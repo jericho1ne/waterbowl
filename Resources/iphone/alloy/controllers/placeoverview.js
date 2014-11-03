@@ -154,6 +154,29 @@ function Controller() {
         id: "placeoverview"
     });
     $.__views.placeoverview && $.addTopLevelView($.__views.placeoverview);
+    $.__views.menubar = Ti.UI.createView({
+        layout: "horizontal",
+        height: 36,
+        width: "100%",
+        top: 18,
+        backgroundColor: "#58c6d5",
+        borderColor: "#ffffff",
+        borderWidth: 0,
+        opacity: 1,
+        zIndex: 99,
+        verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+        id: "menubar"
+    });
+    $.__views.placeoverview.add($.__views.menubar);
+    $.__views.menuLeft = Ti.UI.createView({
+        layout: "vertical",
+        height: "100%",
+        width: "20%",
+        borderColor: "#000",
+        borderWidth: 0,
+        id: "menuLeft"
+    });
+    $.__views.menubar.add($.__views.menuLeft);
     $.__views.backBtn = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#ec3c95",
@@ -172,7 +195,60 @@ function Controller() {
         left: 2,
         id: "backBtn"
     });
-    $.__views.placeoverview.add($.__views.backBtn);
+    $.__views.menuLeft.add($.__views.backBtn);
+    $.__views.menuCenter = Ti.UI.createView({
+        layout: "vertical",
+        height: "100%",
+        width: "60%",
+        borderColor: "#000",
+        borderWidth: 0,
+        id: "menuCenter"
+    });
+    $.__views.menubar.add($.__views.menuCenter);
+    $.__views.wbLogoMenubar = Ti.UI.createLabel({
+        font: {
+            fontFamily: "Raleway-Light",
+            fontSize: 18,
+            color: "#ffffff"
+        },
+        width: Ti.UI.SIZE,
+        height: 28,
+        color: "#ffffff",
+        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+        verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+        text: "waterbowl",
+        top: 0,
+        id: "wbLogoMenubar"
+    });
+    $.__views.menuCenter.add($.__views.wbLogoMenubar);
+    $.__views.menuRight = Ti.UI.createView({
+        layout: "vertical",
+        height: "100%",
+        width: Ti.UI.FILL,
+        borderColor: "#000",
+        borderWidth: 0,
+        id: "menuRight"
+    });
+    $.__views.menubar.add($.__views.menuRight);
+    $.__views.refreshBtn = Ti.UI.createButton({
+        color: "#fff",
+        backgroundColor: "#ec3c95",
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        borderWidth: 0,
+        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+        zIndex: 10,
+        font: {
+            fontFamily: "Raleway-Bold",
+            fontSize: 13
+        },
+        title: "%",
+        opacity: 1,
+        right: 2,
+        id: "refreshBtn"
+    });
+    $.__views.menuRight.add($.__views.refreshBtn);
     $.__views.scrollView = Ti.UI.createScrollView({
         layout: "vertical",
         contentHeight: "auto",
@@ -393,10 +469,13 @@ function Controller() {
         $.placeoverview.close({
             top: 800,
             opacity: .2,
-            duration: 420,
+            duration: 320,
             curve: Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
         });
         $.placeoverview = null;
+    });
+    $.refreshBtn.addEventListener("click", function() {
+        Ti.API.info("* Should be refreshing the feed... *");
     });
     $.scrollView.addEventListener("scroll", function(e) {
         if (null != e.y) {

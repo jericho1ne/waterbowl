@@ -1,6 +1,16 @@
 <Alloy>
 	<Window class="container" id="placeoverview" platform="ios,mobileweb">
-		<Button id="backBtn"/>
+		<View id="menubar">
+			<View id="menuLeft">
+				<Button id="backBtn" class="center_vertical"/>
+			</View>
+			<View id="menuCenter">
+				<Label id="wbLogoMenubar" class="center_vertical"/>
+			</View>
+			<View id="menuRight">
+				<Button id="refreshBtn" class="center_vertical"/>
+			</View>
+		</View>
 
 		<ScrollView id="scrollView" showVerticalScrollIndicator="true" showHorizontalScrollIndicator="true" height="100%" width="100%">
 		

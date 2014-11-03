@@ -47,6 +47,7 @@ function Controller() {
         borderWidth: 0,
         opacity: 1,
         zIndex: 99,
+        verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         id: "menubar"
     });
     $.__views.register.add($.__views.menubar);

@@ -200,17 +200,22 @@ getActivity( args._place_id );
 
 //----------------------------------------------------------------------------
 //
-//		(3)		Add back button listener
+//		(3)		Button listeners
 //
 //----------------------------------------------------------------------------
 $.backBtn.addEventListener('click', function() {			//  BACK button (aka window close)
 	$.placeoverview.close( { 
 		top: 800,
 		opacity: 0.2,
-		duration: 420, 
+		duration: 320, 
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
 	} );
 	$.placeoverview = null;
+});
+
+$.refreshBtn.addEventListener('click', function() {			//  BACK button (aka window close)
+	Ti.API.info( "* Should be refreshing the feed... *" );
+	// TODO:  refresh / replace feed if newer posts exist
 });
 
 ///----------------------------------------------------------------------------

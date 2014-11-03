@@ -221,6 +221,7 @@ function Controller() {
         backgroundColor: "#58c6d5",
         opacity: 1,
         zIndex: 99,
+        verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         id: "menubar"
     });
     $.__views.map.add($.__views.menubar);

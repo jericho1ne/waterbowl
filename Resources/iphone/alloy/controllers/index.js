@@ -58,11 +58,11 @@ function Controller() {
         fullscreen: "false",
         horizontalWrap: "true",
         backgroundColor: "#58c6d5",
-        backgroundImage: "images/waterbowl-splash-screen.jpg",
         height: Ti.UI.FILL,
         zIndex: 1,
         layout: "vertical",
         width: "100%",
+        backgroundImage: "images/waterbowl-splash-screen.jpg",
         id: "index"
     });
     $.__views.index && $.addTopLevelView($.__views.index);

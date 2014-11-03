@@ -68,7 +68,8 @@
 /* 							Top Menubar																														 */
 
 "#menubar"			: { width: "100%", layout: "horizontal", top: 18, height: 36, backgroundColor: "#58c6d5", 
-										borderColor: '#ffffff', borderWidth: 0, opacity: 1, zIndex: 99 }
+										borderColor: '#ffffff', borderWidth: 0, opacity: 1, zIndex: 99,
+										verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
 						
 "#menuLeft"			: { width: "20%", borderColor: '#000', borderWidth: 0 }
 "#menuCenter"		: { width: "60%", borderColor: '#000', borderWidth: 0 }
