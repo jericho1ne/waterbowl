@@ -30,7 +30,7 @@ function getActivity(place_ID) {
 		var jsonResponse = this.responseText;
 		var activityData = new Array();												// create empty object container
 		
-		if (jsonResponse != "") {
+		if (jsonResponse != "" && jsonResponse !="[]") {
 			var activityJson = JSON.parse( jsonResponse );
 			
 			// TODO: add appropriate classes, especially right_view
@@ -115,27 +115,6 @@ function getActivity(place_ID) {
 				///////// ADD ITEM TO FEED CONTAINER ////////////////////////
 				$.feedContainer.add( feed_item_view );
 	
-				/*
-				activityData.push( Ti.UI.createTableViewRow({			// create each TableView row of park info
-					dog_ID		: activityJson[i].dog_ID,
-					dog_name 	: activityJson[i].dog_name,
-					owner_ID  : activityJson[i].owner_ID,
-					last_update:	activityJson[i].last_update,
-					title 		: activityJson[i].dog_name + " saw " + activityJson[i].amount + " dogs " +
-								" - " + activityJson[i].last_update_formatted, 				
-					leftImage : icon,																// icon image defined above
-					hasChild : true,
-					height 		: 80, 																// or: Ti.Platform.displayCaps.platformHeight * 0.04,
-					left 			: 1,
-					color 		: "#fff",
-					width 		: 'auto',
-					textAlign : 'left',
-					font : {
-						fontFamily : 'Helvetica',
-						fontWeight : 'normal',
-						fontSize : 14
-					}
-				})); */
 					
 			}
 			//$.feedList.data = activityData;				// populate placeList TableView (defined in XML file, styled in TSS)

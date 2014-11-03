@@ -128,14 +128,15 @@ function Controller() {
                         mobile_bg: jsonPlaces[i].mobile_bg,
                         leftImage: icon,
                         hasChild: true,
-                        height: 34,
-                        left: 4,
-                        color: "#fff",
-                        width: "auto",
-                        textAlign: "left",
                         font: {
+                            fontFamily: "Raleway-Light",
                             fontSize: 14
-                        }
+                        },
+                        height: 30,
+                        left: 4,
+                        color: "#ffffff",
+                        width: "auto",
+                        textAlign: "left"
                     }));
                     createMapMarker(jsonPlaces[i]);
                 }
@@ -210,6 +211,28 @@ function Controller() {
         id: "map"
     });
     $.__views.map && $.addTopLevelView($.__views.map);
+    $.__views.menubar = Ti.UI.createView({
+        layout: "horizontal",
+        height: 36,
+        borderWidth: 0,
+        borderColor: "#ffffff",
+        width: "100%",
+        top: 18,
+        backgroundColor: "#58c6d5",
+        opacity: 1,
+        zIndex: 99,
+        id: "menubar"
+    });
+    $.__views.map.add($.__views.menubar);
+    $.__views.menuLeft = Ti.UI.createView({
+        layout: "vertical",
+        height: "100%",
+        width: "20%",
+        borderColor: "#000",
+        borderWidth: 0,
+        id: "menuLeft"
+    });
+    $.__views.menubar.add($.__views.menuLeft);
     $.__views.backBtn = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#ec3c95",
@@ -228,7 +251,41 @@ function Controller() {
         left: 2,
         id: "backBtn"
     });
-    $.__views.map.add($.__views.backBtn);
+    $.__views.menuLeft.add($.__views.backBtn);
+    $.__views.menuCenter = Ti.UI.createView({
+        layout: "vertical",
+        height: "100%",
+        width: "60%",
+        borderColor: "#000",
+        borderWidth: 0,
+        id: "menuCenter"
+    });
+    $.__views.menubar.add($.__views.menuCenter);
+    $.__views.wbLogoMenubar = Ti.UI.createLabel({
+        font: {
+            fontFamily: "Raleway-Light",
+            fontSize: 18,
+            color: "#ffffff"
+        },
+        width: Ti.UI.SIZE,
+        height: 28,
+        color: "#ffffff",
+        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+        verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+        text: "waterbowl",
+        top: 0,
+        id: "wbLogoMenubar"
+    });
+    $.__views.menuCenter.add($.__views.wbLogoMenubar);
+    $.__views.menuRight = Ti.UI.createView({
+        layout: "vertical",
+        height: "100%",
+        width: Ti.UI.FILL,
+        borderColor: "#000",
+        borderWidth: 0,
+        id: "menuRight"
+    });
+    $.__views.menubar.add($.__views.menuRight);
     $.__views.refreshBtn = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#ec3c95",
@@ -247,7 +304,7 @@ function Controller() {
         right: 2,
         id: "refreshBtn"
     });
-    $.__views.map.add($.__views.refreshBtn);
+    $.__views.menuRight.add($.__views.refreshBtn);
     $.__views.mapContainer = Ti.UI.createView({
         layout: "vertical",
         height: "60%",
@@ -311,14 +368,7 @@ function Controller() {
             _place_distance: e.rowData.distance,
             _mobile_bg: e.rowData.mobile_bg
         }).getView();
-        place_overview.top = 800;
-        place_overview.opacity = .15;
-        place_overview.open({
-            top: 0,
-            opacity: 1,
-            duration: 400,
-            curve: Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-        });
+        place_overview.open();
     });
     $.refreshBtn.addEventListener("click", function() {
         createPlaceList();

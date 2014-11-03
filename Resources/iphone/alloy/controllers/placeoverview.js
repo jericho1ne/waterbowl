@@ -32,7 +32,7 @@ function Controller() {
         query.onload = function() {
             var jsonResponse = this.responseText;
             new Array();
-            if ("" != jsonResponse) {
+            if ("" != jsonResponse && "[]" != jsonResponse) {
                 var activityJson = JSON.parse(jsonResponse);
                 var last_update_photo = sessionVars.AWS.base_url + activityJson[0].dog_photo;
                 Ti.API.info("latest update photo: " + last_update_photo);

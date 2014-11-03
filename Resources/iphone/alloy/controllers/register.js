@@ -8,44 +8,7 @@ function __processArg(obj, key) {
 }
 
 function Controller() {
-    function checkemail(emailAddress) {
-        var email_test;
-        var str = emailAddress;
-        var filter = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-        email_test = filter.test(str) ? true : false;
-        return email_test;
-    }
-    function registerNewUser() {
-        if ("" != $.nickname.value && "" != $.password1.value && "" != $.password2.value && "" != $.email.value) if ($.password1.value != $.password2.value) {
-            var error = Titanium.UI.createAlertDialog({
-                title: "Passwords do not match",
-                message: "Please handle that and try again"
-            });
-            error.show();
-        } else if (checkemail($.email.value)) {
-            $.createBtn.enabled = false;
-            $.createBtn.opacity = .3;
-            createAccountRequest.open("POST", "http://www.waterbowl.net/mobile/create-account.php");
-            var params = {
-                nick: $.nickname.value,
-                pwd: $.password1.value,
-                email: $.email.value
-            };
-            createAccountRequest.send(params);
-        } else {
-            var error = Titanium.UI.createAlertDialog({
-                title: "Email error",
-                message: "Please enter a valid email"
-            });
-            error.show();
-        } else {
-            var error = Titanium.UI.createAlertDialog({
-                title: "Eror",
-                message: "All fields are required"
-            });
-            error.show();
-        }
-    }
+    function uploadPhoto() {}
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "register";
     if (arguments[0]) {
@@ -63,10 +26,14 @@ function Controller() {
     var exports = {};
     var __defers = {};
     $.__views.register = Ti.UI.createWindow({
-        exitOnClose: "true",
+        exitOnClose: true,
         fullscreen: "false",
         horizontalWrap: "true",
         backgroundColor: "#DCF1FC",
+        height: Ti.UI.FILL,
+        zIndex: 1,
+        layout: "vertical",
+        width: "100%",
         id: "register"
     });
     $.__views.register && $.addTopLevelView($.__views.register);
@@ -183,6 +150,7 @@ function Controller() {
         color: "#000000",
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+        top: 20,
         text: "email",
         id: "__alloyId8"
     });
@@ -216,6 +184,7 @@ function Controller() {
         color: "#000000",
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+        top: 20,
         text: "password",
         id: "__alloyId9"
     });
@@ -269,32 +238,21 @@ function Controller() {
         color: "#000000",
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
-        text: "your name or nickname",
+        top: 20,
+        text: "password",
         id: "__alloyId10"
     });
     $.__views.__alloyId7.add($.__views.__alloyId10);
-    $.__views.nickname = Ti.UI.createTextField({
-        autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
-        autocorrect: false,
-        backgroundColor: "#ffffff",
-        color: "#777477",
-        width: "50%",
-        height: 30,
-        font: {
-            fontFamily: "Raleway-Light",
-            fontSize: 14
-        },
-        keyboardType: Titanium.UI.KEYBOARD_DEFAULT,
-        returnKeyType: Titanium.UI.RETURNKEY_DEFAULT,
-        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-        hintText: "this is not required",
-        id: "nickname"
+    $.__views.__alloyId11 = Ti.UI.createView({
+        layout: "horizontal",
+        height: Ti.UI.SIZE,
+        id: "__alloyId11"
     });
-    $.__views.__alloyId7.add($.__views.nickname);
+    $.__views.__alloyId7.add($.__views.__alloyId11);
     $.__views.uploadGalleryPhoto = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#ec3c95",
-        width: "50%",
+        width: "40%",
         height: 35,
         borderRadius: 3,
         borderWidth: 0,
@@ -307,12 +265,12 @@ function Controller() {
         title: "Choose from Gallery",
         id: "uploadGalleryPhoto"
     });
-    $.__views.__alloyId7.add($.__views.uploadGalleryPhoto);
+    $.__views.__alloyId11.add($.__views.uploadGalleryPhoto);
     uploadFromGallery ? $.__views.uploadGalleryPhoto.addEventListener("click", uploadFromGallery) : __defers["$.__views.uploadGalleryPhoto!click!uploadFromGallery"] = true;
     $.__views.uploadCameraPhoto = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#ec3c95",
-        width: "50%",
+        width: "40%",
         height: 35,
         borderRadius: 3,
         borderWidth: 0,
@@ -325,9 +283,9 @@ function Controller() {
         title: "Take a Snapshot",
         id: "uploadCameraPhoto"
     });
-    $.__views.__alloyId7.add($.__views.uploadCameraPhoto);
+    $.__views.__alloyId11.add($.__views.uploadCameraPhoto);
     uploadFromCamera ? $.__views.uploadCameraPhoto.addEventListener("click", uploadFromCamera) : __defers["$.__views.uploadCameraPhoto!click!uploadFromCamera"] = true;
-    $.__views.createBtn = Ti.UI.createButton({
+    $.__views.continueBtn = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#ec3c95",
         width: "50%",
@@ -341,10 +299,10 @@ function Controller() {
             fontSize: 13
         },
         title: "create account",
-        id: "createBtn"
+        id: "continueBtn"
     });
-    $.__views.__alloyId7.add($.__views.createBtn);
-    registerNewUser ? $.__views.createBtn.addEventListener("click", registerNewUser) : __defers["$.__views.createBtn!click!registerNewUser"] = true;
+    $.__views.__alloyId7.add($.__views.continueBtn);
+    uploadPhoto ? $.__views.continueBtn.addEventListener("click", uploadPhoto) : __defers["$.__views.continueBtn!click!uploadPhoto"] = true;
     exports.destroy = function() {};
     _.extend($, $.__views);
     var createAccountRequest = Titanium.Network.createHTTPClient();
@@ -371,14 +329,9 @@ function Controller() {
             });
             error.show();
         }
-        $.createBtn.enabled = true;
-        $.createBtn.opacity = 1;
+        $.continueBtn.enabled = true;
+        $.continueBtn.opacity = 1;
     };
-    Ti.UI.createAnimation({
-        transform: Ti.UI.create2DMatrix().scale(.5),
-        duration: 500,
-        curve: Titanium.UI.ANIMATION_CURVE_LINEAR
-    });
     $.backBtn.addEventListener("click", function() {
         $.register.close({
             top: 800,
@@ -390,7 +343,7 @@ function Controller() {
     });
     __defers["$.__views.uploadGalleryPhoto!click!uploadFromGallery"] && $.__views.uploadGalleryPhoto.addEventListener("click", uploadFromGallery);
     __defers["$.__views.uploadCameraPhoto!click!uploadFromCamera"] && $.__views.uploadCameraPhoto.addEventListener("click", uploadFromCamera);
-    __defers["$.__views.createBtn!click!registerNewUser"] && $.__views.createBtn.addEventListener("click", registerNewUser);
+    __defers["$.__views.continueBtn!click!uploadPhoto"] && $.__views.continueBtn.addEventListener("click", uploadPhoto);
     _.extend($, exports);
 }
 

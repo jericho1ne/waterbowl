@@ -1,31 +1,25 @@
 /*
-  Window: register
- 	
-  +===loginScreen==============+
-  |	+----row_spacer_100------+ |
-  | |                        | |
+  +=== register ===============+
   |	+------------------------+ |
-  | +----loginStuff----------+ |
-  |	|										 		 | |
- 	|	|      	row_spacer_100	 | |
- 	|	|				appTitle				 | |
-	|	|				username				 | | 	+ spacer_xx in between each field
-	|	|				password				 | | 
-	|	|				loginBtn				 | | 
-	|	|				spacerImg 			 | |
-	|	|				registerBtn      | |
-	|	|												 | |
+  | |    		menubar          | |
+  |	+------------------------+ |
+  | +----ScrollView----------+ |
+ 	|	|				email						 | |
+	|	|				password1				 | | 	
+	|	|				password2				 | | 
 	|	+------------------------+ |
-	|	+-----footerContainer----+ |	
-	|	|				row_spacer_50		 | |
-	| |				footer					 | |
-	|	|				row_fill				 | |
+	|	+----button container----+ |	
+	| |				uploadGallery		 | |
+	|	|				uploadCamera		 | |
+	| +------------------------+ |
+	|	+------------------------+ |	
+	|	|				continueBtn			 | |
 	| +------------------------+ |	
 	+============================+
 */
 
 <Alloy>
-	<Window id="register" platform="ios,mobileweb">
+	<Window id="register" class="container">
 		
 		<View id="menubar">
 			<View id="menuLeft">
@@ -39,23 +33,21 @@
 			</View>
 		</View>
 		
-		<ScrollView>
+		<ScrollView class="">
 			<!-- Create account fields:  username, 2x passwd, submit btn -->
-			<Label class="form_label">email</Label>
+			<Label class="form_label top_20">email</Label>
 			<TextField id="email"></TextField>
 		
-			<Label class="form_label">password</Label>
+			<Label class="form_label top_20">password</Label>
 			<TextField id="password1"></TextField>
 			<TextField id="password2"></TextField>
 			
-			<Label class="form_label">your name or nickname</Label>
-			<TextField id="nickname"></TextField>
-			
-			<Button id="uploadGalleryPhoto" onClick="uploadFromGallery">Choose from Gallery</Button>
-			
-			<Button id="uploadCameraPhoto" onClick="uploadFromCamera">Take a Snapshot</Button>
-		
-			<Button id="createBtn" onClick="registerNewUser">create account</Button>
+			<Label class="form_label top_20">password</Label>
+			<View class="layout_horz">
+				<Button id="uploadGalleryPhoto" onClick="uploadFromGallery" class="width_">Choose from Gallery</Button>
+				<Button id="uploadCameraPhoto" onClick="uploadFromCamera">Take a Snapshot</Button>
+			</View>
+			<Button id="continueBtn" onClick="uploadPhoto">create account</Button>
 			
 	 	</ScrollView>
 	</Window>

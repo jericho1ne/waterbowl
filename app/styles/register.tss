@@ -1,13 +1,13 @@
 // New account form fields
 "#register" : { backgroundColor: "#DCF1FC" }
 
-"#new_account_label":{ top: '12%' }
 "#email": 			{	hintText: 'email address' }
 
 "#password1": 	{ hintText: 'pick something tricky', passwordMask: true }
 "#password2": 	{	hintText: 'one more time please',	passwordMask: true }
 
-"#nickname":		{ hintText: 'this is not required' }
+"#uploadGalleryPhoto" :	{ width: "40%" }
+"#uploadCameraPhoto"  :	{ width: "40%" }
 
-"#createBtn":		{ }
+"#continueBtn":		{ }
 

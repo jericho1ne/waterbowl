@@ -36,9 +36,7 @@ createAccountRequest.onload = function() {
 			buttonNames : ['OK']
 		});
 		alertDialog.show();
-		//alertDialog.addEventListener('click', function(e) {
-		//	win.tabGroup.setActiveTab(0);
-		//});
+
 		$.email.value = '';
 		$.password1.value = '';
 		$.password2.value = '';
@@ -52,8 +50,8 @@ createAccountRequest.onload = function() {
 		error.show();
 	}
 	// regardless of success or error, reactivate Submit button
-	$.createBtn.enabled = true;
-		$.createBtn.opacity = 1;
+	$.continueBtn.enabled = true;
+	$.continueBtn.opacity = 1;
 };
 
 //================================================================================
@@ -77,8 +75,8 @@ function registerNewUser(e) {
 				});
 				error.show();
 			} else {
-				$.createBtn.enabled = false;
-				$.createBtn.opacity = 0.3;
+				$.continueBtn.enabled = false;
+				$.continueBtn.opacity = 0.3;
 				//createAccountRequest.open("POST","http://192.168.1.1/mobile/create-account.php")
 				createAccountRequest.open("POST", "http://www.waterbowl.net/mobile/create-account.php");
 				var params = {
@@ -98,13 +96,8 @@ function registerNewUser(e) {
 	}
 }
 
+function uploadPhoto() {}
 //========================================================================================
-var slideRight = Ti.UI.createAnimation({
-    transform : Ti.UI.create2DMatrix().scale(0.5),
-    duration : 500,
-    curve : Titanium.UI.ANIMATION_CURVE_LINEAR
-});
-
 
 $.backBtn.addEventListener('click', function() {
 	$.register.close( { 
@@ -115,10 +108,3 @@ $.backBtn.addEventListener('click', function() {
 	} );
 	$.register = null;
 });
-
-/*	var imageView = Ti.UI.createImageView({
-					width:win.width,
-					height:win.height,
-					image:event.media
-				});
-				$.feedContainer.add(imageView);  */

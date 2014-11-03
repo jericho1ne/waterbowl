@@ -42,6 +42,7 @@
 	showHorizontalScrollIndicator: "true"
 }
 
+
 "Button": { 
 	color: '#fff', backgroundColor: '#ec3c95',
 	width: '50%', height: 35, borderRadius: 3, borderWidth: 0,
@@ -102,6 +103,12 @@
 
 ".fill_height"  : { height: Ti.UI.FILL }
 ".fill_width"   : { width: Ti.UI.FILL }
+
+/*  border colors for layout / debug purposes  */
+".border" 			 : { borderWidth: 2, borderColor: "#000000" }
+".border_yellow" : { borderWidth: 1, borderColor: "#ffff00" }
+".border_cyan" 	 : { borderWidth: 1, borderColor: "#00ffff" }
+".border_red"  	 : { borderWidth: 1, borderColor: "ff0000" }
 
 
 ".btn_large" : { height: 50, font:{ fontSize: 20 } }

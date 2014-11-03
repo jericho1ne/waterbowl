@@ -198,13 +198,9 @@ function createPlaceList() {
 					distance : jsonPlaces[i].dist,
 					mobile_bg : jsonPlaces[i].mobile_bg,
 					leftImage : icon,				// icon image defined above
-					hasChild : true,
-					height 		: 34, 						// height: Ti.Platform.displayCaps.platformHeight * 0.04,
-					left 			: 4,
-					color 		: "#fff",
-					width 		: 'auto',
-					textAlign : 'left',
-					font : { fontSize : 14 }
+					hasChild : true, 	
+					font:{ fontFamily: 'Raleway-Light', fontSize: 14 }, height: 30,
+					left: 4, color: "#ffffff", width: 'auto', textAlign : 'left'
 				}));
 				createMapMarker(jsonPlaces[i]);
 				// also attach a placemark to the map for each park
@@ -263,9 +259,9 @@ function findNearbyPlaces(lat, lon) {
 				dialog.addEventListener('click', function(e) {// take user to Checkin View
 					if (e.index == 0) {
 						var checkinPage = Alloy.createController("checkin").getView();
-						checkinPage.open({
-							transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-						});
+						checkinPage.open(
+							{ transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT }
+						);
 					} else if (e.index == 1) {
 						sessionVars.checkinInProgress = false;
 					}
@@ -316,6 +312,7 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 	
 	
 	Ti.API.info(" * sending to placeoverview: " + e.rowData.id + ", "+e.rowData.title + " *");
+	/*  prep all the required data to placeoverview.js */
 	var place_overview = Alloy.createController("placeoverview", { 
 			_place_id: 			e.rowData.id,						// pass in basic place info to next page
 			_place_name: 		e.rowData.title,
@@ -325,7 +322,9 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 			_place_distance:e.rowData.distance,
 			_mobile_bg:			e.rowData.mobile_bg
 		} ).getView();
-		
+	
+	place_overview.open();
+	/*
 	place_overview.top = 800;							// get ready for the sexy slide up animation
  	place_overview.opacity = 0.15;
 	place_overview.open({
@@ -334,7 +333,7 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 		duration: 400,  
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
 	});
-						
+		*/				
 	// setTimeout( );
 });
 

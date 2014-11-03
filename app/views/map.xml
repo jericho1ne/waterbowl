@@ -1,14 +1,24 @@
 <Alloy>
   <Window class="container">
-  	<Button id="backBtn" />
-  	<Button id="refreshBtn" />
   	
+  	<View id="menubar" class="border">
+			<View id="menuLeft">
+				<Button id="backBtn" class="center_vertical"/>
+			</View>
+			<View id="menuCenter">
+				<Label id="wbLogoMenubar" class="center_vertical"/>
+			</View>
+			<View id="menuRight">
+				<Button id="refreshBtn" class="center_vertical"/>
+			</View>
+		</View>
+		
   	<!-- <View ns="Ti.Map" id="wbMapView"/> -->
-  	<View id="mapContainer"/>
+  	<View id="mapContainer" class=""/>
   	
-  	<View id="placeListContainer">
-  		<TableView id="placeList"/>
-  		<!-- Parks get populated in here -->
+  	<View id="placeListContainer" class="fill_height">
+  		<TableView id="placeList" class="table_view_row"/>
+  			<!-- Parks get populated in here -->
   	</View>
   </Window>
 </Alloy> 

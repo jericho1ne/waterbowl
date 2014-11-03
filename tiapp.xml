@@ -38,6 +38,14 @@
                 <false/>
                 <key>UIStatusBarStyle</key>
                 <string>UIStatusBarStyleDefault</string>
+                <key>UIAppFonts</key>
+                <array>
+                	<string>Raleway.ttf</string>
+                	<string>Raleway-Light.ttf</string>
+                	<string>Raleway-ExtraLight.ttf</string>
+                	<string>Raleway-Medium.ttf</string>
+                	<string>Raleway-Bold.ttf</string>
+                </array>
             </dict>
         </plist>
     </ios>
