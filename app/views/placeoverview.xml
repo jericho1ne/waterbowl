@@ -1,0 +1,76 @@
+<Alloy>
+	<Window class="container" id="placeoverview" platform="ios,mobileweb">
+		<Button id="backBtn"/>
+
+		<ScrollView id="scrollView" showVerticalScrollIndicator="true" showHorizontalScrollIndicator="true" height="100%" width="100%">
+		
+			<View id="headerContainer">
+				<View id="headerTop" class="column">
+					<View class="row_spacer_100"/>
+					<View class="col_spacer_100"/>
+					<View class="right_float">
+						<Button id="checkin_button"/>
+					</View>
+				</View>	
+				<View id="headerBottom" class="row">
+					<Label id="place_name_label" text=".place name." 	class="feed_label_left_lg"/>
+					<Label id="place_addr_label" text=".street addr." class="feed_label_left" />
+					<Label id="place_city_label" text=".city zip." 		class="feed_label_left" />
+					<Label id="place_dist_label" text=".distance." 		class="feed_label_left" />			
+				</View>
+			</View>
+			
+			// 								LATEST UPDATE
+			// +============= feed_item =================================+
+			// |  +-photo-+ +-- middleColumn ---+ +-- rightColumn ---+  |
+			// |  |       | |   midColTopLabel  | |   rightLabelTop  |  |
+			// |  |       | |   midColMidLabel  | |                  |  |
+			// |  |       | |   midColBotLabel  | |   rightLabelTop  |  |		
+			// |  +-------+ +-------------------+ +------------------+  |		
+			// +========================================================+
+			<View class="feed_item_lg">
+				<ImageView class="thumbnail" id="last_update_thumb"/>
+				<View class="middle_view" id="last_update_middle">
+					<Label class="feed_label_left">latest update</Label>
+						<!-- add most recent update labels here programmatically -->
+				</View>
+				<View class="right_view" id="last_update_right">
+					<!-- add most recent update labels here programmatically -->
+				</View>
+			</View>
+			
+	
+			// 								 ACTIVITY FEED
+			// +============== feedContainer ===============================+
+			// |  +----------- feed_item (#1) ---------------------------+  |
+			// |  | +-photo-+ +------------------+  +------------------+ |  |                
+			// |  | |  			| | feed_label_left  |  | feed_label_right | |  |            
+			// |  | | 	    | | feed_label_left  |  |                  | |  |  		
+			// |  | +-------+ +------------------+  +------------------+ |  | 
+			// |  +------------------------------------------------------+  |	
+			// |																				                    |
+			// |  +---------- feed_item (#2) ------------+                  |
+			// |	|				    e t c . . .                |                  |
+			// |  |                                      |                  |
+			// |  ^                                      ^                  |
+			// +============================================================+
+			<View id="feedContainer">
+				<!--
+				<View class="feed_item">
+					<ImageView class="thumbnail_sm"/>
+					<View class="middle_view">
+						<Label class="feed_label_left">Terra checked in [TEST]</Label>
+						<Label class="feed_label_left">Terra saw 1-2 dogs</Label>
+					</View>
+					<View class="right_view">
+							<Label class="feed_label_right">7 mins	ago</Label>
+					</View>
+				</View>
+				-->
+				
+			</View>
+			
+		</ScrollView>
+
+	</Window>
+</Alloy>

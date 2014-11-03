@@ -1,0 +1,6 @@
+<Alloy>
+	<Window class="container">
+		<Label id="park_name"></Label>
+      	<Label id="address"></Label> 
+	</Window>
+</Alloy>

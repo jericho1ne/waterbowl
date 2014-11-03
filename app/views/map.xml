@@ -1,0 +1,14 @@
+<Alloy>
+  <Window class="container">
+  	<Button id="backBtn" />
+  	<Button id="refreshBtn" />
+  	
+  	<!-- <View ns="Ti.Map" id="wbMapView"/> -->
+  	<View id="mapContainer"/>
+  	
+  	<View id="placeListContainer">
+  		<TableView id="placeList"/>
+  		<!-- Parks get populated in here -->
+  	</View>
+  </Window>
+</Alloy> 

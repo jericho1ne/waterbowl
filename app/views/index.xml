@@ -1,0 +1,58 @@
+/*
+  +=== index ==================+
+  |	+----row_spacer_100------+ |
+  | |                        | |
+  | |                        | |
+  |	+------------------------+ |
+  |	+------------------------+ |
+  | |    		appTitle         | |
+  |	+------------------------+ |
+  |	+----row_spacer_50-------+ |
+  | |                        | |
+  |	+------------------------+ |
+  | +----loginStuff----------+ |
+  |	|										 		 | |
+ 	|	|      	row_spacer_100	 | |
+ 	|	|				appTitle				 | |
+	|	|				username				 | | 	+ spacer_xx in between each field
+	|	|				password				 | | 
+	|	|				loginBtn				 | | 
+	|	|				spacerImg 			 | |
+	|	|				registerBtn      | |
+	|	+------------------------+ |
+	|	+-----footerContainer----+ |	
+	|	|				row_spacer_50		 | |
+	| |				footer					 | |
+	|	|				row_fill				 | |
+	| +------------------------+ |	
+	+============================+
+*/
+
+<Alloy>
+	<Window id="index" class="container login_bg">
+		
+		<View class="row_spacer_100"/>
+		<Label id="appTitle">waterbowl</Label>
+		<View class="row_spacer_50"/>
+		
+		<View id="loginStuff">
+			<TextField class="text_field_large" id="username"></TextField>
+			<View class="row_spacer_10"/>
+			<TextField class="text_field_large" id="password"></TextField>
+			<View class="row_spacer_10"/>
+			<Button class="btn_large" id="loginBtn"    onClick="goToLogin"/>
+			<View class="row_spacer_10"/>
+			<Button class="btn_large" id="registerBtn" onClick="goToRegister"/>		
+		</View>
+		
+		<View id="footerContainer">
+			<View class="row_spacer_100"/>
+			<ImageView id="footer"/>
+			<View class="row_fill"/>
+		</View>
+		
+	</Window>
+</Alloy>
+
+
+

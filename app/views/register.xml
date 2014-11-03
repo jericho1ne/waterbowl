@@ -1,0 +1,62 @@
+/*
+  Window: register
+ 	
+  +===loginScreen==============+
+  |	+----row_spacer_100------+ |
+  | |                        | |
+  |	+------------------------+ |
+  | +----loginStuff----------+ |
+  |	|										 		 | |
+ 	|	|      	row_spacer_100	 | |
+ 	|	|				appTitle				 | |
+	|	|				username				 | | 	+ spacer_xx in between each field
+	|	|				password				 | | 
+	|	|				loginBtn				 | | 
+	|	|				spacerImg 			 | |
+	|	|				registerBtn      | |
+	|	|												 | |
+	|	+------------------------+ |
+	|	+-----footerContainer----+ |	
+	|	|				row_spacer_50		 | |
+	| |				footer					 | |
+	|	|				row_fill				 | |
+	| +------------------------+ |	
+	+============================+
+*/
+
+<Alloy>
+	<Window id="register" platform="ios,mobileweb">
+		
+		<View id="menubar">
+			<View id="menuLeft">
+				<Button id="backBtn" class="center_vertical"/>
+			</View>
+			<View id="menuCenter">
+				<Label id="wbLogoMenubar" class="center_vertical"/>
+			</View>
+			<View id="menuRight">
+				<Button id="infoBtn" class="center_vertical"/>
+			</View>
+		</View>
+		
+		<ScrollView>
+			<!-- Create account fields:  username, 2x passwd, submit btn -->
+			<Label class="form_label">email</Label>
+			<TextField id="email"></TextField>
+		
+			<Label class="form_label">password</Label>
+			<TextField id="password1"></TextField>
+			<TextField id="password2"></TextField>
+			
+			<Label class="form_label">your name or nickname</Label>
+			<TextField id="nickname"></TextField>
+			
+			<Button id="uploadGalleryPhoto" onClick="uploadFromGallery">Choose from Gallery</Button>
+			
+			<Button id="uploadCameraPhoto" onClick="uploadFromCamera">Take a Snapshot</Button>
+		
+			<Button id="createBtn" onClick="registerNewUser">create account</Button>
+			
+	 	</ScrollView>
+	</Window>
+</Alloy>

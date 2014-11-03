@@ -1,0 +1,10 @@
+<Alloy>
+	<Window class="container">
+	 <!-- 
+	 	   <TableView dataCollection="dogs">
+	      <TableViewRow dataId="" model="{alloy_id}">
+	        <Label text="{name}">
+	      </TableViewRow>
+	    </TableView> -->
+	</Window>
+</Alloy>

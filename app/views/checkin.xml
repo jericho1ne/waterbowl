@@ -1,0 +1,18 @@
+<Alloy>
+	
+	<Window id="checkin" platform="ios,mobileweb">
+		<Button id="backBtn"/>
+		<ScrollView>
+			<!-- Create account fields:  username, 2x passwd, submit btn -->
+			<Label id="place_checkin"></Label>	
+			<Label id="question" class="form_label">How many dogs are playing here?</Label>	
+			
+			<Slider id="slider" onChange="updateLabel"/>				
+			<Label id="slider_int_val" class="checkin_label"/>
+			<Label id="slider_label"	 class="checkin_label"/>
+			
+			<Button id="checkInBtn" onClick="checkIn"/>
+	 	</ScrollView>
+ 	</Window>
+
+</Alloy>
