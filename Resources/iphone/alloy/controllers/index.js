@@ -58,11 +58,11 @@ function Controller() {
         fullscreen: "false",
         horizontalWrap: "true",
         backgroundColor: "#58c6d5",
-        backgroundImage: "images/waterbowl-splash-screen.jpg",
         height: Ti.UI.FILL,
         zIndex: 1,
         layout: "vertical",
         width: "100%",
+        backgroundImage: "images/waterbowl-splash-screen.jpg",
         id: "index"
     });
     $.__views.index && $.addTopLevelView($.__views.index);
@@ -91,7 +91,7 @@ function Controller() {
     $.__views.loginStuff = Ti.UI.createView({
         layout: "vertical",
         height: Ti.UI.SIZE,
-        top: 40,
+        top: 20,
         width: "100%",
         id: "loginStuff"
     });
@@ -200,7 +200,6 @@ function Controller() {
     $.__views.__alloyId1 = Ti.UI.createView({
         layout: "vertical",
         height: Ti.UI.FILL,
-        width: "100%",
         backgroundColor: "#58c6d5",
         id: "__alloyId1"
     });

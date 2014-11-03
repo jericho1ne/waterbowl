@@ -105,7 +105,6 @@ function Controller() {
             fontFamily: "Raleway-Bold",
             fontSize: 13
         },
-        top: 4,
         title: "<<",
         opacity: 1,
         left: 2,
@@ -132,8 +131,8 @@ function Controller() {
         color: "#ffffff",
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
-        top: 0,
         text: "waterbowl",
+        top: 0,
         id: "wbLogoMenubar"
     });
     $.__views.menuCenter.add($.__views.wbLogoMenubar);
@@ -159,7 +158,6 @@ function Controller() {
             fontFamily: "Raleway-Bold",
             fontSize: 13
         },
-        top: 4,
         title: "(i)",
         opacity: 1,
         right: 2,

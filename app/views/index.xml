@@ -1,29 +1,18 @@
 /*
   +=== index ==================+
-  |	+----row_spacer_100------+ |
-  | |                        | |
-  | |                        | |
-  |	+------------------------+ |
   |	+------------------------+ |
   | |    		appTitle         | |
   |	+------------------------+ |
-  |	+----row_spacer_50-------+ |
-  | |                        | |
-  |	+------------------------+ |
   | +----loginStuff----------+ |
-  |	|										 		 | |
- 	|	|      	row_spacer_100	 | |
  	|	|				appTitle				 | |
-	|	|				username				 | | 	+ spacer_xx in between each field
+	|	|				email						 | | 	
 	|	|				password				 | | 
-	|	|				loginBtn				 | | 
-	|	|				spacerImg 			 | |
+	|	|				loginBtn				 | | 			 
 	|	|				registerBtn      | |
 	|	+------------------------+ |
 	|	+-----footerContainer----+ |	
-	|	|				row_spacer_50		 | |
 	| |				footer					 | |
-	|	|				row_fill				 | |
+	|	|				fill_height 		 | |
 	| +------------------------+ |	
 	+============================+
 */
@@ -31,24 +20,18 @@
 <Alloy>
 	<Window id="index" class="container login_bg">
 		
-		<View class="row_spacer_100"/>
-		<Label id="appTitle">waterbowl</Label>
-		<View class="row_spacer_50"/>
+		<Label id="appTitle" class="top_160">waterbowl</Label>
 		
-		<View id="loginStuff">
-			<TextField class="text_field_large" id="username"></TextField>
-			<View class="row_spacer_10"/>
-			<TextField class="text_field_large" id="password"></TextField>
-			<View class="row_spacer_10"/>
-			<Button class="btn_large" id="loginBtn"    onClick="goToLogin"/>
-			<View class="row_spacer_10"/>
-			<Button class="btn_large" id="registerBtn" onClick="goToRegister"/>		
+		<View id="loginStuff" class="top_20">
+			<TextField class="text_field_large" id="email"/>
+			<TextField class="text_field_large top_10" id="password"/>
+			<Button class="btn_large top_10" id="loginBtn"    onClick="goToLogin"/>
+			<Button class="btn_large top_10" id="registerBtn" onClick="goToRegister"/>		
 		</View>
 		
-		<View id="footerContainer">
-			<View class="row_spacer_100"/>
+		<View id="footerContainer" class="top_80">
 			<ImageView id="footer"/>
-			<View class="row_fill"/>
+			<View class="fill_height bg_dk_blue"/>
 		</View>
 		
 	</Window>

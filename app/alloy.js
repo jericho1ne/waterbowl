@@ -39,23 +39,28 @@ if(Ti.Platform.osname === 'android'){
 // 34.024 / -118.394
 
 var sessionVars = {
-	owner_ID: null,
-	username: null,
-	password: null,
-	currentWindow: "index", 
-	lastWindow: null,
+	user : {
+		owner_ID: 	null,
+		username: 	null,
+		password: 	null,
+		dog_id: 		null,
+		dog_name:		null,
+		dog_photo:	null
+	},
+	currentWindow	: "index", 
+	lastWindow		: null,
 	// lat: 34.014,  lon: -118.375,		/* centered on West LA */
 	lat: 34.024,  lon: -118.394,		/* centered on Nextspace */
 	currentPlace: { 
-		ID: 1,
-		name: null,
+		ID		: 	1,
+		name	: null,
 		bg_img: null,
-		city: null
+		city	: null
 	},
-	checkinInProgress: null,
-	checkedIn: 1,
-	lastCheckIn: null,
-	checkinTimestamp: null,
+	checkinInProgress	: null,
+	checkedIn					: 1,
+	lastCheckIn				: null,
+	checkinTimestamp	: null,
 	AWS : {
 		access_key_id: "AKIAILLMVRRDGDBDZ5XQ",
 		secret_access: "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",
@@ -89,32 +94,8 @@ else if (Ti.Platform.osname == "android")
 	Alloy.Globals.Map = Ti.Map;
 	
 //Alloy.Globals.wbMapView = Alloy.Globals.Map.createView( {mapType:Map.NORMAL_TYPE} );
-  
-// Globally define place data - manipulated from multiple places
-// Ti.App.placeData = new Array();	  ?? necessary ??
 
 var longPress;
-
-
-// Alloy.Globals.someGlobalFunction = function(){};
-/*
-var localDogs = Alloy.Collections.dogs;
-
-var dog = Alloy.createModel('dogs', { 
-   dog_ID: 		'1',
-   dog_name: 	'Odie Won Kenobi',
-   owner_ID: 	'1',
-   photo: 		'01-odiewon.jpg',
-   birth_year:	'1976',
-   breed:		'Master Jedi'
-});
-
-Ti.API.log("created a dog model containing:" );
-Ti.API.log( JSON.stringify( dog ) );
-*/	
-// add dog to localDogs collection, persist it to the DB
-// dogs.add( dog );
-// OdieWon.save();
 
 
 //==================================================================================================
@@ -149,7 +130,6 @@ function uploadFromCamera() {
 		allowEditing:	true,		 			// allowEditing and mediaTypes are iOS-only settings
 		mediaTypes:[Ti.Media.MEDIA_TYPE_VIDEO,Ti.Media.MEDIA_TYPE_PHOTO]
 	});
-	Ti.API.info( fileInfoArray["filename"] + " // " + fileInfoArray["filehandle"] );
 	return null;
 }
 
@@ -167,8 +147,7 @@ function uploadFromGallery() {
 				return fileInfoArray;
 			}
 		});
-	}
-	else {
+	} else {
 		alert ('Internet connection unavailable');
 	}
 	return null;
@@ -179,8 +158,12 @@ function uploadFromGallery() {
 //	Purpose:	upload files/photos from camera or gallery
 //==================================================================================================
 function uploadToAWS( event_media ) {  	 // event_media is event.media type
-	// move file from photo gallery to Ti app data directory first
+	/* 	move file from photo gallery to Ti app data directory first */
 	var filename 		= Ti.Platform.createUUID()+".jpg";
+	/* 	save recently uploaded photo as current profile photo; update $.photo ImageView */
+	sessionVars.user.dog_photo = filename;
+	$.photo.image = filehandle;
+	
 	// Returns a File object representing the file identified by the path arguments
 	var filehandle 	= Ti.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, filename);
 	filehandle.write( event_media );

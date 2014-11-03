@@ -194,11 +194,11 @@ function Controller() {
     });
     $.__views.scrollView.add($.__views.headerContainer);
     $.__views.headerTop = Ti.UI.createView({
-        layout: "horizontal",
+        layout: "vertical",
         height: "60%",
-        left: 0,
         width: "100%",
         top: 20,
+        left: 0,
         id: "headerTop"
     });
     $.__views.headerContainer.add($.__views.headerTop);
@@ -244,8 +244,8 @@ function Controller() {
     $.__views.headerBottom = Ti.UI.createView({
         layout: "vertical",
         height: Ti.UI.SIZE,
-        left: 0,
         width: "100%",
+        left: 0,
         top: -6,
         opacity: .7,
         backgroundColor: "#ffffff",

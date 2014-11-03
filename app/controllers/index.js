@@ -21,10 +21,10 @@ else {
 //================================================================================
 function goToLogin (e) {
 	Ti.API.log("* Login clicked *");				// debug message
-	if ($.username.value != '' && $.password.value != '') {
+	if ($.email.value != '' && $.password.value != '') {
 		loginRequest.open("POST", "http://www.waterbowl.net/mobile/login.php");
 		var params = {
-			email: $.username.value,
+			email: $.email.value,
 			pass : $.password.value
 		};
 		loginRequest.send(params);
@@ -62,12 +62,12 @@ function goToRegister (e) {
 $.index.open();
 	
 // if credentials are already saved in sessionVars
-if( sessionVars.username!=null || Ti.App.Properties.getString('user')!="" ) {
-	// $.username.value = sessionVars.username;
-	$.username.value = Ti.App.Properties.getString('user');
+if( sessionVars.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
+	// $.email.value = sessionVars.user.email;
+	$.email.value = Ti.App.Properties.getString('user');
 }
-if( sessionVars.password!=null || Ti.App.Properties.getString('pass')!="" ) {
-	$.password.value = sessionVars.password;
+if( sessionVars.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
+	$.password.value = sessionVars.user.password;
 	$.password.value = Ti.App.Properties.getString('pass');
 }	
 
@@ -90,14 +90,15 @@ loginRequest.onload = function() {			// parse the JSON response
 	var response = JSON.parse(json);			// debug message
 	if (response.status == 1) {
 		// save credentials locally (globals for now, later more secure)
-		sessionVars.username = $.username.value;
-		sessionVars.password = $.password.value;
-		sessionVars.owner_ID = response.owner_ID;
+		sessionVars.user.email 		= $.email.value;
+		sessionVars.user.password = $.password.value;
+		sessionVars.user.owner_ID = response.owner_ID;
+		// TODO: dog info
 		
-		Ti.API.log( "* Saved Creds: "+sessionVars.owner_ID+ "/" +sessionVars.username+ "/" + sessionVars.password);
+		Ti.API.log( "* Saved Creds: "+sessionVars.user.owner_ID+ "/" +sessionVars.user.email+ "/" + sessionVars.user.password);
 		
 		// grant entry, bounce user to next page
-		$.username.blur();
+		$.email.blur();
 		$.password.blur();
 		
 		// take user to the post-login window

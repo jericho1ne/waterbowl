@@ -7,6 +7,14 @@
 		Light Blue				DCF1FC		- lighter BG for forms and text
 */
 
+".bg_dk_blue" : { backgroundColor: "#58c6d5"}
+".bg_lt_blue" : { backgroundColor: "#DCF1FC"}
+
+".bg_dk_gray" : { backgroundColor: "#777477"}
+
+".bg_dk_pink" : { backgroundColor: "#ec3c95"}
+".bg_lt_pink" : { backgroundColor: "#f587e7"}		// TODO:  need current light pink from Herb
+
 
 /*				PREDEFIND   TITANIUM  UI  ELEMENTS  									*/
 "Window":{
@@ -56,9 +64,8 @@
 }
 
 
-/***************  SPECIFIC IDs	******************************************/
+/* 							Top Menubar																														 */
 
-/* Top Menubar */
 "#menubar"			: { width: "100%", layout: "horizontal", top: 18, height: 36, backgroundColor: "#58c6d5", 
 										borderColor: '#ffffff', borderWidth: 0, opacity: 1, zIndex: 99 }
 						
@@ -72,7 +79,8 @@
 "#infoBtn"			: {	width: Ti.UI.SIZE, title: "(i)", opacity: 1, right: 2, height: 28, borderRadius: 14 }
 "#refreshBtn"		: {	title: "%", width: 28, height: 28, opacity: 1, right: 2, borderRadius: 14 }
 
-/* Top Menubar */
+/* 									Headers and ScrollViews																														 */
+
 "#scrollView" 			: { backgroundColor: "#fff", layout: "vertical" }
 "#headerContainer" 	: { layout: 'vertical', top: 0, height: "50%", width: "100%", backgroundImage : "images/places/obrd-header.jpg" }
 "#headerTop"				: { height: "60%",  width: "100%", top: 20, left: 0 }
@@ -83,10 +91,21 @@
 // every top level div in each XML view is a .container; * DO NOT DELETE *
 ".container" : { height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", backgroundColor: "#58c6d5", exitOnClose: true }
 
+".top_10"  : { top: 10 }
+".top_20"  : { top: 20 }
+".top_40"  : { top: 40 }
+".top_80"  : { top: 80 }
+".top_160" : { top: 160 }
+
+".layout_vert"	: { layout:"vertical", width: Ti.UI.SIZE}
+".layout_horz"	: {	layout:"horizontal", height: Ti.UI.SIZE	}
+
+".fill_height"  : { height: Ti.UI.FILL }
+".fill_width"   : { width: Ti.UI.FILL }
+
+
 ".btn_large" : { height: 50, font:{ fontSize: 20 } }
 ".text_field_large" : { height: 25, font:{ fontSize: 14 } }
-
-".center_vertical" : { top: 4}
 
 ".checkin_button" : {	title: "\/", color: "#ffffff", zIndex: 5, opacity: 1, borderRadius: 20, 
 	width: 64, height: 64, backgroundColor: "#ccc" }
@@ -104,6 +123,7 @@
 	font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
 	
 ".shadow" : { shadowColor: '#333', shadowOffset: {x:1, y:1}  }
+
 
 ".row_spacer_200"	: { height: 200, width: "100%" }
 ".row_spacer_100"	: { height: 100, width: "100%" }
@@ -137,8 +157,6 @@
 ".feed_label_center_lg" : { width: Ti.UI.SIZE, height: "auto", font: { fontSize: 20 }, top: 6 }
 ".feed_label_right_lg"	: { width: Ti.UI.SIZE, height: "auto", font: { fontSize: 20 }, right: 6 }
 
-".row"					: { layout:"vertical", left: 4, width: Ti.UI.SIZE}
-".column"				: {	layout:"horizontal", left: 4, height: Ti.UI.SIZE	}
 
 ".left_view"  : { layout:"vertical",	width: "50%", left: 4  }
 ".middle_view"  : { layout:"vertical", width:"50%", left:2, borderColor: "#ccc", borderWidth: 0 }
