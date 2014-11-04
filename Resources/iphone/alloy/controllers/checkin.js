@@ -111,9 +111,10 @@ function Controller() {
             fontFamily: "Raleway-Bold",
             fontSize: 13
         },
-        title: "<<",
+        top: 4,
         opacity: 1,
         left: 2,
+        title: "<<",
         id: "backBtn"
     });
     $.__views.checkin.add($.__views.backBtn);

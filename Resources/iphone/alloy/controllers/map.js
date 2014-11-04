@@ -129,7 +129,7 @@ function Controller() {
                         leftImage: icon,
                         hasChild: true,
                         font: {
-                            fontFamily: "Raleway-Light",
+                            fontFamily: "Raleway",
                             fontSize: 14
                         },
                         height: 30,
@@ -214,13 +214,17 @@ function Controller() {
     $.__views.menubar = Ti.UI.createView({
         layout: "horizontal",
         height: 36,
-        borderWidth: 0,
-        borderColor: "#ffffff",
         width: "100%",
         top: 18,
         backgroundColor: "#58c6d5",
         opacity: 1,
         zIndex: 99,
+        shadowColor: "#222222",
+        shadowRadius: 3,
+        shadowOffset: {
+            x: 2,
+            y: 2
+        },
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         id: "menubar"
     });
@@ -247,18 +251,19 @@ function Controller() {
             fontFamily: "Raleway-Bold",
             fontSize: 13
         },
-        title: "<<",
+        top: 4,
         opacity: 1,
         left: 2,
+        title: "<<",
         id: "backBtn"
     });
     $.__views.menuLeft.add($.__views.backBtn);
     $.__views.menuCenter = Ti.UI.createView({
         layout: "vertical",
         height: "100%",
-        width: "60%",
-        borderColor: "#000",
         borderWidth: 0,
+        borderColor: "#000",
+        width: "60%",
         id: "menuCenter"
     });
     $.__views.menubar.add($.__views.menuCenter);

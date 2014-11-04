@@ -12,6 +12,7 @@
 			</View>
 		</View>
 
+		// attach blank mini header here, move just off screen (animate top pos from -80 to 0 opacity from 0.1 to 1.0)
 		<ScrollView id="scrollView" showVerticalScrollIndicator="true" showHorizontalScrollIndicator="true" height="100%" width="100%">
 		
 			<View id="headerContainer">

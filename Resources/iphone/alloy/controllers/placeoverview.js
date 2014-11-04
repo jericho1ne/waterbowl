@@ -160,10 +160,14 @@ function Controller() {
         width: "100%",
         top: 18,
         backgroundColor: "#58c6d5",
-        borderColor: "#ffffff",
-        borderWidth: 0,
         opacity: 1,
         zIndex: 99,
+        shadowColor: "#222222",
+        shadowRadius: 3,
+        shadowOffset: {
+            x: 2,
+            y: 2
+        },
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         id: "menubar"
     });
@@ -190,9 +194,10 @@ function Controller() {
             fontFamily: "Raleway-Bold",
             fontSize: 13
         },
-        title: "<<",
+        top: 4,
         opacity: 1,
         left: 2,
+        title: "<<",
         id: "backBtn"
     });
     $.__views.menuLeft.add($.__views.backBtn);

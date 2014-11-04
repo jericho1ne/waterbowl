@@ -199,7 +199,7 @@ function createPlaceList() {
 					mobile_bg : jsonPlaces[i].mobile_bg,
 					leftImage : icon,				// icon image defined above
 					hasChild : true, 	
-					font:{ fontFamily: 'Raleway-Light', fontSize: 14 }, height: 30,
+					font:{ fontFamily: 'Raleway', fontSize: 14 }, height: 30,
 					left: 4, color: "#ffffff", width: 'auto', textAlign : 'left'
 				}));
 				createMapMarker(jsonPlaces[i]);

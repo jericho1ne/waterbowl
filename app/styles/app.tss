@@ -1,6 +1,5 @@
 /* 
 	WB COLOR SCHEME
-
 		Waterbowl Pink		ec3c95		- Used mainly for active buttons, highlights
 		Waterbowl Blue		58c6d5 		- strong BG color
 		Waterbowl Grey		777477
@@ -14,7 +13,6 @@
 
 ".bg_dk_pink" : { backgroundColor: "#ec3c95"}
 ".bg_lt_pink" : { backgroundColor: "#f587e7"}		// TODO:  need current light pink from Herb
-
 
 /*				PREDEFIND   TITANIUM  UI  ELEMENTS  									*/
 "Window":{
@@ -42,7 +40,6 @@
 	showHorizontalScrollIndicator: "true"
 }
 
-
 "Button": { 
 	color: '#fff', backgroundColor: '#ec3c95',
 	width: '50%', height: 35, borderRadius: 3, borderWidth: 0,
@@ -68,18 +65,20 @@
 /* 							Top Menubar																														 */
 
 "#menubar"			: { width: "100%", layout: "horizontal", top: 18, height: 36, backgroundColor: "#58c6d5", 
-										borderColor: '#ffffff', borderWidth: 0, opacity: 1, zIndex: 99,
+										opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2},
 										verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
 						
 "#menuLeft"			: { width: "20%", borderColor: '#000', borderWidth: 0 }
 "#menuCenter"		: { width: "60%", borderColor: '#000', borderWidth: 0 }
 "#menuRight"		: { width: Ti.UI.FILL, borderColor: '#000', borderWidth: 0 }
 
-"#backBtn"				: {	width: Ti.UI.SIZE, title: '<<', opacity: 1, left: 2, height: 28, borderRadius: 14 }
+"#backBtn"				: {	title: '<<' }
+"#infoBtn"				: { title: "(i)" }
+"#refreshBtn"			: {	title: "%" }
+".menubar_button" : { width: Ti.UI.SIZE, top: 4, opacity: 1, left: 2,  height: 28, borderRadius: 14 }
+
 "#wbLogoMenubar" 	: { width: Ti.UI.SIZE, text: 'waterbowl', top: 0, height: 28,
 											color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#ffffff" } }
-"#infoBtn"			: {	width: Ti.UI.SIZE, title: "(i)", opacity: 1, right: 2, height: 28, borderRadius: 14 }
-"#refreshBtn"		: {	title: "%", width: 28, height: 28, opacity: 1, right: 2, borderRadius: 14 }
 
 /* 									Headers and ScrollViews																														 */
 
@@ -130,7 +129,7 @@
 	height: 50, top: 20, zIndex: 3, backgroundColor: "#ffffff", color: "#777477",
 	font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
 	
-".shadow" : { shadowColor: '#333', shadowOffset: {x:1, y:1}  }
+".shadow" : { shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2}  }
 
 
 ".row_spacer_200"	: { height: 200, width: "100%" }

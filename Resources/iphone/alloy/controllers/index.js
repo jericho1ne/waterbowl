@@ -219,6 +219,9 @@ function Controller() {
         $.password.value = sessionVars.user.password;
         $.password.value = Ti.App.Properties.getString("pass");
     }
+    var go_here = "register";
+    var new_window = Alloy.createController(go_here).getView();
+    new_window.open();
     var loginRequest = Titanium.Network.createHTTPClient();
     loginRequest.onload = function() {
         var json = this.responseText;

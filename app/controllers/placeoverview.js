@@ -190,7 +190,6 @@ $.headerContainer.backgroundImage = "images/places/"+args._mobile_bg;		// add pl
 
 sessionVars.currentWindow = "placeoverview";									// set current place session variable
 
-
 //----------------------------------------------------------------------------
 //
 //		(2)		Populate activity feed
@@ -214,7 +213,7 @@ $.backBtn.addEventListener('click', function() {			//  BACK button (aka window c
 });
 
 $.refreshBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	Ti.API.info( "* Should be refreshing the feed... *" );
+	Ti.API.info( "* Should be refreshing the feed... *" 	);
 	// TODO:  refresh / replace feed if newer posts exist
 });
 
@@ -252,8 +251,6 @@ $.scrollView.addEventListener('scroll', function(e) {
 
 //
 if ( args._place_id==sessionVars.currentPlace.ID && sessionVars.checkedIn == 1 ) {
-	
-	
 	/*
 	var checkin_button = Ti.UI.createButton( { id: "checkin_button" } );
 	$.addClass( checkin_button, "checkin_button");
@@ -267,5 +264,4 @@ if ( args._place_id==sessionVars.currentPlace.ID && sessionVars.checkedIn == 1 )
 
 	//checkin_button.text = '';				
 }
-
 
