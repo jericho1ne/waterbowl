@@ -105,12 +105,12 @@ var longPress;
 function uploadFromCamera() {
 	Titanium.Media.showCamera({
 		success:function(event) {
-			Ti.API.debug('Our type was: '+event.mediaType);			// which media type was returned from camera
+			Ti.API.debug( ' * Selected media type was: '+event.mediaType );			// which media type was returned from camera
 			if(event.mediaType == Ti.Media.MEDIA_TYPE_PHOTO) {
 				var fileInfoArray = uploadToAWS( event.media );		
 				return fileInfoArray;		
 			} else {
-				alert("Please select a photo instad.  Not a "+event.mediaType +".  =) ");
+				alert("Hmm, this seems to be a "+event.mediaType +". Please select a photo instead.  =) ");
 			}
 		},
 		cancel:function() {
@@ -137,12 +137,12 @@ function uploadFromCamera() {
 //	Name:			uploadFromGallery ( )
 //	Purpose:	return file handle of selected media
 //==================================================================================================
-function uploadFromGallery() {	
+function uploadFromGallery( photoPlaceholder ) {	
 	if (Titanium.Network.online) {
 		Titanium.Media.openPhotoGallery({
 			success:function(event) {			// success callback fired after media retrieved from gallery 
 				Ti.API.info ( event.media );		
-				var fileInfoArray = uploadToAWS( event.media );
+				var fileInfoArray = uploadToAWS( event.media, photoPlaceholder );
 				//Ti.API.info( fileInfoArray["filename"] + " // " + fileInfoArray["filehandle"] );
 				return fileInfoArray;
 			}
@@ -157,12 +157,12 @@ function uploadFromGallery() {
 //	Name:			uploadToAWS ( event_media )
 //	Purpose:	upload files/photos from camera or gallery
 //==================================================================================================
-function uploadToAWS( event_media ) {  	 // event_media is event.media type
+function uploadToAWS( event_media, photoPlaceholder ) {  	 // event_media is event.media type
 	/* 	move file from photo gallery to Ti app data directory first */
 	var filename 		= Ti.Platform.createUUID()+".jpg";
-	/* 	save recently uploaded photo as current profile photo; update $.photo ImageView */
+	/* 	save recently uploaded photo as current profile photo; update profile photo ImageView image=... */
 	sessionVars.user.dog_photo = filename;
-	$.photo.image = filehandle;
+	photoPlaceholder.image = filehandle;
 	
 	// Returns a File object representing the file identified by the path arguments
 	var filehandle 	= Ti.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, filename);

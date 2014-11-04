@@ -7,12 +7,12 @@ function zeroPad(number, width) {
 function uploadFromCamera() {
     Titanium.Media.showCamera({
         success: function(event) {
-            Ti.API.debug("Our type was: " + event.mediaType);
+            Ti.API.debug(" * Selected media type was: " + event.mediaType);
             if (event.mediaType == Ti.Media.MEDIA_TYPE_PHOTO) {
                 var fileInfoArray = uploadToAWS(event.media);
                 return fileInfoArray;
             }
-            alert("Please select a photo instad.  Not a " + event.mediaType + ".  =) ");
+            alert("Hmm, this seems to be a " + event.mediaType + ". Please select a photo instead.  =) ");
         },
         cancel: function() {
             Ti.API.info("Camera snapshot canceled by user");
@@ -31,21 +31,21 @@ function uploadFromCamera() {
     return null;
 }
 
-function uploadFromGallery() {
+function uploadFromGallery(photoPlaceholder) {
     Titanium.Network.online ? Titanium.Media.openPhotoGallery({
         success: function(event) {
             Ti.API.info(event.media);
-            var fileInfoArray = uploadToAWS(event.media);
+            var fileInfoArray = uploadToAWS(event.media, photoPlaceholder);
             return fileInfoArray;
         }
     }) : alert("Internet connection unavailable");
     return null;
 }
 
-function uploadToAWS(event_media) {
+function uploadToAWS(event_media, photoPlaceholder) {
     var filename = Ti.Platform.createUUID() + ".jpg";
     sessionVars.user.dog_photo = filename;
-    $.photo.image = filehandle;
+    photoPlaceholder.image = filehandle;
     var filehandle = Ti.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, filename);
     filehandle.write(event_media);
     Ti.API.info(filename + " || " + filehandle);

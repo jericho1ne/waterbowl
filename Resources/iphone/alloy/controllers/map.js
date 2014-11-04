@@ -203,7 +203,7 @@ function Controller() {
         exitOnClose: true,
         fullscreen: "false",
         horizontalWrap: "true",
-        backgroundColor: "#58c6d5",
+        backgroundColor: "#DCF1FC",
         height: Ti.UI.FILL,
         zIndex: 1,
         layout: "vertical",
@@ -253,25 +253,24 @@ function Controller() {
         },
         top: 4,
         opacity: 1,
-        left: 2,
         title: "<<",
+        left: 2,
         id: "backBtn"
     });
     $.__views.menuLeft.add($.__views.backBtn);
     $.__views.menuCenter = Ti.UI.createView({
         layout: "vertical",
         height: "100%",
-        borderWidth: 0,
-        borderColor: "#000",
         width: "60%",
+        borderColor: "#000",
+        borderWidth: 0,
         id: "menuCenter"
     });
     $.__views.menubar.add($.__views.menuCenter);
     $.__views.wbLogoMenubar = Ti.UI.createLabel({
         font: {
             fontFamily: "Raleway-Light",
-            fontSize: 18,
-            color: "#ffffff"
+            fontSize: 18
         },
         width: Ti.UI.SIZE,
         height: 28,
@@ -279,7 +278,7 @@ function Controller() {
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         text: "waterbowl",
-        top: 0,
+        top: 4,
         id: "wbLogoMenubar"
     });
     $.__views.menuCenter.add($.__views.wbLogoMenubar);
@@ -292,10 +291,10 @@ function Controller() {
         id: "menuRight"
     });
     $.__views.menubar.add($.__views.menuRight);
-    $.__views.refreshBtn = Ti.UI.createButton({
+    $.__views.infoBtn = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#ec3c95",
-        width: 28,
+        width: Ti.UI.SIZE,
         height: 28,
         borderRadius: 14,
         borderWidth: 0,
@@ -305,12 +304,13 @@ function Controller() {
             fontFamily: "Raleway-Bold",
             fontSize: 13
         },
-        title: "%",
+        top: 4,
         opacity: 1,
+        title: "(i)",
         right: 2,
-        id: "refreshBtn"
+        id: "infoBtn"
     });
-    $.__views.menuRight.add($.__views.refreshBtn);
+    $.__views.menuRight.add($.__views.infoBtn);
     $.__views.mapContainer = Ti.UI.createView({
         layout: "vertical",
         height: "60%",

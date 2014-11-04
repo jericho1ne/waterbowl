@@ -96,7 +96,10 @@ function registerNewUser(e) {
 	}
 }
 
-function uploadPhoto() {}
+function goToNextPage() {
+	var new_window = Alloy.createController( "photoupload" ).getView();
+	new_window.open();
+}
 //========================================================================================
 
 $.backBtn.addEventListener('click', function() {

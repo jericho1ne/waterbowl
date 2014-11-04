@@ -8,7 +8,10 @@ function __processArg(obj, key) {
 }
 
 function Controller() {
-    function uploadPhoto() {}
+    function goToNextPage() {
+        var new_window = Alloy.createController("photoupload").getView();
+        new_window.open();
+    }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "register";
     if (arguments[0]) {
@@ -79,8 +82,8 @@ function Controller() {
         },
         top: 4,
         opacity: 1,
-        left: 2,
         title: "<<",
+        left: 2,
         id: "backBtn"
     });
     $.__views.menuLeft.add($.__views.backBtn);
@@ -96,8 +99,7 @@ function Controller() {
     $.__views.wbLogoMenubar = Ti.UI.createLabel({
         font: {
             fontFamily: "Raleway-Light",
-            fontSize: 18,
-            color: "#ffffff"
+            fontSize: 18
         },
         width: Ti.UI.SIZE,
         height: 28,
@@ -105,7 +107,7 @@ function Controller() {
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         text: "waterbowl",
-        top: 0,
+        top: 4,
         id: "wbLogoMenubar"
     });
     $.__views.menuCenter.add($.__views.wbLogoMenubar);
@@ -133,20 +135,20 @@ function Controller() {
         },
         top: 4,
         opacity: 1,
-        right: 2,
         title: "(i)",
+        right: 2,
         id: "infoBtn"
     });
     $.__views.menuRight.add($.__views.infoBtn);
-    $.__views.__alloyId7 = Ti.UI.createScrollView({
+    $.__views.__alloyId14 = Ti.UI.createScrollView({
         layout: "vertical",
         contentHeight: "auto",
         showVerticalScrollIndicator: "true",
         showHorizontalScrollIndicator: "true",
-        id: "__alloyId7"
+        id: "__alloyId14"
     });
-    $.__views.register.add($.__views.__alloyId7);
-    $.__views.__alloyId8 = Ti.UI.createLabel({
+    $.__views.register.add($.__views.__alloyId14);
+    $.__views.__alloyId15 = Ti.UI.createLabel({
         font: {
             fontFamily: "Raleway-Light",
             fontSize: 14,
@@ -159,9 +161,9 @@ function Controller() {
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         top: 20,
         text: "email",
-        id: "__alloyId8"
+        id: "__alloyId15"
     });
-    $.__views.__alloyId7.add($.__views.__alloyId8);
+    $.__views.__alloyId14.add($.__views.__alloyId15);
     $.__views.email = Ti.UI.createTextField({
         autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
         autocorrect: false,
@@ -179,8 +181,8 @@ function Controller() {
         hintText: "email address",
         id: "email"
     });
-    $.__views.__alloyId7.add($.__views.email);
-    $.__views.__alloyId9 = Ti.UI.createLabel({
+    $.__views.__alloyId14.add($.__views.email);
+    $.__views.__alloyId16 = Ti.UI.createLabel({
         font: {
             fontFamily: "Raleway-Light",
             fontSize: 14,
@@ -193,9 +195,9 @@ function Controller() {
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         top: 20,
         text: "password",
-        id: "__alloyId9"
+        id: "__alloyId16"
     });
-    $.__views.__alloyId7.add($.__views.__alloyId9);
+    $.__views.__alloyId14.add($.__views.__alloyId16);
     $.__views.password1 = Ti.UI.createTextField({
         autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
         autocorrect: false,
@@ -214,7 +216,7 @@ function Controller() {
         passwordMask: true,
         id: "password1"
     });
-    $.__views.__alloyId7.add($.__views.password1);
+    $.__views.__alloyId14.add($.__views.password1);
     $.__views.password2 = Ti.UI.createTextField({
         autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
         autocorrect: false,
@@ -229,72 +231,15 @@ function Controller() {
         keyboardType: Titanium.UI.KEYBOARD_DEFAULT,
         returnKeyType: Titanium.UI.RETURNKEY_DEFAULT,
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+        top: 10,
         hintText: "one more time please",
         passwordMask: true,
         id: "password2"
     });
-    $.__views.__alloyId7.add($.__views.password2);
-    $.__views.__alloyId10 = Ti.UI.createLabel({
-        font: {
-            fontFamily: "Raleway-Light",
-            fontSize: 14,
-            color: "#ffffff"
-        },
-        width: "100%",
-        height: 26,
-        color: "#000000",
-        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-        verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
-        top: 20,
-        text: "password",
-        id: "__alloyId10"
-    });
-    $.__views.__alloyId7.add($.__views.__alloyId10);
-    $.__views.__alloyId11 = Ti.UI.createView({
-        layout: "horizontal",
-        height: Ti.UI.SIZE,
-        id: "__alloyId11"
-    });
-    $.__views.__alloyId7.add($.__views.__alloyId11);
-    $.__views.uploadGalleryPhoto = Ti.UI.createButton({
-        color: "#fff",
-        backgroundColor: "#ec3c95",
-        width: "40%",
-        height: 35,
-        borderRadius: 3,
-        borderWidth: 0,
-        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-        zIndex: 10,
-        font: {
-            fontFamily: "Raleway-Bold",
-            fontSize: 13
-        },
-        title: "Choose from Gallery",
-        id: "uploadGalleryPhoto"
-    });
-    $.__views.__alloyId11.add($.__views.uploadGalleryPhoto);
-    uploadFromGallery ? $.__views.uploadGalleryPhoto.addEventListener("click", uploadFromGallery) : __defers["$.__views.uploadGalleryPhoto!click!uploadFromGallery"] = true;
-    $.__views.uploadCameraPhoto = Ti.UI.createButton({
-        color: "#fff",
-        backgroundColor: "#ec3c95",
-        width: "40%",
-        height: 35,
-        borderRadius: 3,
-        borderWidth: 0,
-        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-        zIndex: 10,
-        font: {
-            fontFamily: "Raleway-Bold",
-            fontSize: 13
-        },
-        title: "Take a Snapshot",
-        id: "uploadCameraPhoto"
-    });
-    $.__views.__alloyId11.add($.__views.uploadCameraPhoto);
-    uploadFromCamera ? $.__views.uploadCameraPhoto.addEventListener("click", uploadFromCamera) : __defers["$.__views.uploadCameraPhoto!click!uploadFromCamera"] = true;
+    $.__views.__alloyId14.add($.__views.password2);
     $.__views.continueBtn = Ti.UI.createButton({
         color: "#fff",
-        backgroundColor: "#ec3c95",
+        backgroundColor: "#777477",
         width: "50%",
         height: 35,
         borderRadius: 3,
@@ -305,11 +250,12 @@ function Controller() {
             fontFamily: "Raleway-Bold",
             fontSize: 13
         },
-        title: "create account",
+        top: 20,
+        title: "continue",
         id: "continueBtn"
     });
-    $.__views.__alloyId7.add($.__views.continueBtn);
-    uploadPhoto ? $.__views.continueBtn.addEventListener("click", uploadPhoto) : __defers["$.__views.continueBtn!click!uploadPhoto"] = true;
+    $.__views.__alloyId14.add($.__views.continueBtn);
+    goToNextPage ? $.__views.continueBtn.addEventListener("click", goToNextPage) : __defers["$.__views.continueBtn!click!goToNextPage"] = true;
     exports.destroy = function() {};
     _.extend($, $.__views);
     var createAccountRequest = Titanium.Network.createHTTPClient();
@@ -348,9 +294,7 @@ function Controller() {
         });
         $.register = null;
     });
-    __defers["$.__views.uploadGalleryPhoto!click!uploadFromGallery"] && $.__views.uploadGalleryPhoto.addEventListener("click", uploadFromGallery);
-    __defers["$.__views.uploadCameraPhoto!click!uploadFromCamera"] && $.__views.uploadCameraPhoto.addEventListener("click", uploadFromCamera);
-    __defers["$.__views.continueBtn!click!uploadPhoto"] && $.__views.continueBtn.addEventListener("click", uploadPhoto);
+    __defers["$.__views.continueBtn!click!goToNextPage"] && $.__views.continueBtn.addEventListener("click", goToNextPage);
     _.extend($, exports);
 }
 

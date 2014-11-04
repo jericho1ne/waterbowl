@@ -1,16 +1,10 @@
 <Alloy>
   <Window class="container">
   	
-  	<View id="menubar" class="">
-			<View id="menuLeft">
-				<Button id="backBtn" class="center_vertical"/>
-			</View>
-			<View id="menuCenter" class="border_red">
-				<Label id="wbLogoMenubar" class="center_vertical"/>
-			</View>
-			<View id="menuRight">
-				<Button id="refreshBtn" class="center_vertical"/>
-			</View>
+  	<View id="menubar">
+			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
+			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
+			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
 		</View>
 		
   	<!-- <View ns="Ti.Map" id="wbMapView"/> -->

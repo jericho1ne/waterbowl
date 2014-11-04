@@ -1,4 +1,76 @@
+/*
+  +=== photoupload ============+
+  |	+------------------------+ |
+  | |    		menubar          | |
+  |	+------------------------+ |
+  | +----ScrollView----------+ |
+ 	|	|				email						 | |
+	|	|				password1				 | | 	
+	|	|				password2				 | | 
+	|	+------------------------+ |
+	|	+----button container----+ |	
+	| |				uploadGallery		 | |
+	|	|				uploadCamera		 | |
+	| +------------------------+ |
+	|	+------------------------+ |	
+	|	|				createBtn				 | |
+	| +------------------------+ |	
+	+============================+
+*/
+
 <Alloy>
-	<View class="container">
-	</View>
+	<Window id="photoupload" class="container">
+		
+	  <View id="menubar">
+			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
+			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
+			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
+		</View>
+		
+		<ScrollView class="">
+			<Label class="form_label top_40">choose a profile photo</Label>
+			<Label class="small_text">no humans allowed!</Label>
+			<View class="layout_horz width_60">
+					<ImageView id="photoPlaceholder"/>
+			</View>
+			<View class="layout_horz border top_20 width_60">
+				
+				<View class="layout_horz width_50">
+					<Button id="galleryBtn" class="half_width">gallery</Button>
+				</View>
+				<View class="layout_horz width_50">
+					<Button id="cameraBtn" onClick="uploadFromCamera" class="half_width">camera</Button>
+				</View>
+			</View>
+			
+			<Button id="continueBtn" class="top_20" onClick="uploadPhoto">create account</Button>
+			
+	 	</ScrollView>
+	</Window>
 </Alloy>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

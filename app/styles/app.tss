@@ -61,9 +61,9 @@
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
 }
 
-
-/* 							Top Menubar																														 */
-
+  /**************************************************************************************************************/
+ /* 									Predefined Ti Selectors																		  														 */
+/**************************************************************************************************************/
 "#menubar"			: { width: "100%", layout: "horizontal", top: 18, height: 36, backgroundColor: "#58c6d5", 
 										opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2},
 										verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
@@ -72,25 +72,29 @@
 "#menuCenter"		: { width: "60%", borderColor: '#000', borderWidth: 0 }
 "#menuRight"		: { width: Ti.UI.FILL, borderColor: '#000', borderWidth: 0 }
 
-"#backBtn"				: {	title: '<<' }
-"#infoBtn"				: { title: "(i)" }
-"#refreshBtn"			: {	title: "%" }
-".menubar_button" : { width: Ti.UI.SIZE, top: 4, opacity: 1, left: 2,  height: 28, borderRadius: 14 }
+"#backBtn"				: {	title: '<<', left: 2 }
+"#infoBtn"				: { title: "(i)", right: 2 }
+"#refreshBtn"			: {	title: "%", right: 2 }
+".menubar_button" : { width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 28, borderRadius: 14 }
 
-"#wbLogoMenubar" 	: { width: Ti.UI.SIZE, text: 'waterbowl', top: 0, height: 28,
-											color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#ffffff" } }
+"#wbLogoMenubar" 	: { width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: 28,
+											color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18 } }
 
-/* 									Headers and ScrollViews																														 */
-
+  /**************************************************************************************************************/
+ /* 									Headers and ScrollViews																				  												 */
+/**************************************************************************************************************/
 "#scrollView" 			: { backgroundColor: "#fff", layout: "vertical" }
 "#headerContainer" 	: { layout: 'vertical', top: 0, height: "50%", width: "100%", backgroundImage : "images/places/obrd-header.jpg" }
 "#headerTop"				: { height: "60%",  width: "100%", top: 20, left: 0 }
 "#headerBottom" 		: { height: Ti.UI.SIZE, width: "100%",  left: 0, top: -6, opacity: 0.7,  backgroundColor: '#ffffff' }
 "#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
 
-/*				C L A S S E S										*/
-// every top level div in each XML view is a .container; * DO NOT DELETE *
-".container" : { height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", backgroundColor: "#58c6d5", exitOnClose: true }
+
+  /**************************************************************************************************************/
+ /* 									Class Selectors and ScrollViews																				  								 */
+/**************************************************************************************************************/
+// every top level div in each XML view is a .container * Forewarned. *
+".container" : { height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", backgroundColor: "#DCF1FC", exitOnClose: true }
 
 ".top_10"  : { top: 10 }
 ".top_20"  : { top: 20 }
@@ -98,11 +102,20 @@
 ".top_80"  : { top: 80 }
 ".top_160" : { top: 160 }
 
-".layout_vert"	: { layout:"vertical", width: Ti.UI.SIZE}
-".layout_horz"	: {	layout:"horizontal", height: Ti.UI.SIZE	}
+".width_20"  : { width: "20%" }
+".width_40"  : { width: "40%" }
+".width_50"  : { width: "50%" }
+".width_60"  : { width: "60%" }
+".width_80"  : { width: "80%" }
+
+
+".layout_vert"	: { layout:"vertical", width: Ti.UI.SIZE, contentHeight: "auto" }
+".layout_horz"	: {	layout:"horizontal", height: Ti.UI.SIZE, contentWidth: "auto"	}
 
 ".fill_height"  : { height: Ti.UI.FILL }
 ".fill_width"   : { width: Ti.UI.FILL }
+".half_width"   : { width: "40%" }
+".small_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 8 } }
 
 /*  border colors for layout / debug purposes  */
 ".border" 			 : { borderWidth: 2, borderColor: "#000000" }

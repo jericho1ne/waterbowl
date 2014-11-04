@@ -27,7 +27,7 @@ function Controller() {
         exitOnClose: true,
         fullscreen: "false",
         horizontalWrap: "true",
-        backgroundColor: "white",
+        backgroundColor: "#DCF1FC",
         height: Ti.UI.FILL,
         zIndex: 1,
         layout: "vertical",

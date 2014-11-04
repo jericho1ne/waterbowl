@@ -21,16 +21,10 @@
 <Alloy>
 	<Window id="register" class="container">
 		
-		<View id="menubar">
-			<View id="menuLeft">
-				<Button id="backBtn" class="center_vertical"/>
-			</View>
-			<View id="menuCenter">
-				<Label id="wbLogoMenubar" class="center_vertical"/>
-			</View>
-			<View id="menuRight">
-				<Button id="infoBtn" class="center_vertical"/>
-			</View>
+	  <View id="menubar">
+			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
+			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
+			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
 		</View>
 		
 		<ScrollView class="">
@@ -40,15 +34,37 @@
 		
 			<Label class="form_label top_20">password</Label>
 			<TextField id="password1"></TextField>
-			<TextField id="password2"></TextField>
+			<TextField id="password2" class="top_10"></TextField>
 			
-			<Label class="form_label top_20">password</Label>
-			<View class="layout_horz">
-				<Button id="uploadGalleryPhoto" onClick="uploadFromGallery" class="width_">Choose from Gallery</Button>
-				<Button id="uploadCameraPhoto" onClick="uploadFromCamera">Take a Snapshot</Button>
-			</View>
-			<Button id="continueBtn" onClick="uploadPhoto">create account</Button>
+			
+			<Button id="continueBtn" class="top_20 bg_dk_gray" onClick="goToNextPage">continue</Button>
 			
 	 	</ScrollView>
 	</Window>
 </Alloy>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

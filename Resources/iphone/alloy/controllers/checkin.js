@@ -101,9 +101,9 @@ function Controller() {
     $.__views.backBtn = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#ec3c95",
-        width: Ti.UI.SIZE,
-        height: 28,
-        borderRadius: 14,
+        width: "50%",
+        height: 35,
+        borderRadius: 3,
         borderWidth: 0,
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
         zIndex: 10,
@@ -111,10 +111,8 @@ function Controller() {
             fontFamily: "Raleway-Bold",
             fontSize: 13
         },
-        top: 4,
-        opacity: 1,
-        left: 2,
         title: "<<",
+        left: 2,
         id: "backBtn"
     });
     $.__views.checkin.add($.__views.backBtn);

@@ -1,22 +1,10 @@
-/* 
-	WB COLOR SCHEME
-
-		Waterbowl Pink		ec3c95		- Used mainly for active buttons, highlights
-		Waterbowl Blue		58c6d5 		- strong BG color
-		Waterbowl Grey		777477
-		Light Blue				DCF1FC		- lighter BG for forms and text
-*/
-
 "#index" 			: {}
 ".login_bg" 	: { backgroundImage: 'images/waterbowl-splash-screen.jpg' }
 
 "#loginStuff" 			: { height: Ti.UI.SIZE, layout: "vertical", width: "100%" }
 "#footerContainer" 	: { height: Ti.UI.FILL, layout: "vertical", borderWidth: 0, borderColor: "#fff", zIndex: 3,  
 											width: "100%" }
-										
-
 "#appTitle"				: { color: "#ffffff", zIndex: 2, font:{ fontFamily: 'Raleway-ExtraLight', fontSize: 36 },
-										//right: 30, top: -4, textAlign: Ti.UI.TEXT_ALIGNMENT_RIGHT,
 										shadowColor: '#777477', shadowOffset: {x:1, y:1}, shadowRadius: 2 }  
 										
 "#email"					:	{ hintText: 'Email', zIndex: 2, opacity: 0.9 }
@@ -25,6 +13,5 @@
 "#registerBtn"		: { title: 'register', zIndex: 2, backgroundColor: '#ec3c95', opacity: 0.9 } 
 
 
-										
 "#footer" 		: { image: 'images/WB-FooterBar-White.png', opacity: 1.0, bottom: 0, width: "100%" }
 

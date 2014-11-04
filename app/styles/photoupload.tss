@@ -1,4 +1,4 @@
 
-".container" : {
-  
-}
+"#galleryBtn" : { width: "90%", left: 0 }
+"#cameraBtn" : { width: "90%", left: 10 }
+"#photoPlaceholder" : { image:"images/missing/dog-icon.png", width: "100%", height: "auto", borderRadius: 20 }
