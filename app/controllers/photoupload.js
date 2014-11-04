@@ -6,6 +6,7 @@ function uploadPhoto() {
 
 
 $.galleryBtn.addEventListener('click', function() {
+	Ti.API.info( " * inside of galleryBtn click listener * " + this.parent );
 	uploadFromGallery( $.photoPlaceholder );	
 });
 

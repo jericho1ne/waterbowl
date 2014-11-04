@@ -154,17 +154,18 @@ function uploadFromGallery( photoPlaceholder ) {
 }
 
 //==================================================================================================
-//	Name:			uploadToAWS ( event_media )
-//	Purpose:	upload files/photos from camera or gallery
+//	Name:			uploadToAWS ( event_media, photoPlaceholder )
+//	Purpose:	upload files/photos from camera or gallery, display selected image
+//					  - event_media is event.media type, placeholder is a Ti ImageView object
 //==================================================================================================
-function uploadToAWS( event_media, photoPlaceholder ) {  	 // event_media is event.media type
+function uploadToAWS( event_media, photoPlaceholder ) {  	
 	/* 	move file from photo gallery to Ti app data directory first */
 	var filename 		= Ti.Platform.createUUID()+".jpg";
 	/* 	save recently uploaded photo as current profile photo; update profile photo ImageView image=... */
 	sessionVars.user.dog_photo = filename;
 	photoPlaceholder.image = filehandle;
 	
-	// Returns a File object representing the file identified by the path arguments
+	/* Returns a File object representing the file identified by the path arguments  */
 	var filehandle 	= Ti.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, filename);
 	filehandle.write( event_media );
 	Ti.API.info ( filename + " || "  + filehandle);
