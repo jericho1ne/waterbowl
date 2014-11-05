@@ -32,28 +32,28 @@ function Controller() {
         query.onload = function() {
             var jsonResponse = this.responseText;
             new Array();
+            var dog_name_label = Ti.UI.createLabel({
+                text: "None so far ...",
+                top: 0
+            });
+            $.addClass(dog_name_label, "feed_label_left_md");
+            var time_elapsed_label = Ti.UI.createLabel({
+                text: "Be the first!",
+                top: 0
+            });
+            $.addClass(time_elapsed_label, "feed_label_left");
+            var dogs_amount_label = Ti.UI.createLabel({
+                text: "...",
+                top: 4
+            });
+            $.addClass(dogs_amount_label, "feed_label_center_lg");
             if ("" != jsonResponse && "[]" != jsonResponse) {
                 var activityJson = JSON.parse(jsonResponse);
                 var last_update_photo = sessionVars.AWS.base_url + activityJson[0].dog_photo;
                 Ti.API.info("latest update photo: " + last_update_photo);
                 $.last_update_thumb.image = last_update_photo;
-                var dog_name_label = Ti.UI.createLabel({
-                    text: "...",
-                    top: 0
-                });
-                $.addClass(dog_name_label, "feed_label_left_md");
                 dog_name_label.text = activityJson[0].dog_name;
-                var time_elapsed_label = Ti.UI.createLabel({
-                    text: "...",
-                    top: 0
-                });
-                $.addClass(time_elapsed_label, "feed_label_left");
                 time_elapsed_label.text = activityJson[0].time_elapsed;
-                var dogs_amount_label = Ti.UI.createLabel({
-                    text: "...",
-                    top: 4
-                });
-                $.addClass(dogs_amount_label, "feed_label_center_lg");
                 dogs_amount_label.text = activityJson[0].amount;
                 var dogs_amount_suffix = Ti.UI.createLabel({
                     text: "dogs here",
@@ -102,6 +102,10 @@ function Controller() {
                     feed_item_view.add(right_view);
                     $.feedContainer.add(feed_item_view);
                 }
+            } else {
+                $.last_update_middle.add(dog_name_label);
+                $.last_update_middle.add(time_elapsed_label);
+                Ti.API.info(" * no checkins here... * ");
             }
         };
     }

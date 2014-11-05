@@ -58,11 +58,11 @@ function Controller() {
         fullscreen: "false",
         horizontalWrap: "true",
         backgroundColor: "#DCF1FC",
+        backgroundImage: "images/waterbowl-splash-screen.jpg",
         height: Ti.UI.FILL,
         zIndex: 1,
         layout: "vertical",
         width: "100%",
-        backgroundImage: "images/waterbowl-splash-screen.jpg",
         id: "index"
     });
     $.__views.index && $.addTopLevelView($.__views.index);
@@ -221,9 +221,9 @@ function Controller() {
         $.password.value = sessionVars.user.password;
         $.password.value = Ti.App.Properties.getString("pass");
     }
-    var go_here = "register";
-    var new_window = Alloy.createController(go_here).getView();
-    new_window.open();
+    setTimeout(function() {
+        $.loginBtn.fireEvent("click");
+    }, 200);
     var loginRequest = Titanium.Network.createHTTPClient();
     loginRequest.onload = function() {
         var json = this.responseText;

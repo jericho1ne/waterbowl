@@ -30,36 +30,35 @@ function getActivity(place_ID) {
 		var jsonResponse = this.responseText;
 		var activityData = new Array();												// create empty object container
 		
+		
+		/*			CREATE BLANK TEMPLATE FOR LATEST FEED ITEM 				*/
+		var dog_name_label 			= Ti.UI.createLabel({text: "None so far ...", top: 0});
+		$.addClass( dog_name_label, "feed_label_left_md");
+		
+		var time_elapsed_label 	= Ti.UI.createLabel({text: "Be the first!", top: 0});
+		$.addClass( time_elapsed_label, "feed_label_left");
+		
+		var dogs_amount_label = Ti.UI.createLabel({text: "...", top: 4});
+		$.addClass( dogs_amount_label, "feed_label_center_lg");
+					
 		if (jsonResponse != "" && jsonResponse !="[]") {
 			var activityJson = JSON.parse( jsonResponse );
-			
-			// TODO: add appropriate classes, especially right_view
-			///////////// CREATE LATEST FEED ITEM ////////////////////////////////////
-			
+				
+			/*					POPULATE LATEST FEED ITEM 					*/
 			//var base_URL = "http://waterbowl.net/app-dev/stable/images/profile/";
 			var last_update_photo = sessionVars.AWS.base_url + activityJson[0].dog_photo;
 			Ti.API.info( "latest update photo: " + last_update_photo  );
 			 
-			$.last_update_thumb.image =  last_update_photo;		// TODO: change storage location	
-		
-			var dog_name_label = Ti.UI.createLabel({text: "...", top: 0});
-			$.addClass( dog_name_label, "feed_label_left_md");
-			dog_name_label.text = activityJson[0].dog_name;				// dog that provided most recent update
-			
-			var time_elapsed_label = Ti.UI.createLabel({text: "...", top: 0});
-			$.addClass( time_elapsed_label, "feed_label_left");
-			time_elapsed_label.text = activityJson[0].time_elapsed;				// dog that provided most recent update
-			
-			var dogs_amount_label = Ti.UI.createLabel({text: "...", top: 4});
-			$.addClass( dogs_amount_label, "feed_label_center_lg");
-			dogs_amount_label.text = activityJson[0].amount;				// dog that provided most recent update
+			$.last_update_thumb.image = last_update_photo;		// TODO: change storage location	
+			dog_name_label.text 			= activityJson[0].dog_name;				// dog that provided most recent update
+			time_elapsed_label.text 	= activityJson[0].time_elapsed;				// dog that provided most recent update
+			dogs_amount_label.text 		= activityJson[0].amount;				// dog that provided most recent update
 			
 			var dogs_amount_suffix = Ti.UI.createLabel({text: "dogs here", top: -1});
 			$.addClass( dogs_amount_suffix, "feed_label_center");
 			
 			$.last_update_middle.add ( dog_name_label );				// add most recent update info to middle and right views
 			$.last_update_middle.add ( time_elapsed_label );
-			
 			$.last_update_right.add ( dogs_amount_label );
 			$.last_update_right.add ( dogs_amount_suffix );
 			
@@ -71,9 +70,8 @@ function getActivity(place_ID) {
 		 
 			for (var i=1, j=max; i<j; i++) {		// optimize loop to only calculate array size once
 				// Ti.API.log("* "+ activityJson[i].dog_name + " - " + activityJson[i].last_update_formatted +" *");
-				// var icon = 'images/missing/dog-icon.png';
+				// var icon = 'images/missing/dog-icon-sm.png';
 			
-				
 				///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
 				var feed_item_view =  Ti.UI.createView();
 				$.addClass( feed_item_view, "feed_item");
@@ -119,6 +117,12 @@ function getActivity(place_ID) {
 			}
 			//$.feedList.data = activityData;				// populate placeList TableView (defined in XML file, styled in TSS)
 		}
+		else {
+			$.last_update_middle.add ( dog_name_label );	
+			$.last_update_middle.add ( time_elapsed_label );
+			Ti.API.info(" * no checkins here... * ");
+		}
+				
 	};
 }
 
