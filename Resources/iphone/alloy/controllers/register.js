@@ -274,7 +274,6 @@ function Controller() {
             $.email.value = "";
             $.password1.value = "";
             $.password2.value = "";
-            $.nickname.value = "";
         } else {
             var error = Titanium.UI.createAlertDialog({
                 title: "Cannot create account",
@@ -285,14 +284,19 @@ function Controller() {
         $.continueBtn.enabled = true;
         $.continueBtn.opacity = 1;
     };
+    sessionVars.windowStack.push($.register);
+    Ti.API.info("localStack size: " + JSON.stringify(sessionVars.windowStack.length));
+    Ti.App.Properties.current_window_name = "register";
     $.backBtn.addEventListener("click", function() {
-        $.register.close({
-            top: 800,
-            opacity: .2,
-            duration: 420,
+        var currentWindow = sessionVars.windowStack.pop();
+        Ti.API.info(JSON.stringify("currentWindow:" + currentWindow));
+        currentWindow.close({
+            top: 0,
+            opacity: .01,
+            duration: 200,
             curve: Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
         });
-        $.register = null;
+        currentWindow = null;
     });
     __defers["$.__views.continueBtn!click!goToNextPage"] && $.__views.continueBtn.addEventListener("click", goToNextPage);
     _.extend($, exports);

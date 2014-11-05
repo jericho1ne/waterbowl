@@ -311,6 +311,26 @@ function Controller() {
         id: "infoBtn"
     });
     $.__views.menuRight.add($.__views.infoBtn);
+    $.__views.refreshBtn = Ti.UI.createButton({
+        color: "#fff",
+        backgroundColor: "#ec3c95",
+        width: Ti.UI.SIZE,
+        height: 28,
+        borderRadius: 14,
+        borderWidth: 0,
+        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+        zIndex: 10,
+        font: {
+            fontFamily: "Raleway-Bold",
+            fontSize: 13
+        },
+        top: 4,
+        opacity: 1,
+        title: "%",
+        right: 2,
+        id: "refreshBtn"
+    });
+    $.__views.menuRight.add($.__views.refreshBtn);
     $.__views.mapContainer = Ti.UI.createView({
         layout: "vertical",
         height: "60%",
@@ -327,9 +347,9 @@ function Controller() {
     });
     $.__views.map.add($.__views.placeListContainer);
     $.__views.placeList = Ti.UI.createTableView({
+        height: 150,
         color: "#efefef",
         bottom: 0,
-        height: 150,
         width: "100%",
         backgroundColor: "#58c6d5",
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
@@ -376,12 +396,20 @@ function Controller() {
         }).getView();
         place_overview.open();
     });
+    Ti.App.Properties.windowStack.push($.map);
+    Ti.App.Properties.current_window_name = "map";
+    $.backBtn.addEventListener("click", function() {
+        var currentWindow = Ti.App.Properties.windowStack.pop();
+        currentWindow.close({
+            top: 0,
+            opacity: .01,
+            duration: 200,
+            curve: Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
+        });
+        currentWindow = null;
+    });
     $.refreshBtn.addEventListener("click", function() {
         createPlaceList();
-    });
-    $.backBtn.addEventListener("click", function() {
-        $.map.close();
-        $.map = null;
     });
     _.extend($, exports);
 }

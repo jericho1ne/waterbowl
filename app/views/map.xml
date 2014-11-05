@@ -4,14 +4,17 @@
   	<View id="menubar">
 			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
 			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
-			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
+			<View id="menuRight">
+				<Button id="infoBtn" class="menubar_button"/>
+				<Button id="refreshBtn" class="menubar_button"/>
+			</View>
 		</View>
 		
   	<!-- <View ns="Ti.Map" id="wbMapView"/> -->
   	<View id="mapContainer" class=""/>
   	
   	<View id="placeListContainer" class="fill_height">
-  		<TableView id="placeList" class="table_view_row"/>
+  		<TableView id="placeList" class="fill_height table_view_row"/>
   			<!-- Parks get populated in here -->
   	</View>
   </Window>

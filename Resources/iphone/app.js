@@ -91,6 +91,7 @@ var sessionVars = {
         dog_name: null,
         dog_photo: null
     },
+    windowStack: [],
     currentWindow: "index",
     lastWindow: null,
     lat: 34.024,
@@ -115,6 +116,12 @@ var sessionVars = {
 Ti.App.Properties.setString("user", "jericho1ne@yahoo.com");
 
 Ti.App.Properties.setString("pass", "mihai1");
+
+var winStack = [];
+
+Ti.App.Properties.windowStack = winStack;
+
+Ti.App.Properties.current_window_name = null;
 
 Alloy.Globals.AWS = require("ti.aws");
 

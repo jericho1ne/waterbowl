@@ -59,8 +59,17 @@ function goToRegister (e) {
 }
 
 //========= Create and Open top level UI components ======================================= 
-$.index.open();
-	
+$.index.open();	
+
+sessionVars.windowStack.push( $.index );
+Ti.API.info ( "localStack size: " + JSON.stringify( sessionVars.windowStack.length ) );
+
+/*
+Ti.App.Properties.windowStack.push( $.index );
+Ti.App.Properties.current_window_name = "index";	
+Ti.API.info ( "windowStack size: " + JSON.stringify( Ti.App.Properties.windowStack.length ) );
+*/
+
 // if credentials are already saved in sessionVars
 if( sessionVars.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
 	// $.email.value = sessionVars.user.email;

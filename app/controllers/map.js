@@ -297,6 +297,7 @@ Ti.Geolocation.getCurrentPosition(function(e) {
 //					- make sure Ti.Geolocation.distanceFilter is set in alloy.js!
 //-----------------------------------------------------------------------
 Ti.Geolocation.addEventListener('location', function() {
+	
 	Ti.API.info(" ( -+- ) location event listener trigger ");
 	currentLocation();			// update map view and check for nearby places
 });
@@ -337,15 +338,24 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 	// setTimeout( );
 });
 
+
+sessionVars.windowStack.push( $.map );
+Ti.API.info ( "localStack size: " + JSON.stringify( sessionVars.windowStack.length ) );
+
+Ti.App.Properties.current_window_name = "map";	
+
+$.backBtn.addEventListener('click', function() {
+	var currentWindow = sessionVars.windowStack.pop();
+	Ti.API.info ( JSON.stringify( "currentWindow:"+currentWindow ) );
+	currentWindow.close( { 
+		top: 0, opacity: 0.01, duration: 200, 
+		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
+	} );
+	currentWindow = null;
+});
 $.refreshBtn.addEventListener('click', function() {			// REFRESH button
 	createPlaceList();
 });
-
-$.backBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	$.map.close();
-	$.map = null;
-});
-
 
 
 /*

@@ -1,4 +1,3 @@
-
 //================================================================================
 //		Name: checkemail
 //		Purpose:  error check user input
@@ -40,7 +39,6 @@ createAccountRequest.onload = function() {
 		$.email.value = '';
 		$.password1.value = '';
 		$.password2.value = '';
-		$.nickname.value = '';
 	} 
 	else {
 		var error = Titanium.UI.createAlertDialog({
@@ -59,9 +57,8 @@ createAccountRequest.onload = function() {
 //		Purpose:  add new user to database
 //================================================================================
 function registerNewUser(e) {
-	if ($.nickname.value != '' && $.password1.value != '' && $.password2.value != '' && $.email.value != '') {
+	if ($.password1.value != '' && $.password2.value != '' && $.email.value != '') {
 		if ($.password1.value != $.password2.value) {
-
 			var error = Titanium.UI.createAlertDialog({
 				title : "Passwords do not match",
 				message : "Please handle that and try again"
@@ -80,8 +77,7 @@ function registerNewUser(e) {
 				//createAccountRequest.open("POST","http://192.168.1.1/mobile/create-account.php")
 				createAccountRequest.open("POST", "http://www.waterbowl.net/mobile/create-account.php");
 				var params = {
-					nick : $.nickname.value,
-					pwd : $.password1.value,
+					pwd 	: $.password1.value,
 					email : $.email.value
 				};
 				createAccountRequest.send(params);
@@ -101,13 +97,17 @@ function goToNextPage() {
 	new_window.open();
 }
 //========================================================================================
+sessionVars.windowStack.push( $.register );
+Ti.API.info ( "localStack size: " + JSON.stringify( sessionVars.windowStack.length ) );
+
+Ti.App.Properties.current_window_name = "register";	
 
 $.backBtn.addEventListener('click', function() {
-	$.register.close( { 
-		top: 800,
-		opacity: 0.2,
-		duration: 420, 
+	var currentWindow = sessionVars.windowStack.pop();
+	Ti.API.info ( JSON.stringify( "currentWindow:"+currentWindow ) );
+	currentWindow.close( { 
+		top: 0, opacity: 0.01, duration: 200, 
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
 	} );
-	$.register = null;
+	currentWindow = null;
 });

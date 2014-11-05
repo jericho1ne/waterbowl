@@ -214,6 +214,8 @@ function Controller() {
         Ti.API.info("* Running IOS 8 or greater *");
     } else Ti.API.info("* Running IOS 7 or older *");
     $.index.open();
+    sessionVars.windowStack.push($.index);
+    Ti.API.info("localStack size: " + JSON.stringify(sessionVars.windowStack.length));
     (null != sessionVars.user.email || "" != Ti.App.Properties.getString("user")) && ($.email.value = Ti.App.Properties.getString("user"));
     if (null != sessionVars.user.password || "" != Ti.App.Properties.getString("pass")) {
         $.password.value = sessionVars.user.password;

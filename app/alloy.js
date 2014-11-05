@@ -47,10 +47,11 @@ var sessionVars = {
 		dog_name:		null,
 		dog_photo:	null
 	},
+	windowStack		: [],
 	currentWindow	: "index", 
 	lastWindow		: null,
-	// lat: 34.014,  lon: -118.375,		/* centered on West LA */
-	lat: 34.024,  lon: -118.394,		/* centered on Nextspace */
+	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
+	lat: 34.024,  lon: -118.394,			/*	 centered on Nextspace 	*/
 	currentPlace: { 
 		ID		: 	1,
 		name	: null,
@@ -68,10 +69,16 @@ var sessionVars = {
 	}
 };
 
+/*  saved credentials and app status in local storage  */
 Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
 Ti.App.Properties.setString('pass', 'mihai1');
 
-Alloy.Globals.AWS = require('ti.aws');						// include amazon AWS module + credentials
+var winStack = [];
+Ti.App.Properties.windowStack = winStack;
+Ti.App.Properties.current_window_name = null;
+
+/*  include amazon AWS module + credentials   */
+Alloy.Globals.AWS = require('ti.aws');						
 Alloy.Globals.AWS.authorize( sessionVars.AWS.access_key_id, sessionVars.AWS.secret_access);
 
 /*----------------------------------------------------------------------
