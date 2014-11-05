@@ -1,16 +1,9 @@
 "#placeLabel":{ top: "3%", zIndex: 3, opacity: 0.85 }
 
-"#placeList":{
-	color: "#efefef", bottom: 0, height: 150, width: "100%", backgroundColor: '#58c6d5',
-	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-	borderColor: "#fff", zIndex: 2, 
-	borderRadius: 0, opacity: 0.96,
-	scrollable: true, 
-	borderWidth: 0, 
-	scrollIndicatorStyle: Ti.UI.iPhone.ScrollIndicatorStyle.BLACK,
-	showVerticalScrollIndicator: true
-}
+"#placeList":{}
 
-"#mapContainer" : { width: "100%", height: "60%", top: 0}
+"#mapContainer" : {top: 0}
 
-"#placeListContainer" : { width: "100%", height: Ti.UI.FILL}
+"#placeListContainer" : { width: "100%", contentHeight: "auto" }
+
+"#refreshBtn" : { }

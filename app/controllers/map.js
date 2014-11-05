@@ -200,7 +200,7 @@ function createPlaceList() {
 					leftImage : icon,				// icon image defined above
 					hasChild : true, 	
 					font:{ fontFamily: 'Raleway', fontSize: 14 }, height: 30,
-					left: 4, color: "#ffffff", width: 'auto', textAlign : 'left'
+					left: 4, color: "#000000", width: 'auto', textAlign : 'left'
 				}));
 				createMapMarker(jsonPlaces[i]);
 				// also attach a placemark to the map for each park
@@ -353,10 +353,12 @@ $.backBtn.addEventListener('click', function() {
 	} );
 	currentWindow = null;
 });
+
+/*
 $.refreshBtn.addEventListener('click', function() {			// REFRESH button
 	createPlaceList();
 });
-
+*/
 
 /*
 $.wbMapView.addEventListener('click', function(e){	

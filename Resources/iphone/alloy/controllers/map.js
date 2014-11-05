@@ -134,7 +134,7 @@ function Controller() {
                         },
                         height: 30,
                         left: 4,
-                        color: "#ffffff",
+                        color: "#000000",
                         width: "auto",
                         textAlign: "left"
                     }));
@@ -311,47 +311,37 @@ function Controller() {
         id: "infoBtn"
     });
     $.__views.menuRight.add($.__views.infoBtn);
-    $.__views.refreshBtn = Ti.UI.createButton({
-        color: "#fff",
-        backgroundColor: "#ec3c95",
-        width: Ti.UI.SIZE,
-        height: 28,
-        borderRadius: 14,
-        borderWidth: 0,
-        textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-        zIndex: 10,
-        font: {
-            fontFamily: "Raleway-Bold",
-            fontSize: 13
-        },
-        top: 4,
-        opacity: 1,
-        title: "%",
-        right: 2,
-        id: "refreshBtn"
+    $.__views.__alloyId2 = Ti.UI.createView({
+        layout: "vertical",
+        height: "50%",
+        id: "__alloyId2"
     });
-    $.__views.menuRight.add($.__views.refreshBtn);
+    $.__views.map.add($.__views.__alloyId2);
     $.__views.mapContainer = Ti.UI.createView({
         layout: "vertical",
-        height: "60%",
-        width: "100%",
+        height: Ti.UI.FILL,
         top: 0,
         id: "mapContainer"
     });
-    $.__views.map.add($.__views.mapContainer);
+    $.__views.__alloyId2.add($.__views.mapContainer);
+    $.__views.__alloyId3 = Ti.UI.createImageView({
+        image: "images/ui/blue-line.png",
+        height: 2,
+        width: "100%",
+        id: "__alloyId3"
+    });
+    $.__views.map.add($.__views.__alloyId3);
     $.__views.placeListContainer = Ti.UI.createView({
         layout: "vertical",
         height: Ti.UI.FILL,
         width: "100%",
+        contentHeight: "auto",
         id: "placeListContainer"
     });
     $.__views.map.add($.__views.placeListContainer);
     $.__views.placeList = Ti.UI.createTableView({
-        height: 150,
         color: "#efefef",
-        bottom: 0,
-        width: "100%",
-        backgroundColor: "#58c6d5",
+        backgroundColor: "#ffffff",
         textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
         borderColor: "#fff",
         zIndex: 2,
@@ -396,10 +386,12 @@ function Controller() {
         }).getView();
         place_overview.open();
     });
-    Ti.App.Properties.windowStack.push($.map);
+    sessionVars.windowStack.push($.map);
+    Ti.API.info("localStack size: " + JSON.stringify(sessionVars.windowStack.length));
     Ti.App.Properties.current_window_name = "map";
     $.backBtn.addEventListener("click", function() {
-        var currentWindow = Ti.App.Properties.windowStack.pop();
+        var currentWindow = sessionVars.windowStack.pop();
+        Ti.API.info(JSON.stringify("currentWindow:" + currentWindow));
         currentWindow.close({
             top: 0,
             opacity: .01,
@@ -407,9 +399,6 @@ function Controller() {
             curve: Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
         });
         currentWindow = null;
-    });
-    $.refreshBtn.addEventListener("click", function() {
-        createPlaceList();
     });
     _.extend($, exports);
 }

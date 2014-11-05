@@ -19,7 +19,7 @@
 				<View id="headerTop" class="column">
 					<View class="row_spacer_100"/>
 					<View class="col_spacer_100"/>
-					<View class="right_float">
+					<View class="float_right">
 						<Button id="checkin_button"/>
 					</View>
 				</View>	

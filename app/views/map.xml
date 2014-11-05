@@ -6,15 +6,16 @@
 			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
 			<View id="menuRight">
 				<Button id="infoBtn" class="menubar_button"/>
-				<Button id="refreshBtn" class="menubar_button"/>
 			</View>
 		</View>
-		
-  	<!-- <View ns="Ti.Map" id="wbMapView"/> -->
-  	<View id="mapContainer" class=""/>
-  	
+		<View class="height_50">
+			<!-- <Button id="refreshBtn" class="float_right"/> -->
+			<View id="mapContainer" class="fill_height border_bottom"/>
+			<!-- <View ns="Ti.Map" id="wbMapView"/> -->
+		</View>
+  	<ImageView class="blue_line"/>	
   	<View id="placeListContainer" class="fill_height">
-  		<TableView id="placeList" class="fill_height table_view_row"/>
+  		<TableView id="placeList" class="height_100"/>
   			<!-- Parks get populated in here -->
   	</View>
   </Window>

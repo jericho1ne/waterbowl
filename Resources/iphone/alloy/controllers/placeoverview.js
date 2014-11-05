@@ -279,28 +279,28 @@ function Controller() {
         id: "headerTop"
     });
     $.__views.headerContainer.add($.__views.headerTop);
-    $.__views.__alloyId9 = Ti.UI.createView({
+    $.__views.__alloyId11 = Ti.UI.createView({
         layout: "vertical",
         height: 100,
         width: "100%",
-        id: "__alloyId9"
-    });
-    $.__views.headerTop.add($.__views.__alloyId9);
-    $.__views.__alloyId10 = Ti.UI.createView({
-        layout: "vertical",
-        height: Ti.UI.FILL,
-        width: 100,
-        id: "__alloyId10"
-    });
-    $.__views.headerTop.add($.__views.__alloyId10);
-    $.__views.__alloyId11 = Ti.UI.createView({
-        layout: "vertical",
-        height: "100%",
-        width: Ti.UI.FILL,
-        right: 0,
         id: "__alloyId11"
     });
     $.__views.headerTop.add($.__views.__alloyId11);
+    $.__views.__alloyId12 = Ti.UI.createView({
+        layout: "vertical",
+        height: Ti.UI.FILL,
+        width: 100,
+        id: "__alloyId12"
+    });
+    $.__views.headerTop.add($.__views.__alloyId12);
+    $.__views.__alloyId13 = Ti.UI.createView({
+        layout: "vertical",
+        height: "100%",
+        width: Ti.UI.FILL,
+        right: 2,
+        id: "__alloyId13"
+    });
+    $.__views.headerTop.add($.__views.__alloyId13);
     $.__views.checkin_button = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#ec3c95",
@@ -317,7 +317,7 @@ function Controller() {
         opacity: 0,
         id: "checkin_button"
     });
-    $.__views.__alloyId11.add($.__views.checkin_button);
+    $.__views.__alloyId13.add($.__views.checkin_button);
     $.__views.headerBottom = Ti.UI.createView({
         layout: "vertical",
         height: Ti.UI.SIZE,
@@ -389,16 +389,16 @@ function Controller() {
         text: ".distance."
     });
     $.__views.headerBottom.add($.__views.place_dist_label);
-    $.__views.__alloyId12 = Ti.UI.createView({
+    $.__views.__alloyId14 = Ti.UI.createView({
         layout: "horizontal",
         height: 65,
         width: "100%",
         left: 0,
         top: 0,
         backgroundColor: "#58c6d5",
-        id: "__alloyId12"
+        id: "__alloyId14"
     });
-    $.__views.scrollView.add($.__views.__alloyId12);
+    $.__views.scrollView.add($.__views.__alloyId14);
     $.__views.last_update_thumb = Ti.UI.createImageView({
         image: "images/missing/dog-icon.png",
         height: 60,
@@ -408,7 +408,7 @@ function Controller() {
         top: 2,
         id: "last_update_thumb"
     });
-    $.__views.__alloyId12.add($.__views.last_update_thumb);
+    $.__views.__alloyId14.add($.__views.last_update_thumb);
     $.__views.last_update_middle = Ti.UI.createView({
         layout: "vertical",
         height: "100%",
@@ -418,8 +418,8 @@ function Controller() {
         borderWidth: 0,
         id: "last_update_middle"
     });
-    $.__views.__alloyId12.add($.__views.last_update_middle);
-    $.__views.__alloyId13 = Ti.UI.createLabel({
+    $.__views.__alloyId14.add($.__views.last_update_middle);
+    $.__views.__alloyId15 = Ti.UI.createLabel({
         font: {
             fontFamily: "Raleway-Light",
             fontSize: 12
@@ -431,9 +431,9 @@ function Controller() {
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         left: 6,
         text: "latest update",
-        id: "__alloyId13"
+        id: "__alloyId15"
     });
-    $.__views.last_update_middle.add($.__views.__alloyId13);
+    $.__views.last_update_middle.add($.__views.__alloyId15);
     $.__views.last_update_right = Ti.UI.createView({
         layout: "vertical",
         height: "100%",
@@ -443,7 +443,7 @@ function Controller() {
         borderWidth: 0,
         id: "last_update_right"
     });
-    $.__views.__alloyId12.add($.__views.last_update_right);
+    $.__views.__alloyId14.add($.__views.last_update_right);
     $.__views.feedContainer = Ti.UI.createView({
         layout: "vertical",
         height: Titanium.UI.SIZE,

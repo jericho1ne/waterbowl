@@ -140,15 +140,15 @@ function Controller() {
         id: "infoBtn"
     });
     $.__views.menuRight.add($.__views.infoBtn);
-    $.__views.__alloyId14 = Ti.UI.createScrollView({
+    $.__views.__alloyId16 = Ti.UI.createScrollView({
         layout: "vertical",
         contentHeight: "auto",
         showVerticalScrollIndicator: "true",
         showHorizontalScrollIndicator: "true",
-        id: "__alloyId14"
+        id: "__alloyId16"
     });
-    $.__views.register.add($.__views.__alloyId14);
-    $.__views.__alloyId15 = Ti.UI.createLabel({
+    $.__views.register.add($.__views.__alloyId16);
+    $.__views.__alloyId17 = Ti.UI.createLabel({
         font: {
             fontFamily: "Raleway-Light",
             fontSize: 14,
@@ -161,9 +161,9 @@ function Controller() {
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         top: 20,
         text: "email",
-        id: "__alloyId15"
+        id: "__alloyId17"
     });
-    $.__views.__alloyId14.add($.__views.__alloyId15);
+    $.__views.__alloyId16.add($.__views.__alloyId17);
     $.__views.email = Ti.UI.createTextField({
         autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
         autocorrect: false,
@@ -181,8 +181,8 @@ function Controller() {
         hintText: "email address",
         id: "email"
     });
-    $.__views.__alloyId14.add($.__views.email);
-    $.__views.__alloyId16 = Ti.UI.createLabel({
+    $.__views.__alloyId16.add($.__views.email);
+    $.__views.__alloyId18 = Ti.UI.createLabel({
         font: {
             fontFamily: "Raleway-Light",
             fontSize: 14,
@@ -195,9 +195,9 @@ function Controller() {
         verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
         top: 20,
         text: "password",
-        id: "__alloyId16"
+        id: "__alloyId18"
     });
-    $.__views.__alloyId14.add($.__views.__alloyId16);
+    $.__views.__alloyId16.add($.__views.__alloyId18);
     $.__views.password1 = Ti.UI.createTextField({
         autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
         autocorrect: false,
@@ -216,7 +216,7 @@ function Controller() {
         passwordMask: true,
         id: "password1"
     });
-    $.__views.__alloyId14.add($.__views.password1);
+    $.__views.__alloyId16.add($.__views.password1);
     $.__views.password2 = Ti.UI.createTextField({
         autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
         autocorrect: false,
@@ -236,7 +236,7 @@ function Controller() {
         passwordMask: true,
         id: "password2"
     });
-    $.__views.__alloyId14.add($.__views.password2);
+    $.__views.__alloyId16.add($.__views.password2);
     $.__views.continueBtn = Ti.UI.createButton({
         color: "#fff",
         backgroundColor: "#777477",
@@ -254,7 +254,7 @@ function Controller() {
         title: "continue",
         id: "continueBtn"
     });
-    $.__views.__alloyId14.add($.__views.continueBtn);
+    $.__views.__alloyId16.add($.__views.continueBtn);
     goToNextPage ? $.__views.continueBtn.addEventListener("click", goToNextPage) : __defers["$.__views.continueBtn!click!goToNextPage"] = true;
     exports.destroy = function() {};
     _.extend($, $.__views);
