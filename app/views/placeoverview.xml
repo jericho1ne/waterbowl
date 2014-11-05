@@ -42,7 +42,7 @@
 			<View class="feed_item_lg">
 				<ImageView class="thumbnail" id="last_update_thumb"/>
 				<View class="middle_view" id="last_update_middle">
-					<Label class="feed_label_left">latest update</Label>
+					<Label class="feed_label_left" id="latest_update_static">latest update</Label>
 						<!-- add most recent update labels here programmatically -->
 				</View>
 				<View class="right_view" id="last_update_right">

@@ -203,5 +203,5 @@
 ".middle_view"  : { layout:"vertical", width:"50%", left:2, borderColor: "#ccc", borderWidth: 0 }
 ".right_view"   : { layout:"vertical",	 width: Ti.UI.FILL, left:0, borderColor: "#000", borderWidth: 0 } 
 
-".thumbnail" 		: { image: 'images/missing/dog-icon.png', height: 60, width: 60, borderRadius: 14, left: 4, top: 2 }
-".thumbnail_sm" : { image: 'images/missing/dog-icon.png', height: 48, width: 48, borderRadius: 10, left: 10 }
+".thumbnail" 		: { image: 'images/missing/dog-icon-lg.png', height: 60, width: 60, borderRadius: 12, left: 4, top: 2 }
+".thumbnail_sm" : { image: 'images/missing/dog-icon-sm.png', height: 48, width: 48, borderRadius: 10, left: 10 }

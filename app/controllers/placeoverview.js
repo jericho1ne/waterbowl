@@ -118,6 +118,7 @@ function getActivity(place_ID) {
 			//$.feedList.data = activityData;				// populate placeList TableView (defined in XML file, styled in TSS)
 		}
 		else {
+			$.latest_update_static.text(" ");
 			$.last_update_middle.add ( dog_name_label );	
 			$.last_update_middle.add ( time_elapsed_label );
 			Ti.API.info(" * no checkins here... * ");
