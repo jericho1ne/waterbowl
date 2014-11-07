@@ -132,8 +132,8 @@
 ".layout_vert"	: { layout:"vertical", width: Ti.UI.SIZE, contentHeight: "auto" }
 ".layout_horz"	: {	layout:"horizontal", height: Ti.UI.SIZE, contentWidth: "auto"	}
 
-".fit_height"  : { height: Ti.UI.SIZE }
-".fit_width"   : { width: Ti.UI.SIZE }
+".fit_height"  : { height: Ti.UI.SIZE, width: auto }
+".fit_width"   : { width: Ti.UI.SIZE, height: auto }
 
 ".fill_height"  : { height: Ti.UI.FILL }
 ".fill_width"   : { width: Ti.UI.FILL }
