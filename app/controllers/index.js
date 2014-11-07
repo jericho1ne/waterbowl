@@ -82,7 +82,7 @@ if( sessionVars.user.password!=null || Ti.App.Properties.getString('pass')!="" )
 
 
 /*  	Login Hack - skip past login screen and go to Map 	*/
-  setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
+//  setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 /*
  	var go_here = "register";

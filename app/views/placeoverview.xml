@@ -1,15 +1,9 @@
 <Alloy>
 	<Window class="container" id="placeoverview" platform="ios,mobileweb">
 		<View id="menubar">
-			<View id="menuLeft">
-				<Button id="backBtn" class="center_vertical"/>
-			</View>
-			<View id="menuCenter">
-				<Label id="wbLogoMenubar" class="center_vertical"/>
-			</View>
-			<View id="menuRight">
-				<Button id="refreshBtn" class="center_vertical"/>
-			</View>
+			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
+			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
+			<View id="menuRight"><Button id="refreshBtn" class="menubar_button"/></View>
 		</View>
 
 		// attach blank mini header here, move just off screen (animate top pos from -80 to 0 opacity from 0.1 to 1.0)

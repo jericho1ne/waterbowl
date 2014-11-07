@@ -140,6 +140,7 @@
 
 ".half_width"   : { width: "40%" }
 ".small_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 8 } }
+".list_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 12 } }
 
 /*  border colors for layout / debug purposes  */
 ".border" 			 : { borderWidth: 2, borderColor: "#000000" }

@@ -126,8 +126,8 @@ function createMapMarker(row) {
 		title 		: row.name,
 		subtitle 	: row.city + " (" + row.dist + " mi)",
 		animate 	: true,
-		image 		: 'images/icons/map-marker.png',			// TODO: will need separate icons soon
-		leftButton : 'images/icons/map-marker.png',
+		image 		: 'images/icons/map-marker.png',			// TODO: will need separate map marker icons; pull from AWS
+		//leftButton : row.icon,												// TODO:  include an imageView instead
 	/*
 		leftButton : Ti.UI.createButton({
 			title : '+',
@@ -174,8 +174,7 @@ function createPlaceList() {
 
 		if (jsonResponse != "") {
 			var jsonPlaces = JSON.parse(jsonResponse);
-			Ti.API.log("* JSON array " + jsonPlaces);
-			
+	
 			jsonPlaces.sort(function(a, b) {							// sort by proximity (closest first)
 				return parseFloat(a.dist) - parseFloat(b.dist);
 			});
@@ -184,24 +183,40 @@ function createPlaceList() {
 			var max_size = 4;															// fixed maximum, or up to arrayName.length
 			
 			for (var i = 0; i < jsonPlaces.length; i++) {
-				// Ti.API.info(" * JSON  " + jsonPlaces[i].name + " / " + jsonPlaces[i].dist + " *");
-				var icon = "images/icons/map-park.png";	// convert to branching statement based on icon type
-
-				placeData.push(Ti.UI.createTableViewRow({		// create each TableView row of park info
+				// Ti.API.info(" * JSON  " + jsonPlaces[i].name + " / " + jsonPlaces[i].dist + " *");			
+				var dataRow = Ti.UI.createTableViewRow({		// create each TableView row of park info
+					leftImage : icon_image,				// as defined above
 					id 			: jsonPlaces[i].id,
 					lat 		: jsonPlaces[i].lat,
 					lon 		: jsonPlaces[i].lon,
-					title 	: jsonPlaces[i].name, // + ' (' + JSON_locations[i].dist + 'mi)',
 					address	: jsonPlaces[i].address,
 					city 		: jsonPlaces[i].city,
 					zip			: jsonPlaces[i].zip,
+					name		: jsonPlaces[i].name,
 					distance : jsonPlaces[i].dist,
 					mobile_bg : jsonPlaces[i].mobile_bg,
-					leftImage : icon,				// icon image defined above
-					hasChild : true, 	
-					font:{ fontFamily: 'Raleway', fontSize: 14 }, height: 30,
-					left: 4, color: "#000000", width: 'auto', textAlign : 'left'
-				}));
+					hasChild : true
+				});
+				
+				var icon_image = Ti.UI.createImageView({
+  					image: sessionVars.AWS.base_icon_url + jsonPlaces[i].icon, 
+  					width:48, height:48, left:2, zIndex: 20			
+				});
+				Ti.API.info( sessionVars.AWS.base_icon_url + jsonPlaces[i].icon );
+				var contentView = Ti.UI.createView({ 
+						layout: "horizontal", height: 48, width: "100%", backgroundColor: '', color: "#000000"
+				});
+				var placeLabel = Ti.UI.createLabel ({ 
+					text: jsonPlaces[i].name, height: Ti.UI.SIZE, width: Ti.UI.FILL, left: 4,
+					font:{ fontFamily: 'Raleway', fontSize: 14 }, color: "#000000",  textAlign : 'left' } );
+				
+				contentView.add( icon_image );
+				contentView.add( placeLabel );
+        /*  add the custom row content we've just created  */
+        dataRow.add( contentView );
+        
+				placeData.push( dataRow );
+				
 				createMapMarker(jsonPlaces[i]);
 				// also attach a placemark to the map for each park
 			}
@@ -316,7 +331,7 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 	/*  prep all the required data to placeoverview.js */
 	var place_overview = Alloy.createController("placeoverview", { 
 			_place_id: 			e.rowData.id,						// pass in basic place info to next page
-			_place_name: 		e.rowData.title,
+			_place_name: 		e.rowData.name,
 			_place_address:	e.rowData.address,
 			_place_city:		e.rowData.city,
 			_place_zip:			e.rowData.zip,
@@ -324,17 +339,15 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 			_mobile_bg:			e.rowData.mobile_bg
 		} ).getView();
 	
-	place_overview.open();
-	/*
-	place_overview.top = 800;							// get ready for the sexy slide up animation
- 	place_overview.opacity = 0.15;
+	// place_overview.open();
+	/*  quick fade-in animation   */
+	place_overview.opacity = 0.01;
 	place_overview.open({
-		top: 0,
 		opacity: 1,
-		duration: 400,  
+		duration: 220,  
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
 	});
-		*/				
+	
 	// setTimeout( );
 });
 

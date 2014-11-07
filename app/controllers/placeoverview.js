@@ -45,8 +45,8 @@ function getActivity(place_ID) {
 			var activityJson = JSON.parse( jsonResponse );
 				
 			/*					POPULATE LATEST FEED ITEM 					*/
-			//var base_URL = "http://waterbowl.net/app-dev/stable/images/profile/";
-			var last_update_photo = sessionVars.AWS.base_url + activityJson[0].dog_photo;
+			//var base_profile_url = "http://waterbowl.net/app-dev/stable/images/profile/";
+			var last_update_photo = sessionVars.AWS.base_profile_url + activityJson[0].dog_photo;
 			Ti.API.info( "latest update photo: " + last_update_photo  );
 			 
 			$.last_update_thumb.image = last_update_photo;		// TODO: change storage location	
@@ -82,7 +82,7 @@ function getActivity(place_ID) {
 				
 				var thumb = Ti.UI.createImageView ();
 				$.addClass( thumb, "thumbnail_sm");
-				thumb.image = sessionVars.AWS.base_url + activityJson[i].dog_photo;		// TODO: change storage location	
+				thumb.image = sessionVars.AWS.base_profile_url + activityJson[i].dog_photo;		// TODO: change storage location	
 				
 				var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
 				$.addClass( status_update_label, "feed_label_left");
@@ -118,7 +118,7 @@ function getActivity(place_ID) {
 			//$.feedList.data = activityData;				// populate placeList TableView (defined in XML file, styled in TSS)
 		}
 		else {
-			$.latest_update_static.text(" ");
+			$.latest_update_static.text = "";
 			$.last_update_middle.add ( dog_name_label );	
 			$.last_update_middle.add ( time_elapsed_label );
 			Ti.API.info(" * no checkins here... * ");
@@ -127,12 +127,7 @@ function getActivity(place_ID) {
 	};
 }
 
-// default close window action
-function closeWindow(e) {
-	$.placeoverview.close();
-	var lastPage = Alloy.createController( sessionVars.lastWindow ).getView();
-	lastPage.open( {transition:Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT} );
-}
+
 
 //============================================================================
 //		Name:			touchStartClick(e)
@@ -209,11 +204,13 @@ getActivity( args._place_id );
 //----------------------------------------------------------------------------
 $.backBtn.addEventListener('click', function() {			//  BACK button (aka window close)
 	$.placeoverview.close( { 
-		top: 800,
-		opacity: 0.2,
-		duration: 320, 
+		top: 0, opacity: 0.01, duration: 200, 
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
 	} );
+	/* $.placeoverview.close( { 
+		top: 800,	opacity: 0.2,
+		duration: 320, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
+	} ); */
 	$.placeoverview = null;
 });
 
