@@ -1,5 +1,6 @@
 <Alloy>
 	<Window class="container" id="placeoverview" platform="ios,mobileweb">
+				
 		<View id="menubar">
 			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
 			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
@@ -7,6 +8,12 @@
 		</View>
 
 		// attach blank mini header here, move just off screen (animate top pos from -80 to 0 opacity from 0.1 to 1.0)
+		<View id="miniHeader" class="">
+			<View id="menuLeft"><Button class="menubar_button"/></View>
+			<View id="menuCenter"><Label id="miniHeaderPlaceName" class="large_text" text="..."/></View>
+			<View id="menuRight" class="border_red"><ImageView id="checkinStatusImage" class="fit_width border"/></View>
+		</View>
+		
 		<ScrollView id="scrollView" showVerticalScrollIndicator="true" showHorizontalScrollIndicator="true" height="100%" width="100%">
 		
 			<View id="headerContainer">
@@ -14,7 +21,7 @@
 					<View class="row_spacer_100"/>
 					<View class="col_spacer_100"/>
 					<View class="float_right">
-						<Button id="checkin_button"/>
+						<Button id="checkin_button"/> 
 					</View>
 				</View>	
 				<View id="headerBottom" class="row">

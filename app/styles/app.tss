@@ -78,9 +78,9 @@
 										opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2},
 										verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
 						
-"#menuLeft"			: { width: "20%", borderColor: '#000', borderWidth: 0 }
-"#menuCenter"		: { width: "60%", borderColor: '#000', borderWidth: 0 }
-"#menuRight"		: { width: Ti.UI.FILL, borderColor: '#000', borderWidth: 0 }
+"#menuLeft"			: { width: "20%" }
+"#menuCenter"		: { width: "60%" }
+"#menuRight"		: { width: Ti.UI.FILL }
 
 "#backBtn"				: {	title: '<<', left: 2 }
 "#infoBtn"				: { title: "(i)", right: 2 }
@@ -94,7 +94,7 @@
  /* 									Headers and ScrollViews																				  												 */
 /**************************************************************************************************************/
 "#scrollView" 			: { backgroundColor: "#fff", layout: "vertical" }
-"#headerContainer" 	: { layout: 'vertical', top: 0, height: "50%", width: "100%", backgroundImage : "images/places/obrd-header.jpg" }
+"#headerContainer" 	: { layout: 'vertical', top: 0, height: "50%", width: "100%", backgroundImage : "images/missing/place-header.png" }
 "#headerTop"				: { height: "60%",  width: "100%", top: 20, left: 0 }
 "#headerBottom" 		: { height: Ti.UI.SIZE, width: "100%",  left: 0, top: -6, opacity: 0.7,  backgroundColor: '#ffffff' }
 "#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
@@ -140,6 +140,8 @@
 
 ".half_width"   : { width: "40%" }
 ".small_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 8 } }
+".large_text"		: { color: "#000000", font:{ fontFamily: 'Raleway', fontSize: 18 } }
+
 ".list_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 12 } }
 
 /*  border colors for layout / debug purposes  */

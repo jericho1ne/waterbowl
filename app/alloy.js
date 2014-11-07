@@ -63,15 +63,19 @@ var sessionVars = {
 	lastCheckIn				: null,
 	checkinTimestamp	: null,
 	AWS : {
-		access_key_id: "AKIAILLMVRRDGDBDZ5XQ",
-		secret_access: "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",
-		base_url: "http://s3.amazonaws.com/wb-profiles/"
+		access_key_id	: "AKIAILLMVRRDGDBDZ5XQ",
+		secret_access	: "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",
+		base_profile_url	: "http://s3.amazonaws.com/wb-profiles/",
+		base_icon_url			: "http://s3.amazonaws.com/wb-icons/"
+		//base_icon_url			: "http://waterbowl.net/mobile/wb-icons/"
 	}
 };
 
 /*  saved credentials and app status in local storage  */
+/*
 Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
 Ti.App.Properties.setString('pass', 'mihai1');
+*/
 
 var winStack = [];
 Ti.App.Properties.windowStack = winStack;

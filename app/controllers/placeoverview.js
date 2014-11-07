@@ -3,13 +3,23 @@
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //=================================================================================
 function attachMiniHeader () {
-  var miniHeader = Titanium.UI.createView({
-  	 borderRadius: 0, id: "miniHeader", 
-  	 backgroundColor:'#ccc', opacity: 0.8,
-  	 width:"100%", zIndex: 4,
-  	 height: "100dp", top: 0
-	});
-	return miniHeader;
+	// var matrix = Ti.UI.create2DMatrix()
+  // matrix = matrix.rotate(180);
+  // matrix = matrix.scale(2, 2);
+  var a = Ti.UI.createAnimation({
+    top: 0, opacity: 1, duration : 320
+  });
+  $.miniHeader.animate(a);
+}
+
+function hideMiniHeader () {
+	// var matrix = Ti.UI.create2DMatrix()
+  // matrix = matrix.rotate(180);
+  // matrix = matrix.scale(2, 2);
+  var a = Ti.UI.createAnimation({
+    top: -104, opacity: 0, duration : 220
+  });
+  $.miniHeader.animate(a);
 }
 
 
@@ -181,13 +191,19 @@ var args 	= arguments[0] || {};
 // var header_image = zeroPad( args._place_id, 4 ) . "-000001-placename.jpg";
 Ti.API.log("* placeoverview.js { #" + args._place_id + " } - "+ args._place_name + " | "+ args._mobile_bg+" * ");
 
+/*  fill in header info */
 $.place_name_label.text = args._place_name;													// add place name header
 $.place_addr_label.text =	args._place_address;											// address, city, zip
 $.place_city_label.text =	args._place_city +' ' + args._place_zip;
 $.place_dist_label.text = args._place_distance + " miles away";   //args._place_dist // TODO: send in distance in miles from backend
 
-$.headerContainer.backgroundImage = "images/places/"+args._mobile_bg;		// add place header image
+/*  fill in mini header info */
+$.miniHeaderPlaceName.text = args._place_name;	
 
+/*  only attempt to set the bg image if it exists */
+if (args._mobile_bg!="") {
+	$.headerContainer.backgroundImage = "images/places/"+args._mobile_bg;		// add place header image
+}
 sessionVars.currentWindow = "placeoverview";									// set current place session variable
 
 //----------------------------------------------------------------------------
@@ -229,9 +245,9 @@ $.scrollView.addEventListener('scroll', function(e) {
     var offsetY = e.y;
    
     if  ( offsetY >= 230 && offsetY != null && mini_header_display==0 ) {
-    	miniHeader = attachMiniHeader();			// build the mini header
+    	miniHeader = attachMiniHeader();			// show the mini header
     	
-    	$.placeoverview.add( miniHeader );
+    	//$.placeoverview.add( miniHeader );
     	
  			Titanium.API.info(' * scrollView Y offset: ' + offsetY);
  			mini_header_display = 1;
@@ -239,8 +255,8 @@ $.scrollView.addEventListener('scroll', function(e) {
     }
     else if ( offsetY < 230 && offsetY != null && mini_header_display==1) {
     	Ti.API.info (" MINIHEADER CONTENTS: "+ miniHeader);
-    	miniHeader = null;  // removeMiniHeader
-    	
+    	miniHeader = hideMiniHeader();			// hide the mini header
+     	
     	Titanium.API.info(' * scrollView Y offset: ' + offsetY);
    		mini_header_display = 0;
  			Titanium.API.info( ' * miniHeader removed * ' + mini_header_display );

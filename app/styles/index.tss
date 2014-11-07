@@ -4,7 +4,7 @@
 "#loginStuff" 			: { height: Ti.UI.SIZE, layout: "vertical", width: "100%" }
 "#footerContainer" 	: { height: Ti.UI.FILL, layout: "vertical", borderWidth: 0, borderColor: "#fff", zIndex: 3,  
 											width: "100%" }
-"#appTitle"				: { color: "#ffffff", zIndex: 2, font:{ fontFamily: 'Raleway-ExtraLight', fontSize: 36 },
+"#appTitle"				: { color: "#ffffff", zIndex: 2, font:{ fontFamily: 'Raleway-Medium', fontSize: 36 },
 										shadowColor: '#777477', shadowOffset: {x:1, y:1}, shadowRadius: 2 }  
 										
 "#email"					:	{ hintText: 'Email', zIndex: 2, opacity: 0.9 }

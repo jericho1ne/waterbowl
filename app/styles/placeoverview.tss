@@ -1,2 +1,9 @@
 "#placeoverview"  : { 	}
 "#checkin_button" : { opacity: 0.0 }
+
+
+
+"#miniHeader"  : { layout: "horizontal", zIndex: 98, top:-104, height: 40, backgroundColor:"#777477", opacity: 0.0 }
+"#miniHeaderPlaceName" :  { left: 10, textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT } 
+
+"#checkinStatusImage" : { image: "images/icons/checkbox.png" }
