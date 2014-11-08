@@ -347,12 +347,11 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 	place_overview.opacity = 0.01;
 	place_overview.open({
 		opacity: 1,
-		duration: 220,  
+		duration: 360,  
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
 	});
 
 });
-
 
 sessionVars.windowStack.push( $.map );
 Ti.API.info ( "localStack size: " + JSON.stringify( sessionVars.windowStack.length ) );

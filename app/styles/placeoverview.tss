@@ -1,7 +1,10 @@
-"#placeoverview"  : { 	}
+"#placeoverview"  		: {}
+"#checkboxHeader" 		: { zIndex: 90, top:20, right: 20, width: 70, opacity: 1.0 }
 
-"#checkboxHeader" : { zIndex: 20, right: 20, opacity: 1 }
-"#checkboxMiniHeader" : { zIndex: 90 }
+"#miniHeader" 				 : { layout: "horizontal", zIndex: 98, top:-80, height: 60, backgroundColor:"#777477", opacity: 0 }
+"#checkboxMiniHeader"  : { zIndex: 30,  opacity: 0 }
+"#miniHeaderPlaceName" :  { left: 6, top: 20 } 
+
 
 // image: "images/icons/checkbox.png"
 /*
@@ -9,7 +12,6 @@
 	width: 64, height: 64, backgroundColor: "#ccc" }
 */
 
-"#miniHeader"  : { layout: "horizontal", zIndex: 98, top:-60, height: 60, backgroundColor:"#777477", opacity: 0.0 }
-"#miniHeaderPlaceName" :  { left: 6, top: 20, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER } 
+
 
 

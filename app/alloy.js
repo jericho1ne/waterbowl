@@ -62,8 +62,8 @@ var sessionVars = {
 		distance  : null
 	},
 	checkinInProgress	: null,
-	checkedIn					: 1,
-	checkin_place_ID	: 17, 
+	checkedIn					: null,
+	checkin_place_ID	: null, 
 	lastCheckIn				: null,
 	checkinTimestamp	: null,
 	AWS : {
@@ -77,8 +77,8 @@ var sessionVars = {
 
 /*  saved credentials and app status in local storage  */
 /*
-Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
-Ti.App.Properties.setString('pass', 'mihai1');
+Ti.App.Properties.setString('user', 'email@this.com');
+Ti.App.Properties.setString('pass', 'passwod');
 */
 
 var winStack = [];

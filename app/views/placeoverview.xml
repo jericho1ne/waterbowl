@@ -7,7 +7,6 @@
 			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
 		</View>
 
-		// attach blank mini header here, move just off screen (animate top pos from -80 to 0 opacity from 0.1 to 1.0)
 		<View id="miniHeader" class="layout_horz height_80dp">
 			<View class="width_60">
 				<Label id="miniHeaderPlaceName" class="large_text white" text="..."/>
@@ -19,17 +18,16 @@
 		
 		<ScrollView id="scrollView" class="fill_height">
 		
-			<View id="headerContainer layout_vert">
-				<View id="headerTop" class="column border-blue">
-					<View class="row_spacer_100 border"/>
-					<View class="col_spacer_100 border"/>
-					<View class="float_right border">
-						<ImageView id="checkboxHeader"/> 
+			<View id="headerContainer" class="layout_vert">
+				<View id="headerTop" class="layout_horz">
+					<View class="width_50"/>
+					<View class="fill_width">
+						<ImageView id="checkboxHeader" class="float_right"/> 
 					</View>
 				</View>	
-				<View id="headerBottom" class="row border">
+				<View id="headerBottom" class="layout_vert">
 					<Label id="place_name_label" text=".place name." 	class="feed_label_left_lg"/>
-					<Label id="place_addr_label" text=".street addr." class="feed_label_left" />
+					<Label id="place_address_label" text=".street addr." class="feed_label_left" />
 					<Label id="place_city_label" text=".city zip." 		class="feed_label_left" />
 					<Label id="place_dist_label" text=".distance." 		class="feed_label_left" />			
 				</View>
@@ -53,9 +51,7 @@
 					<!-- add most recent update labels here programmatically -->
 				</View>
 			</View>
-			
-	
-			// 								 ACTIVITY FEED
+				
 			// +============== feedContainer ===============================+
 			// |  +----------- feed_item (#1) ---------------------------+  |
 			// |  | +-photo-+ +------------------+  +------------------+ |  |                
@@ -69,22 +65,8 @@
 			// |  |                                      |                  |
 			// |  ^                                      ^                  |
 			// +============================================================+
-			<View id="feedContainer">
-				<!--
-				<View class="feed_item">
-					<ImageView class="thumbnail_sm"/>
-					<View class="middle_view">
-						<Label class="feed_label_left">Terra checked in [TEST]</Label>
-						<Label class="feed_label_left">Terra saw 1-2 dogs</Label>
-					</View>
-					<View class="right_view">
-							<Label class="feed_label_right">7 mins	ago</Label>
-					</View>
-				</View>
-				-->
+			<View id="feedContainer"/>
 				
-			</View>
-			
 		</ScrollView>
 
 	</Window>

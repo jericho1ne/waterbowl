@@ -20,8 +20,8 @@ function hideMiniHeader () {
 //		Name:				getPlaceInfo(place_ID)
 //		Purpose:		get place header info (name, address, bg image, etc)
 //================================================================================
-function getPlaceInfo(place_ID) {
-	Ti.API.log("* getPlaceInfo() called *" + place_ID);
+function getPlaceInfo( place_ID ) {
+	Ti.API.info("* getPlaceInfo() called *" + place_ID);
 	var query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID  : place_ID,
@@ -33,10 +33,10 @@ function getPlaceInfo(place_ID) {
 	query.send( params );
 	query.onload = function() {
 		var jsonResponse = this.responseText;
-		Ti.API.log( " * Place JSON: " + jsonResponse );
+		Ti.API.info( " * Place JSON: " + jsonResponse );
 		if (jsonResponse != "" && jsonResponse !="[]") {
 			var placeJson = JSON.parse( jsonResponse );
-			// var header_image = zeroPad( sessionVars.currentPlace.ID, 4 ) . "-000001-placename.jpg";
+			// var header_image = zeroPad( sessionVars.currentPlace.ID, 4 )."-000001-placename.jpg";
 			$.place_name_label.text 	= placeJson['name'];			// add place name header
 			$.place_address_label.text=	placeJson['street_address'];		// address, city, zip
 			$.place_city_label.text	  =	placeJson['city'] +' ' + placeJson['zipcode'];
@@ -50,11 +50,13 @@ function getPlaceInfo(place_ID) {
 				$.headerContainer.backgroundImage = "images/places/" + placeJson['mobile_bg'];		// add place header image
 			}
 			/*  if viewing place details on a place we're currently, show the checkboxx!!   */
-			if ( place_ID == sessionVars.checkin_place_ID && sessionVars.checkedIn == true ) {
-				$.checkboxHeader.image = "images/icons/checkbox.png";
-				$.checkboxMiniHeader.image = "images/icons/checkbox.png";
-				// TODO: add checkout fucntionality to checkbox button!
-				//$.checkin_button.opacity = 1;
+			if ( place_ID == sessionVars.checkin_place_ID && sessionVars.checkedIn == 1 ) {
+				$.checkboxHeader.image 		= "images/icons/checkbox.png";
+				$.checkboxHeader.opacity 	= 1;
+				$.checkboxMiniHeader.image 		= "images/icons/checkbox.png";
+				$.checkboxMiniHeader.opacity 	= 1;
+				
+				// TODO: add checkout functionality to checkbox button!
 				
 				/*
 				$.checkin_button.addEventListener( "touchstart", touchStartClick );				// assign the touch start & end functions
@@ -70,8 +72,95 @@ function getPlaceInfo(place_ID) {
 //		Name:				getPlaceActivity(place_ID)
 //		Purpose:		get latest checkins
 //================================================================================
-function getPlaceActivity(place_ID) {
-	Ti.API.log("* getPlaceActivity() called *");
+
+
+//============================================================================
+//		Name:			touchStartClick(e)
+//		Purpose:		what to do upon checkin button long press
+//							- creates a 350ms interval that fires click events
+//================================================================================
+function touchStartClick(e) {
+  if ( !e.source.touchTimer ) {	
+      e.source.touchTimer = setInterval(function () {
+        e.source.fireEvent("click");
+        longPress = 1;
+        this.backgroundColor = "#ff38d9";
+        this.opacity = "1";
+        this.title = "Update";
+        Ti.API.info("***** Long Press Start "+ longPress +"*****");
+    }, 350);
+  }
+}
+
+//============================================================================
+//		Name:			touchStartClick(e)
+//		Purpose:		what to do upon checkin button long press
+//							- what do to at the end of the touchStart;  cancels the interval
+//================================================================================
+function touchEndClick(e) {
+  if ( e.source.touchTimer ) {
+    clearInterval(e.source.touchTimer);
+    if (longPress == 1) {
+  		longPress = 0;
+  		this.backgroundColor = "#16dd0c";
+  		this.opacity = "0.88";
+  		Ti.API.info("***** Long Press End *****");
+    }
+    e.source.touchTimer = null;
+  }
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//			LOGIC FLOW
+//
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+var mini_header_display = 0;
+Titanium.UI.iPhone.statusBarStyle = Titanium.UI.iPhone.StatusBar.OPAQUE_BLACK;
+
+//-----------------------------------------------------------------------------
+//
+//		(1)		Grab incoming variables, set header image and title
+//
+//-----------------------------------------------------------------------------
+var args 	= arguments[0] || {};
+Ti.API.info("* placeoverview.js { #" + args._place_ID  + " } * ");	
+sessionVars.currentWindow = "placeoverview";									// set current place session variable
+
+//----------------------------------------------------------------------------
+//
+//		(2)		Populate place header + activity feed
+//
+//----------------------------------------------------------------------------
+getPlaceInfo( args._place_ID );
+getPlaceActivity( args._place_ID );
+
+//----------------------------------------------------------------------------
+//
+//		(3)		Button listeners
+//
+//----------------------------------------------------------------------------
+$.backBtn.addEventListener('click', function() {			//  BACK button (aka window close)
+	$.placeoverview.close( { 
+		top: 0, opacity: 0.01, duration: 200, 
+		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
+	} );
+	$.placeoverview = null;
+});
+
+// TODO:  refresh / replace feed if newer posts exist
+/*
+$.refreshBtn.addEventListener('click', function() {			//  BACK button (aka window close)
+	Ti.API.info( "* Should be refreshing the feed... *" 	);
+	
+});
+*/
+$.infoBtn.addEventListener('click', function() {			//  BACK button (aka window close)
+	Ti.API.info( "* Info button clicked *" 	);
+	// TODO:  ask Herb what info does
+});
+
+function getPlaceActivity( place_ID ) {
+	Ti.API.info("* getPlaceActivity() called *");
 	var query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID	: place_ID
@@ -97,14 +186,13 @@ function getPlaceActivity(place_ID) {
 			var activityJson = JSON.parse( jsonResponse );
 				
 			/*					POPULATE LATEST FEED ITEM 					*/
-			//var base_profile_url = "http://waterbowl.net/app-dev/stable/images/profile/";
 			var last_update_photo = sessionVars.AWS.base_profile_url + activityJson[0].dog_photo;
-			Ti.API.log( "latest update photo: " + last_update_photo  );
+			Ti.API.info( "latest update photo: " + last_update_photo  );
 			 
-			$.last_update_thumb.image = last_update_photo;		// TODO: change storage location	
+			$.last_update_thumb.image = last_update_photo;							// TODO: change storage location	
 			dog_name_label.text 			= activityJson[0].dog_name;				// dog that provided most recent update
-			time_elapsed_label.text 	= activityJson[0].time_elapsed;				// dog that provided most recent update
-			dogs_amount_label.text 		= activityJson[0].amount;				// dog that provided most recent update
+			time_elapsed_label.text 	= activityJson[0].time_elapsed;		// dog that provided most recent update
+			dogs_amount_label.text 		= activityJson[0].amount;					// dog that provided most recent update
 			
 			var dogs_amount_suffix = Ti.UI.createLabel({text: "dogs here", top: -1});
 			$.addClass( dogs_amount_suffix, "feed_label_center");
@@ -123,7 +211,7 @@ function getPlaceActivity(place_ID) {
 			/* ensure that there is more than 1 recent checkin */
 			if( activityJson.length > 1) {
 				for (var i=1; i<max; i++) {		// optimize loop to only calculate array size once
-					// Ti.API.log("* "+ activityJson[i].dog_name + " - " + activityJson[i].last_update_formatted +" *");
+					// Ti.API.info("* "+ activityJson[i].dog_name + " - " + activityJson[i].last_update_formatted +" *");
 					// var icon = 'images/missing/dog-icon-sm.png';
 				
 					///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
@@ -174,101 +262,11 @@ function getPlaceActivity(place_ID) {
 			$.latest_update_static.text = "";
 			$.last_update_middle.add ( dog_name_label );	
 			$.last_update_middle.add ( time_elapsed_label );
-			Ti.API.log(" * no checkins here... * ");
+			Ti.API.info(" * no checkins here... * ");
 		}
 				
 	};
 }
-
-
-
-//============================================================================
-//		Name:			touchStartClick(e)
-//		Purpose:		what to do upon checkin button long press
-//							- creates a 350ms interval that fires click events
-//================================================================================
-function touchStartClick(e) {
-  if ( !e.source.touchTimer ) {	
-      e.source.touchTimer = setInterval(function () {
-        e.source.fireEvent("click");
-        longPress = 1;
-        this.backgroundColor = "#ff38d9";
-        this.opacity = "1";
-        this.title = "Update";
-        Ti.API.log("***** Long Press Start "+ longPress +"*****");
-    }, 350);
-  }
-}
-
-//============================================================================
-//		Name:			touchStartClick(e)
-//		Purpose:		what to do upon checkin button long press
-//							- what do to at the end of the touchStart;  cancels the interval
-//================================================================================
-function touchEndClick(e) {
-  if ( e.source.touchTimer ) {
-    clearInterval(e.source.touchTimer);
-    if (longPress == 1) {
-  		longPress = 0;
-  		this.backgroundColor = "#16dd0c";
-  		this.opacity = "0.88";
-  		//this.title = "|/";
-  		Ti.API.log("***** Long Press End *****");
-    }
-    e.source.touchTimer = null;
-  }
-}
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//			LOGIC FLOW
-//
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-var mini_header_display = 0;
-
-//-----------------------------------------------------------------------------
-//
-//		(1)		Grab incoming variables, set header image and title
-//
-//-----------------------------------------------------------------------------
-var args 	= arguments[0] || {};
-Ti.API.log("* placeoverview.js { #" + args._place_ID  + " } * ");	
-sessionVars.currentWindow = "placeoverview";									// set current place session variable
-
-//----------------------------------------------------------------------------
-//
-//		(2)		Populate place header + activity feed
-//
-//----------------------------------------------------------------------------
-getPlaceInfo( args._place_ID );
-getPlaceActivity( args._place_ID );
-
-//----------------------------------------------------------------------------
-//
-//		(3)		Button listeners
-//
-//----------------------------------------------------------------------------
-$.backBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	$.placeoverview.close( { 
-		top: 0, opacity: 0.01, duration: 200, 
-		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-	} );
-	/* $.placeoverview.close( { 
-		top: 800,	opacity: 0.2,
-		duration: 320, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-	} ); */
-	$.placeoverview = null;
-});
-
-/*
-$.refreshBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	Ti.API.log( "* Should be refreshing the feed... *" 	);
-	// TODO:  refresh / replace feed if newer posts exist
-});
-*/
-$.infoBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	Ti.API.log( "* Info button clicked *" 	);
-	// TODO:  ask Herb what info does
-});
 
 ///----------------------------------------------------------------------------
 //
@@ -282,14 +280,12 @@ $.scrollView.addEventListener('scroll', function(e) {
     if  ( offsetY >= 230 && offsetY != null && mini_header_display==0 ) {
     	miniHeader = attachMiniHeader();			// show the mini header
     	
-    	//$.placeoverview.add( miniHeader );
-    	
- 			Titanium.API.info(' * scrollView Y offset: ' + offsetY);
+   		Titanium.API.info(' * scrollView Y offset: ' + offsetY);
  			mini_header_display = 1;
  			Titanium.API.info( ' * miniHeader attached * ' +  mini_header_display );
     }
     else if ( offsetY < 230 && offsetY != null && mini_header_display==1) {
-    	Ti.API.log (" MINIHEADER CONTENTS: "+ miniHeader);
+    	Ti.API.info (" MINIHEADER CONTENTS: "+ miniHeader);
     	miniHeader = hideMiniHeader();			// hide the mini header
      	
     	Titanium.API.info(' * scrollView Y offset: ' + offsetY);
@@ -301,5 +297,3 @@ $.scrollView.addEventListener('scroll', function(e) {
     Titanium.API.info(' * scrollView Y offset is null');
   }
 });
-
-
