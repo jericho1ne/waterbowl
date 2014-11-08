@@ -20,7 +20,7 @@
 <Alloy>
 	<Window id="index" class="container login_bg">
 		
-		<Label id="appTitle" class="top_160">waterbowl</Label>
+		<Label id="appTitle" class="top_100">waterbowl</Label>
 		
 		<View id="loginStuff" class="top_20">
 			<TextField class="text_field_large" id="email"/>
