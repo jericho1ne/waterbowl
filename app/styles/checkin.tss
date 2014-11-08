@@ -1,12 +1,12 @@
-'#checkin' 		:	{	}
+'#checkin' 		:	{	backgroundColor: "#f587e7" }
 
-"#place_checkin"	: {	top: 70, height: 50, font:{ fontWeight: 'bold', fontSize: 24 }, backgroundColor: "#ccc"  }
-"#question"				: { font:{ fontSize: 22 }, height: 100 }
-"#slider"					:	{	top: "4%", height: 50, backgroundColor: "#ffffff", borderWidth: 0, borderRadius: 12, 
+"#place_checkin"	: {	top: 40, height: 60, font:{ fontWeight: 'bold', fontSize: 24 } }
+"#question"				: { font:{ fontSize: 22 }, height: 80 }
+"#slider"					:	{	top: "4%", height: 100, backgroundColor: "#ffffff", borderRadius: 12,
+											borderColor: "#777477", borderWidth: 2, 
 											min: "1", max:"7", width:"85%", value: "4" }
 											
-"#slider_int_val" : {	width: "100%", top:"0%", left:"0", height: 40, font:{ fontWeight: 'bold', fontSize: 36 } }
-											
+"#slider_int_val" : {	width: "100%", top:"0%", left:"0", height: 40, font:{ fontWeight: 'bold', fontSize: 36 } }							
 "#slider_label"		: { width: "100%", top:"0%", left:"0", height: 40, font:{ fontSize: 24 } }
  
 "#checkInBtn"	: { title: 'Check In', height: 40, width: "40%", top: "10%", font:{ fontSize: 18 } }

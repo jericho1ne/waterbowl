@@ -14,8 +14,9 @@
 			<View id="mapContainer" class="fill_height border_bottom"/>
 			<!-- <View ns="Ti.Map" id="wbMapView"/> -->
 		</View>
-  	<ImageView class="blue_line"/>	
-  	<View id="placeListContainer" class="fill_height">
+  	<View id="hr" height="1" backgroundColor="#343434" />
+  	<!-- <ImageView class="blue_line"/>	-->
+  	<View id="placeListContainer" class="fill_height bg_lt_blue">
   		<TableView id="placeList" class="fill_height"/>
   			<!-- Parks get populated in here -->
   	</View>

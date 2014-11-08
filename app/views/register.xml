@@ -27,7 +27,7 @@
 			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
 		</View>
 		
-		<ScrollView class="">
+		<ScrollView class="fill_width bg_lt_blue">
 			<!-- Create account fields:  username, 2x passwd, submit btn -->
 			<Label class="form_label top_20">email</Label>
 			<TextField id="email"></TextField>
@@ -37,7 +37,7 @@
 			<TextField id="password2" class="top_10"></TextField>
 			
 			
-			<Button id="continueBtn" class="top_20 bg_dk_gray" onClick="goToNextPage">continue</Button>
+			<Button id="continueBtn" class="btn_large top_20 bg_dk_gray" onClick="goToNextPage">continue</Button>
 			
 	 	</ScrollView>
 	</Window>

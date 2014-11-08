@@ -1,5 +1,5 @@
 // New account form fields
-"#register" : { backgroundColor: "#DCF1FC" }
+"#register" : { }
 
 "#email": 			{	hintText: 'email address' }
 
