@@ -13,21 +13,21 @@
 				<Label id="miniHeaderPlaceName" class="large_text white" text="..."/>
 			</View>
 			<View class="fill_width">
-				<ImageView id="checkinStatusImage" class="fit_height height_80"/>
+				<ImageView id="checkboxMiniHeader" class="fit_height height_80"/>
 			</View>
 		</View>
 		
 		<ScrollView id="scrollView" class="fill_height">
 		
-			<View id="headerContainer">
-				<View id="headerTop" class="column">
-					<View class="row_spacer_100"/>
-					<View class="col_spacer_100"/>
-					<View class="float_right">
-						<Button id="checkin_button"/> 
+			<View id="headerContainer layout_vert">
+				<View id="headerTop" class="column border-blue">
+					<View class="row_spacer_100 border"/>
+					<View class="col_spacer_100 border"/>
+					<View class="float_right border">
+						<ImageView id="checkboxHeader"/> 
 					</View>
 				</View>	
-				<View id="headerBottom" class="row">
+				<View id="headerBottom" class="row border">
 					<Label id="place_name_label" text=".place name." 	class="feed_label_left_lg"/>
 					<Label id="place_addr_label" text=".street addr." class="feed_label_left" />
 					<Label id="place_city_label" text=".city zip." 		class="feed_label_left" />

@@ -27,7 +27,7 @@
 			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
 		</View>
 		
-		<ScrollView class="">
+		<ScrollView class="bg_lt_blue">
 			<Label class="form_label top_40">choose a profile photo</Label>
 			<Label class="small_text">no humans allowed!</Label>
 			<View class="layout_horz width_60">

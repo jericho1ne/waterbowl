@@ -102,9 +102,9 @@
  /* 									Headers and ScrollViews																				  												 */
 /**************************************************************************************************************/
 "#scrollView" 			: { backgroundColor: "#fff", layout: "vertical" }
-"#headerContainer" 	: { layout: 'vertical', top: 0, height: "50%", width: "100%", backgroundImage : "images/missing/place-header.png" }
+"#headerContainer" 	: { zIndex: 30, layout: 'vertical', top: 0, height: "50%", width: "100%", backgroundImage : "images/missing/place-header.png" }
 "#headerTop"				: { height: "60%",  width: "100%", top: 20, left: 0 }
-"#headerBottom" 		: { height: Ti.UI.SIZE, width: "100%",  left: 0, top: -6, opacity: 0.7,  backgroundColor: '#ffffff' }
+"#headerBottom" 		: { height: Ti.UI.SIZE, width: "100%",  left: 0, top: -6, opacity: 0.8,  backgroundColor: '#ffffff' }
 "#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
 
 
@@ -163,9 +163,6 @@
 ".btn_large" : { height: 50, font:{ fontSize: 24, fontFamily: "Raleway-Light" } }
 ".text_field_large" : { height: 25, font:{ fontSize: 14 } }
 
-".checkin_button" : {	title: "\/", color: "#ffffff", zIndex: 5, opacity: 1, borderRadius: 20, 
-	width: 64, height: 64, backgroundColor: "#ccc" }
-
 ".wb_blue" : { backgroundColor: "#58c6d5" }
 
 ".form_label" : { font:{ fontFamily: 'Raleway-Light', fontSize: 14, color: "#ffffff" } }
@@ -179,6 +176,7 @@
 	font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
 	
 ".shadow" : { shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2}  }
+".hr"			: { height: 1, backgroundColor: "#343434", width: "100%" } 
 
 ".row_spacer_200"	: { height: 200, width: "100%" }
 ".row_spacer_100"	: { height: 100, width: "100%" }

@@ -184,7 +184,7 @@ function createPlaceList() {
 			
 			for (var i = 0; i < jsonPlaces.length; i++) {
 				// Ti.API.info(" * JSON  " + jsonPlaces[i].name + " / " + jsonPlaces[i].dist + " *");			
-				var dataRow = Ti.UI.createTableViewRow({		// create each TableView row of park info
+				var dataRow = Ti.UI.createTableViewRow({		// create each TableView row of place info
 					leftImage : icon_image,				// as defined above
 					id 			: jsonPlaces[i].id,
 					lat 		: jsonPlaces[i].lat,
@@ -204,7 +204,7 @@ function createPlaceList() {
 				});
 				Ti.API.info( sessionVars.AWS.base_icon_url + jsonPlaces[i].icon );
 				var contentView = Ti.UI.createView({ 
-						layout: "horizontal", height: 48, width: "100%", backgroundColor: '', color: "#000000"
+						layout: "horizontal", height: 44, width: "100%"
 				});
 				var placeLabel = Ti.UI.createLabel ({ 
 					text: jsonPlaces[i].name, height: Ti.UI.SIZE, width: Ti.UI.FILL, left: 4,
@@ -218,7 +218,7 @@ function createPlaceList() {
 				placeData.push( dataRow );
 				
 				createMapMarker(jsonPlaces[i]);
-				// also attach a placemark to the map for each park
+			 
 			}
 			$.placeList.data = placeData;				// populate placeList TableView (defined in XML file, styled in TSS)
 		}
@@ -237,10 +237,10 @@ function findNearbyPlaces(lat, lon) {
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity.php");
 		
-	var params = {
-		lat : lat,
-		lon : lon
-	};
+	var params = { lat: 34.024,  lon: -118.394 };
+		
+	// var params = { lat : lat, lon: lon	};
+	
 	place_query.send(params);
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
@@ -323,22 +323,25 @@ Ti.Geolocation.addEventListener('location', function() {
 //
 //-----------------------------------------------------------------------
 $.placeList.addEventListener('click', function(e) {			// PLACES TableView
-	Ti.API.info(" * clicked on [ " + e.rowData.title + " ] in POI List");
+	Ti.API.info(" * clicked on [ " + e.rowData.name + " ] in POI List");
 	setRegion(e.rowData.lat, e.rowData.lon);
 	
-	
-	Ti.API.info(" * sending to placeoverview: " + e.rowData.id + ", "+e.rowData.title + " *");
+	var place_ID_clicked_on = e.rowData.id;
+	Ti.API.info(" * sending to placeoverview: " + e.rowData.id + ", "+e.rowData.name + " *");
 	/*  prep all the required data to placeoverview.js */
 	var place_overview = Alloy.createController("placeoverview", { 
-			_place_id: 			e.rowData.id,						// pass in basic place info to next page
-			_place_name: 		e.rowData.name,
-			_place_address:	e.rowData.address,
-			_place_city:		e.rowData.city,
-			_place_zip:			e.rowData.zip,
-			_place_distance:e.rowData.distance,
-			_mobile_bg:			e.rowData.mobile_bg
+			_place_ID : place_ID_clicked_on			// pass in placeID so we can hit the backend for place info
 		} ).getView();
 	
+	/*  save the place details in sessionVars TODO: ?? IS THIS STILL NECESSARY ?? */
+	sessionVars.currentPlace.ID 				= e.rowData.id;
+	sessionVars.currentPlace.name 			= e.rowData.name;
+	sessionVars.currentPlace.address 		= e.rowData.address;
+	sessionVars.currentPlace.city 			= e.rowData.city;
+	sessionVars.currentPlace.zip 				= e.rowData.zip;
+	sessionVars.currentPlace.distance 	= e.rowData.distance;
+	sessionVars.currentPlace.mobile_bg 	= e.rowData.mobile_bg;
+
 	// place_overview.open();
 	/*  quick fade-in animation   */
 	place_overview.opacity = 0.01;
@@ -347,8 +350,7 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 		duration: 220,  
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
 	});
-	
-	// setTimeout( );
+
 });
 
 

@@ -53,13 +53,17 @@ var sessionVars = {
 	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
 	lat: 34.024,  lon: -118.394,			/*	 centered on Nextspace 	*/
 	currentPlace: { 
-		ID		: 	1,
-		name	: null,
-		bg_img: null,
-		city	: null
+		ID				: null,
+		name			: null,
+		mobile_bg	: null,
+		address		: null,
+		city			: null,
+		zip 			: null,
+		distance  : null
 	},
 	checkinInProgress	: null,
 	checkedIn					: 1,
+	checkin_place_ID	: 17, 
 	lastCheckIn				: null,
 	checkinTimestamp	: null,
 	AWS : {

@@ -16,24 +16,72 @@ function hideMiniHeader () {
   $.miniHeader.animate(a);
 }
 
-
 //================================================================================
-//		Name:				getActivity(place_ID)
-//		Purpose:		get latest checkins
+//		Name:				getPlaceInfo(place_ID)
+//		Purpose:		get place header info (name, address, bg image, etc)
 //================================================================================
-function getActivity(place_ID) {
-	Ti.API.info("* getActivity() called *");
+function getPlaceInfo(place_ID) {
+	Ti.API.log("* getPlaceInfo() called *" + place_ID);
 	var query = Ti.Network.createHTTPClient();
 	var params = {
-		place_ID : place_ID
+		place_ID  : place_ID,
+		lat				: sessionVars.lat,
+		lon				:	sessionVars.lon
 	};
 	
-	query.open("POST", "http://waterbowl.net/mobile/activity.php");	
+	query.open("POST", "http://waterbowl.net/mobile/place-info.php");	
+	query.send( params );
+	query.onload = function() {
+		var jsonResponse = this.responseText;
+		Ti.API.log( " * Place JSON: " + jsonResponse );
+		if (jsonResponse != "" && jsonResponse !="[]") {
+			var placeJson = JSON.parse( jsonResponse );
+			// var header_image = zeroPad( sessionVars.currentPlace.ID, 4 ) . "-000001-placename.jpg";
+			$.place_name_label.text 	= placeJson['name'];			// add place name header
+			$.place_address_label.text=	placeJson['street_address'];		// address, city, zip
+			$.place_city_label.text	  =	placeJson['city'] +' ' + placeJson['zipcode'];
+			$.place_dist_label.text 	= placeJson['distance'] + " miles away";   // TODO: send in distance in miles from backend
+			 
+			/*  fill in mini header info */
+			$.miniHeaderPlaceName.text = placeJson['name'];	
+			
+			/*  only attempt to set the bg image if it exists */
+			if ( placeJson['mobile_bg'] != "") {
+				$.headerContainer.backgroundImage = "images/places/" + placeJson['mobile_bg'];		// add place header image
+			}
+			/*  if viewing place details on a place we're currently, show the checkboxx!!   */
+			if ( place_ID == sessionVars.checkin_place_ID && sessionVars.checkedIn == true ) {
+				$.checkboxHeader.image = "images/icons/checkbox.png";
+				$.checkboxMiniHeader.image = "images/icons/checkbox.png";
+				// TODO: add checkout fucntionality to checkbox button!
+				//$.checkin_button.opacity = 1;
+				
+				/*
+				$.checkin_button.addEventListener( "touchstart", touchStartClick );				// assign the touch start & end functions
+				$.checkin_button.addEventListener( "touchend", touchEndClick );
+				$.checkin_button.addEventListener( "touchcancel", touchEndClick );
+				*/
+				//checkin_button.text = '';				
+			}
+		}	
+	};
+}
+//================================================================================
+//		Name:				getPlaceActivity(place_ID)
+//		Purpose:		get latest checkins
+//================================================================================
+function getPlaceActivity(place_ID) {
+	Ti.API.log("* getPlaceActivity() called *");
+	var query = Ti.Network.createHTTPClient();
+	var params = {
+		place_ID	: place_ID
+	};
+	
+	query.open("POST", "http://waterbowl.net/mobile/place-activity.php");	
 	query.send( params );
 	query.onload = function() {
 		var jsonResponse = this.responseText;
 		var activityData = new Array();												// create empty object container
-		
 		
 		/*			CREATE BLANK TEMPLATE FOR LATEST FEED ITEM 				*/
 		var dog_name_label 			= Ti.UI.createLabel({text: "None so far ...", top: 0});
@@ -51,7 +99,7 @@ function getActivity(place_ID) {
 			/*					POPULATE LATEST FEED ITEM 					*/
 			//var base_profile_url = "http://waterbowl.net/app-dev/stable/images/profile/";
 			var last_update_photo = sessionVars.AWS.base_profile_url + activityJson[0].dog_photo;
-			Ti.API.info( "latest update photo: " + last_update_photo  );
+			Ti.API.log( "latest update photo: " + last_update_photo  );
 			 
 			$.last_update_thumb.image = last_update_photo;		// TODO: change storage location	
 			dog_name_label.text 			= activityJson[0].dog_name;				// dog that provided most recent update
@@ -71,53 +119,54 @@ function getActivity(place_ID) {
 			});
 			
 			var max = 10;		// activityJson.length;
-		 
-			for (var i=1, j=max; i<j; i++) {		// optimize loop to only calculate array size once
-				// Ti.API.log("* "+ activityJson[i].dog_name + " - " + activityJson[i].last_update_formatted +" *");
-				// var icon = 'images/missing/dog-icon-sm.png';
 			
-				///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
-				var feed_item_view =  Ti.UI.createView();
-				$.addClass( feed_item_view, "feed_item");
+			/* ensure that there is more than 1 recent checkin */
+			if( activityJson.length > 1) {
+				for (var i=1; i<max; i++) {		// optimize loop to only calculate array size once
+					// Ti.API.log("* "+ activityJson[i].dog_name + " - " + activityJson[i].last_update_formatted +" *");
+					// var icon = 'images/missing/dog-icon-sm.png';
 				
-				///////////// MIDDLE VIEW OF STUFF ////////////////////////////////////////////
-				var middle_view = Ti.UI.createView ();
-				$.addClass( middle_view, "middle_view");
-				
-				var thumb = Ti.UI.createImageView ();
-				$.addClass( thumb, "thumbnail_sm");
-				thumb.image = sessionVars.AWS.base_profile_url + activityJson[i].dog_photo;		// TODO: change storage location	
-				
-				var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
-				$.addClass( status_update_label, "feed_label_left");
-				
-				var dog_name_label = Ti.UI.createLabel({text: "..."});
-				$.addClass( dog_name_label, "feed_label_left");
-				
-				status_update_label.text = activityJson[i].dog_name + " checked in";			// TODO: grab other status updates instead
-				dog_name_label.text 			= activityJson[i].dog_name + " saw " + activityJson[i].amount + " dogs 	";
-				
-				middle_view.add(status_update_label);
-				middle_view.add(dog_name_label);
-				
-				///////// RIGHT VIEW OF STUFF ///////////////////////////
-				var right_view = Ti.UI.createView();
-				var time_elapsed_label = Titanium.UI.createLabel({text: "..."});
-				time_elapsed_label.text = activityJson[i].time_elapsed;
-				
-				$.addClass( right_view, "right_view");
-				$.addClass( time_elapsed_label, "feed_label_right");
-				
-				right_view.add( time_elapsed_label );
-				///////// BUILD FEED ITEM  ///////////////////////////////////
-				feed_item_view.add( thumb );
-				feed_item_view.add( middle_view );
-				feed_item_view.add( right_view );
-				
-				///////// ADD ITEM TO FEED CONTAINER ////////////////////////
-				$.feedContainer.add( feed_item_view );
-	
+					///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
+					var feed_item_view =  Ti.UI.createView();
+					$.addClass( feed_item_view, "feed_item");
 					
+					///////////// MIDDLE VIEW OF STUFF ////////////////////////////////////////////
+					var middle_view = Ti.UI.createView ();
+					$.addClass( middle_view, "middle_view");
+					
+					var thumb = Ti.UI.createImageView ();
+					$.addClass( thumb, "thumbnail_sm");
+					thumb.image = sessionVars.AWS.base_profile_url + activityJson[i].dog_photo;		// TODO: change storage location	
+					
+					var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
+					$.addClass( status_update_label, "feed_label_left");
+					
+					var dog_name_label = Ti.UI.createLabel({text: "..."});
+					$.addClass( dog_name_label, "feed_label_left");
+					
+					status_update_label.text = activityJson[i].dog_name + " checked in";			// TODO: grab other status updates instead
+					dog_name_label.text 			= activityJson[i].dog_name + " saw " + activityJson[i].amount + " dogs 	";
+					
+					middle_view.add(status_update_label);
+					middle_view.add(dog_name_label);
+					
+					///////// RIGHT VIEW OF STUFF ///////////////////////////
+					var right_view = Ti.UI.createView();
+					var time_elapsed_label = Titanium.UI.createLabel({text: "..."});
+					time_elapsed_label.text = activityJson[i].time_elapsed;
+					
+					$.addClass( right_view, "right_view");
+					$.addClass( time_elapsed_label, "feed_label_right");
+					
+					right_view.add( time_elapsed_label );
+					///////// BUILD FEED ITEM  ///////////////////////////////////
+					feed_item_view.add( thumb );
+					feed_item_view.add( middle_view );
+					feed_item_view.add( right_view );
+					
+					///////// ADD ITEM TO FEED CONTAINER ////////////////////////
+					$.feedContainer.add( feed_item_view );		
+				}
 			}
 			//$.feedList.data = activityData;				// populate placeList TableView (defined in XML file, styled in TSS)
 		}
@@ -125,7 +174,7 @@ function getActivity(place_ID) {
 			$.latest_update_static.text = "";
 			$.last_update_middle.add ( dog_name_label );	
 			$.last_update_middle.add ( time_elapsed_label );
-			Ti.API.info(" * no checkins here... * ");
+			Ti.API.log(" * no checkins here... * ");
 		}
 				
 	};
@@ -175,37 +224,23 @@ function touchEndClick(e) {
 //
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 var mini_header_display = 0;
-var miniHeader;
+
 //-----------------------------------------------------------------------------
 //
 //		(1)		Grab incoming variables, set header image and title
 //
 //-----------------------------------------------------------------------------
 var args 	= arguments[0] || {};
-// var header_image = zeroPad( args._place_id, 4 ) . "-000001-placename.jpg";
-Ti.API.log("* placeoverview.js { #" + args._place_id + " } - "+ args._place_name + " | "+ args._mobile_bg+" * ");
-
-/*  fill in header info */
-$.place_name_label.text = args._place_name;													// add place name header
-$.place_addr_label.text =	args._place_address;											// address, city, zip
-$.place_city_label.text =	args._place_city +' ' + args._place_zip;
-$.place_dist_label.text = args._place_distance + " miles away";   //args._place_dist // TODO: send in distance in miles from backend
-
-/*  fill in mini header info */
-$.miniHeaderPlaceName.text = args._place_name;	
-
-/*  only attempt to set the bg image if it exists */
-if (args._mobile_bg!="") {
-	$.headerContainer.backgroundImage = "images/places/"+args._mobile_bg;		// add place header image
-}
+Ti.API.log("* placeoverview.js { #" + args._place_ID  + " } * ");	
 sessionVars.currentWindow = "placeoverview";									// set current place session variable
 
 //----------------------------------------------------------------------------
 //
-//		(2)		Populate activity feed
+//		(2)		Populate place header + activity feed
 //
 //----------------------------------------------------------------------------
-getActivity( args._place_id );
+getPlaceInfo( args._place_ID );
+getPlaceActivity( args._place_ID );
 
 //----------------------------------------------------------------------------
 //
@@ -226,12 +261,12 @@ $.backBtn.addEventListener('click', function() {			//  BACK button (aka window c
 
 /*
 $.refreshBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	Ti.API.info( "* Should be refreshing the feed... *" 	);
+	Ti.API.log( "* Should be refreshing the feed... *" 	);
 	// TODO:  refresh / replace feed if newer posts exist
 });
 */
 $.infoBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	Ti.API.info( "* Info button clicked *" 	);
+	Ti.API.log( "* Info button clicked *" 	);
 	// TODO:  ask Herb what info does
 });
 
@@ -254,7 +289,7 @@ $.scrollView.addEventListener('scroll', function(e) {
  			Titanium.API.info( ' * miniHeader attached * ' +  mini_header_display );
     }
     else if ( offsetY < 230 && offsetY != null && mini_header_display==1) {
-    	Ti.API.info (" MINIHEADER CONTENTS: "+ miniHeader);
+    	Ti.API.log (" MINIHEADER CONTENTS: "+ miniHeader);
     	miniHeader = hideMiniHeader();			// hide the mini header
      	
     	Titanium.API.info(' * scrollView Y offset: ' + offsetY);
@@ -267,19 +302,4 @@ $.scrollView.addEventListener('scroll', function(e) {
   }
 });
 
-//
-if ( args._place_id==sessionVars.currentPlace.ID && sessionVars.checkedIn == 1 ) {
-	/*
-	var checkin_button = Ti.UI.createButton( { id: "checkin_button" } );
-	$.addClass( checkin_button, "checkin_button");
-	$.checkinButtonContainer.add( checkin_button );
-	*/
-	$.checkin_button.opacity = 1;
-	
-	$.checkin_button.addEventListener( "touchstart", touchStartClick );				// assign the touch start & end functions
-	$.checkin_button.addEventListener( "touchend", touchEndClick );
-	$.checkin_button.addEventListener( "touchcancel", touchEndClick );
-
-	//checkin_button.text = '';				
-}
 
