@@ -4,20 +4,20 @@
 		<View id="menubar">
 			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
 			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
-			<View id="menuRight"><Button id="refreshBtn" class="menubar_button"/></View>
+			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
 		</View>
 
 		// attach blank mini header here, move just off screen (animate top pos from -80 to 0 opacity from 0.1 to 1.0)
-		<View id="miniHeader" class=layout_horz">
-			<View class="width_50">
-				<Label id="miniHeaderPlaceName" class="large_text" text="..."/>
+		<View id="miniHeader" class="layout_horz height_80dp">
+			<View class="width_60">
+				<Label id="miniHeaderPlaceName" class="large_text white" text="..."/>
 			</View>
-			<View class="fill_width border_red">
-				<ImageView id="checkinStatusImage" class="fit_height border"/>
+			<View class="fill_width">
+				<ImageView id="checkinStatusImage" class="fit_height height_80"/>
 			</View>
 		</View>
 		
-		<ScrollView id="scrollView" showVerticalScrollIndicator="true" showHorizontalScrollIndicator="true" height="100%" width="100%">
+		<ScrollView id="scrollView" class="fill_height">
 		
 			<View id="headerContainer">
 				<View id="headerTop" class="column">

@@ -3,9 +3,6 @@
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //=================================================================================
 function attachMiniHeader () {
-	// var matrix = Ti.UI.create2DMatrix()
-  // matrix = matrix.rotate(180);
-  // matrix = matrix.scale(2, 2);
   var a = Ti.UI.createAnimation({
     top: 0, opacity: 1, duration : 320
   });
@@ -13,11 +10,8 @@ function attachMiniHeader () {
 }
 
 function hideMiniHeader () {
-	// var matrix = Ti.UI.create2DMatrix()
-  // matrix = matrix.rotate(180);
-  // matrix = matrix.scale(2, 2);
   var a = Ti.UI.createAnimation({
-    top: -104, opacity: 0, duration : 220
+    top: -60, opacity: 0, duration : 220
   });
   $.miniHeader.animate(a);
 }
@@ -230,9 +224,15 @@ $.backBtn.addEventListener('click', function() {			//  BACK button (aka window c
 	$.placeoverview = null;
 });
 
+/*
 $.refreshBtn.addEventListener('click', function() {			//  BACK button (aka window close)
 	Ti.API.info( "* Should be refreshing the feed... *" 	);
 	// TODO:  refresh / replace feed if newer posts exist
+});
+*/
+$.infoBtn.addEventListener('click', function() {			//  BACK button (aka window close)
+	Ti.API.info( "* Info button clicked *" 	);
+	// TODO:  ask Herb what info does
 });
 
 ///----------------------------------------------------------------------------

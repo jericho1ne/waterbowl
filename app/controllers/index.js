@@ -84,11 +84,11 @@ if( sessionVars.user.password!=null || Ti.App.Properties.getString('pass')!="" )
 /*  	Login Hack - skip past login screen and go to Map 	*/
 //  setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-/*
- 	var go_here = "register";
+
+ 	var go_here = "checkin";
 	var new_window = Alloy.createController( go_here ).getView();
 	new_window.open();
-*/
+
 
 // loginRequest.open triggers > loginRequest.onload 
 // bounce user to Place View upon successful login

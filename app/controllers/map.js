@@ -126,9 +126,9 @@ function createMapMarker(row) {
 		title 		: row.name,
 		subtitle 	: row.city + " (" + row.dist + " mi)",
 		animate 	: true,
-		image 		: 'images/icons/map-marker.png',			// TODO: will need separate map marker icons; pull from AWS
+		image 		: 'images/icons/map-marker-pink.png',			// TODO: will need separate map marker icons; pull from AWS
 		//leftButton : row.icon,												// TODO:  include an imageView instead
-	/*
+	/*-+++++++++++++++++++++++++++++++++++++++++++++++++
 		leftButton : Ti.UI.createButton({
 			title : '+',
 			height : 36,
@@ -367,11 +367,11 @@ $.backBtn.addEventListener('click', function() {
 	currentWindow = null;
 });
 
-/*
+
 $.refreshBtn.addEventListener('click', function() {			// REFRESH button
 	createPlaceList();
 });
-*/
+
 
 /*
 $.wbMapView.addEventListener('click', function(e){	

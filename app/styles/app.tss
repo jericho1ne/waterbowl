@@ -14,9 +14,13 @@
 ".bg_dk_pink" : { backgroundColor: "#ec3c95"}
 ".bg_lt_pink" : { backgroundColor: "#f587e7"}		// TODO:  need current light pink from Herb
 
+".bg_white" : { backgroundColor: "#ffffff"}	
+".white" 		: { color: "#ffffff"}	
+
 /*				PREDEFIND   TITANIUM  UI  ELEMENTS  									*/
 "Window":{
 	exitOnClose: "true", fullscreen: "false", horizontalWrap: "true",
+	statusBarStyle: Ti.UI.iPhone.StatusBar.TRANSLUCENT_BLACK, 
 	backgroundColor:  "#777477"  
 
 }
@@ -104,8 +108,8 @@
  /* 									Class Selectors and ScrollViews																				  								 */
 /**************************************************************************************************************/
 // every top level div in each XML view is a .container * Forewarned. *
-".container" : { height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", backgroundColor: "#DCF1FC", exitOnClose: true }
-
+".container" : { height: Ti.UI.FILL, zIndex: 1, statusBarStyle: Ti.UI.iPhone.StatusBar.TRANSLUCENT_BLACK, layout: "vertical", width: "100%", backgroundColor: "#DCF1FC", exitOnClose: true }
+ 
 ".top_10"  : { top: 10 }
 ".top_20"  : { top: 20 }
 ".top_40"  : { top: 40 }
@@ -126,22 +130,24 @@
 ".height_60"  : { height: "60%" }
 ".height_80"  : { height: "80%" }
 
+".height_80dp"  : { height: 80 }
+
 ".float_left" 			: { width: Ti.UI.FILL, left: 2 }
 ".float_right" 			: { width: Ti.UI.FILL, right: 2 }
 
 ".layout_vert"	: { layout:"vertical", width: Ti.UI.SIZE, contentHeight: "auto" }
 ".layout_horz"	: {	layout:"horizontal", height: Ti.UI.SIZE, contentWidth: "auto"	}
 
-".fit_height"  : { height: Ti.UI.SIZE, width: auto }
-".fit_width"   : { width: Ti.UI.SIZE, height: auto }
+".fit_height"  : { height: Ti.UI.SIZE, width: "auto" }
+".fit_width"   : { width: Ti.UI.SIZE, height: "auto" }
 
 ".fill_height"  : { height: Ti.UI.FILL }
 ".fill_width"   : { width: Ti.UI.FILL }
 
 ".half_width"   : { width: "40%" }
 ".small_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 8 } }
-".large_text"		: { color: "#000000", font:{ fontFamily: 'Raleway', fontSize: 18 } }
-
+".large_text"		: { color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18 } }
+".medium_text"	: { color: "#000000", font:{ fontFamily: 'Raleway-Bold', fontSize: 14 } }
 ".list_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 12 } }
 
 /*  border colors for layout / debug purposes  */
@@ -149,7 +155,6 @@
 ".border_yel" : { borderWidth: 2, borderColor: "#ffff00" }
 ".border_blu" 	 : { borderWidth: 2, borderColor: "#00ffff" }
 ".border_red"  	 : { borderWidth: 2, borderColor: "ff0000" }
-
 
 ".btn_large" : { height: 50, font:{ fontSize: 20 } }
 ".text_field_large" : { height: 25, font:{ fontSize: 14 } }
@@ -170,7 +175,6 @@
 	font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
 	
 ".shadow" : { shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2}  }
-
 
 ".row_spacer_200"	: { height: 200, width: "100%" }
 ".row_spacer_100"	: { height: 100, width: "100%" }
@@ -197,7 +201,7 @@
 
 ".feed_label_left_md"	: { height: "auto", width:"auto",  font: { 	fontSize: 16 }, left : 6 }
 
-".feed_label_left_lg"	  : { width: Ti.UI.SIZE, height: "auto",  font: { 	fontSize: 20 }, left : 6 }
+".feed_label_left_lg"	  : { width: Ti.UI.SIZE, height: "auto",  font: { fontSize: 20 }, left : 6 }
 ".feed_label_center_lg" : { width: Ti.UI.SIZE, height: "auto", font: { fontSize: 20 }, top: 6 }
 ".feed_label_right_lg"	: { width: Ti.UI.SIZE, height: "auto", font: { fontSize: 20 }, right: 6 }
 

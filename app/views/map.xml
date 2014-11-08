@@ -1,13 +1,14 @@
 <Alloy>
-  <Window class="container">
+  <Window id="map" class="container">
   	
   	<View id="menubar">
 			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
 			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
 			<View id="menuRight">
-				<Button id="infoBtn" class="menubar_button"/>
+				<Button id="refreshBtn" class="menubar_button"/>
 			</View>
 		</View>
+		
 		<View class="height_50">
 			<!-- <Button id="refreshBtn" class="float_right"/> -->
 			<View id="mapContainer" class="fill_height border_bottom"/>
@@ -15,7 +16,7 @@
 		</View>
   	<ImageView class="blue_line"/>	
   	<View id="placeListContainer" class="fill_height">
-  		<TableView id="placeList" class="height_100"/>
+  		<TableView id="placeList" class="fill_height"/>
   			<!-- Parks get populated in here -->
   	</View>
   </Window>
