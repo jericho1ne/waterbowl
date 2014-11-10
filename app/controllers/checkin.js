@@ -106,6 +106,8 @@ function updateEstimates (place_ID, owner_ID, estimate) {
 	return response;
 }
 
+addToAppWindowStack( $.checkin, "checkin" );
+
 sessionVars.currentWindow = "checkin";
 
 $.backBtn.addEventListener('click', function() {

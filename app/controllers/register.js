@@ -100,7 +100,7 @@ function goToNextPage() {
 sessionVars.windowStack.push( $.register );
 Ti.API.info ( "localStack size: " + JSON.stringify( sessionVars.windowStack.length ) );
 
-Ti.App.Properties.current_window_name = "register";	
+addToAppWindowStack( $.register, "register" );
 
 $.backBtn.addEventListener('click', function() {
 	var currentWindow = sessionVars.windowStack.pop();

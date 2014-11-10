@@ -61,8 +61,7 @@ function goToRegister (e) {
 //========= Create and Open top level UI components ======================================= 
 $.index.open();	
 
-sessionVars.windowStack.push( $.index );
-Ti.API.info ( "localStack size: " + JSON.stringify( sessionVars.windowStack.length ) );
+addToAppWindowStack( $.index, "index" );
 
 /*
 Ti.App.Properties.windowStack.push( $.index );

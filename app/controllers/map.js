@@ -186,16 +186,16 @@ function createPlaceList() {
 				// Ti.API.info(" * JSON  " + jsonPlaces[i].name + " / " + jsonPlaces[i].dist + " *");			
 				var dataRow = Ti.UI.createTableViewRow({		// create each TableView row of place info
 					leftImage : icon_image,				// as defined above
-					id 			: jsonPlaces[i].id,
-					lat 		: jsonPlaces[i].lat,
-					lon 		: jsonPlaces[i].lon,
-					address	: jsonPlaces[i].address,
-					city 		: jsonPlaces[i].city,
-					zip			: jsonPlaces[i].zip,
-					name		: jsonPlaces[i].name,
-					distance : jsonPlaces[i].dist,
+					id 				: jsonPlaces[i].id,
+					lat 			: jsonPlaces[i].lat,
+					lon 			: jsonPlaces[i].lon,
+					address		: jsonPlaces[i].address,
+					city 			: jsonPlaces[i].city,
+					zip				: jsonPlaces[i].zip,
+					name			: jsonPlaces[i].name,
+					distance 	: jsonPlaces[i].dist,
 					mobile_bg : jsonPlaces[i].mobile_bg,
-					hasChild : true
+					hasChild 	: true
 				});
 				
 				var icon_image = Ti.UI.createImageView({
@@ -237,10 +237,10 @@ function findNearbyPlaces(lat, lon) {
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity.php");
 		
-	var params = { lat: 34.024,  lon: -118.394 };
+	// DEBUG / HACK: Search for places near a specific location
+	//var params = { lat: 34.024,  lon: -118.394 };
 		
-	// var params = { lat : lat, lon: lon	};
-	
+	var params = { lat : lat, lon: lon	};
 	place_query.send(params);
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
@@ -267,17 +267,18 @@ function findNearbyPlaces(lat, lon) {
 				};
 				var dialog = Ti.UI.createOptionDialog(optns);
 
+				// TODO:: if only 1 result. pop up Checkin modal; else, show a list of all nearby spots first
 				if (sessionVars.checkinInProgress != true)
-					dialog.show();													// pop up Checkin modal
-				sessionVars.checkinInProgress = true;			// checkin now officially in progress
+					dialog.show();													
 				
 				dialog.addEventListener('click', function(e) {// take user to Checkin View
-					if (e.index == 0) {
+					if (e.index == 0) {								// user clicked OK
+						sessionVars.checkinInProgress = true;			// checkin now officially in progress  <-- TODO: move to checkin.js
 						var checkinPage = Alloy.createController("checkin").getView();
 						checkinPage.open(
 							{ transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT }
 						);
-					} else if (e.index == 1) {
+					} else if (e.index == 1) {				// user clicked Cancel
 						sessionVars.checkinInProgress = false;
 					}
 				});
@@ -295,9 +296,9 @@ function findNearbyPlaces(lat, lon) {
 //
 //-----------------------------------------------------------------------
 Ti.Geolocation.getCurrentPosition(function(e) {
-	if (e.error) {//  hard-coded lat/lon if this fails
+	if (e.error) {			//  hard-coded lat/lon if this fails
 		Ti.API.info(" (x) Cannot seem to get your current location (x) ");
-	} else {//  or with current geolocation
+	} else {						//  or with current geolocation
 		sessionVars.lat = e.coords.latitude;
 		sessionVars.lon = e.coords.longitude;
 	}
@@ -353,7 +354,8 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 
 });
 
-sessionVars.windowStack.push( $.map );
+addToAppWindowStack( $.map, "map" );
+
 Ti.API.info ( "localStack size: " + JSON.stringify( sessionVars.windowStack.length ) );
 
 Ti.App.Properties.current_window_name = "map";	

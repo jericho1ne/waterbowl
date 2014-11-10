@@ -6,6 +6,20 @@
 // 	make things accessible globally by attaching them to the Alloy.Globals object
 //=================================================================================
 
+
+
+//=================================================================================
+// 	Name:  		addToAppWindowStack ( window_name, win_name )
+// 	Purpose:	keep breadcrumb of user navigation + close windows in correct order
+//=================================================================================
+function addToAppWindowStack( winObject, win_name )  {
+	sessionVars.windowStack.push( winObject );
+	Ti.App.Properties.last_open_window_name = win_name;
+	
+	Ti.API.info ( "windowStack:"+ JSON.stringify( sessionVars.windowStack ) + " || array size: " + ( sessionVars.windowStack.length ) );
+}
+
+
 //=================================================================================
 // 	Name:  		zeroPad ( number, width )
 // 	Purpose:		add leading zeroes to incoming int
@@ -51,7 +65,8 @@ var sessionVars = {
 	currentWindow	: "index", 
 	lastWindow		: null,
 	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
-	lat: 34.024,  lon: -118.394,			/*	 centered on Nextspace 	*/
+	// lat: 34.024,  lon: -118.394,			/*	 centered on Nextspace 	*/
+	lat: null, lon: null, 
 	currentPlace: { 
 		ID				: null,
 		name			: null,
@@ -81,11 +96,12 @@ Ti.App.Properties.setString('user', 'email@this.com');
 Ti.App.Properties.setString('pass', 'passwod');
 */
 
-var winStack = [];
-Ti.App.Properties.windowStack = winStack;
-Ti.App.Properties.current_window_name = null;
 
-/*  include amazon AWS module + credentials   */
+var winStack = [];			// create window stack array to keep track of what's open
+Ti.App.Properties.windowStack = winStack;
+Ti.App.Properties.last_open_window_name = null;
+
+/*  include amazon AWS module + authorize w/ credentials   */
 Alloy.Globals.AWS = require('ti.aws');						
 Alloy.Globals.AWS.authorize( sessionVars.AWS.access_key_id, sessionVars.AWS.secret_access);
 

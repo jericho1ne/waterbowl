@@ -1,6 +1,5 @@
-sessionVars.windowStack.push( $.photoupload );
 
-Ti.App.Properties.current_window_name = "photoupload";	
+addToAppWindowStack( $.photoupload, "photoupload" )
 
 
 $.backBtn.addEventListener('click', function() {
