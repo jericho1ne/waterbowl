@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+iosLaunchConfigurationAttributes/ATTR_MINIFY=true
+iosLaunchConfigurationAttributes/ATTR_PROJECT_NAME=Waterbowl
+iosLaunchConfigurationAttributes/appid=com.waterbowlapp.waterbowl
+iosLaunchConfigurationAttributes/certificate=Mihai Peteu (FDJ9XP24JF)
+iosLaunchConfigurationAttributes/distribute_path=/Users/mpeteu/Desktop/Development
+iosLaunchConfigurationAttributes/keychain=
+iosLaunchConfigurationAttributes/output_format=ipa
+iosLaunchConfigurationAttributes/sdk_version=8.1
+iosLaunchConfigurationAttributes/uuid=7b50285c-e505-4453-bd21-3ceffc3a893c
