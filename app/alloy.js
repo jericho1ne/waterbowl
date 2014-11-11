@@ -7,7 +7,6 @@
 //=================================================================================
 
 
-
 //=================================================================================
 // 	Name:  		addToAppWindowStack ( window_name, win_name )
 // 	Purpose:	keep breadcrumb of user navigation + close windows in correct order
@@ -90,7 +89,7 @@ var sessionVars = {
 	}
 };
 
-/*  saved credentials and app status in local storage  */
+/*  saved credentialsand app status in local storage  */
 /*
 Ti.App.Properties.setString('user', 'email@this.com');
 Ti.App.Properties.setString('pass', 'passwod');
