@@ -1,0 +1,5 @@
+<Alloy>
+	<Window id="testview" class="container">
+		<View id="menubar" height="60" />
+	</Window>
+</Alloy>
