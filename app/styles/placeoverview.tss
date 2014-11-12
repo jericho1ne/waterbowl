@@ -6,12 +6,5 @@
 "#miniHeaderPlaceName" :  { left: 6, top: 20 } 
 
 
-// image: "images/icons/checkbox.png"
-/*
-".checkin_button" : {	title: "\/", color: "#ffffff", zIndex: 5, opacity: 1, borderRadius: 20, 
-	width: 64, height: 64, backgroundColor: "#ccc" }
-*/
-
-
 
 

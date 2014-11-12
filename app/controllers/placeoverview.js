@@ -109,13 +109,18 @@ function touchEndClick(e) {
     e.source.touchTimer = null;
   }
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//===========================================================================================
+// 				LOGIC FLOW
+//-----------------------------------------------------------------------
 //
-//			LOGIC FLOW
+//		(0)		Add window to global stack, display menubar
 //
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//-----------------------------------------------------------------------
+addToAppWindowStack( $.placeoverview, "placeoverview" );
+addMenubar( $.menubar );
+
 var mini_header_display = 0;
-Titanium.UI.iPhone.statusBarStyle = Titanium.UI.iPhone.StatusBar.OPAQUE_BLACK;
 
 //-----------------------------------------------------------------------------
 //
@@ -139,14 +144,6 @@ getPlaceActivity( args._place_ID );
 //		(3)		Button listeners
 //
 //----------------------------------------------------------------------------
-$.backBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	$.placeoverview.close( { 
-		top: 0, opacity: 0.01, duration: 200, 
-		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-	} );
-	$.placeoverview = null;
-});
-
 // TODO:  refresh / replace feed if newer posts exist
 /*
 $.refreshBtn.addEventListener('click', function() {			//  BACK button (aka window close)
@@ -154,10 +151,6 @@ $.refreshBtn.addEventListener('click', function() {			//  BACK button (aka windo
 	
 });
 */
-$.infoBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	Ti.API.info( "* Info button clicked *" 	);
-	// TODO:  ask Herb what info does
-});
 
 function getPlaceActivity( place_ID ) {
 	Ti.API.info("* getPlaceActivity() called *");

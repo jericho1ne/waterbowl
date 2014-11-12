@@ -60,7 +60,6 @@ function goToRegister (e) {
 
 //========= Create and Open top level UI components ======================================= 
 $.index.open();	
-
 addToAppWindowStack( $.index, "index" );
 
 /*
@@ -82,12 +81,10 @@ if( sessionVars.user.password!=null || Ti.App.Properties.getString('pass')!="" )
 
 /*  	Login Hack - skip past login screen and go to Map 	*/
 // setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
+
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-
-// 	var go_here = "checkin";
-//	var new_window = Alloy.createController( go_here ).getView();
-//	new_window.open();
-
+//var new_window = Alloy.createController( "map" ).getView();
+//new_window.open();
 
 // loginRequest.open triggers > loginRequest.onload 
 // bounce user to Place View upon successful login
@@ -103,7 +100,7 @@ loginRequest.onload = function() {			// parse the JSON response
 		// TODO: dog info
 		
 		Ti.API.log( "* Saved Creds: "+sessionVars.user.owner_ID+ "/" +sessionVars.user.email+ "/" + sessionVars.user.password);
-		
+	
 		// grant entry, bounce user to next page
 		$.email.blur();
 		$.password.blur();

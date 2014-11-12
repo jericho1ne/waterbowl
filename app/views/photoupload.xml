@@ -3,11 +3,6 @@
   |	+------------------------+ |
   | |    		menubar          | |
   |	+------------------------+ |
-  | +----ScrollView----------+ |
- 	|	|				email						 | |
-	|	|				password1				 | | 	
-	|	|				password2				 | | 
-	|	+------------------------+ |
 	|	+----button container----+ |	
 	| |				uploadGallery		 | |
 	|	|				uploadCamera		 | |
@@ -33,12 +28,12 @@
 			<View class="layout_horz width_60">
 					<ImageView id="photoPlaceholder"/>
 			</View>
-			<View class="layout_horz border top_20 width_60">
+			<View class="layout_horz top_20 width_80">
 				
-				<View class="layout_horz width_50">
+				<View class="layout_horz width_40">
 					<Button id="galleryBtn" class="half_width">gallery</Button>
 				</View>
-				<View class="layout_horz width_50">
+				<View class="layout_horz width_40">
 					<Button id="cameraBtn" onClick="uploadFromCamera" class="half_width">camera</Button>
 				</View>
 			</View>

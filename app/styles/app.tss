@@ -1,46 +1,45 @@
 /* 
 	WB COLOR SCHEME
-		Waterbowl Pink		ec3c95		- Used mainly for active buttons, highlights
-		Waterbowl Blue		58c6d5 		- strong BG color
-		Waterbowl Grey		777477
-		Light Blue				DCF1FC		- lighter BG for forms and text
+	1. Parks/Outdoors			Brown			986d4f
+	2. Stores (Retail)		Green			34b44a
+	3. Vets								Red				ee3d3b
+	4. Boarding/Dogsit		Blue			3380c4
+	5. Pet Care Services 	Purple		9a52a0
+	6. Food/Restaurant		Orange		f5851f
+	7. General						Gray			787578
 */
 
 ".bg_dk_blue" : { backgroundColor: "#58c6d5"}
 ".bg_lt_blue" : { backgroundColor: "#DCF1FC"}
-
+".bg_lt_gray" : { backgroundColor: "#787578"}
 ".bg_dk_gray" : { backgroundColor: "#777477"}
-
 ".bg_dk_pink" : { backgroundColor: "#ec3c95"}
 ".bg_lt_pink" : { backgroundColor: "#f587e7"}		// TODO:  need current light pink from Herb
 
 ".bg_white" : { backgroundColor: "#ffffff"}	
 ".white" 		: { color: "#ffffff"}	
 
-".poi_park" 	: { backgroundColor: "#34b44a" }
-".poi_retail" : { backgroundColor: "#3380c4" }
+".poi_park" 	: { backgroundColor: "#986d4f" }
+".poi_retail" : { backgroundColor: "#34b44a" }
 ".poi_vet" 		: { backgroundColor: "#ee3d3b" }
 ".poi_board" 	: { backgroundColor: "#9a52a0" }
-".poi_groom" 	: { backgroundColor: "#e9a4c7" }
+".poi_care" 	: { backgroundColor: "#9a52a0" }
 ".poi_food" 	: { backgroundColor: "#f5851f" }
 
 /*				PREDEFIND   TITANIUM  UI  ELEMENTS  									*/
 "Window":{
-	exitOnClose: "true", fullscreen: "false", horizontalWrap: "true",
-	statusBarStyle: Ti.UI.iPhone.StatusBar.TRANSLUCENT_BLACK
+	exitOnClose: "true", fullscreen: "true", horizontalWrap: "true", statusBarStyle: Ti.UI.iPhone.StatusBar.TRANSLUCENT_BLACK
 }
 
+"NavigationWindow":{ exitOnClose: "true", fullscreen: "false" }
+
 "Label": {
-	font:{ fontFamily: 'Raleway', fontSize: 16 },
+	font:{ fontFamily: 'Raleway', fontSize: 18 },
 	width: "100%",  height: 26, color: "#000000", // color: "#777477" 
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 	verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
 }
 
-"NavigationWindow":{
-	exitOnClose: "true", fullscreen: "false",
-	backgroundColor:  "#fff"   // "#59c9ff"
-}
 "View": { layout: 'vertical',	height: '100%' }
 
 "ScrollView": {
@@ -50,13 +49,9 @@
 }
 
 "Button": { 
-	color: '#fff', backgroundColor: '#ec3c95',
-	width: '65%', height: 35, borderRadius: 3, borderWidth: 0,
-	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{
-		fontFamily: 'Raleway-Bold',
-		fontSize: 13
-	}
+	color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	font:{ fontFamily: 'Raleway-Bold', fontSize: 13 },
+	width: '65%', height: 35, borderRadius: 3, borderWidth: 0
 }
 
 "TextField": {
@@ -69,42 +64,40 @@
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
 }
 
-"TableView" : 	
-{ color: "#efefef", backgroundColor: '#ffffff',
-	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-	borderColor: "#fff", zIndex: 2, 
-	borderRadius: 0, opacity: 0.96,
-	scrollable: true, 
-	borderWidth: 0, 
-	scrollIndicatorStyle: Ti.UI.iPhone.ScrollIndicatorStyle.BLACK,
-	showVerticalScrollIndicator: true }
+"TableView": 	
+{ color: "#efefef", backgroundColor: '#ffffff', zIndex: 2, opacity: 0.96,
+	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, scrollable: true, showVerticalScrollIndicator: true, 
+	scrollIndicatorStyle: Ti.UI.iPhone.ScrollIndicatorStyle.BLACK	}
 
   /**************************************************************************************************************/
  /* 									Predefined Ti Selectors																		  														 */
 /**************************************************************************************************************/
-"#menubar"			: { width: "100%", layout: "horizontal", top: 18, height: 36, backgroundColor: "#58c6d5", 
-										opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2},
-										verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
-						
-"#menuLeft"			: { width: "20%" }
-"#menuCenter"		: { width: "60%" }
-"#menuRight"		: { width: Ti.UI.FILL }
+".menubar"			: { width: "100%", layout: "horizontal", top: 18, height: 48, backgroundColor: "#58c6d5", 
+										opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2} }
+										
+".menuLeft"			: { width: "20%", height: 36 }
+".menuCenter"		: { width: "60%" }
+".menuRight"		: { width: Ti.UI.FILL }
 
-"#backBtn"				: {	title: '<<', left: 2 }
-"#infoBtn"				: { title: "(i)", right: 2 }
-"#refreshBtn"			: {	title: "%", right: 2 }
-".menubar_button" : { width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 28, borderRadius: 14 }
+".backBtn"				: {	title: '<<', left: 2 }
+".infoBtn"				: { title: '(i)', right: 2 }
+".refreshBtn"			: {	title: "%", right: 2 }
 
-"#wbLogoMenubar" 	: { width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: 28,
+
+".menubar_button" : {	
+	color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	font:{ fontFamily: 'Raleway-Bold', fontSize: 13 } }
+
+".wbLogoMenubar" 	: { width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: 48,
 											color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18 } }
 
   /**************************************************************************************************************/
  /* 									Headers and ScrollViews																				  												 */
 /**************************************************************************************************************/
 "#scrollView" 			: { backgroundColor: "#fff", layout: "vertical" }
-"#headerContainer" 	: { zIndex: 30, layout: 'vertical', top: 0, height: "50%", width: "100%", backgroundImage : "images/missing/place-header.png" }
+"#headerContainer" 	: { zIndex: 30, layout: 'vertical', top: 0, height: "60%", width: "100%", backgroundImage : "images/missing/place-header.png" }
 "#headerTop"				: { height: "60%",  width: "100%", top: 20, left: 0 }
-"#headerBottom" 		: { height: Ti.UI.SIZE, width: "100%",  left: 0, top: -6, opacity: 0.8,  backgroundColor: '#ffffff' }
+"#headerBottom" 		: { height: Ti.UI.SIZE, width: "100%",  left: 0, top: 0, opacity: 1.0, backgroundImage : "images/ui/header-overlay-white.png" }
 "#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
 
 
@@ -142,7 +135,7 @@
 ".float_right" 			: { width: Ti.UI.FILL, right: 2 }
 
 ".layout_vert"	: { layout:"vertical", width: Ti.UI.SIZE, contentHeight: "auto" }
-".layout_horz"	: {	layout:"horizontal", height: Ti.UI.SIZE, contentWidth: "auto"	}
+".layout_horz"	: {	layout:"horizontal", contentWidth: "auto"	}
 
 ".fit_height"  : { height: Ti.UI.SIZE, width: "auto" }
 ".fit_width"   : { width: Ti.UI.SIZE, height: "auto" }
@@ -167,7 +160,7 @@
 
 ".wb_blue" : { backgroundColor: "#58c6d5" }
 
-".form_label" : { font:{ fontFamily: 'Raleway-Light', fontSize: 14, color: "#ffffff" } }
+".form_label" : { font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#000000" } }
 
 ".header_label" : { 
 	height: 50, top: 70, zIndex: 3, backgroundColor: "#ffffff", color: "#777477",

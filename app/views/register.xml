@@ -8,27 +8,18 @@
 	|	|				password1				 | | 	
 	|	|				password2				 | | 
 	|	+------------------------+ |
-	|	+----button container----+ |	
-	| |				uploadGallery		 | |
-	|	|				uploadCamera		 | |
-	| +------------------------+ |
 	|	+------------------------+ |	
 	|	|				continueBtn			 | |
 	| +------------------------+ |	
 	+============================+
 */
 
+
 <Alloy>
-	<Window id="register" class="container">
+	<Window id="register" class="container border_red">
+		<View id="menubar" height="60" />
 		
-	  <View id="menubar">
-			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
-			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
-			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
-		</View>
-		
-		<ScrollView class="fill_width bg_lt_blue">
-			<!-- Create account fields:  username, 2x passwd, submit btn -->
+		<ScrollView registerScrollView class="fill_width bg_lt_blue">
 			<Label class="form_label top_20">email</Label>
 			<TextField id="email"></TextField>
 		
@@ -36,10 +27,10 @@
 			<TextField id="password1"></TextField>
 			<TextField id="password2" class="top_10"></TextField>
 			
-			
 			<Button id="continueBtn" class="btn_large top_20 bg_dk_gray" onClick="goToNextPage">continue</Button>
 			
-	 	</ScrollView>
+	 	</ScrollView> 
+	 	
 	</Window>
 </Alloy>
 

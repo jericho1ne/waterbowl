@@ -1,12 +1,3 @@
-$.map.open();
-sessionVars.currentWindow = "map";
-
-function sleep(callback, ms) {
-	setTimeout(function() {
-		callback();
-	}, ms);
-}
-
 //=================================================================================
 // 	Name:  		drawDefaultMap (lat, lon)
 // 	Purpose:	draw default Apple map
@@ -30,7 +21,7 @@ function drawDefaultMap(lat, lon) {
 		regionFit : true,
 		userLocation : true
 	});
-	$.mapContainer.add(Alloy.Globals.wbMapView);
+	innerMapContainer.add(Alloy.Globals.wbMapView);
 	// Add map to current view
 	Ti.API.log("*** Default Map Created! ***");
 }
@@ -114,7 +105,6 @@ function currentLocation() {
 	}
 }
 
-
 //=============================================================
 //	Name:		createMapMarker( array )
 //	Purpose:	build Apple Maps place marker from incoming array
@@ -126,8 +116,8 @@ function createMapMarker(row) {
 		title 		: row.name,
 		subtitle 	: row.city + " (" + row.dist + " mi)",
 		animate 	: true,
-		image 		: 'images/icons/map-marker-pink.png',			// TODO: will need separate map marker icons; pull from AWS
-		//leftButton : row.icon,												// TODO:  include an imageView instead
+		image 		: sessionVars.AWS.base_icon_url + row.icon			// pull icon from AWS
+		//leftButton : row.icon,																		// TODO: (optional) create a leftButton imageView 
 	/*-+++++++++++++++++++++++++++++++++++++++++++++++++
 		leftButton : Ti.UI.createButton({
 			title : '+',
@@ -135,14 +125,10 @@ function createMapMarker(row) {
 			width : 36,
 			backgroundColor : "#eee"
 		}),
-		*/
-		rightView : Ti.UI.createButton({
-			title : '>>',
-			height : '36',
-			width : '36',
-			color : '#000',
-			backgroundColor : "#eee"
-		})
+		
+		rightView : Ti.UI.createButton({													// TODO:  (optional) create a rightButton imageView 
+			title : '>>', height : '36', width : '36', color : '#000', backgroundColor : "#eee"
+		})*/
 	});
 	Alloy.Globals.wbMapView.addAnnotation( annotation );
 }
@@ -154,12 +140,12 @@ function createMapMarker(row) {
 function createPlaceList() {
 	Ti.API.info("* createPlaceList() called *");
 	
-	$.placeList.data = null;													// clear existing place scrolling list
+	placeList.data = null;													// clear existing place scrolling list
 	Alloy.Globals.wbMapView.removeAllAnnotations();		// clear all map markers and annotations
 	
 	var place_query = Ti.Network.createHTTPClient();
 	
-	if (sessionVars.owner_ID == 99)				// usually, Mihai=1
+	if (sessionVars.owner_ID == 1)				// usually, Mihai=1
 		place_query.open("POST", "http://waterbowl.net/mobile/places-admin.php");	
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/places.php");	// locally at http://127.0.0.1/*
@@ -185,7 +171,7 @@ function createPlaceList() {
 			for (var i = 0; i < jsonPlaces.length; i++) {
 				// Ti.API.info(" * JSON  " + jsonPlaces[i].name + " / " + jsonPlaces[i].dist + " *");			
 				var dataRow = Ti.UI.createTableViewRow({		// create each TableView row of place info
-					leftImage : icon_image,				// as defined above
+					//leftImage : jsonPlaces[i].icon,				// as defined above
 					id 				: jsonPlaces[i].id,
 					lat 			: jsonPlaces[i].lat,
 					lon 			: jsonPlaces[i].lon,
@@ -198,19 +184,26 @@ function createPlaceList() {
 					hasChild 	: true
 				});
 				
+				/*
 				var icon_image = Ti.UI.createImageView({
   					image: sessionVars.AWS.base_icon_url + jsonPlaces[i].icon, 
   					width:48, height:48, left:2, zIndex: 20			
 				});
+				*/
+				
+				var bg_color = jsonPlaces[i].icon_color;
+				
+				var color_block = Ti.UI.createView( { width: 10, height: 35, left: 0, zIndex: 20, backgroundColor: bg_color	});
 				Ti.API.info( sessionVars.AWS.base_icon_url + jsonPlaces[i].icon );
 				var contentView = Ti.UI.createView({ 
-						layout: "horizontal", height: 44, width: "100%"
+						layout: "horizontal", height: 36, width: "100%"
 				});
 				var placeLabel = Ti.UI.createLabel ({ 
-					text: jsonPlaces[i].name, height: Ti.UI.SIZE, width: Ti.UI.FILL, left: 4,
+					text: jsonPlaces[i].name, height: Ti.UI.SIZE, width: Ti.UI.FILL, left: 10,
 					font:{ fontFamily: 'Raleway', fontSize: 14 }, color: "#000000",  textAlign : 'left' } );
 				
-				contentView.add( icon_image );
+				//contentView.add( icon_image );
+				contentView.add( color_block );
 				contentView.add( placeLabel );
         /*  add the custom row content we've just created  */
         dataRow.add( contentView );
@@ -220,7 +213,7 @@ function createPlaceList() {
 				createMapMarker(jsonPlaces[i]);
 			 
 			}
-			$.placeList.data = placeData;				// populate placeList TableView (defined in XML file, styled in TSS)
+			placeList.data = placeData;				// populate placeList TableView (defined in XML file, styled in TSS)
 		}
 	};
 }
@@ -287,9 +280,30 @@ function findNearbyPlaces(lat, lon) {
 		}
 	};
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
+//===========================================================================================
 // 				LOGIC FLOW
+//-----------------------------------------------------------------------
+//
+//		(0)		Add window to global stack, display menubar
+//
+//-----------------------------------------------------------------------
+addToAppWindowStack( $.map, "map" );
+addMenubar( $.menubar );
+
+var placeListContainer = Ti.UI.createView ( {id: "placeListContainer", width: "100%", contentHeight: "auto" } );
+var placeList					 = Ti.UI.createTableView ( {id: "placeList", width: "100%", contentHeight: "auto" } );
+$.addClass ( placeListContainer, "fill_height bg_lt_blue" );
+$.addClass ( placeList, "fill_height" );
+
+var outerMapContainer = Ti.UI.createView ( { id: "outerMapContainer", width: "100%", height:"50%", contentHeight: "auto" } );
+var innerMapContainer = Ti.UI.createView ( { id: "innerMapContainer", width: "100%", contentHeight: "auto" } );
+$.addClass ( innerMapContainer, "fill_height" );
+
+outerMapContainer.add ( innerMapContainer );
+$.map.add( outerMapContainer );
+placeListContainer.add( placeList );
+$.map.add( placeListContainer );
+	
 //-----------------------------------------------------------------------
 //
 //		(1)		Build the map
@@ -313,7 +327,6 @@ Ti.Geolocation.getCurrentPosition(function(e) {
 //					- make sure Ti.Geolocation.distanceFilter is set in alloy.js!
 //-----------------------------------------------------------------------
 Ti.Geolocation.addEventListener('location', function() {
-	
 	Ti.API.info(" ( -+- ) location event listener trigger ");
 	currentLocation();			// update map view and check for nearby places
 });
@@ -323,7 +336,7 @@ Ti.Geolocation.addEventListener('location', function() {
 // 		(3) 	Add Click Event Listeners
 //
 //-----------------------------------------------------------------------
-$.placeList.addEventListener('click', function(e) {			// PLACES TableView
+placeList.addEventListener('click', function(e) {			// PLACES TableView
 	Ti.API.info(" * clicked on [ " + e.rowData.name + " ] in POI List");
 	setRegion(e.rowData.lat, e.rowData.lon);
 	
@@ -354,26 +367,14 @@ $.placeList.addEventListener('click', function(e) {			// PLACES TableView
 
 });
 
-addToAppWindowStack( $.map, "map" );
-
-Ti.API.info ( "localStack size: " + JSON.stringify( sessionVars.windowStack.length ) );
-
-Ti.App.Properties.current_window_name = "map";	
-
-$.backBtn.addEventListener('click', function() {
-	var currentWindow = sessionVars.windowStack.pop();
-	Ti.API.info ( JSON.stringify( "currentWindow:"+currentWindow ) );
-	currentWindow.close( { 
-		top: 0, opacity: 0.01, duration: 200, 
-		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-	} );
-	currentWindow = null;
-});
 
 
+/*
+// TODO:  move this call to alloy.js
 $.refreshBtn.addEventListener('click', function() {			// REFRESH button
 	createPlaceList();
 });
+*/
 
 
 /*
@@ -387,15 +388,4 @@ $.wbMapView.addEventListener('click', function(e){
  }
  else if(e.clicksource=='leftPane'){			// action for left annotation button
  }
- 
- 
-$.placeList.addEventListener('click', function() {
-	$.register.close( { 
-		top: 800,
-		opacity: 0.2,
-		duration: 420, 
-		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-	} );
-	$.register = null;
-});
 */

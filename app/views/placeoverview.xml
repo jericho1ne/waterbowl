@@ -1,11 +1,6 @@
 <Alloy>
-	<Window class="container" id="placeoverview" platform="ios,mobileweb">
-				
-		<View id="menubar">
-			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
-			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
-			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
-		</View>
+	<Window id="placeoverview" class="container">	
+		<View id="menubar" height="60" />
 
 		<View id="miniHeader" class="layout_horz height_80dp">
 			<View class="width_60">
@@ -18,13 +13,13 @@
 		
 		<ScrollView id="scrollView" class="fill_height">
 		
-			<View id="headerContainer" class="layout_vert">
+			<View id="headerContainer" class="layout_vert border">
 				<View id="headerTop" class="layout_horz">
 					<View class="width_50"/>
 					<View class="fill_width">
 						<ImageView id="checkboxHeader" class="float_right"/> 
 					</View>
-				</View>	
+				</View>
 				<View id="headerBottom" class="layout_vert">
 					<Label id="place_name_label" text=".place name." 	class="feed_label_left_lg"/>
 					<Label id="place_address_label" text=".street addr." class="feed_label_left" />

@@ -1,4 +1,4 @@
 
-"#galleryBtn" : { width: "90%", left: 0 }
-"#cameraBtn" : { width: "90%", left: 10 }
-"#photoPlaceholder" : { image:"images/missing/dog-icon.png", width: "100%", height: "auto", borderRadius: 20 }
+"#galleryBtn" : { left: 10 }
+"#cameraBtn" : {  left: 10 }
+"#photoPlaceholder" : { image:"images/missing/WB-PetProfilePic-Placeholder.png", width: "100%", height: "auto", borderRadius: 20 }

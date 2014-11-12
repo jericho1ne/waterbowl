@@ -1,3 +1,4 @@
+
 //================================================================================
 //		Name: checkemail
 //		Purpose:  error check user input
@@ -96,18 +97,40 @@ function goToNextPage() {
 	var new_window = Alloy.createController( "photoupload" ).getView();
 	new_window.open();
 }
-//========================================================================================
-sessionVars.windowStack.push( $.register );
-Ti.API.info ( "localStack size: " + JSON.stringify( sessionVars.windowStack.length ) );
 
+//===========================================================================================
+// 				LOGIC FLOW
+//-----------------------------------------------------------------------
+//
+//		(0)		Add window to global stack, display menubar
+//
+//-----------------------------------------------------------------------
 addToAppWindowStack( $.register, "register" );
+addMenubar( $.menubar );
+/*	<ScrollView registerScrollView class="fill_width bg_lt_blue">
+			<Label class="form_label top_20">email</Label>
+			<TextField id="email"></TextField>
+		
+			<Label class="form_label top_20">password</Label>
+			<TextField id="password1"></TextField>
+			<TextField id="password2" class="top_10"></TextField>
+			
+			<Button id="continueBtn" class="btn_large top_20 bg_dk_gray" onClick="goToNextPage">continue</Button>
+			
+	 	</ScrollView> */
+	 	/*
+var registerScrollView = Ti.UI.createScrollView ( {id: "registerScrollView", width: "100%", contentHeight: "auto" } );
+var emailLabel				 = Ti.UI.createLabel ( {id: "emailLabel", width: "100%", contentHeight: "auto" } );
+var	emailTextField		 = Ti.UI.createTextField 
+$.addClass ( registerScrollView, "fill_height bg_lt_blue" );
+$.addClass ( emailLabel, "form_label top_20" );
 
-$.backBtn.addEventListener('click', function() {
-	var currentWindow = sessionVars.windowStack.pop();
-	Ti.API.info ( JSON.stringify( "currentWindow:"+currentWindow ) );
-	currentWindow.close( { 
-		top: 0, opacity: 0.01, duration: 200, 
-		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-	} );
-	currentWindow = null;
-});
+var outerMapContainer = Ti.UI.createView ( { id: "outerMapContainer", width: "100%", height:"50%", contentHeight: "auto" } );
+var innerMapContainer = Ti.UI.createView ( { id: "innerMapContainer", width: "100%", contentHeight: "auto" } );
+$.addClass ( innerMapContainer, "fill_height" );
+
+outerMapContainer.add ( innerMapContainer );
+$.map.add( outerMapContainer );
+placeListContainer.add( placeList );
+$.map.add( placeListContainer );
+	*/
