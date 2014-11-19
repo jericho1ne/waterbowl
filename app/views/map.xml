@@ -1,5 +1,5 @@
 <Alloy>
   <Window id="map" class="container">
-  	<View id="menubar" height="60" />
+  	<View id="menubar" />
 	</Window>
 </Alloy> 

@@ -9,6 +9,7 @@ function checkemail(emailAddress) {
 	var filter = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 	if (filter.test(str)) {
 		email_test = true;
+
 	} else {
 		email_test = false;
 	}
@@ -30,16 +31,13 @@ createAccountRequest.onload = function() {
 	var response = JSON.parse(json);
 
 	if (response.logged == 1) {
-		var alertDialog = Titanium.UI.createAlertDialog({
-			title : 'Done!',
-			message : response.message,
-			buttonNames : ['OK']
-		});
-		alertDialog.show();
-
 		$.email.value = '';
 		$.password1.value = '';
 		$.password2.value = '';
+		
+		/* 		--- EVERYTHING IS KOSHER, LET USER UPLOAD PHOTO NOW   ----- */
+		var new_window = Alloy.createController( "photoupload" ).getView();
+		new_window.open();
 	} 
 	else {
 		var error = Titanium.UI.createAlertDialog({
@@ -79,7 +77,9 @@ function registerNewUser(e) {
 				createAccountRequest.open("POST", "http://www.waterbowl.net/mobile/create-account.php");
 				var params = {
 					pwd 	: $.password1.value,
-					email : $.email.value
+					email : $.email.value,
+					lat		: sessionVars.lat,
+					lon		: sessionVars.lon
 				};
 				createAccountRequest.send(params);
 			}
@@ -93,10 +93,6 @@ function registerNewUser(e) {
 	}
 }
 
-function goToNextPage() {
-	var new_window = Alloy.createController( "photoupload" ).getView();
-	new_window.open();
-}
 
 //===========================================================================================
 // 				LOGIC FLOW
@@ -107,18 +103,8 @@ function goToNextPage() {
 //-----------------------------------------------------------------------
 addToAppWindowStack( $.register, "register" );
 addMenubar( $.menubar );
-/*	<ScrollView registerScrollView class="fill_width bg_lt_blue">
-			<Label class="form_label top_20">email</Label>
-			<TextField id="email"></TextField>
-		
-			<Label class="form_label top_20">password</Label>
-			<TextField id="password1"></TextField>
-			<TextField id="password2" class="top_10"></TextField>
-			
-			<Button id="continueBtn" class="btn_large top_20 bg_dk_gray" onClick="goToNextPage">continue</Button>
-			
-	 	</ScrollView> */
-	 	/*
+
+/*
 var registerScrollView = Ti.UI.createScrollView ( {id: "registerScrollView", width: "100%", contentHeight: "auto" } );
 var emailLabel				 = Ti.UI.createLabel ( {id: "emailLabel", width: "100%", contentHeight: "auto" } );
 var	emailTextField		 = Ti.UI.createTextField 

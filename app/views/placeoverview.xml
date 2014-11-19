@@ -2,29 +2,29 @@
 	<Window id="placeoverview" class="container">	
 		<View id="menubar" height="60" />
 
-		<View id="miniHeader" class="layout_horz height_80dp">
+		<View id="miniHeader" class="layout_horz" height="44">
 			<View class="width_60">
-				<Label id="miniHeaderPlaceName" class="large_text white" text="..."/>
+				<Label id="miniHeaderPlaceName" class="large_text white" text=""/>
 			</View>
 			<View class="fill_width">
-				<ImageView id="checkboxMiniHeader" class="fit_height height_80"/>
+				<ImageView id="checkboxMiniHeader" class="fit_height" height="40" />
 			</View>
 		</View>
 		
-		<ScrollView id="scrollView" class="fill_height">
+		<ScrollView id="scrollView" class="fill_height" top="-18">
 		
-			<View id="headerContainer" class="layout_vert border">
+			<View id="headerContainer" class="layout_vert">
 				<View id="headerTop" class="layout_horz">
 					<View class="width_50"/>
 					<View class="fill_width">
-						<ImageView id="checkboxHeader" class="float_right"/> 
+						<View id="checkboxHeader" class="float_right" /> 
 					</View>
 				</View>
 				<View id="headerBottom" class="layout_vert">
-					<Label id="place_name_label" text=".place name." 	class="feed_label_left_lg"/>
-					<Label id="place_address_label" text=".street addr." class="feed_label_left" />
-					<Label id="place_city_label" text=".city zip." 		class="feed_label_left" />
-					<Label id="place_dist_label" text=".distance." 		class="feed_label_left" />			
+					<Label id="place_name_label" 		text="" class="feed_label_left_lg"/>
+					<Label id="place_address_label" text="" class="feed_label_left" />
+					<Label id="place_city_label" 		text="" class="feed_label_left" />
+					<Label id="place_dist_label" 		text="" class="feed_label_left" />			
 				</View>
 			</View>
 			

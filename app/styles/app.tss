@@ -57,23 +57,22 @@
 "TextField": {
 	autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
 	autocorrect: false,
-	backgroundColor: '#ffffff', color: "#777477", width: '65%', height: 40,
+	backgroundColor: '#ffffff', color: "#777477", width: '65%', height: 40, top: 10, 
 	font: { fontFamily: 'Raleway-Light', fontSize: 18 },
 	keyboardType: Titanium.UI.KEYBOARD_DEFAULT,
 	returnKeyType: Titanium.UI.RETURNKEY_DEFAULT,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
 }
 
-"TableView": 	
-{ color: "#efefef", backgroundColor: '#ffffff', zIndex: 2, opacity: 0.96,
+"TableView": { 
+	color: "#efefef", backgroundColor: '#ffffff', zIndex: 2, opacity: 0.96,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, scrollable: true, showVerticalScrollIndicator: true, 
 	scrollIndicatorStyle: Ti.UI.iPhone.ScrollIndicatorStyle.BLACK	}
 
   /**************************************************************************************************************/
  /* 									Predefined Ti Selectors																		  														 */
 /**************************************************************************************************************/
-".menubar"			: { width: "100%", layout: "horizontal", top: 18, height: 48, backgroundColor: "#58c6d5", 
-										opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2} }
+"#menubar"			: { height: 44, width: "100%" }		// the rest is defined post-page load in Alloy.js
 										
 ".menuLeft"			: { width: "20%", height: 36 }
 ".menuCenter"		: { width: "60%" }
@@ -82,7 +81,6 @@
 ".backBtn"				: {	title: '<<', left: 2 }
 ".infoBtn"				: { title: '(i)', right: 2 }
 ".refreshBtn"			: {	title: "%", right: 2 }
-
 
 ".menubar_button" : {	
 	color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
@@ -94,8 +92,8 @@
   /**************************************************************************************************************/
  /* 									Headers and ScrollViews																				  												 */
 /**************************************************************************************************************/
-"#scrollView" 			: { backgroundColor: "#fff", layout: "vertical" }
-"#headerContainer" 	: { zIndex: 30, layout: 'vertical', top: 0, height: "60%", width: "100%", backgroundImage : "images/missing/place-header.png" }
+"#scrollView" 			: { backgroundColor: "" }
+"#headerContainer" 	: { zIndex: 30, height: "53%", width: "100%", backgroundImage : "images/missing/place-header.png" }
 "#headerTop"				: { height: "60%",  width: "100%", top: 20, left: 0 }
 "#headerBottom" 		: { height: Ti.UI.SIZE, width: "100%",  left: 0, top: 0, opacity: 1.0, backgroundImage : "images/ui/header-overlay-white.png" }
 "#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
@@ -106,14 +104,13 @@
 /**************************************************************************************************************/
 // every top level div in each XML view is a .container * Forewarned. *
 ".container" : { height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", backgroundColor: "#343434", exitOnClose: true }
- 
+
+/* --------------- ALL OF THE SPACING STUFF  -------------------------- */ 
 ".top_10"  : { top: 10 }
 ".top_20"  : { top: 20 }
 ".top_40"  : { top: 40 }
 ".top_80"  : { top: 80 }
-".top_100"  : { top: 100 }
-".top_120"  : { top: 120 }
-".top_160" : { top: 160 }
+".top_100" : { top: 100 }
 
 ".width_20"  : { width: "20%" }
 ".width_40"  : { width: "40%" }
@@ -121,7 +118,10 @@
 ".width_60"  : { width: "60%" }
 ".width_80"  : { width: "80%" }
 
-".blue_line" : { image: 'images/ui/blue-line.png', height: 2, width: "100%" }
+".width_60dp"  : { width: 60 }
+".width_80dp"  : { width: 80 }
+
+// ".col_spacer_5"		: { width:   5, height: Ti.UI.FILL }
 
 ".height_20"  : { height: "20%" }
 ".height_40"  : { height: "40%" }
@@ -129,13 +129,8 @@
 ".height_60"  : { height: "60%" }
 ".height_80"  : { height: "80%" }
 
+".height_60dp"  : { height: 60 }
 ".height_80dp"  : { height: 80 }
-
-".float_left" 			: { width: Ti.UI.FILL, left: 2 }
-".float_right" 			: { width: Ti.UI.FILL, right: 2 }
-
-".layout_vert"	: { layout:"vertical", width: Ti.UI.SIZE, contentHeight: "auto" }
-".layout_horz"	: {	layout:"horizontal", contentWidth: "auto"	}
 
 ".fit_height"  : { height: Ti.UI.SIZE, width: "auto" }
 ".fit_width"   : { width: Ti.UI.SIZE, height: "auto" }
@@ -143,8 +138,17 @@
 ".fill_height"  : { height: Ti.UI.FILL }
 ".fill_width"   : { width: Ti.UI.FILL }
 
-".half_width"   : { width: "40%" }
-".small_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 8 } }
+/* --------------- END ALL THE SPACING STUFF  -------------------------- */
+
+".blue_line" : { image: 'images/ui/blue-line.png', height: 2, width: "100%" }
+
+".float_left" 			: { width: Ti.UI.FILL, left: 2 }
+".float_right" 			: { width: Ti.UI.FILL, right: 2 }
+
+".layout_vert"	: { layout:"vertical", width: Ti.UI.SIZE, contentHeight: "auto" }
+".layout_horz"	: {	layout:"horizontal", contentWidth: "auto"	}
+
+".small_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 10 } }
 ".large_text"		: { color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18 } }
 ".medium_text"	: { color: "#000000", font:{ fontFamily: 'Raleway-Bold', fontSize: 14 } }
 ".list_text"		: { color: "#000000", font:{ fontFamily: 'Raleway-Light', fontSize: 12 } }
@@ -160,7 +164,7 @@
 
 ".wb_blue" : { backgroundColor: "#58c6d5" }
 
-".form_label" : { font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#000000" } }
+".form_label" : { top: 20, font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#000000"} }
 
 ".header_label" : { 
 	height: 50, top: 70, zIndex: 3, backgroundColor: "#ffffff", color: "#777477",
@@ -172,20 +176,6 @@
 	
 ".shadow" : { shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2}  }
 ".hr"			: { height: 1, backgroundColor: "#343434", width: "100%" } 
-
-".row_spacer_200"	: { height: 200, width: "100%" }
-".row_spacer_100"	: { height: 100, width: "100%" }
-".row_spacer_50"	: { height:  50, width: "100%" }
-".row_spacer_25"	: { height:  25, width: "100%" }
-".row_spacer_10"	: { height:  10, width: "100%" }
-".row_spacer_5"		: { height:   5, width: "100%" }
-
-".col_spacer_200"	: { width: 200, height: Ti.UI.FILL }
-".col_spacer_100"	: { width: 100, height: Ti.UI.FILL }
-".col_spacer_50"	: { width:  50, height: Ti.UI.FILL }
-".col_spacer_25"	: { width:  25, height: Ti.UI.FILL }
-".col_spacer_10"	: { width:  10, height: Ti.UI.FILL }
-".col_spacer_5"		: { width:   5, height: Ti.UI.FILL }
 
 ".bottom_spacer_10" : { width: "100%", height: "10%" }
 
@@ -202,10 +192,10 @@
 ".feed_label_center_lg" : { width: Ti.UI.SIZE, height: "auto", font: { fontSize: 20 }, top: 6 }
 ".feed_label_right_lg"	: { width: Ti.UI.SIZE, height: "auto", font: { fontSize: 20 }, right: 6 }
 
-
 ".left_view"  : { layout:"vertical",	width: "50%", left: 4  }
 ".middle_view"  : { layout:"vertical", width:"50%", left:2, borderColor: "#ccc", borderWidth: 0 }
 ".right_view"   : { layout:"vertical",	 width: Ti.UI.FILL, left:0, borderColor: "#000", borderWidth: 0 } 
 
-".thumbnail" 		: { image: 'images/missing/dog-icon-lg.png', height: 60, width: 60, borderRadius: 12, left: 4, top: 2 }
-".thumbnail_sm" : { image: 'images/missing/dog-icon-sm.png', height: 48, width: 48, borderRadius: 10, left: 10 }
+".thumbnail_sm" : { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 48, width: 48, borderRadius: 10, left: 4 }
+".thumbnail" 		: { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 60, width: 60, borderRadius: 12, left: 4, top: 2 }
+".thumbnail_lg" : { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 120, width: 120, borderRadius: 24, left: 4, top: 4 }

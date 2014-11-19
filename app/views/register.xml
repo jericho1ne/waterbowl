@@ -16,18 +16,18 @@
 
 
 <Alloy>
-	<Window id="register" class="container border_red">
-		<View id="menubar" height="60" />
+	<Window id="register" class="container">
+		<View id="menubar"/>
 		
-		<ScrollView registerScrollView class="fill_width bg_lt_blue">
-			<Label class="form_label top_20">email</Label>
+		<ScrollView id="registerScrollView" class="fill_width bg_lt_blue">
+			<Label class="form_label top_60">email</Label>
 			<TextField id="email"></TextField>
 		
 			<Label class="form_label top_20">password</Label>
 			<TextField id="password1"></TextField>
 			<TextField id="password2" class="top_10"></TextField>
 			
-			<Button id="continueBtn" class="btn_large top_20 bg_dk_gray" onClick="goToNextPage">continue</Button>
+			<Button id="continueBtn" class="btn_large top_20 bg_dk_gray" onClick="registerNewUser">continue</Button>
 			
 	 	</ScrollView> 
 	 	

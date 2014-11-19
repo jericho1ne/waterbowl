@@ -1,44 +1,41 @@
 /*
-  +=== photoupload ============+
-  |	+------------------------+ |
-  | |    		menubar          | |
-  |	+------------------------+ |
-	|	+----button container----+ |	
-	| |				uploadGallery		 | |
-	|	|				uploadCamera		 | |
-	| +------------------------+ |
-	|	+------------------------+ |	
-	|	|				createBtn				 | |
-	| +------------------------+ |	
-	+============================+
+  +=== photoupload =================+
+  |	+----------------------------+ 	|
+  | |    		menubar          	   | 	|
+  |	+----------------------------+	|
+  |																	|
+  |	+------ScrollView------------+	|
+  | | +----button container----+ |	|	
+	| |	|			uploadGallery			 | |	|
+	|	|	|		uploadCamera				 | |	|
+	| | +------------------------+ |	|
+	| +----------------------------+	| 
+	|	    +-------------------+     	|	
+	|	    |	    createBtn	    |     	|
+	|     +-------------------+     	|	
+	+=================================+
 */
 
 <Alloy>
 	<Window id="photoupload" class="container">
-		
-	  <View id="menubar">
-			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
-			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>
-			<View id="menuRight"><Button id="infoBtn" class="menubar_button"/></View>
-		</View>
-		
-		<ScrollView class="bg_lt_blue">
+		<View id="menubar"/>
+			
+		<ScrollView class="fill_width bg_lt_blue">
 			<Label class="form_label top_40">choose a profile photo</Label>
 			<Label class="small_text">no humans allowed!</Label>
-			<View class="layout_horz width_60">
-					<ImageView id="photoPlaceholder"/>
-			</View>
-			<View class="layout_horz top_20 width_80">
-				
-				<View class="layout_horz width_40">
-					<Button id="galleryBtn" class="half_width">gallery</Button>
+			
+			<ImageView id="photoPlaceholder"/>
+		
+			<View class="layout_horz top_20 height_60dp width_80">
+				<View class="layout_horz width_50">
+					<Button id="galleryBtn" class="float_right">gallery</Button>
 				</View>
-				<View class="layout_horz width_40">
-					<Button id="cameraBtn" onClick="uploadFromCamera" class="half_width">camera</Button>
+				<View class="layout_horz width_50">
+					<Button id="cameraBtn" onClick="uploadFromCamera" class="float_left">camera</Button>
 				</View>
 			</View>
 			
-			<Button id="continueBtn" class="top_20" onClick="uploadPhoto">create account</Button>
+			<Button id="continueBtn" class="btn_large top_20" onClick="createAccount">create account</Button>
 			
 	 	</ScrollView>
 	</Window>

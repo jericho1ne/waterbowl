@@ -106,19 +106,19 @@ function updateEstimates (place_ID, owner_ID, estimate) {
 	return response;
 }
 
+//===========================================================================================
+// 				LOGIC FLOW
+//-----------------------------------------------------------------------
+//
+//		(0)		Add window to global stack, display menubar
+//
+//-----------------------------------------------------------------------
 addToAppWindowStack( $.checkin, "checkin" );
+addMenubar( $.menubar );
 
-sessionVars.currentWindow = "checkin";
+var args 	= arguments[0] || {};
+//Ti.API.info("* checkin.js { #" + args._place_ID  + " } * ");	
 
-$.backBtn.addEventListener('click', function() {
-	$.checkin.close( { 
-		transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_RIGHT, 
-		duration: 300, 
-		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-	} );
-	
-	$.checkin = null;
-});
 
 // initial value set
 $.slider_label.text = ""; 		

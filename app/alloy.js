@@ -5,24 +5,30 @@
 // 	Initializion / Global Variable + Function creation
 // 		make things accessible globally by attaching them to the Alloy.Globals object
 //=================================================================================
-
+ 
+ 
+ //===============================================================================================================
+ //		Name:	addMenubar( parent_object )
+ //		
+ //		
+ //===============================================================================================================
 function addMenubar( parent_object ) {
-	/*  menubar		*/
-	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 18, height: 50, backgroundColor: "#58c6d5", 
-											opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 3, shadowOffset: {x:2, y:2} });
+	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
+	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal" top: 0, height: 44, backgroundColor: "#58c6d5", 
+											opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 2, shadowOffset: {x:2, y:2} });
 											
 	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: "15%", borderWidth: 0, borderColor: "red" });
-	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "50%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
+	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "60%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
 	var menuRight 	= Ti.UI.createView( {id: "menuRight", right: 0, layout: "horizontal", width: Ti.UI.SIZE, borderWidth: 0, borderColor: "red" });
 	
 	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 }, borderWidth: 0, borderColor: "yellow", title: '<<', left: 2, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 } );
+	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 }, borderWidth: 0, borderColor: "yellow", title: '<<', left: 4, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 } );
 	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 }, borderWidth: 0, borderColor: "ff0000", title: '(i)', right: 2, width: Ti.UI.SIZE, top: 4, opacity: 1, height: 34, width: 34, borderRadius: 4 });
 	var	refreshBtn	= Ti.UI.createButton( {id: "refreshBtn", color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 },  borderWidth: 0, borderColor: "ff0000", title: "%", right: 2, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 });
 	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 },  borderWidth: 0, borderColor: "ff0000", title: "|=|", right: 2, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 });
+	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 },  borderWidth: 0, borderColor: "ff0000", title: "|=|", left: 4, right: 4, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 });
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "#wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 8, height: "auto", 
@@ -43,8 +49,8 @@ function addMenubar( parent_object ) {
 	
 	backBtn.addEventListener('click', closeWin);
 	infoBtn.addEventListener('click', mainInfoBtn);
+	settingsBtn.addEventListener('click', showSettings);
 	//refreshBtn.addEventListener('click', createPlaceList);
-
 }
 
 /*
@@ -148,7 +154,7 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 //=================================================================================
 function addToAppWindowStack( winObject, win_name )  {
 	sessionVars.windowStack.push( winObject );
-	Ti.App.Properties.last_open_window_name = win_name;
+	Ti.App.Properties.current_window = win_name;
 	
 	//Ti.API.info ( "windowStack:"+ JSON.stringify( sessionVars.windowStack ) + " || array size: " + ( sessionVars.windowStack.length ) );
 	Ti.API.info ( "window name:"+ win_name + " || current Windows array size: " + ( sessionVars.windowStack.length ) );
@@ -161,7 +167,7 @@ function addToAppWindowStack( winObject, win_name )  {
 function closeWin() {
 	var currentWindow = sessionVars.windowStack.pop();
 		
-	Ti.API.info( "closing window ["+ Ti.App.Properties.last_open_window_name +"]");
+	Ti.API.info( "closing window ["+ Ti.App.Properties.current_window +"]");
 	//Ti.API.info ( "closing currentWindow:" + JSON.stringify( currentWindow ) );
 	
 	currentWindow.close( { 
@@ -177,6 +183,14 @@ function closeWin() {
 //=================================================================================
 function mainInfoBtn() {
 	Ti.API.info( "******** info button clicked *********");
+}
+
+//=================================================================================
+// 	Name:  		showSettings()
+// 	Purpose:	generic settings for user / app
+//=================================================================================
+function showSettings() {
+	Ti.API.info( "******** settings button clicked *********");
 }
 
 //==========================================================================================
@@ -223,6 +237,8 @@ var sessionVars = {
 	windowStack		: [],
 	currentWindow	: "index", 
 	lastWindow		: null,
+	local_icon_url:	"images/icons/",
+	placeArray		: [],
 	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
 	// lat: 34.024,  lon: -118.394,			/*	 centered on Nextspace 	*/
 	lat: null, lon: null, 
@@ -236,16 +252,17 @@ var sessionVars = {
 		distance  : null
 	},
 	checkinInProgress	: null,
-	checkedIn					: null,
-	checkin_place_ID	: null, 
+	checkedIn					: 1,								// where we are actually checked in (as opposed to currentPlace, which is simply nearby)
+	checkin_place_ID	: 1, 
 	lastCheckIn				: null,
 	checkinTimestamp	: null,
 	AWS : {
-		access_key_id	: "AKIAILLMVRRDGDBDZ5XQ",
-		secret_access	: "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",
-		base_profile_url	: "http://s3.amazonaws.com/wb-profiles/",
-		base_icon_url			: "http://s3.amazonaws.com/wb-icons/"
-		//base_icon_url			: "http://waterbowl.net/mobile/wb-icons/"
+		access_key_id		: "AKIAILLMVRRDGDBDZ5XQ",
+		secret_access		: "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",
+		url_img_profile	: "http://s3.amazonaws.com/wb-profile/",
+		url_img_icon		: "http://s3.amazonaws.com/wb-icon/",
+		url_img_banner	: "http://s3.amazonaws.com/wb-place/banner/",
+		url_ui_text			: "http://s3.amazonaws.com/wb-ui-text/"
 	}
 };
 
@@ -258,7 +275,7 @@ Ti.App.Properties.setString('pass', 'passwod');
 
 var winStack = [];			// create window stack array to keep track of what's open
 Ti.App.Properties.windowStack = winStack;
-Ti.App.Properties.last_open_window_name = null;
+Ti.App.Properties.current_window = null;
 
 /*  include amazon AWS module + authorize w/ credentials   */
 Alloy.Globals.AWS = require('ti.aws');						
@@ -272,19 +289,19 @@ Alloy.Globals.AWS.authorize( sessionVars.AWS.access_key_id, sessionVars.AWS.secr
 Ti.Geolocation.distanceFilter = 20;
 Ti.Geolocation.purpose = "Receive User Location";
 
-// Globally define the map to be drawn 
-//		(enables future redraws when user postion changes)
-Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
-
 // load the map module
 if (Ti.Platform.osname === "iphone")	
  	Alloy.Globals.Map = require('ti.map');
 else if (Ti.Platform.osname == "android")
 	Alloy.Globals.Map = Ti.Map;
 	
-//Alloy.Globals.wbMapView = Alloy.Globals.Map.createView( {mapType:Map.NORMAL_TYPE} );
+Alloy.Globals.wbMapView 	= "";
+Alloy.Globals.annotations = [];
 
 var longPress;
+
+Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
+
 
 
 

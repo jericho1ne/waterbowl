@@ -1,4 +1,4 @@
 
 "#galleryBtn" : { left: 10 }
 "#cameraBtn" : {  left: 10 }
-"#photoPlaceholder" : { image:"images/missing/WB-PetProfilePic-Placeholder.png", width: "100%", height: "auto", borderRadius: 20 }
+"#photoPlaceholder" : { image:"images/missing/WB-PetProfilePic-Placeholder.png", width: 200, height: 200, borderRadius: 20 }

@@ -1,14 +1,7 @@
 <Alloy>
 	
 	<Window id="checkin" class="container">
-		
-		<View id="menubar">
-			<View id="menuLeft"><Button id="backBtn" class="menubar_button"/></View>
-			<View id="menuCenter"><Label id="wbLogoMenubar" class=""/></View>	
-			<View id="menuRight">
-				<Button id="refreshBtn" class="menubar_button"/>
-			</View>
-		</View>
+		<View id="menubar" />
 		
 		<ScrollView>
 			<!-- Create account fields:  username, 2x passwd, submit btn -->

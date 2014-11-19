@@ -1,20 +1,3 @@
-Ti.API.info( "*** index.js ***" );
- 
-// Check if the device is running iOS 8 or later, before registering for local notifications
-if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
-  Ti.App.iOS.registerUserNotificationSettings({
-    types: [
-          Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT,
-          Ti.App.iOS.USER_NOTIFICATION_TYPE_SOUND,
-          Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE
-      ]
-  });
-  Ti.API.info( "* Running IOS 8 or greater *" );
-}
-else {
-	Ti.API.info( "* Running IOS 7 or older *" );
-}
-
 //================================================================================
 //	Name: goToLogin
 //	Purpose: check credentials against backend
@@ -58,15 +41,34 @@ function goToRegister (e) {
 	}); 
 }
 
-//========= Create and Open top level UI components ======================================= 
+//========================== Create and Open top level UI components ======================================= 
 $.index.open();	
 addToAppWindowStack( $.index, "index" );
 
-/*
-Ti.App.Properties.windowStack.push( $.index );
-Ti.App.Properties.current_window_name = "index";	
-Ti.API.info ( "windowStack size: " + JSON.stringify( Ti.App.Properties.windowStack.length ) );
-*/
+// check network connection 
+if(Titanium.Network.networkType == Titanium.Network.NETWORK_NONE) {
+	var alertDialog = Titanium.UI.createAlertDialog({
+    title: 'Uh oh',
+    message: 'No network connection detected',
+    buttonNames: ['OK']
+  });
+  alertDialog.show();
+}
+
+// Check if the device is running iOS 8 or later, before registering for local notifications
+if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
+  Ti.App.iOS.registerUserNotificationSettings({
+    types: [
+          Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT,
+          Ti.App.iOS.USER_NOTIFICATION_TYPE_SOUND,
+          Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE
+      ]
+  });
+  Ti.API.info( "* >> IOS 8 or greater *" );
+}
+else {
+	Ti.API.info( "* << IOS 7 or older *" );
+}
 
 // if credentials are already saved in sessionVars
 if( sessionVars.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
@@ -78,13 +80,12 @@ if( sessionVars.user.password!=null || Ti.App.Properties.getString('pass')!="" )
 	$.password.value = Ti.App.Properties.getString('pass');
 }	
 
-
 /*  	Login Hack - skip past login screen and go to Map 	*/
 // setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-//var new_window = Alloy.createController( "map" ).getView();
-//new_window.open();
+// var new_window = Alloy.createController( "map" ).getView();
+// new_window.open();
 
 // loginRequest.open triggers > loginRequest.onload 
 // bounce user to Place View upon successful login
