@@ -51,10 +51,10 @@ function checkIn() {
 	var estimate = Math.round( $.slider.value );
 	
 	Ti.API.log( "* Checked in to place ID "+ 
-		sessionVars.currentPlace.ID + " / " +
-		sessionVars.user.owner_ID + " / " + estimate + " * " );
+		session.currentPlace.ID + " / " +
+		session.user.owner_ID + " / " + estimate + " * " );
 	
-	updateEstimates(sessionVars.currentPlace.ID, sessionVars.user.owner_ID, estimate);
+	updateEstimates(session.currentPlace.ID, session.user.owner_ID, estimate);
 }
 
 //========================================================================
@@ -87,12 +87,12 @@ function updateEstimates (place_ID, owner_ID, estimate) {
 				$.checkin.close();
 				$.checkin = null;
 				
-				/*		 save Place ID, checkin state, and timestamp in sessionVars  	*/
-				sessionVars.checkedIn = true;										// checkin now officially complete
+				/*		 save Place ID, checkin state, and timestamp in session  	*/
+				session.checkedIn = true;										// checkin now officially complete
 				var timestamp = new Date().getTime();
-				sessionVars.checkin_place_ID 	= place_ID;
-				sessionVars.lastCheckIn 			= timestamp;
-				sessionVars.checkinInProgress = false;				// remove "in progress" state
+				session.checkin_place_ID 	= place_ID;
+				session.lastCheckIn 			= timestamp;
+				session.checkinInProgress = false;				// remove "in progress" state
 				
 				var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
 				placeoverview.open();
@@ -124,6 +124,6 @@ var args 	= arguments[0] || {};
 $.slider_label.text = ""; 		
 $.slider_int_val.text = "";
 
-$.place_checkin.text = sessionVars.currentPlace.name;
-Ti.API.log( "* Checking in at "+ sessionVars.currentPlace.name +"(" + sessionVars.currentPlace.ID +")" );
+$.place_checkin.text = session.currentPlace.name;
+Ti.API.log( "* Checking in at "+ session.currentPlace.name +"(" + session.currentPlace.ID +")" );
 

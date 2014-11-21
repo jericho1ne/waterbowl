@@ -78,8 +78,8 @@ function registerNewUser(e) {
 				var params = {
 					pwd 	: $.password1.value,
 					email : $.email.value,
-					lat		: sessionVars.lat,
-					lon		: sessionVars.lon
+					lat		: session.lat,
+					lon		: session.lon
 				};
 				createAccountRequest.send(params);
 			}

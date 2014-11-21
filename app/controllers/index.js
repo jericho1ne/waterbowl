@@ -70,22 +70,22 @@ else {
 	Ti.API.info( "* << IOS 7 or older *" );
 }
 
-// if credentials are already saved in sessionVars
-if( sessionVars.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
-	// $.email.value = sessionVars.user.email;
+// if credentials are already saved in session
+if( session.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
+	// $.email.value = session.user.email;
 	$.email.value = Ti.App.Properties.getString('user');
 }
-if( sessionVars.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
-	$.password.value = sessionVars.user.password;
+if( session.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
+	$.password.value = session.user.password;
 	$.password.value = Ti.App.Properties.getString('pass');
 }	
 
-/*  	Login Hack - skip past login screen and go to Map 	*/
+/*  	LOGIN HCK - skip past login screen and go to Map 	*/
 // setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-// var new_window = Alloy.createController( "map" ).getView();
-// new_window.open();
+var new_window = Alloy.createController( "map" ).getView();
+new_window.open();
 
 // loginRequest.open triggers > loginRequest.onload 
 // bounce user to Place View upon successful login
@@ -95,12 +95,12 @@ loginRequest.onload = function() {			// parse the JSON response
 	var response = JSON.parse(json);			// debug message
 	if (response.status == 1) {
 		// save credentials locally (globals for now, later more secure)
-		sessionVars.user.email 		= $.email.value;
-		sessionVars.user.password = $.password.value;
-		sessionVars.user.owner_ID = response.owner_ID;
+		session.user.email 		= $.email.value;
+		session.user.password = $.password.value;
+		session.user.owner_ID = response.owner_ID;
 		// TODO: dog info
 		
-		Ti.API.log( "* Saved Creds: "+sessionVars.user.owner_ID+ "/" +sessionVars.user.email+ "/" + sessionVars.user.password);
+		Ti.API.log( "* Saved Creds: "+session.user.owner_ID+ "/" +session.user.email+ "/" + session.user.password);
 	
 		// grant entry, bounce user to next page
 		$.email.blur();

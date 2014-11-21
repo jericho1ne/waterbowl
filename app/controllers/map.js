@@ -75,12 +75,12 @@ function currentLocation() {
 				Ti.API.info(' ( -+- ) currentLocation: ' + e.coords.latitude + '/' + e.coords.longitude);
 
 				var minutes_elapsed = 100;
-				if (sessionVars.lastCheckIn != null) {
+				if (session.lastCheckIn != null) {
 					var current_ts = new Date().getTime();
-					minutes_elapsed = Math.round((sessionVars.lastCheckIn - current_ts ) / (1000 * 60));
+					minutes_elapsed = Math.round((session.lastCheckIn - current_ts ) / (1000 * 60));
 					Ti.API.info(' * Minutes elapsed since last check-in: ' + minutes_elapsed + '* ');
 				}
-				if (sessionVars.checkinInProgress != true && minutes_elapsed > 10) {
+				if (session.checkinInProgress != true && minutes_elapsed > 10) {
 					findNearbyPlaces(e.coords.latitude, e.coords.longitude);
 					// quick check for nearby stuff
 				}
@@ -139,10 +139,10 @@ function createAnnotation( place_data ) {
 		latitude : place_data.lat,
 		longitude : place_data.lon,
 		opacity:  0.8,
-		title : place_data.id + place_data.name,
+		title : place_data.id+" "+place_data.name,
 		subtitle : place_data.city + " (" + place_data.dist + " mi)",
 		animate : true,
-		image : sessionVars.local_icon_url + place_data.icon, 			// or, pull icon from AWS: sessionVars.AWS.base_icon_url
+		image : session.local_icon_path+'/'+place_data.icon, 			// or, pull icon from AWS: session.AWS.base_icon_url
 		rightView : temp_button
 		//	leftButton : place_data.icon,														// TODO: (optional) create a leftButton imageView
 		// 	leftButton : Ti.UI.createButton({  title : '+', height : 36, width : 36, backgroundColor : "#eee" }),
@@ -158,22 +158,22 @@ function createAnnotation( place_data ) {
 function createPlaceList() {
 	// Ti.API.info("* createPlaceList() called *");
 
-	placeList.data = null;
+	placeListTable.data = null;
 	// clear existing place scrolling list
 	Alloy.Globals.wbMapView.removeAllAnnotations();
 	// clear all map markers and annotations
 
 	var place_query = Ti.Network.createHTTPClient();
 
-	if (sessionVars.owner_ID == 1)// usually, Mihai=1
+	if (session.owner_ID == 1)// usually, Mihai=1
 		place_query.open("POST", "http://waterbowl.net/mobile/places-admin.php");
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/places.php");
 	// locally at http://127.0.0.1/*
 
 	var params = {
-		lat : sessionVars.lat,
-		lon : sessionVars.lon
+		lat : session.lat,
+		lon : session.lon
 	};
 	place_query.send(params);
 	place_query.onload = function() {
@@ -192,7 +192,7 @@ function createPlaceList() {
 			// fixed maximum, or up to arrayName.length
 
 			for (var i = 0; i < jsonPlaces.length; i++) {
-				Ti.API.info(" * JSON at [i]=" +i+ " : " +JSON.stringify( jsonPlaces[i] )+ " *");
+				// Ti.API.info(" * JSON at [i]=" +i+ " : " +JSON.stringify( jsonPlaces[i] )+ " *");
 				
 				var dataRow = Ti.UI.createTableViewRow(	{	// create each TableView row of place info
 					//leftImage : jsonPlaces[i].icon,				// as defined above
@@ -204,13 +204,12 @@ function createPlaceList() {
 					zip : jsonPlaces[i].zip,
 					name : jsonPlaces[i].name,
 					distance : jsonPlaces[i].dist,
-					mobile_bg : jsonPlaces[i].mobile_bg,
-					hasChild : true
+					hasChild : false
 				});
 
 				/*  save into global places array */
 				var current_index = jsonPlaces[i].id;
-				sessionVars.placeArray[ current_index ] = jsonPlaces[i];
+				session.placeArray[ current_index ] = jsonPlaces[i];
 
 				var bg_color = jsonPlaces[i].icon_color;
 
@@ -218,7 +217,7 @@ function createPlaceList() {
 					width : 10, height : 35, left : 0, zIndex : 20,
 					backgroundColor : bg_color
 				});
-				// Ti.API.info(sessionVars.AWS.base_icon_url + jsonPlaces[i].icon);
+				// Ti.API.info(session.AWS.base_icon_url + jsonPlaces[i].icon);
 				var place_name = jsonPlaces[i].name;
 				var font_size = 14;
 				
@@ -243,7 +242,7 @@ function createPlaceList() {
 				createAnnotation(jsonPlaces[i]);
 			}
 			/* populate placeList TableViewRows*/
-			placeList.data = placeData;
+			placeListTable.data = placeData;
 			/* attach all POI marker annotations to map */
 			Alloy.Globals.wbMapView.addAnnotations( Alloy.Globals.annotations );
 		}
@@ -257,7 +256,7 @@ function createPlaceList() {
 function findNearbyPlaces(lat, lon) {
 	var place_query = Ti.Network.createHTTPClient();
 
-	if (sessionVars.owner_ID == 1)
+	if (session.owner_ID == 1)
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity-admin.php");
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity.php");
@@ -279,30 +278,33 @@ function findNearbyPlaces(lat, lon) {
 
 				// TODO: 	will need to discern between multiple nearby places
 				// 				- selection should be made in first modal or in the checkin Window
-
+				// TODO:  only ask once every 10 minutes; impose sleep command
+				
 				/* 	save to global vars		*/	
-				sessionVars.currentPlace.ID = placesArray.places[0].id;
-				sessionVars.currentPlace.name = placesArray.places[0].name;
-				sessionVars.currentPlace.city = placesArray.places[0].city;
+				session.currentPlace.ID = placesArray.places[0].id;
+				session.currentPlace.name = placesArray.places[0].name;
+				session.currentPlace.city = placesArray.places[0].city;
 
-				// Ti.API.info("*** close to " + sessionVars.currentPlace.name);
+				// Ti.API.info("*** close to " + session.currentPlace.name);
 				var optns = {// build up Checkin modal popup
 					options : ['Yes', 'Cancel'],
 					cancel : 1,
 					selectedIndex : 0,
 					destructive : 0,
-					title : 'Check in at ' + sessionVars.currentPlace.name + '?'
+					title : 'Check in at ' + session.currentPlace.name + '?'
 				};
 				var dialog = Ti.UI.createOptionDialog(optns);
 
 				// TODO:: if only 1 result. pop up Checkin modal; else, show a list of all nearby spots first
-				if (sessionVars.checkinInProgress != true)
+				if (session.checkinInProgress != true) {
 					dialog.show();
+					session.checkinInProgress = true; 		// should only bug user once
+				}
 
 				dialog.addEventListener('click', function(e) {// take user to Checkin View
 					Ti.API.info ( " ** What we got here is: " + JSON.stringify(e) );
 					if (e.index == 0) {// user clicked OK
-						sessionVars.checkinInProgress = true;
+						session.checkinInProgress = true;
 						// checkin now officially in progress  <-- TODO: move to checkin.js
 						var checkinPage = Alloy.createController("checkin", {
 							//_place_ID : e.source.id			// pass in place info!
@@ -312,7 +314,7 @@ function findNearbyPlaces(lat, lon) {
 							transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
 						});
 					} else if (e.index == 1) {// user clicked Cancel
-						sessionVars.checkinInProgress = false;
+						session.checkinInProgress = false;
 					}
 				});
 
@@ -336,13 +338,13 @@ var placeListContainer = Ti.UI.createView({
 	width : "100%",
 	contentHeight : "auto"
 });
-var placeList = Ti.UI.createTableView({
-	id : "placeList",
+var placeListTable = Ti.UI.createTableView({
+	id : "placeListTable",
 	width : "100%",
 	contentHeight : "auto"
 });
 $.addClass(placeListContainer, "fill_height bg_lt_blue");
-$.addClass(placeList, "fill_height");
+$.addClass(placeListTable, "fill_height");
 
 var outerMapContainer = Ti.UI.createView({
 	id : "outerMapContainer",
@@ -359,7 +361,7 @@ $.addClass(innerMapContainer, "fill_height");
 
 outerMapContainer.add(innerMapContainer);
 $.map.add(outerMapContainer);
-placeListContainer.add(placeList);
+placeListContainer.add(placeListTable);
 $.map.add(placeListContainer);
 
 //-----------------------------------------------------------------------
@@ -369,15 +371,15 @@ $.map.add(placeListContainer);
 //-----------------------------------------------------------------------
 Ti.Geolocation.getCurrentPosition(function(e) {
 	if (e.error) {//  hard-coded lat/lon if this fails
-		Ti.API.info(" (x) Cannot seem to get your current location (x) ");
+		Ti.API.info("! Cannot seem to get your current location !");
 	} else {//  or with current geolocation
-		sessionVars.lat = e.coords.latitude;
-		sessionVars.lon = e.coords.longitude;
+		session.lat = e.coords.latitude;
+		session.lon = e.coords.longitude;
 	}
 	// Ti.API.info("*** Drawing the Map ***");
 	
 	/* draw the map		*/
-	drawDefaultMap(sessionVars.lat, sessionVars.lon);
+	drawDefaultMap(session.lat, session.lon);
 	
 	/* Grab JSON data and populate Place TableView */
 	createPlaceList();
@@ -399,29 +401,33 @@ Ti.Geolocation.addEventListener('location', function() {
 // 		(3) 	Add Click Event Listeners
 //
 //-----------------------------------------------------------------------
-placeList.addEventListener('click', function(e) {// PLACES TableView
-	Ti.API.info(" * clicked on [ " + e.rowData.name + " ] in POI List");
+placeListTable.addEventListener('click', function(e) {// PLACES TableView
+	Ti.API.info("[+] POI list click [ " + e.rowData.name + " ]");
 	setRegion(e.rowData.lat, e.rowData.lon);
 
 	var place_ID_clicked_on = e.rowData.id;
-	Ti.API.info(" * clicked on: " + e.rowData.id + ", " + e.rowData.name + " *");
-
-	Alloy.Globals.wbMapView.selectAnnotation( Alloy.Globals.annotations[e.index] );
-	// or try .fireEvent('click');
 	
-	/*  prep all the required data to placeoverview.js */
+	if ( Alloy.Globals.place_list_clicks <= 1 ) {
+		Ti.API.info(" * clicked on: " + e.rowData.id + ", " + e.rowData.name + " *");
+		Alloy.Globals.wbMapView.selectAnnotation( Alloy.Globals.annotations[e.index] );
+	}
+	else if ( Alloy.Globals.place_list_clicks = 2 ) {
+			/*  prep all the required data to placeoverview.js */
+		// TODO: separate triggers for First and Second click; 2nd click goes straight to detail view
+		var place_overview = Alloy.createController("placeoverview", {
+			_place_ID : place_ID_clicked_on, 	// pass in placeID so we can hit the backend for place info
+			_banner		: e.rowData.banner
+		}).getView();
+	
+		/*  quick fade-in animation   */
+		place_overview.opacity = 0.01;
+		place_overview.open({
+			opacity : 1,
+			duration : 300,
+			curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
+		});
+	}
 
-	//var place_overview = Alloy.createController("placeoverview", {
-	//	_place_ID : place_ID_clicked_on	// pass in placeID so we can hit the backend for place info
-	//}).getView();
-
-	/*  quick fade-in animation   */
-	/* place_overview.opacity = 0.01;
-	place_overview.open({
-		opacity : 1,
-		duration : 360,
-		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-	}); */
 
 });
 

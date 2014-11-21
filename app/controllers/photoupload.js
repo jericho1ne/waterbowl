@@ -1,9 +1,10 @@
 addToAppWindowStack( $.photoupload, "photoupload" );
+
 addMenubar( $.menubar );
 
 /* 								photo upload buttons									*/
 $.galleryBtn.addEventListener('click', function() {
-	Ti.API.info( " * inside of galleryBtn click listener * " + this.parent );
+	Ti.API.info( " * galleryBtn clicked, calling uploadFromGallery * " );
 	uploadFromGallery( $.photoPlaceholder );	
 });
 

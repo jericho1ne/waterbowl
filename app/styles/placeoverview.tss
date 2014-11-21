@@ -1,9 +1,21 @@
 "#placeoverview"  		: {}
-"#checkboxHeader" 		: { zIndex: 90, top:20, right: 20, width: 70, height: 70, opacity: 1.0 }
 
-"#miniHeader" 				 : { layout: "horizontal", zIndex: 98, top: -44, height: 44, backgroundColor:"#777477", opacity: 0 }
+"#checkboxHeader" 		: { 
+		zIndex: 90, top:20, right: 20, width: 70, height: 70, opacity: 1.0 
+}
+
+"#miniHeader" 				 : { 
+		layout: "horizontal", zIndex: 98, top: -44, height: 44, backgroundColor:"#777477", opacity: 0 
+}
+
 "#checkboxMiniHeader"  : { zIndex: 30,  opacity: 0 }
-"#miniHeaderPlaceName" :  { left: 6, top: 10 } 
+
+"#miniHeaderPlaceName" : { left: 6, top: 10 } 
+
+"#headerContainer" 	: { zIndex: 30, height: "53%", width: "100%" }
+"#headerTop"				: { height: "60%",  width: "100%", top: 20, left: 0 }
+"#headerBottom" 		: { height: Ti.UI.SIZE, width: "100%",  left: 0, top: 0, opacity: 1.0, backgroundImage : "images/ui/header-overlay-white.png" }
+
 
 
 

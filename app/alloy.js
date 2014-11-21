@@ -5,16 +5,10 @@
 // 	Initializion / Global Variable + Function creation
 // 		make things accessible globally by attaching them to the Alloy.Globals object
 //=================================================================================
- 
- 
- //===============================================================================================================
- //		Name:	addMenubar( parent_object )
- //		
- //		
- //===============================================================================================================
+
 function addMenubar( parent_object ) {
 	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
-	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal" top: 0, height: 44, backgroundColor: "#58c6d5", 
+	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 44, backgroundColor: "#58c6d5", 
 											opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 2, shadowOffset: {x:2, y:2} });
 											
 	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: "15%", borderWidth: 0, borderColor: "red" });
@@ -51,6 +45,7 @@ function addMenubar( parent_object ) {
 	infoBtn.addEventListener('click', mainInfoBtn);
 	settingsBtn.addEventListener('click', showSettings);
 	//refreshBtn.addEventListener('click', createPlaceList);
+
 }
 
 /*
@@ -125,23 +120,25 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 	/* 	move file from photo gallery to Ti app data directory first */
 	var filename 		= Ti.Platform.createUUID()+".jpg";
 	/* 	save recently uploaded photo as current profile photo; update profile photo ImageView image=... */
-	sessionVars.user.dog_photo = filename;
-	photoPlaceholder.image = filehandle;
+	session.user.dog_photo = filename;
+	//photoPlaceholder.image = filehandle;
 	
 	/* Returns a File object representing the file identified by the path arguments  */
 	var filehandle 	= Ti.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, filename);
 	filehandle.write( event_media );
-	Ti.API.info ( filename + " || "  + filehandle);
+	Ti.API.info ( " >> uploadToAWS: " + filename + " || "  + filehandle);
 	Alloy.Globals.AWS.S3.putObject( {
-      'BucketName' : 'wb-profiles',
+      'BucketName' : 'wb-profile',
      	'ObjectName' : filename, 
       'File' : filehandle,
       'Expires' : 30000
-	 	 	}, function(data, response) {
-      Ti.API.info(JSON.stringify(data));
- 	 	}, function(message, error) {
-      Ti.API.error(message);
-      Ti.API.info(JSON.stringify(error));
+	 	 	}, 
+	 	 	function(data, response) {		// success
+      	Ti.API.info(" >>> uploadToAWS success  >> " + JSON.stringify(data) );
+      	
+ 	 	}, function(message, error) {		// 
+      Ti.API.info( " >>> uploadToAWS message  >> " + message );
+      Ti.API.info( " >>> uploadToAWS error >> " + JSON.stringify(error));
  	 	}
  	);
  	return { "filename": filename, "filehandle": filehandle };
@@ -153,11 +150,11 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 // 	Purpose:	keep breadcrumb of user navigation + close windows in correct order
 //=================================================================================
 function addToAppWindowStack( winObject, win_name )  {
-	sessionVars.windowStack.push( winObject );
+	session.windowStack.push( winObject );
 	Ti.App.Properties.current_window = win_name;
 	
-	//Ti.API.info ( "windowStack:"+ JSON.stringify( sessionVars.windowStack ) + " || array size: " + ( sessionVars.windowStack.length ) );
-	Ti.API.info ( "window name:"+ win_name + " || current Windows array size: " + ( sessionVars.windowStack.length ) );
+	//Ti.API.info ( "windowStack:"+ JSON.stringify( session.windowStack ) + " || array size: " + ( session.windowStack.length ) );
+	Ti.API.info ( "window name:"+ win_name + " || current Windows array size: " + ( session.windowStack.length ) );
 }
 
 //=================================================================================
@@ -165,10 +162,9 @@ function addToAppWindowStack( winObject, win_name )  {
 // 	Purpose:	generic cleanup function usually attached to Back Button
 //=================================================================================
 function closeWin() {
-	var currentWindow = sessionVars.windowStack.pop();
+	var currentWindow = session.windowStack.pop();
 		
-	Ti.API.info( "closing window ["+ Ti.App.Properties.current_window +"]");
-	//Ti.API.info ( "closing currentWindow:" + JSON.stringify( currentWindow ) );
+	Ti.API.info( "[x] closing window ["+ Ti.App.Properties.current_window +"]");
 	
 	currentWindow.close( { 
 		top: 0, opacity: 0.01, duration: 200, 
@@ -182,7 +178,7 @@ function closeWin() {
 // 	Purpose:	generic help function attached to Info Button
 //=================================================================================
 function mainInfoBtn() {
-	Ti.API.info( "******** info button clicked *********");
+	Ti.API.info( "[+] info button clicked");
 }
 
 //=================================================================================
@@ -190,7 +186,7 @@ function mainInfoBtn() {
 // 	Purpose:	generic settings for user / app
 //=================================================================================
 function showSettings() {
-	Ti.API.info( "******** settings button clicked *********");
+	Ti.API.info( "[+] settings button clicked");
 }
 
 //==========================================================================================
@@ -225,7 +221,7 @@ if(Ti.Platform.osname === 'android'){
 // NextSpace Culver City
 // 34.024 / -118.394
 
-var sessionVars = {
+var session = {
 	user : {
 		owner_ID: 	null,
 		username: 	null,
@@ -237,7 +233,8 @@ var sessionVars = {
 	windowStack		: [],
 	currentWindow	: "index", 
 	lastWindow		: null,
-	local_icon_url:	"images/icons/",
+	local_icon_path		:	"images/icons",
+	local_banner_path : "images/places",
 	placeArray		: [],
 	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
 	// lat: 34.024,  lon: -118.394,			/*	 centered on Nextspace 	*/
@@ -259,10 +256,11 @@ var sessionVars = {
 	AWS : {
 		access_key_id		: "AKIAILLMVRRDGDBDZ5XQ",
 		secret_access		: "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",
-		url_img_profile	: "http://s3.amazonaws.com/wb-profile/",
-		url_img_icon		: "http://s3.amazonaws.com/wb-icon/",
-		url_img_banner	: "http://s3.amazonaws.com/wb-place/banner/",
-		url_ui_text			: "http://s3.amazonaws.com/wb-ui-text/"
+		url_base 				: "http://s3.amazonaws.com",
+		// bucket_icon			: "wb-icon",
+		bucket_place		: "wb-place",
+		bucket_profile	: "wb-profile",
+		bucket_uitext		: "wb-ui-text"
 	}
 };
 
@@ -279,8 +277,9 @@ Ti.App.Properties.current_window = null;
 
 /*  include amazon AWS module + authorize w/ credentials   */
 Alloy.Globals.AWS = require('ti.aws');						
-Alloy.Globals.AWS.authorize( sessionVars.AWS.access_key_id, sessionVars.AWS.secret_access);
+Alloy.Globals.AWS.authorize( session.AWS.access_key_id, session.AWS.secret_access );
 
+Alloy.Globals.place_list_clicks = 0;
 /*----------------------------------------------------------------------
  *  	GEOLOCATION
  *-----------------------------------------------------------------------*/
@@ -288,6 +287,7 @@ Alloy.Globals.AWS.authorize( sessionVars.AWS.access_key_id, sessionVars.AWS.secr
 // 	*** note:	10m triggers too often ***
 Ti.Geolocation.distanceFilter = 20;
 Ti.Geolocation.purpose = "Receive User Location";
+Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
 
 // load the map module
 if (Ti.Platform.osname === "iphone")	
@@ -299,9 +299,6 @@ Alloy.Globals.wbMapView 	= "";
 Alloy.Globals.annotations = [];
 
 var longPress;
-
-Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
-
 
 
 

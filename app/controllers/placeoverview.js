@@ -26,16 +26,16 @@ function getPlaceActivity( place_ID ) {
 		$.addClass( dogs_amount_label, "feed_label_center_lg");
 					
 		if (jsonResponse != "" && jsonResponse !="[]") {
-			var activityJson = JSON.parse( jsonResponse );
+			var activity = JSON.parse( jsonResponse );
 				
 			/*					POPULATE LATEST FEED ITEM 					*/
-			var last_update_photo = sessionVars.AWS.base_profile_url + activityJson[0].dog_photo;
+			var last_update_photo = session.AWS.url_base+ '/' +session.AWS.bucket_profile+ '/' +activity[0].dog_photo;
 			Ti.API.info( "latest update photo: " + last_update_photo  );
 			 
 			$.last_update_thumb.image = last_update_photo;							// TODO: change storage location	
-			dog_name_label.text 			= activityJson[0].dog_name;				// dog that provided most recent update
-			time_elapsed_label.text 	= activityJson[0].time_elapsed;		// dog that provided most recent update
-			dogs_amount_label.text 		= activityJson[0].amount;					// dog that provided most recent update
+			dog_name_label.text 			= activity[0].dog_name;				// dog that provided most recent update
+			time_elapsed_label.text 	= activity[0].time_elapsed;		// dog that provided most recent update
+			dogs_amount_label.text 		= activity[0].amount;					// dog that provided most recent update
 			
 			var dogs_amount_suffix = Ti.UI.createLabel({text: "dogs here", top: -1});
 			$.addClass( dogs_amount_suffix, "feed_label_center");
@@ -45,16 +45,16 @@ function getPlaceActivity( place_ID ) {
 			$.last_update_right.add ( dogs_amount_label );
 			$.last_update_right.add ( dogs_amount_suffix );
 			
-			activityJson.sort(function(a,b) {			// 		sort updates based on datetime posted
+			activity.sort(function(a,b) {			// 		sort updates based on datetime posted
 			  return b.rank - a.rank;
 			});
 			
-			var max = 10;		// activityJson.length;
+			var max = 10;		// activity.length;
 			
 			/* ensure that there is more than 1 recent checkin */
-			if( activityJson.length > 1) {
+			if( activity.length > 1) {
 				for (var i=1; i<max; i++) {		// optimize loop to only calculate array size once
-					// Ti.API.info("* "+ activityJson[i].dog_name + " - " + activityJson[i].last_update_formatted +" *");
+					// Ti.API.info("* "+ activity[i].dog_name + " - " + activity[i].last_update_formatted +" *");
 					// var icon = 'images/missing/dog-icon-sm.png';
 				
 					///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
@@ -67,7 +67,7 @@ function getPlaceActivity( place_ID ) {
 					
 					var thumb = Ti.UI.createImageView ();
 					$.addClass( thumb, "thumbnail_sm");
-					thumb.image = sessionVars.AWS.base_profile_url + activityJson[i].dog_photo;		// TODO: change storage location	
+					thumb.image = session.AWS.url_base + '/' + session.AWS.bucket_profile + '/' + activity[i].dog_photo;		// TODO: change storage location	
 					
 					var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
 					$.addClass( status_update_label, "feed_label_left");
@@ -75,8 +75,8 @@ function getPlaceActivity( place_ID ) {
 					var dog_name_label = Ti.UI.createLabel({text: "..."});
 					$.addClass( dog_name_label, "feed_label_left");
 					
-					status_update_label.text = activityJson[i].dog_name + " checked in";			// TODO: grab other status updates instead
-					dog_name_label.text 			= activityJson[i].dog_name + " saw " + activityJson[i].amount + " dogs 	";
+					status_update_label.text = activity[i].dog_name + " checked in";			// TODO: grab other status updates instead
+					dog_name_label.text 			= activity[i].dog_name + " saw " + activity[i].amount + " dogs 	";
 					
 					middle_view.add(status_update_label);
 					middle_view.add(dog_name_label);
@@ -84,7 +84,7 @@ function getPlaceActivity( place_ID ) {
 					///////// RIGHT VIEW OF STUFF ///////////////////////////
 					var right_view = Ti.UI.createView();
 					var time_elapsed_label = Titanium.UI.createLabel({text: "..."});
-					time_elapsed_label.text = activityJson[i].time_elapsed;
+					time_elapsed_label.text = activity[i].time_elapsed;
 					
 					$.addClass( right_view, "right_view");
 					$.addClass( time_elapsed_label, "feed_label_right");
@@ -137,8 +137,8 @@ function getPlaceInfo( place_ID ) {
 	var query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID  : place_ID,
-		lat				: sessionVars.lat,
-		lon				:	sessionVars.lon
+		lat				: session.lat,
+		lon				:	session.lon
 	};
 	
 	query.open("POST", "http://waterbowl.net/mobile/place-info.php");	
@@ -157,22 +157,29 @@ function getPlaceInfo( place_ID ) {
 			if ( $.place_city_label.text == "")
 				$.place_city_label.text	  =	place['city'] +' ' + place['zipcode'];
 				
-			$.place_dist_label.text 	= place['distance'] + " miles away";   // TODO: send in distance in miles from backend
-			 
+			if ( session.placeArray.dist != "")
+				$.place_dist_label.text 	= session.placeArray.dist + " miles away";   // TODO: send in distance in miles from backend
+				 
 			/*  fill in mini header info */
 			if ( $.miniHeaderPlaceName.text == "" )
 				$.miniHeaderPlaceName.text = place['name'];	
 			
 			/*  only attempt to set the bg image if it exists */
-			if ( place['mobile_bg'] != "") {
-				$.headerContainer.backgroundImage = "images/places/" + place['mobile_bg'];		// add place header image
+			if ( place['banner'] != "" ) {
+				//var banner_image = session.AWS.url_base+'/'+session.AWS.bucket_place+'/'+place['banner'];
+				var banner_image = session.local_banner_path+'/'+place['banner'];
+				
+				$.headerContainer.backgroundImage = banner_image;		// add place header image
+				Ti.API.info( " * Place banner: " + banner_image );
+				alert( " * Place banner: " + banner_image );
 			}
 			
 			/*  if viewing place details on a place we're currently, show the checkboxx!!   */
-			if ( place_ID == sessionVars.checkin_place_ID && sessionVars.checkedIn == 1 ) {
+			if ( place_ID == session.checkin_place_ID && session.checkedIn == 1 ) {
 				var checkoutBtn = Ti.UI.createButton ( { id: "checkoutBtn", width: 48, height: 48, backgroundImage: "images/icons/checkbox.png" } );
 			
 				//$.checkboxMiniHeader.image 		= "images/icons/checkbox.png";
+
 				
 				$.checkboxHeader.add( checkoutBtn );
 				
@@ -189,12 +196,12 @@ function getPlaceInfo( place_ID ) {
 					/* add click listener for "Yes" button */
 					checkout_dialog.addEventListener('click', function(e) {// take user to Checkin View
 						if (e.index == 0) {// user clicked OK
-							sessionVars.checkinInProgress = false;
-							sessionVars.checkin_place_ID = null;
-							sessionVars.checkedIn = null;
+							session.checkinInProgress = false;
+							session.checkin_place_ID = null;
+							session.checkedIn = null;
 							 
 							// TODO: ping checkin.php w/ owner_ID, dog_ID, checkout_timestamp, park_ID 
-							// OR simply sessionVars.dog_activity_ID, which requires checkin.php to return mysql_last_insert_ID
+							// OR simply session.dog_activity_ID, which requires checkin.php to return mysql_last_insert_ID
 		
 							closeWin();
 							/*	
@@ -276,19 +283,30 @@ var mini_header_display = 0;
 //-----------------------------------------------------------------------------
 var args 	= arguments[0] || {};
 Ti.API.info("* placeoverview.js { #" + args._place_ID  + " } * ");	
+/*  save globally stored place info into a local variable */
+var placeInfo = session.placeArray[args._place_ID];
 
 //----------------------------------------------------------------------------
 //
 //		(2)		Populate place header + activity feed
 //
 //----------------------------------------------------------------------------
-Ti.API.info ( " * placeoverview :: placeArray[ "+ args._place_ID  +" ]" + sessionVars.placeArray[args._place_ID] );
-$.place_name_label.text 		= sessionVars.placeArray[args._place_ID].name;
-$.miniHeaderPlaceName.text == sessionVars.placeArray[args._place_ID].name;
-$.place_address_label.text	=	sessionVars.placeArray[args._place_ID].address;
-$.place_city_label.text	  	=	sessionVars.placeArray[args._place_ID].city + ' ' + sessionVars.placeArray[args._place_ID].zip;
+Ti.API.info (  " * placeoverview :: placeArray[" + args._place_ID +"]"+ JSON.stringify( placeInfo )  );
 
-getPlaceInfo( args._place_ID );
+$.headerContainer.backgroundImage = "images/missing/place-header.png";
+
+if ( placeInfo.banner != "" )
+	$.headerContainer.backgroundImage = session.local_banner_path+'/'+placeInfo.banner;
+
+if ( placeInfo.dist != "")
+	$.place_dist_label.text 	= placeInfo.dist + " miles away";   // TODO: send in distance in miles from backend
+		
+$.place_name_label.text 		= placeInfo.name;
+$.miniHeaderPlaceName.text 	= placeInfo.name;
+$.place_address_label.text	=	placeInfo.address;
+$.place_city_label.text	  	=	placeInfo.city + ' ' + placeInfo.zip;
+
+// getPlaceInfo( args._place_ID );		// ideally, only called 
 getPlaceActivity( args._place_ID );
 
 //----------------------------------------------------------------------------
