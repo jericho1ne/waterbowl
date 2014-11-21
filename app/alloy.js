@@ -154,7 +154,7 @@ function addToAppWindowStack( winObject, win_name )  {
 	Ti.App.Properties.current_window = win_name;
 	
 	//Ti.API.info ( "windowStack:"+ JSON.stringify( session.windowStack ) + " || array size: " + ( session.windowStack.length ) );
-	Ti.API.info ( "window name:"+ win_name + " || current Windows array size: " + ( session.windowStack.length ) );
+	Ti.API.info ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( session.windowStack.length ) +" =========//" );
 }
 
 //=================================================================================
@@ -203,6 +203,7 @@ function zeroPad( number, width )  {
 
 
 //============================================================================================
+/*
 Ti.API.info('Ti.Platform.displayCaps.density: ' + Ti.Platform.displayCaps.density);
 Ti.API.info('Ti.Platform.displayCaps.dpi: ' + Ti.Platform.displayCaps.dpi);
 Ti.API.info('Ti.Platform.displayCaps.platformHeight: ' + Ti.Platform.displayCaps.platformHeight);
@@ -212,6 +213,7 @@ if(Ti.Platform.osname === 'android'){
   Ti.API.info('Ti.Platform.displayCaps.ydpi: ' + Ti.Platform.displayCaps.ydpi);
   Ti.API.info('Ti.Platform.displayCaps.logicalDensityFactor: ' + Ti.Platform.displayCaps.logicalDensityFactor);
 };
+*/
 
 
 // Bucharest
@@ -279,7 +281,8 @@ Ti.App.Properties.current_window = null;
 Alloy.Globals.AWS = require('ti.aws');						
 Alloy.Globals.AWS.authorize( session.AWS.access_key_id, session.AWS.secret_access );
 
-Alloy.Globals.place_list_clicks = 0;
+Alloy.Globals.placeList_clicks = 0;
+Alloy.Globals.placeList_ID = null;
 /*----------------------------------------------------------------------
  *  	GEOLOCATION
  *-----------------------------------------------------------------------*/

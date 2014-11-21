@@ -295,8 +295,13 @@ Ti.API.info (  " * placeoverview :: placeArray[" + args._place_ID +"]"+ JSON.str
 
 $.headerContainer.backgroundImage = "images/missing/place-header.png";
 
-if ( placeInfo.banner != "" )
-	$.headerContainer.backgroundImage = session.local_banner_path+'/'+placeInfo.banner;
+if ( placeInfo.banner != "" ) {
+	var bg_image = session.local_banner_path+'/'+placeInfo.banner;
+	// $.headerContainer.backgroundImage 
+	bg_image = session.AWS.url_base+'/'+session.AWS.bucket_place+'/'+placeInfo.banner;
+	$.headerContainer.backgroundImage = bg_image;
+	Ti.API.info ( "...(i) banner image [ "+ bg_image +" ]");
+}
 
 if ( placeInfo.dist != "")
 	$.place_dist_label.text 	= placeInfo.dist + " miles away";   // TODO: send in distance in miles from backend

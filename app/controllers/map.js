@@ -24,7 +24,8 @@ function drawDefaultMap(lat, lon) {
 	innerMapContainer.add(Alloy.Globals.wbMapView);
 
 	// Add map to current view
-	Ti.API.log("*** Default Map Created! ***");
+	Ti.API.log("...[~] Default Map Created! ");
+	
 }
 
 //=================================================================================
@@ -33,7 +34,7 @@ function drawDefaultMap(lat, lon) {
 //=================================================================================
 function setRegion(lat, lon) {
 	// set bounding box, move the map View/Location
-	Ti.API.log("* - set Region: " + lat + " / " + lon + " *");
+	Ti.API.log("...[~] set Region ["+ lat +" / "+ lon +"]");
 	var region = {
 		latitude : lat,
 		longitude : lon,
@@ -52,7 +53,7 @@ function setRegion(lat, lon) {
 //==============================================================
 function currentLocation() {
 	if (Titanium.Geolocation.locationServicesEnabled === false) {
-		Ti.API.debug('Device has GPS turned off. ');
+		Ti.API.debug('...[!] Device has GPS turned off. ');
 		alert('Please turn on the GPS antenna on your device');
 	} else {// assuming GPS is turned ON
 		Ti.Geolocation.getCurrentPosition(function(e) {
@@ -72,13 +73,13 @@ function currentLocation() {
 				Ti.API.debug(e);
 				return;
 			} else {// everything is kosher, do the damn thing
-				Ti.API.info(' ( -+- ) currentLocation: ' + e.coords.latitude + '/' + e.coords.longitude);
+				Ti.API.info('...(-+-) currentLocation [ ' + e.coords.latitude + '/' + e.coords.longitude + ' ]');
 
 				var minutes_elapsed = 100;
 				if (session.lastCheckIn != null) {
 					var current_ts = new Date().getTime();
 					minutes_elapsed = Math.round((session.lastCheckIn - current_ts ) / (1000 * 60));
-					Ti.API.info(' * Minutes elapsed since last check-in: ' + minutes_elapsed + '* ');
+					Ti.API.info('...[o] Minutes since last check-in [ ' + minutes_elapsed + ' ] ');
 				}
 				if (session.checkinInProgress != true && minutes_elapsed > 10) {
 					findNearbyPlaces(e.coords.latitude, e.coords.longitude);
@@ -118,21 +119,11 @@ function createAnnotation( place_data ) {
 			color : '#ffffff', backgroundColor : "#ec3c95"
 	});
 		
-	Ti.API.info("object: " + temp_button);
+	// Ti.API.info("object: " + temp_button);
 
  	temp_button.addEventListener('click', function(e){
  		/*  prep all the required data to placeoverview.js */
-		var place_overview = Alloy.createController("placeoverview", {
-			_place_ID : e.source.id			// pass in placeID so we can hit the backend for place info
-		}).getView();
-	
-		/*  quick fade-in animation   */
-		place_overview.opacity = 0.1;
-		place_overview.open({
-			opacity : 1,
-			duration : 320,
-			curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-		});
+		goToPlaceOverview(e.source.id);
  	});
 
 	var annotation = Alloy.Globals.Map.createAnnotation({
@@ -147,7 +138,21 @@ function createAnnotation( place_data ) {
 		//	leftButton : place_data.icon,														// TODO: (optional) create a leftButton imageView
 		// 	leftButton : Ti.UI.createButton({  title : '+', height : 36, width : 36, backgroundColor : "#eee" }),
 	});
-
+	
+	/* -------------- TRIGGER RIGHT BUTTON ON ANNOTATION --------------------- */
+	annotation.addEventListener('click', function(evt) {
+		var clicksource = evt.clicksource;
+		if (clicksource == 'title') {
+			alert(' title !! ');
+		}
+		if (clicksource == 'rightButton') {// action for right annotation button
+			alert(' rightPane !! ');
+		} 
+		if (clicksource == 'leftButton') {// action for left annotation button
+			alert(' leftPane !! ');
+		}
+	});
+	
 	Alloy.Globals.annotations.push (annotation);
 }
 
@@ -272,7 +277,7 @@ function findNearbyPlaces(lat, lon) {
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
 		if (jsonResponse != "") {
-			Ti.API.info("*** nearby locations " + jsonResponse);
+			Ti.API.info("...[i] nearby locations " + jsonResponse);
 			var placesArray = JSON.parse(jsonResponse);
 			if (placesArray.nearby == 1) {
 
@@ -302,7 +307,7 @@ function findNearbyPlaces(lat, lon) {
 				}
 
 				dialog.addEventListener('click', function(e) {// take user to Checkin View
-					Ti.API.info ( " ** What we got here is: " + JSON.stringify(e) );
+					Ti.API.info ( "...[i] You see, what we got here is: " + JSON.stringify(e) );
 					if (e.index == 0) {// user clicked OK
 						session.checkinInProgress = true;
 						// checkin now officially in progress  <-- TODO: move to checkin.js
@@ -323,6 +328,19 @@ function findNearbyPlaces(lat, lon) {
 	};
 }
 
+function goToPlaceOverview (place_ID) {
+	var place_overview = Alloy.createController("placeoverview", {
+		_place_ID : place_ID			// pass in placeID so we can hit the backend for more details
+	}).getView();
+
+	/*  quick fade-in animation   */
+	place_overview.opacity = 0.1;
+	place_overview.open({
+		opacity : 1,
+		duration : 320,
+		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
+	});
+}
 //===========================================================================================
 // 				LOGIC FLOW
 //-----------------------------------------------------------------------
@@ -371,7 +389,7 @@ $.map.add(placeListContainer);
 //-----------------------------------------------------------------------
 Ti.Geolocation.getCurrentPosition(function(e) {
 	if (e.error) {//  hard-coded lat/lon if this fails
-		Ti.API.info("! Cannot seem to get your current location !");
+		Ti.API.info("...[!] Cannot seem to get your current location ");
 	} else {//  or with current geolocation
 		session.lat = e.coords.latitude;
 		session.lon = e.coords.longitude;
@@ -383,6 +401,8 @@ Ti.Geolocation.getCurrentPosition(function(e) {
 	
 	/* Grab JSON data and populate Place TableView */
 	createPlaceList();
+	
+
 });
 
 //-----------------------------------------------------------------------
@@ -391,7 +411,7 @@ Ti.Geolocation.getCurrentPosition(function(e) {
 //					- make sure Ti.Geolocation.distanceFilter is set in alloy.js!
 //-----------------------------------------------------------------------
 Ti.Geolocation.addEventListener('location', function() {
-	Ti.API.info(" ( -+- ) location event listener trigger ");
+	Ti.API.info("...(-+-) location event listener trigger ");
 	currentLocation();
 	// update map view and check for nearby places
 });
@@ -402,50 +422,29 @@ Ti.Geolocation.addEventListener('location', function() {
 //
 //-----------------------------------------------------------------------
 placeListTable.addEventListener('click', function(e) {// PLACES TableView
-	Ti.API.info("[+] POI list click [ " + e.rowData.name + " ]");
+	Ti.API.info("...[o] POI list click [ " + e.rowData.name + " ]");
 	setRegion(e.rowData.lat, e.rowData.lon);
 
-	var place_ID_clicked_on = e.rowData.id;
+	Alloy.Globals.placeList_clicks ++;
+	Ti.API.info("...[o] clicked on [" + e.rowData.id + " - " + e.rowData.name + " ]");
+	Alloy.Globals.wbMapView.selectAnnotation( Alloy.Globals.annotations[e.index] );
 	
-	if ( Alloy.Globals.place_list_clicks <= 1 ) {
-		Ti.API.info(" * clicked on: " + e.rowData.id + ", " + e.rowData.name + " *");
-		Alloy.Globals.wbMapView.selectAnnotation( Alloy.Globals.annotations[e.index] );
+	if ( Alloy.Globals.placeList_clicks == 2 ) {
+		if (Alloy.Globals.placeList_ID == e.rowData.id ) {
+			/* 2nd click on same place name, open it up! */
+			goToPlaceOverview ( e.rowData.id );
+			Alloy.Globals.placeList_ID 			= null;
+			Alloy.Globals.placeList_clicks 	= 0;
+		}
+		else {
+			Alloy.Globals.placeList_clicks 	= 1;
+		}
 	}
-	else if ( Alloy.Globals.place_list_clicks = 2 ) {
-			/*  prep all the required data to placeoverview.js */
-		// TODO: separate triggers for First and Second click; 2nd click goes straight to detail view
-		var place_overview = Alloy.createController("placeoverview", {
-			_place_ID : place_ID_clicked_on, 	// pass in placeID so we can hit the backend for place info
-			_banner		: e.rowData.banner
-		}).getView();
-	
-		/*  quick fade-in animation   */
-		place_overview.opacity = 0.01;
-		place_overview.open({
-			opacity : 1,
-			duration : 300,
-			curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-		});
-	}
-
-
+		
+	Alloy.Globals.placeList_ID = e.rowData.id;	
 });
 
-/* -------------- TRIGGER RIGHT BUTTON ON ANNOTATION --------------------- */
-/*
-Alloy.Globals.wbMapView.addEventListener('click', function(evt) {
-	var clicksource = evt.clicksource;
 
-	if (clicksource == 'rightButton') {// action for right annotation button
-		alert(' rightPane !! ');
-	} else if (clicksource == 'lefttButton') {// action for left annotation button
-		alert(' leftPane !! ');
-	} else if (clicksource == 'title') {
-		alert(' title !! ');
-	}
-	alert(clicksource);
-});
-*/
 
 /*
  // TODO:  move this call to alloy.js
