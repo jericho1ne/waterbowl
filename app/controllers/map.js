@@ -54,7 +54,7 @@ function setRegion(lat, lon) {
 function currentLocation() {
 	if (Titanium.Geolocation.locationServicesEnabled === false) {
 		Ti.API.debug('...[!] Device has GPS turned off. ');
-		alert('Please turn on the GPS antenna on your device');
+		alert('Please turn on Location Services');
 	} else {// assuming GPS is turned ON
 		Ti.Geolocation.getCurrentPosition(function(e) {
 
@@ -421,6 +421,10 @@ Ti.Geolocation.addEventListener('location', function() {
 // 		(3) 	Add Click Event Listeners
 //
 //-----------------------------------------------------------------------
+$.refreshBtn.addEventListener('click', function() {			// REFRESH button
+	createPlaceList();
+});
+ 
 placeListTable.addEventListener('click', function(e) {// PLACES TableView
 	Ti.API.info("...[o] POI list click [ " + e.rowData.name + " ]");
 	setRegion(e.rowData.lat, e.rowData.lon);
@@ -445,11 +449,4 @@ placeListTable.addEventListener('click', function(e) {// PLACES TableView
 });
 
 
-
-/*
- // TODO:  move this call to alloy.js
- $.refreshBtn.addEventListener('click', function() {			// REFRESH button
- createPlaceList();
- });
- */
 

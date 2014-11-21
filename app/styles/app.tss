@@ -135,7 +135,9 @@
 ".fill_width"   : { width: Ti.UI.FILL }
 
 /* --------------- END ALL THE SPACING STUFF  -------------------------- */
-
+".font_icon"	 : { font:{ fontFamily: 'Sosa-Regular', fontSize: 18 }, width: 40, height: 40, color: "#000000", // color: "#777477" 
+	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
+	
 ".blue_line" : { image: 'images/ui/blue-line.png', height: 2, width: "100%" }
 
 ".float_left" 			: { width: Ti.UI.FILL, left: 2 }
