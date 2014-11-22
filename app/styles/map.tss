@@ -4,4 +4,4 @@
 
 "#placeListContainer" : {  }
 
-"#refreshBtn" : { width: 40, height: 40, top:100, left:100, backgroundColor: "#cccccc" }
+"#refreshBtn" : { width: 36, height: 36, top:20, left:20 }

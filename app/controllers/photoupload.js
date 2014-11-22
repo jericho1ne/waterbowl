@@ -1,5 +1,4 @@
 addToAppWindowStack( $.photoupload, "photoupload" );
-
 addMenubar( $.menubar );
 
 /* 								photo upload buttons									*/

@@ -266,13 +266,16 @@ function findNearbyPlaces(lat, lon) {
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity.php");
 
-	// DEBUG / HACK: Search for places near a specific location
-	//var params = { lat: 34.024,  lon: -118.394 };
-
 	var params = {
 		lat : lat,
 		lon : lon
 	};
+	
+	// DEBUG / HACK: Search for places near a specific location
+	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
+	// lat: 34.024,  lon: -118.394,			/*	 centered on Nextspace 	*/
+	var params = { lat: 34.024,  lon: -118.394 };
+	
 	place_query.send(params);
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
@@ -351,6 +354,9 @@ function goToPlaceOverview (place_ID) {
 addToAppWindowStack($.map, "map");
 addMenubar($.menubar);
 
+/* 	check for nearby places every 3 minutes */
+setInterval(function () { findNearbyPlaces(session.lat, session.lon) }, 180000 );  	
+
 var placeListContainer = Ti.UI.createView({
 	id : "placeListContainer",
 	width : "100%",
@@ -421,9 +427,10 @@ Ti.Geolocation.addEventListener('location', function() {
 // 		(3) 	Add Click Event Listeners
 //
 //-----------------------------------------------------------------------
-$.refreshBtn.addEventListener('click', function() {			// REFRESH button
+/*  $.refreshBtn.addEventListener('click', function() {			// REFRESH button
 	createPlaceList();
 });
+*/
  
 placeListTable.addEventListener('click', function(e) {// PLACES TableView
 	Ti.API.info("...[o] POI list click [ " + e.rowData.name + " ]");

@@ -63,9 +63,8 @@ function checkIn() {
 //	TODO:			Allow selection between multiple dogs
 //========================================================================
 function updateEstimates (place_ID, owner_ID, estimate) {
-	
 	var grabPlaces = Ti.Network.createHTTPClient();
-	grabPlaces.open("POST", "http://waterbowl.net/mobile/checkin.php");
+	grabPlaces.open("POST", "http://waterbowl.net/mobile/update-estimate.php");
 	
 	var params = {
 		place_ID : place_ID,
@@ -81,7 +80,7 @@ function updateEstimates (place_ID, owner_ID, estimate) {
 			Ti.API.info("* checkin JSON " + json);
 			var response = JSON.parse(json);
 			if (response.status == 1) { 		// success
-				Ti.API.log("* Checked in Successfully *");
+				Ti.API.log("  [>]  Estimate added successfully ");
 	
 				// close current window and bounce user to Place Overview
 				$.checkin.close();
@@ -98,10 +97,59 @@ function updateEstimates (place_ID, owner_ID, estimate) {
 				placeoverview.open();
 			}
 			else
-				alert("Check in failed."); 
+				alert("Unable to save estimate"); 
 		}
 		else
-				alert("No JSON data received."); 
+				alert("No data received from server"); 
+	};
+	return response;
+}
+
+
+//========================================================================
+//	Name:			updateDogActivity (place_ID, owner_ID, estimate)
+//	Purpose:	check into a place - user_estimates table
+//	TODO:			Allow selection between multiple dogs
+//========================================================================
+function updateDogActivity (place_ID, owner_ID, estimate) {
+	var grabPlaces = Ti.Network.createHTTPClient();
+	grabPlaces.open("POST", "http://waterbowl.net/mobile/update-estimate.php");
+	
+	var params = {
+		place_ID : place_ID,
+		owner_ID : owner_ID,
+		estimate: estimate
+	};
+	
+	var response = 0;
+	grabPlaces.send(params);
+	grabPlaces.onload = function() {
+		var json = this.responseText;
+		if (json != "") {
+			Ti.API.info("* checkin JSON " + json);
+			var response = JSON.parse(json);
+			if (response.status == 1) { 		// success
+				Ti.API.log("  [>]  Estimate added successfully ");
+	
+				// close current window and bounce user to Place Overview
+				$.checkin.close();
+				$.checkin = null;
+				
+				/*		 save Place ID, checkin state, and timestamp in session  	*/
+				session.checkedIn = true;										// checkin now officially complete
+				var timestamp = new Date().getTime();
+				session.checkin_place_ID 	= place_ID;
+				session.lastCheckIn 			= timestamp;
+				session.checkinInProgress = false;				// remove "in progress" state
+				
+				var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
+				placeoverview.open();
+			}
+			else
+				alert("Unable to save estimate"); 
+		}
+		else
+				alert("No data received from server"); 
 	};
 	return response;
 }

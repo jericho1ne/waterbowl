@@ -15,14 +15,17 @@ function addMenubar( parent_object ) {
 	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "60%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
 	var menuRight 	= Ti.UI.createView( {id: "menuRight", right: 0, layout: "horizontal", width: Ti.UI.SIZE, borderWidth: 0, borderColor: "red" });
 	
-	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 }, borderWidth: 0, borderColor: "yellow", title: '<<', left: 4, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 } );
-	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 }, borderWidth: 0, borderColor: "ff0000", title: '(i)', right: 2, width: Ti.UI.SIZE, top: 4, opacity: 1, height: 34, width: 34, borderRadius: 4 });
-	var	refreshBtn	= Ti.UI.createButton( {id: "refreshBtn", color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 },  borderWidth: 0, borderColor: "ff0000", title: "%", right: 2, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 });
-	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Raleway-Bold', fontSize: 14 },  borderWidth: 0, borderColor: "ff0000", title: "|=|", left: 4, right: 4, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 });
+	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 } );
+	
+	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 4, opacity: 1, height: 34, width: 34, borderRadius: 4 });
+	
+	var	refreshBtn	= Ti.UI.createButton( {id: "refreshBtn", color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, title: "y", right: 2, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 });
+	
+	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, title: "Y", left: 4, right: 4, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 });
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "#wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 8, height: "auto", 
@@ -215,7 +218,6 @@ if(Ti.Platform.osname === 'android'){
 };
 */
 
-
 // Bucharest
 //var lat = 44.4275;		
 //var lon = 26.125;			
@@ -238,8 +240,6 @@ var session = {
 	local_icon_path		:	"images/icons",
 	local_banner_path : "images/places",
 	placeArray		: [],
-	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
-	// lat: 34.024,  lon: -118.394,			/*	 centered on Nextspace 	*/
 	lat: null, lon: null, 
 	currentPlace: { 
 		ID				: null,

@@ -175,7 +175,7 @@ function getPlaceInfo( place_ID ) {
 			}
 			
 			/*  if viewing place details on a place we're currently, show the checkboxx!!   */
-			if ( place_ID == session.checkin_place_ID && session.checkedIn == 1 ) {
+			if ( place_ID == session.checkin_place_ID && session.checkedIn == true ) {
 				var checkoutBtn = Ti.UI.createButton ( { id: "checkoutBtn", width: 48, height: 48, backgroundImage: "images/icons/checkbox.png" } );
 			
 				//$.checkboxMiniHeader.image 		= "images/icons/checkbox.png";
@@ -227,42 +227,6 @@ function getPlaceInfo( place_ID ) {
 	};
 }
 
-
-//============================================================================
-//		Name:			touchStartClick(e)
-//		Purpose:		what to do upon checkin button long press
-//							- creates a 350ms interval that fires click events
-//================================================================================
-function touchStartClick(e) {
-  if ( !e.source.touchTimer ) {	
-      e.source.touchTimer = setInterval(function () {
-        e.source.fireEvent("click");
-        longPress = 1;
-        this.backgroundColor = "#ff38d9";
-        this.opacity = "1";
-        this.title = "Update";
-        Ti.API.info("***** Long Press Start "+ longPress +"*****");
-    }, 350);
-  }
-}
-
-//============================================================================
-//		Name:			touchStartClick(e)
-//		Purpose:		what to do upon checkin button long press
-//							- what do to at the end of the touchStart;  cancels the interval
-//================================================================================
-function touchEndClick(e) {
-  if ( e.source.touchTimer ) {
-    clearInterval(e.source.touchTimer);
-    if (longPress == 1) {
-  		longPress = 0;
-  		this.backgroundColor = "#16dd0c";
-  		this.opacity = "0.88";
-  		Ti.API.info("***** Long Press End *****");
-    }
-    e.source.touchTimer = null;
-  }
-}
 
 //===========================================================================================
 // 				LOGIC FLOW

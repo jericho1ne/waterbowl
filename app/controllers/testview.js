@@ -1,4 +1,3 @@
 addToAppWindowStack( $.testview, "testview" );
-addMenubar( $.testview );
-
+addMenubar( $.menubar );
 

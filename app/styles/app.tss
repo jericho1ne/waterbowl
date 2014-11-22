@@ -51,7 +51,7 @@
 "Button": { 
 	color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Raleway-Bold', fontSize: 13 },
-	width: '65%', height: 35, borderRadius: 3, borderWidth: 0
+	width: '65%', height: 35, borderRadius: 3, borderWidth: 0, bottom: 6
 }
 
 "TextField": {
@@ -135,7 +135,10 @@
 ".fill_width"   : { width: Ti.UI.FILL }
 
 /* --------------- END ALL THE SPACING STUFF  -------------------------- */
-".font_icon"	 : { font:{ fontFamily: 'Sosa-Regular', fontSize: 18 }, width: 40, height: 40, color: "#000000", // color: "#777477" 
+".font_icon"	 : { font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, color: "#ffffff", // color: "#777477" 
+	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
+
+".font_icon_sm"	 : { font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, color: "#ffffff", // color: "#777477" 
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
 	
 ".blue_line" : { image: 'images/ui/blue-line.png', height: 2, width: "100%" }
