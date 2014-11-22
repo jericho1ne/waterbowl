@@ -84,10 +84,10 @@ if( session.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 // setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-/*
- var new_window = Alloy.createController( "map" ).getView();
+
+var new_window = Alloy.createController( "map" ).getView();
 new_window.open();
-*/
+
 
 // loginRequest.open triggers > loginRequest.onload 
 // bounce user to Place View upon successful login

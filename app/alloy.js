@@ -16,20 +16,20 @@ function addMenubar( parent_object ) {
 	var menuRight 	= Ti.UI.createView( {id: "menuRight", right: 0, layout: "horizontal", width: Ti.UI.SIZE, borderWidth: 0, borderColor: "red" });
 	
 	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 } );
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
 	
 	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 4, opacity: 1, height: 34, width: 34, borderRadius: 4 });
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1, height: 34, width: 34, borderRadius: 12 });
 	
 	var	refreshBtn	= Ti.UI.createButton( {id: "refreshBtn", color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, title: "y", right: 2, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 });
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: "y", right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
 	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, title: "Y", left: 4, right: 4, width: Ti.UI.SIZE, top: 4, opacity: 1,  height: 34, width: 34, borderRadius: 4 });
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: "Y", left: 4, right: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
-			{ id: "#wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 8, height: "auto", 
-			color: "#ffffff", font:{ fontFamily: 'Raleway', fontSize: 20 } } );
+			{ id: "#wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 6, height: "auto", 
+			color: "#ffffff", font:{ fontFamily: 'Raleway', fontSize: 16 } } );
 	
 	
 	menuLeft.add(backBtn);
@@ -68,8 +68,9 @@ function uploadFromCamera() {
 		success:function(event) {
 			Ti.API.debug( ' * Selected media type was: '+event.mediaType );			// which media type was returned from camera
 			if(event.mediaType == Ti.Media.MEDIA_TYPE_PHOTO) {
-				var fileInfoArray = uploadToAWS( event.media );		
-				return fileInfoArray;		
+				uploadToAWS( event.media );	
+				// var fileInfoArray = uploadToAWS( event.media );		
+				//return fileInfoArray;		
 			} else {
 				alert("Hmm, this seems to be a "+event.mediaType +". Please select a photo instead.  =) ");
 			}

@@ -257,13 +257,21 @@ var placeInfo = session.placeArray[args._place_ID];
 //----------------------------------------------------------------------------
 Ti.API.info (  " * placeoverview :: placeArray[" + args._place_ID +"]"+ JSON.stringify( placeInfo )  );
 
-$.headerContainer.backgroundImage = "images/missing/place-header.png";
+var bg_image = "images/missing/place-header.png";
+$.headerContainer.backgroundImage = bg_image;
 
 if ( placeInfo.banner != "" ) {
-	var bg_image = session.local_banner_path+'/'+placeInfo.banner;
-	// $.headerContainer.backgroundImage 
 	bg_image = session.AWS.url_base+'/'+session.AWS.bucket_place+'/'+placeInfo.banner;
-	$.headerContainer.backgroundImage = bg_image;
+	/*  use image preloader */
+	var c = Titanium.Network.createHTTPClient();
+	c.setTimeout(10000);
+	c.onload = function() {
+	    if(c.status == 200) {
+	     	$.headerContainer.backgroundImage = this.responseData;
+	    }
+	};
+	c.open('GET', bg_image);
+	c.send();
 	Ti.API.info ( "...(i) banner image [ "+ bg_image +" ]");
 }
 

@@ -130,7 +130,7 @@ function createAnnotation( place_data ) {
 		latitude : place_data.lat,
 		longitude : place_data.lon,
 		opacity:  0.8,
-		title : place_data.id+" "+place_data.name,
+		title : place_data.name,
 		subtitle : place_data.city + " (" + place_data.dist + " mi)",
 		animate : true,
 		image : session.local_icon_path+'/'+place_data.icon, 			// or, pull icon from AWS: session.AWS.base_icon_url
