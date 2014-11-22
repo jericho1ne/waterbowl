@@ -17,6 +17,7 @@
 			<Button class="font_icon_sm" id="refreshBtn">y</Button>
 			<Button class="font_icon_sm" id="infoBtn">i</Button>
 			<Button class="font_icon_sm" id="settingsBtn">Y</Button>
+			<Button class="font_icon_sm" id="flipToNext">p</Button>
 			
 		</ScrollView>
 		

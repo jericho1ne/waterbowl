@@ -114,9 +114,10 @@ function createAnnotation( place_data ) {
 	//Ti.API.info("map marker place_data:" + JSON.stringify(place_data));
 	
 	var temp_button = Ti.UI.createButton({ 
-			title : '>', id : place_data.id,
-			height : '40', width : '40', borderRadius: 8, 
-			color : '#ffffff', backgroundColor : "#ec3c95"
+		id : place_data.id,
+		font:{ fontFamily: 'Sosa-Regular', fontSize: 30 }, title: "p",
+		height : '40', width : '40', borderRadius: 6, 
+		color : '#ffffff', backgroundColor : "#ec3c95"
 	});
 		
 	// Ti.API.info("object: " + temp_button);
@@ -229,7 +230,7 @@ function createPlaceList() {
 				if (place_name.length > 40)
 					font_size = 12;
 				
-				place_name = jsonPlaces[i].id + ' ' + place_name;
+				// place_name = jsonPlaces[i].id + ' ' + place_name;
 						
 				var contentView = Ti.UI.createView({ layout : "horizontal", height : 36, width : "100%" });
 				var placeLabel = Ti.UI.createLabel({
@@ -427,11 +428,6 @@ Ti.Geolocation.addEventListener('location', function() {
 // 		(3) 	Add Click Event Listeners
 //
 //-----------------------------------------------------------------------
-/*  $.refreshBtn.addEventListener('click', function() {			// REFRESH button
-	createPlaceList();
-});
-*/
- 
 placeListTable.addEventListener('click', function(e) {// PLACES TableView
 	Ti.API.info("...[o] POI list click [ " + e.rowData.name + " ]");
 	setRegion(e.rowData.lat, e.rowData.lon);

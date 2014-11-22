@@ -11,37 +11,52 @@ function addMenubar( parent_object ) {
 	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 44, backgroundColor: "#58c6d5", 
 											opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 2, shadowOffset: {x:2, y:2} });
 											
-	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: "15%", borderWidth: 0, borderColor: "red" });
-	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "60%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
-	var menuRight 	= Ti.UI.createView( {id: "menuRight", right: 0, layout: "horizontal", width: Ti.UI.SIZE, borderWidth: 0, borderColor: "red" });
+	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: "12%", borderWidth: 0, borderColor: "red" });
+	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "50%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
+	var menuRight 	= Ti.UI.createView( {id: "menuRight", right: 0, layout: "horizontal", width: Ti.UI.SIZE });
 	
-	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
 	
-	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1, height: 34, width: 34, borderRadius: 12 });
 	
-	var	refreshBtn	= Ti.UI.createButton( {id: "refreshBtn", color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	var	refreshBtn	= Ti.UI.createButton( {id: "refreshBtn", color: '#ffffff', backgroundColor: '',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: "y", right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
-	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: "Y", left: 4, right: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "#wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 6, height: "auto", 
-			color: "#ffffff", font:{ fontFamily: 'Raleway', fontSize: 16 } } );
+			color: "#ffffff", font:{ fontFamily: 'Raleway', fontSize: 20 } } );
 	
 	
 	menuLeft.add(backBtn);
 	menuCenter.add(wbLogoMenubar);	
+	
+	if (Ti.App.Properties.current_window == "map") {	
+		menuRight.add(refreshBtn);
+		refreshBtn.addEventListener('click', function() {			// REFRESH button
+			Ti.API.info("...[+] Refresh button click");
+			// createPlaceList();
+		});
+	}
+	else if (Ti.App.Properties.current_window == "placeoverview") {	
+		refreshBtn.addEventListener('click', function() {			// REFRESH button
+			// TODO: add refresh function for Place Activity feed
+		});
+	}
+	
 	menuRight.add(infoBtn);
 	//menuRight.add(refreshBtn);
 	menuRight.add(settingsBtn);
 	
+
+	/* Add items to container divs, then add menubar to Window object */
 	menubar.add(menuLeft);	
 	menubar.add(menuCenter); 
 	menubar.add(menuRight);
-	
 	parent_object.add( menubar );
 	
 	backBtn.addEventListener('click', closeWin);
