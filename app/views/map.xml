@@ -1,6 +1,6 @@
 <Alloy>
   <Window id="map" class="container">
-  	<View id="menubar" height="44" />
+  	<View id="menubar"/>
   	<!-- <Button id="refreshBtn" title="U" class="font_icon bg_dk_pink"/> -->
   </Window>
 </Alloy> 

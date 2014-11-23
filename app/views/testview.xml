@@ -6,10 +6,15 @@
 			
 			<Label class="font_icon_sm">1234567890-=</Label>
 			<Label class="font_icon_sm">~!@#$%^*()_+</Label>
+			
 			<Label class="font_icon_sm">qwertyuiop[]</Label>
 			<Label class="font_icon_sm">QWERTYUIOP{}</Label>
+			
 			<Label class="font_icon_sm">asdfghjkl;'</Label>
-		<Label class="font_icon_sm">ZXCVBNM?</Label>
+			<Label class="font_icon_sm">ASDFGHJKL:""</Label>
+			
+			<Label class="font_icon_sm">zxcvbnm,./</Label>
+			<Label class="font_icon_sm">ZXCVBNM?</Label>
 	
 			<Button class="font_icon_sm" id="cameraBtn">1</Button>
 			<Button class="font_icon_sm" id="xBtn">~</Button>

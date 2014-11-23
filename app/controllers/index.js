@@ -81,15 +81,15 @@ if( mySession.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 }	
 
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
-// Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
-// Ti.App.Properties.setString('pass', 'mihai1');
-// setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
+//setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for the login fields to get populate
 
 /*  saved credentialsand app status in local storage  */
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 /*  		we also require a user to log in since we need an owner_ID for most interactions */
-//  var new_window = Alloy.createController( "map" ).getView();
-//  new_window.open();
+//Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
+//Ti.App.Properties.setString('pass', 'mihai1');
+//var new_window = Alloy.createController( "registerpetinfo" ).getView();
+//new_window.open();
 
 
 // loginRequest.open triggers > loginRequest.onload 

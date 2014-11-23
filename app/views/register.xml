@@ -27,7 +27,7 @@
 			<TextField id="password1"></TextField>
 			<TextField id="password2" class="top_10"></TextField>
 			
-			<Button id="continueBtn" class="btn_large top_20 bg_dk_gray" onClick="registerNewUser">continue</Button>
+			<Button id="continueBtn" class="btn_large top_20 bg_dk_gray" onClick="checkUserDetails">continue</Button>
 			
 	 	</ScrollView> 
 	 	

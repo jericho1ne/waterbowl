@@ -20,17 +20,16 @@ function getPlaceActivity( place_ID ) {
 		
 		/*			CREATE BLANK TEMPLATE FOR LATEST FEED ITEM 				*/
 		var dog_name_label 			= Ti.UI.createLabel({text: "None so far ...", top: 0});
-		$.addClass( dog_name_label, "feed_label_left_md");
+		$.addClass( dog_name_label, "feed_label_left_md text_medium_bold");
 		
 		var time_elapsed_label 	= Ti.UI.createLabel({text: "Be the first!", top: 0});
-		$.addClass( time_elapsed_label, "feed_label_left");
+		$.addClass( time_elapsed_label, "feed_label_left text_medium_bold");
 		
 		var dogs_amount_label = Ti.UI.createLabel({text: "...", top: 4});
-		$.addClass( dogs_amount_label, "feed_label_center_lg");
+		$.addClass( dogs_amount_label, "feed_label_center_lg text_large_medium");
 					
 		if (jsonResponse != "" && jsonResponse !="[]") {
 			var activity = JSON.parse( jsonResponse );
-				
 			/*					POPULATE LATEST FEED ITEM 					*/
 			var last_update_photo = mySession.AWS.url_base+ '/' +mySession.AWS.bucket_profile+ '/' +activity[0].dog_photo;
 			Ti.API.info( "latest update photo: " + last_update_photo  );
@@ -40,8 +39,12 @@ function getPlaceActivity( place_ID ) {
 			time_elapsed_label.text 	= activity[0].time_elapsed;		// dog that provided most recent update
 			dogs_amount_label.text 		= activity[0].amount;					// dog that provided most recent update
 			
-			var dogs_amount_suffix = Ti.UI.createLabel({text: "dogs here", top: -1});
-			$.addClass( dogs_amount_suffix, "feed_label_center");
+			var dogs_suffix_text = "dogs here";
+			if	( activity[0].amount == 1)
+				dogs_suffix_text = "dog here";
+				
+			var dogs_amount_suffix = Ti.UI.createLabel({text: dogs_suffix_text, top: -2});
+			$.addClass( dogs_amount_suffix, "feed_label_center text_medium_light");
 			
 			$.last_update_middle.add ( dog_name_label );				// add most recent update info to middle and right views
 			$.last_update_middle.add ( time_elapsed_label );
@@ -53,10 +56,10 @@ function getPlaceActivity( place_ID ) {
 			});
 			
 			var max = 10;		// activity.length;
-			
+		
 			/* ensure that there is more than 1 recent checkin */
 			if( activity.length > 1) {
-				for (var i=1; i<max; i++) {		// optimize loop to only calculate array size once
+				for (var i=1; i<activity.length; i++) {		// optimize loop to only calculate array size once
 					///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
 					var feed_item_view =  Ti.UI.createView();
 					$.addClass( feed_item_view, "feed_item");
@@ -67,16 +70,18 @@ function getPlaceActivity( place_ID ) {
 					
 					var thumb = Ti.UI.createImageView ();
 					$.addClass( thumb, "thumbnail_sm");
-					thumb.image = mySession.AWS.url_base + '/' + mySession.AWS.bucket_profile + '/' + activity[i].dog_photo;		// TODO: change storage location	
+					
+					// TODO: change storage location	*ERROR* here
+					thumb.image = mySession.AWS.url_base + '/' + mySession.AWS.bucket_profile + '/' + activity[i].dog_photo;		
 					
 					var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
-					$.addClass( status_update_label, "feed_label_left");
+					$.addClass( status_update_label, "feed_label_left text_medium_bold");
 					
 					var dog_name_label = Ti.UI.createLabel({text: "..."});
-					$.addClass( dog_name_label, "feed_label_left");
+					$.addClass( dog_name_label, "feed_label_left text_medium_light");
 					
-					status_update_label.text = activity[i].dog_name + " checked in";			// TODO: grab other status updates instead
-					dog_name_label.text 			= activity[i].dog_name + " saw " + activity[i].amount + " dogs 	";
+					status_update_label.text 	= activity[i].dog_name;			// TODO: grab other status updates instead
+					dog_name_label.text 			= "Saw " + activity[i].amount + " dogs 	";
 					
 					middle_view.add(status_update_label);
 					middle_view.add(dog_name_label);
@@ -87,7 +92,7 @@ function getPlaceActivity( place_ID ) {
 					time_elapsed_label.text = activity[i].time_elapsed;
 					
 					$.addClass( right_view, "right_view");
-					$.addClass( time_elapsed_label, "feed_label_right");
+					$.addClass( time_elapsed_label, "feed_label_right text_medium_light");
 					
 					right_view.add( time_elapsed_label );
 					///////// BUILD FEED ITEM  ///////////////////////////////////
@@ -96,7 +101,9 @@ function getPlaceActivity( place_ID ) {
 					feed_item_view.add( right_view );
 					
 					///////// ADD ITEM TO FEED CONTAINER ////////////////////////
-					$.feedContainer.add( feed_item_view );		
+					$.feedContainer.add( feed_item_view );	
+					if (i>=max)
+						break;	
 				}
 			}
 			//$.feedList.data = activityData;				// populate placeList TableView (defined in XML file, styled in TSS)
@@ -115,17 +122,19 @@ function getPlaceActivity( place_ID ) {
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //=================================================================================
 function attachMiniHeader () {
-  var a = Ti.UI.createAnimation({
-    top: -8, opacity: 1, duration : 340
+	var a = Ti.UI.createAnimation({
+    // top: -8, opacity: 1, duration : 340
+    opacity: 1, duration : 340
   });
-  $.miniHeader.animate(a);
+  $.miniHeaderContainer.animate(a);
 }
 
 function hideMiniHeader () {
   var a = Ti.UI.createAnimation({
-    top: -44, opacity: 0, duration : 220
+    // top: -44, opacity: 0, duration : 220
+    opacity: 0, duration : 220
   });
-  $.miniHeader.animate(a);
+  $.miniHeaderContainer.animate(a);
 }
 
 //================================================================================
@@ -189,19 +198,18 @@ function getPlaceInfo( place_ID ) {
 //-----------------------------------------------------------------------
 addToAppWindowStack( $.placeoverview, "placeoverview" );
 addMenubar( $.menubar );
-
+	
 var mini_header_display = 0;
 
-//-----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 //
-//		(1)		Grab incoming variables, set header image and title
+//		(1)		Grab incoming variables, set header image and title, build miniheader
 //
-//-----------------------------------------------------------------------------
+//--------------------------------------------------------------------------------
 var args 	= arguments[0] || {};
 Ti.API.info("* placeoverview.js { #" + args._place_ID  + " } * ");	
 /*  save globally stored place info into a local variable */
 var placeInfo = mySession.placeArray[ args._place_ID ];
-Ti.API.info (  "placeArray: "+ JSON.stringify( mySession.placeArray ) );
 Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( placeInfo )  );
 
 //----------------------------------------------------------------------------
@@ -228,13 +236,15 @@ if ( placeInfo.banner != "" ) {
 	Ti.API.info ( "...(i) banner image [ "+ bg_image +" ]");
 }
 
-if ( placeInfo.dist != "")
-	$.place_dist_label.text 	= placeInfo.dist + " miles away";   // TODO: send in distance in miles from backend
-		
-$.place_name_label.text 		= placeInfo.name;
-$.miniHeaderPlaceName.text 	= placeInfo.name;
-$.place_address_label.text	=	placeInfo.address;
-$.place_city_label.text	  	=	placeInfo.city + ' ' + placeInfo.zip;
+/*  fill in header and miniheader information */
+$.place_dist_label.text 	= placeInfo.dist + " miles away";   // TODO: send in distance in miles from backend
+//$.mini_place_dist_label.text 	= placeInfo.dist + " mi away"; 
+
+$.place_name_label.text 			= placeInfo.name;
+$.place_address_label.text		=	placeInfo.address;
+$.place_city_label.text	  		=	placeInfo.city + ' ' + placeInfo.zip;
+$.mini_place_name_label.text 	= placeInfo.name;
+$.mini_place_second_label.text	=	placeInfo.city;  // + ' ('+ placeInfo.dist + " mi away)";
 
 // getPlaceInfo( args._place_ID );		// ideally, only called 
 getPlaceActivity( args._place_ID );
@@ -255,7 +265,13 @@ for (var j=0; j<mySession.geofencePlaceArray.length; j++) {
 // Ti.API.info( nearbyPlaceIDs )
 /*  if viewing place details on a place we're currently, show the checkboxx   */
 if ( args._place_ID == mySession.checkin_place_ID && mySession.checkedIn == true ) {
-	var checkoutBtn = Ti.UI.createButton ( { id: "checkoutBtn", width: 48, height: 48, backgroundImage: "images/icons/checkbox.png" } );
+	//var checkoutBtn = Ti.UI.createButton ( { id: "checkoutBtn", width: 48, height: 48, backgroundImage: "images/icons/checkbox.png" } );
+	var checkoutBtn = Ti.UI.createButton ( { 
+		id: "checkoutBtn", width: 48, height: 48, top: 10, title: "~", backgroundColor: '#ec3c95', borderRadius: 10,
+		font:{ fontFamily: 'Sosa-Regular', fontSize: 32 }, color: "#ffffff", 
+		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
+	} );
+	
 	$.checkboxHeader.add( checkoutBtn );
 	checkoutBtn.addEventListener('click', function() {	
 		var optns = {// build up Checkin modal popup
@@ -284,21 +300,28 @@ if ( args._place_ID == mySession.checkin_place_ID && mySession.checkedIn == true
 }
 /*  if we are nearby this place, show manual checkin button   */
 else if ( nearbyPlaceIDs.indexOf( args._place_ID ) != -1) {
-	alert("this is nearby!");
+	//alert("this is nearby!");
 	
-	var checkinBtn = Ti.UI.createButton ( { id: "checkinBtn", width: 120, height: 40, 
-	 backgroundColor: "#cccccc", title: "Here?", zIndex: 11 } );
+	var checkinBtn = Ti.UI.createButton ( { 
+		id: "checkinBtn", width: 48, height: 48, top: 10, title: "j", backgroundColor: '#58c6d5', borderRadius: 10,
+		font:{ fontFamily: 'Sosa-Regular', fontSize: 32 }, color: "#ffffff", 		// 
+		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
+	} );
+	
 	$.checkboxHeader.add( checkinBtn );
 	/*  bounce user to checkin.js, passing in current    */
 	mySession.checkinInProgress = true;
 	// checkin now officially in progress  <-- TODO: move to checkin.js
-	var checkinPage = Alloy.createController("checkin", {
-		_place_ID : args._place_ID,			// pass in place info!
-		_array_pos: 0
-	}).getView();
-		
-	checkinPage.open({
-		transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+	
+	checkinBtn.addEventListener('click', function(e) {
+		var checkinPage = Alloy.createController("checkin", {
+			_place_ID : args._place_ID,			// pass in place info!
+			_array_pos: 0
+		}).getView();
+			
+		checkinPage.open({
+			transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+		});
 	});
 }
 
@@ -310,14 +333,15 @@ else if ( nearbyPlaceIDs.indexOf( args._place_ID ) != -1) {
 $.scrollView.addEventListener('scroll', function(e) {
   if (e.y!=null) {
     var offsetY = e.y;
+    var threshold = 210;
    
-    if  ( offsetY >= 230 && offsetY != null && mini_header_display==0 ) {
+    if  ( offsetY >= threshold && offsetY != null && mini_header_display==0 ) {
     	miniHeader = attachMiniHeader();			// show the mini header
    		//Titanium.API.info(' * scrollView Y offset: ' + offsetY);
  			mini_header_display = 1;
  			Titanium.API.info( ' * miniHeader attached * ' +  mini_header_display );
     }
-    else if ( offsetY < 230 && offsetY != null && mini_header_display==1) {
+    else if ( offsetY < threshold && offsetY != null && mini_header_display==1) {
     	//Ti.API.info (" MINIHEADER CONTENTS: "+ miniHeader);
     	miniHeader = hideMiniHeader();			// hide the mini header
      	

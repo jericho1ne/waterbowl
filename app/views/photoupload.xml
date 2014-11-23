@@ -22,7 +22,7 @@
 			
 		<ScrollView class="fill_width bg_lt_blue">
 			<Label class="form_label top_40">choose a profile photo</Label>
-			<Label class="small_text">no humans allowed!</Label>
+			<Label class="text_small_light">no humans allowed!</Label>
 			
 			<ImageView id="photoPlaceholder"/>
 		

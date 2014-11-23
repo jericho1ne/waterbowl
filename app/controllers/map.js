@@ -287,7 +287,8 @@ function findNearbyPlaces(lat, lon) {
 			var responseArray = JSON.parse(jsonResponse);
 			mySession.geofencePlaceArray = responseArray.places; 
 			
-			Ti.API.info("geofencePlaceArray: "+ JSON.stringify(mySession.geofencePlaceArray) );
+			//	Ti.API.info("geofencePlaceArray: "+ JSON.stringify(mySession.geofencePlaceArray) );
+			
 			/*  if anything is nearby, gotta notify the user  */
 			if ( responseArray.nearby > 0) {
 				/* build options array, allow user to pick from multiple nearby places */

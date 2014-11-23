@@ -1,15 +1,15 @@
 <Alloy>
 	
 	<Window id="checkin" class="container">
-		<View id="menubar" />
+		<View id="menubar"/>
 		
-		<ScrollView>
+		<ScrollView class="fill_height">
 			<!-- Create account fields:  username, 2x passwd, submit btn -->
-			<Label id="place_checkin" class="bg_white"></Label>	
+			<Label id="place_checkin" class="bg_white text_large_bold"></Label>	
 			<Label id="question" class="form_label">How many dogs are playing here?</Label>	
 			<Slider id="slider" onChange="updateLabel"/>				
-			<Label id="slider_int_val" class="checkin_label"/>
-			<Label id="slider_label"	 class="checkin_label"/>
+			<Label id="slider_int_val" class="checkin_label text_large_bold"/>
+			<Label id="slider_label" class="checkin_label text_large_medium"/>
 			
 			<Button id="checkInBtn"/>
 	 	</ScrollView>
