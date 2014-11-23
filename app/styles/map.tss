@@ -1,6 +1,6 @@
 "#placeLabel":{ top: "3%", zIndex: 3, opacity: 0.85 }
 
-"#mapContainer" : {top: 0}
+"#mapContainer" : { top: -4 }
 
 "#placeListContainer" : {  }
 

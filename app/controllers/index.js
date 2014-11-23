@@ -70,23 +70,26 @@ else {
 	Ti.API.info( "* << IOS 7 or older *" );
 }
 
-// if credentials are already saved in session
-if( session.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
-	// $.email.value = session.user.email;
+// if credentials are already saved in mySession
+if( mySession.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
+	$.email.value = mySession.user.email;
 	$.email.value = Ti.App.Properties.getString('user');
 }
-if( session.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
-	$.password.value = session.user.password;
+if( mySession.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
+	$.password.value = mySession.user.password;
 	$.password.value = Ti.App.Properties.getString('pass');
 }	
 
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
+// Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
+// Ti.App.Properties.setString('pass', 'mihai1');
 // setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
+/*  saved credentialsand app status in local storage  */
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-
-var new_window = Alloy.createController( "map" ).getView();
-new_window.open();
+/*  		we also require a user to log in since we need an owner_ID for most interactions */
+//  var new_window = Alloy.createController( "map" ).getView();
+//  new_window.open();
 
 
 // loginRequest.open triggers > loginRequest.onload 
@@ -97,12 +100,12 @@ loginRequest.onload = function() {			// parse the JSON response
 	var response = JSON.parse(json);			// debug message
 	if (response.status == 1) {
 		// save credentials locally (globals for now, later more secure)
-		session.user.email 		= $.email.value;
-		session.user.password = $.password.value;
-		session.user.owner_ID = response.owner_ID;
+		mySession.user.email 		= $.email.value;
+		mySession.user.password = $.password.value;
+		mySession.user.owner_ID = response.owner_ID;
 		// TODO: dog info
 		
-		Ti.API.log( "* Saved Creds: "+session.user.owner_ID+ "/" +session.user.email+ "/" + session.user.password);
+		Ti.API.log( "* Saved Creds: "+mySession.user.owner_ID+ "/" +mySession.user.email+ "/" + mySession.user.password);
 	
 		// grant entry, bounce user to next page
 		$.email.blur();

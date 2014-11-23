@@ -76,12 +76,12 @@ function currentLocation() {
 				Ti.API.info('...(-+-) currentLocation [ ' + e.coords.latitude + '/' + e.coords.longitude + ' ]');
 
 				var minutes_elapsed = 100;
-				if (session.lastCheckIn != null) {
+				if (mySession.lastCheckIn != null) {
 					var current_ts = new Date().getTime();
-					minutes_elapsed = Math.round((session.lastCheckIn - current_ts ) / (1000 * 60));
+					minutes_elapsed = Math.round((mySession.lastCheckIn - current_ts ) / (1000 * 60));
 					Ti.API.info('...[o] Minutes since last check-in [ ' + minutes_elapsed + ' ] ');
 				}
-				if (session.checkinInProgress != true && minutes_elapsed > 10) {
+				if (mySession.checkinInProgress != true && minutes_elapsed > 10) {
 					findNearbyPlaces(e.coords.latitude, e.coords.longitude);
 					// quick check for nearby stuff
 				}
@@ -134,7 +134,7 @@ function createAnnotation( place_data ) {
 		title : place_data.name,
 		subtitle : place_data.city + " (" + place_data.dist + " mi)",
 		animate : true,
-		image : session.local_icon_path+'/'+place_data.icon, 			// or, pull icon from AWS: session.AWS.base_icon_url
+		image : mySession.local_icon_path+'/'+place_data.icon, 			// or, pull icon from AWS: mySession.AWS.base_icon_url
 		rightView : temp_button
 		//	leftButton : place_data.icon,														// TODO: (optional) create a leftButton imageView
 		// 	leftButton : Ti.UI.createButton({  title : '+', height : 36, width : 36, backgroundColor : "#eee" }),
@@ -171,15 +171,15 @@ function createPlaceList() {
 
 	var place_query = Ti.Network.createHTTPClient();
 
-	if (session.owner_ID == 1)// usually, Mihai=1
+	if (mySession.user.owner_ID == 1 || mySession.user.owner_ID == 2)// usually, Mihai=1
 		place_query.open("POST", "http://waterbowl.net/mobile/places-admin.php");
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/places.php");
 	// locally at http://127.0.0.1/*
 
 	var params = {
-		lat : session.lat,
-		lon : session.lon
+		lat : mySession.lat,
+		lon : mySession.lon
 	};
 	place_query.send(params);
 	place_query.onload = function() {
@@ -215,7 +215,7 @@ function createPlaceList() {
 
 				/*  save into global places array */
 				var current_index = jsonPlaces[i].id;
-				session.placeArray[ current_index ] = jsonPlaces[i];
+				mySession.placeArray[ current_index ] = jsonPlaces[i];
 
 				var bg_color = jsonPlaces[i].icon_color;
 
@@ -223,7 +223,7 @@ function createPlaceList() {
 					width : 10, height : 35, left : 0, zIndex : 20,
 					backgroundColor : bg_color
 				});
-				// Ti.API.info(session.AWS.base_icon_url + jsonPlaces[i].icon);
+				// Ti.API.info(mySession.AWS.base_icon_url + jsonPlaces[i].icon);
 				var place_name = jsonPlaces[i].name;
 				var font_size = 14;
 				
@@ -262,7 +262,7 @@ function createPlaceList() {
 function findNearbyPlaces(lat, lon) {
 	var place_query = Ti.Network.createHTTPClient();
 
-	if (session.owner_ID == 1)
+	if (mySession.user.owner_ID == 1 || mySession.user.owner_ID == 2)
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity-admin.php");
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity.php");
@@ -274,56 +274,61 @@ function findNearbyPlaces(lat, lon) {
 	
 	// DEBUG / HACK: Search for places near a specific location
 	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
-	// lat: 34.024,  lon: -118.394,			/*	 centered on Nextspace 	*/
-	var params = { lat: 34.024,  lon: -118.394 };
-	
+	// lat: 024268,  lon: -118.394,			/*	 centered on Nextspace 	*/
+	var params = { lat: 34.024268,  lon: -118.394 };
 	place_query.send(params);
+	
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
 		if (jsonResponse != "") {
 			Ti.API.info("...[i] nearby locations " + jsonResponse);
-			var placesArray = JSON.parse(jsonResponse);
-			if (placesArray.nearby == 1) {
-
-				// TODO: 	will need to discern between multiple nearby places
-				// 				- selection should be made in first modal or in the checkin Window
-				// TODO:  only ask once every 10 minutes; impose sleep command
+			//var placesArray = JSON.parse(jsonResponse);
+			/* save up to 5 nearby places to global array */
+			var responseArray = JSON.parse(jsonResponse);
+			mySession.geofencePlaceArray = responseArray.places; 
+			
+			Ti.API.info("geofencePlaceArray: "+ JSON.stringify(mySession.geofencePlaceArray) );
+			/*  if anything is nearby, gotta notify the user  */
+			if ( responseArray.nearby > 0) {
+				/* build options array, allow user to pick from multiple nearby places */
+				var opts = [];
+				for (var i=0; i<mySession.geofencePlaceArray.length; i++) {
+					opts.push( mySession.geofencePlaceArray[i].name );
+				}
+				opts.push('Cancel');
 				
-				/* 	save to global vars		*/	
-				session.currentPlace.ID = placesArray.places[0].id;
-				session.currentPlace.name = placesArray.places[0].name;
-				session.currentPlace.city = placesArray.places[0].city;
-
-				// Ti.API.info("*** close to " + session.currentPlace.name);
-				var optns = {// build up Checkin modal popup
-					options : ['Yes', 'Cancel'],
-					cancel : 1,
-					selectedIndex : 0,
-					destructive : 0,
-					title : 'Check in at ' + session.currentPlace.name + '?'
+				// Ti.API.info("*** close to " + mySession.currentPlace.name);
+				var optns = { 	// build up Checkin modal popup
+					options : opts,
+					//selectedIndex : 0,
+					// destructive : mySession.geofencePlaceArray.places.length,		// red text
+					cancel : mySession.geofencePlaceArray.length,
+					title : 'Check in here?'
 				};
 				var dialog = Ti.UI.createOptionDialog(optns);
 
 				// TODO:: if only 1 result. pop up Checkin modal; else, show a list of all nearby spots first
-				if (session.checkinInProgress != true) {
+				if (mySession.checkinInProgress != true) {
 					dialog.show();
-					session.checkinInProgress = true; 		// should only bug user once
+					mySession.checkinInProgress = true; 		// should only bug user once
 				}
 
 				dialog.addEventListener('click', function(e) {// take user to Checkin View
-					Ti.API.info ( "...[i] You see, what we got here is: " + JSON.stringify(e) );
-					if (e.index == 0) {// user clicked OK
-						session.checkinInProgress = true;
+					Ti.API.info ( "...[i] clicked on " + JSON.stringify(e.index) );
+					/* user clicked something other than Cancel */
+					if (e.index != mySession.geofencePlaceArray.length) { 
+						mySession.checkinInProgress = true;
 						// checkin now officially in progress  <-- TODO: move to checkin.js
 						var checkinPage = Alloy.createController("checkin", {
-							//_place_ID : e.source.id			// pass in place info!
+							_place_ID : mySession.geofencePlaceArray[e.index].id,			// pass in place info!
+							_array_pos: e.index
 						}).getView();
 							
 						checkinPage.open({
 							transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
 						});
 					} else if (e.index == 1) {// user clicked Cancel
-						session.checkinInProgress = false;
+						mySession.checkinInProgress = false;
 					}
 				});
 
@@ -355,8 +360,8 @@ function goToPlaceOverview (place_ID) {
 addToAppWindowStack($.map, "map");
 addMenubar($.menubar);
 
-/* 	check for nearby places every 3 minutes */
-setInterval(function () { findNearbyPlaces(session.lat, session.lon) }, 180000 );  	
+/* 	check for nearby places every 6 minutes */
+setInterval(function () { findNearbyPlaces(mySession.lat, mySession.lon) }, 360000 );  	
 
 var placeListContainer = Ti.UI.createView({
 	id : "placeListContainer",
@@ -398,13 +403,13 @@ Ti.Geolocation.getCurrentPosition(function(e) {
 	if (e.error) {//  hard-coded lat/lon if this fails
 		Ti.API.info("...[!] Cannot seem to get your current location ");
 	} else {//  or with current geolocation
-		session.lat = e.coords.latitude;
-		session.lon = e.coords.longitude;
+		mySession.lat = e.coords.latitude;
+		mySession.lon = e.coords.longitude;
 	}
 	// Ti.API.info("*** Drawing the Map ***");
 	
 	/* draw the map		*/
-	drawDefaultMap(session.lat, session.lon);
+	drawDefaultMap(mySession.lat, mySession.lon);
 	
 	/* Grab JSON data and populate Place TableView */
 	createPlaceList();

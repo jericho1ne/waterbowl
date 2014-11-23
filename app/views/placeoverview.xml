@@ -1,23 +1,20 @@
 <Alloy>
 	<Window id="placeoverview" class="container">	
-		<View id="menubar" height="60" />
+		<View id="menubar" height="44"/>
 
 		<View id="miniHeader" class="layout_horz" height="44">
-			<View class="width_60">
-				<Label id="miniHeaderPlaceName" class="large_text white" text=""/>
-			</View>
 			<View class="fill_width">
-				<ImageView id="checkboxMiniHeader" class="fit_height" height="40" />
+				<Label id="miniHeaderPlaceName" class="large_text white" text=""/>
 			</View>
 		</View>
 		
-		<ScrollView id="scrollView" class="fill_height" top="-18">
+		<ScrollView id="scrollView" class="fill_height" top="-23">
 		
 			<View id="headerContainer" class="layout_vert">
 				<View id="headerTop" class="layout_horz">
 					<View class="width_50"/>
 					<View class="fill_width">
-						<View id="checkboxHeader" class="float_right" /> 
+						<View id="checkboxHeader" class="float_right border_red" /> 
 					</View>
 				</View>
 				<View id="headerBottom" class="layout_vert">

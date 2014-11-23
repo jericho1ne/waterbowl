@@ -15,6 +15,9 @@ function getPlaceActivity( place_ID ) {
 		var jsonResponse = this.responseText;
 		var activityData = new Array();												// create empty object container
 		
+		// TODO:  save place feeds incrementally to placeArray[x]['feed'] as they become available
+		// TODO:  Ti.App.Properties or to 
+		
 		/*			CREATE BLANK TEMPLATE FOR LATEST FEED ITEM 				*/
 		var dog_name_label 			= Ti.UI.createLabel({text: "None so far ...", top: 0});
 		$.addClass( dog_name_label, "feed_label_left_md");
@@ -29,10 +32,10 @@ function getPlaceActivity( place_ID ) {
 			var activity = JSON.parse( jsonResponse );
 				
 			/*					POPULATE LATEST FEED ITEM 					*/
-			var last_update_photo = session.AWS.url_base+ '/' +session.AWS.bucket_profile+ '/' +activity[0].dog_photo;
+			var last_update_photo = mySession.AWS.url_base+ '/' +mySession.AWS.bucket_profile+ '/' +activity[0].dog_photo;
 			Ti.API.info( "latest update photo: " + last_update_photo  );
 			 
-			$.last_update_thumb.image = last_update_photo;							// TODO: change storage location	
+			$.last_update_thumb.image = last_update_photo;					// TODO: change storage location	
 			dog_name_label.text 			= activity[0].dog_name;				// dog that provided most recent update
 			time_elapsed_label.text 	= activity[0].time_elapsed;		// dog that provided most recent update
 			dogs_amount_label.text 		= activity[0].amount;					// dog that provided most recent update
@@ -54,9 +57,6 @@ function getPlaceActivity( place_ID ) {
 			/* ensure that there is more than 1 recent checkin */
 			if( activity.length > 1) {
 				for (var i=1; i<max; i++) {		// optimize loop to only calculate array size once
-					// Ti.API.info("* "+ activity[i].dog_name + " - " + activity[i].last_update_formatted +" *");
-					// var icon = 'images/missing/dog-icon-sm.png';
-				
 					///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
 					var feed_item_view =  Ti.UI.createView();
 					$.addClass( feed_item_view, "feed_item");
@@ -67,7 +67,7 @@ function getPlaceActivity( place_ID ) {
 					
 					var thumb = Ti.UI.createImageView ();
 					$.addClass( thumb, "thumbnail_sm");
-					thumb.image = session.AWS.url_base + '/' + session.AWS.bucket_profile + '/' + activity[i].dog_photo;		// TODO: change storage location	
+					thumb.image = mySession.AWS.url_base + '/' + mySession.AWS.bucket_profile + '/' + activity[i].dog_photo;		// TODO: change storage location	
 					
 					var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
 					$.addClass( status_update_label, "feed_label_left");
@@ -116,7 +116,7 @@ function getPlaceActivity( place_ID ) {
 //=================================================================================
 function attachMiniHeader () {
   var a = Ti.UI.createAnimation({
-    top: -16, opacity: 1, duration : 340
+    top: -8, opacity: 1, duration : 340
   });
   $.miniHeader.animate(a);
 }
@@ -137,8 +137,8 @@ function getPlaceInfo( place_ID ) {
 	var query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID  : place_ID,
-		lat				: session.lat,
-		lon				:	session.lon
+		lat				: mySession.lat,
+		lon				:	mySession.lon
 	};
 	
 	query.open("POST", "http://waterbowl.net/mobile/place-info.php");	
@@ -146,6 +146,7 @@ function getPlaceInfo( place_ID ) {
 	query.onload = function() {
 		var placeJSON = this.responseText;
 		Ti.API.info( " * Place JSON: " + placeJSON );
+		
 		if (placeJSON != "" && placeJSON !="[]") {
 			var place = JSON.parse( placeJSON );
 
@@ -157,8 +158,8 @@ function getPlaceInfo( place_ID ) {
 			if ( $.place_city_label.text == "")
 				$.place_city_label.text	  =	place['city'] +' ' + place['zipcode'];
 				
-			if ( session.placeArray.dist != "")
-				$.place_dist_label.text 	= session.placeArray.dist + " miles away";   // TODO: send in distance in miles from backend
+			if ( place['dist'] != "")
+				$.place_dist_label.text 	= place['dist'] + " miles away";   // TODO: send in distance in miles from backend
 				 
 			/*  fill in mini header info */
 			if ( $.miniHeaderPlaceName.text == "" )
@@ -166,63 +167,14 @@ function getPlaceInfo( place_ID ) {
 			
 			/*  only attempt to set the bg image if it exists */
 			if ( place['banner'] != "" ) {
-				//var banner_image = session.AWS.url_base+'/'+session.AWS.bucket_place+'/'+place['banner'];
-				var banner_image = session.local_banner_path+'/'+place['banner'];
+				//var banner_image = mySession.AWS.url_base+'/'+mySession.AWS.bucket_place+'/'+place['banner'];
+				var banner_image = mySession.local_banner_path+'/'+place['banner'];
 				
 				$.headerContainer.backgroundImage = banner_image;		// add place header image
 				Ti.API.info( " * Place banner: " + banner_image );
-				alert( " * Place banner: " + banner_image );
+				// alert( " * Place banner: " + banner_image );
 			}
-			
-			/*  if viewing place details on a place we're currently, show the checkboxx!!   */
-			if ( place_ID == session.checkin_place_ID && session.checkedIn == true ) {
-				var checkoutBtn = Ti.UI.createButton ( { id: "checkoutBtn", width: 48, height: 48, backgroundImage: "images/icons/checkbox.png" } );
-			
-				//$.checkboxMiniHeader.image 		= "images/icons/checkbox.png";
 
-				
-				$.checkboxHeader.add( checkoutBtn );
-				
-				checkoutBtn.addEventListener('click', function() {	
-					var optns = {// build up Checkin modal popup
-						options : ['Yes', 'Cancel'],
-						cancel : 1,
-						selectedIndex : 0,
-						destructive : 0,
-						title : 'Are you leaving ' + place['name'] + '?'
-					};
-					var checkout_dialog = Ti.UI.createOptionDialog(optns);
-				
-					/* add click listener for "Yes" button */
-					checkout_dialog.addEventListener('click', function(e) {// take user to Checkin View
-						if (e.index == 0) {// user clicked OK
-							session.checkinInProgress = false;
-							session.checkin_place_ID = null;
-							session.checkedIn = null;
-							 
-							// TODO: ping checkin.php w/ owner_ID, dog_ID, checkout_timestamp, park_ID 
-							// OR simply session.dog_activity_ID, which requires checkin.php to return mysql_last_insert_ID
-		
-							closeWin();
-							/*	
-							$.placeoverview.close({
-								transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-							});
-							$.placeoverview = null;
-							*/
-						}
-					});
-					
-					checkout_dialog.show();
-				});
-								
-				/*
-				$.checkin_button.addEventListener( "touchstart", touchStartClick );				// assign the touch start & end functions
-				$.checkin_button.addEventListener( "touchend", touchEndClick );
-				$.checkin_button.addEventListener( "touchcancel", touchEndClick );
-				*/
-				//checkin_button.text = '';				
-			}
 		}	
 	};
 }
@@ -248,21 +200,22 @@ var mini_header_display = 0;
 var args 	= arguments[0] || {};
 Ti.API.info("* placeoverview.js { #" + args._place_ID  + " } * ");	
 /*  save globally stored place info into a local variable */
-var placeInfo = session.placeArray[args._place_ID];
+var placeInfo = mySession.placeArray[ args._place_ID ];
+Ti.API.info (  "placeArray: "+ JSON.stringify( mySession.placeArray ) );
+Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( placeInfo )  );
 
 //----------------------------------------------------------------------------
 //
 //		(2)		Populate place header + activity feed
 //
 //----------------------------------------------------------------------------
-Ti.API.info (  " * placeoverview :: placeArray[" + args._place_ID +"]"+ JSON.stringify( placeInfo )  );
 
 var bg_image = "images/missing/place-header.png";
 $.headerContainer.backgroundImage = bg_image;
 
 if ( placeInfo.banner != "" ) {
-	bg_image = session.AWS.url_base+'/'+session.AWS.bucket_place+'/'+placeInfo.banner;
-	/*  use image preloader */
+	bg_image = mySession.AWS.url_base+'/'+mySession.AWS.bucket_place+'/'+placeInfo.banner;
+	/*  image preloader of sorts  */
 	var c = Titanium.Network.createHTTPClient();
 	c.setTimeout(10000);
 	c.onload = function() {
@@ -288,20 +241,70 @@ getPlaceActivity( args._place_ID );
 
 //----------------------------------------------------------------------------
 //
-//		(3)		Button listeners
+//		(3)		Checkin/Checkout button attach + related button listeners
 //
 //----------------------------------------------------------------------------
-// TODO:  refresh / replace feed if newer posts exist
-/*
-$.refreshBtn.addEventListener('click', function() {			//  BACK button (aka window close)
-	Ti.API.info( "* Should be refreshing the feed... *" 	);
+var nearbyPlaceIDs = [];
+
+for (var j=0; j<mySession.geofencePlaceArray.length; j++) {
+	nearbyPlaceIDs.push( mySession.geofencePlaceArray[ j ].id );
+}
+
+// alert (JSON.stringify (nearbyPlaceIDs) );
+
+// Ti.API.info( nearbyPlaceIDs )
+/*  if viewing place details on a place we're currently, show the checkboxx   */
+if ( args._place_ID == mySession.checkin_place_ID && mySession.checkedIn == true ) {
+	var checkoutBtn = Ti.UI.createButton ( { id: "checkoutBtn", width: 48, height: 48, backgroundImage: "images/icons/checkbox.png" } );
+	$.checkboxHeader.add( checkoutBtn );
+	checkoutBtn.addEventListener('click', function() {	
+		var optns = {// build up Checkin modal popup
+			options : ['Yes', 'Cancel'],
+			cancel : 1,
+			selectedIndex : 0,
+			destructive : 0,
+			title : 'Are you leaving ' + placeInfo['name'] + '?'
+		};
+		var checkout_dialog = Ti.UI.createOptionDialog(optns);
 	
-});
-*/
+		/* add click listener for "Yes" button */
+		checkout_dialog.addEventListener('click', function(e) {// take user to Checkin View
+			if (e.index == 0) {// user clicked OK
+				mySession.checkinInProgress = false;
+				mySession.checkin_place_ID = null;
+				mySession.checkedIn = null;
+				 
+				// TODO: ping checkin.php w/ owner_ID, dog_ID, checkout_timestamp, park_ID 
+				// OR simply mySession.dog_activity_ID, which requires checkin.php to return mysql_last_insert_ID
+				closeWin();	
+			}
+		});
+		checkout_dialog.show();
+	});		
+}
+/*  if we are nearby this place, show manual checkin button   */
+else if ( nearbyPlaceIDs.indexOf( args._place_ID ) != -1) {
+	alert("this is nearby!");
+	
+	var checkinBtn = Ti.UI.createButton ( { id: "checkinBtn", width: 120, height: 40, 
+	 backgroundColor: "#cccccc", title: "Here?", zIndex: 11 } );
+	$.checkboxHeader.add( checkinBtn );
+	/*  bounce user to checkin.js, passing in current    */
+	mySession.checkinInProgress = true;
+	// checkin now officially in progress  <-- TODO: move to checkin.js
+	var checkinPage = Alloy.createController("checkin", {
+		_place_ID : args._place_ID,			// pass in place info!
+		_array_pos: 0
+	}).getView();
+		
+	checkinPage.open({
+		transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
+	});
+}
 
 ///----------------------------------------------------------------------------
 //
-//		(4)		Add scrollView listener (and attach sticky mini-header bar)
+//		(4)	 ScrollView listener (+ attach sticky mini-header bar)
 //
 //----------------------------------------------------------------------------
 $.scrollView.addEventListener('scroll', function(e) {

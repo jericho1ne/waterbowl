@@ -43,33 +43,25 @@ function updateLabel(e){
 }
 
 //========================================================================
-//	Name:			checkIn ( )
-//	Purpose:	send owner_ID, estimate, timestamp to updateEstimates(); 
-//						close current window if db insert is successful
-//========================================================================
-function checkIn() {
-	var estimate = Math.round( $.slider.value );
-	
-	Ti.API.log( "* Checked in to place ID "+ 
-		session.currentPlace.ID + " / " +
-		session.user.owner_ID + " / " + estimate + " * " );
-	
-	updateEstimates(session.currentPlace.ID, session.user.owner_ID, estimate);
-}
-
-//========================================================================
 //	Name:			updateEstimates (place_ID, owner_ID, estimate)
 //	Purpose:	check into a place - user_estimates table
 //	TODO:			Allow selection between multiple dogs
 //========================================================================
-function updateEstimates (place_ID, owner_ID, estimate) {
+function updateEstimates (place_ID, estimate) {
 	var grabPlaces = Ti.Network.createHTTPClient();
 	grabPlaces.open("POST", "http://waterbowl.net/mobile/update-estimate.php");
 	
+	Ti.API.log( "* Check In @ place ID " + place_ID + 
+		" | owner_ID: " + mySession.user.owner_ID + 
+		" | estimate: " + estimate + 
+		" | @ ["+ mySession.lat +', '+ mySession.lon+ "]" );
+	
 	var params = {
 		place_ID : place_ID,
-		owner_ID : owner_ID,
-		estimate: estimate
+		owner_ID : mySession.user.owner_ID,
+		estimate: estimate,
+		lat:	mySession.lat,
+		lon:	mySession.lon
 	};
 	
 	var response = 0;
@@ -86,12 +78,12 @@ function updateEstimates (place_ID, owner_ID, estimate) {
 				$.checkin.close();
 				$.checkin = null;
 				
-				/*		 save Place ID, checkin state, and timestamp in session  	*/
-				session.checkedIn = true;										// checkin now officially complete
+				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
+				mySession.checkedIn = true;										// checkin now officially complete
 				var timestamp = new Date().getTime();
-				session.checkin_place_ID 	= place_ID;
-				session.lastCheckIn 			= timestamp;
-				session.checkinInProgress = false;				// remove "in progress" state
+				mySession.checkin_place_ID 	= place_ID;
+				mySession.lastCheckIn 			= timestamp;
+				mySession.checkinInProgress = false;				// remove "in progress" state
 				
 				var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
 				placeoverview.open();
@@ -118,7 +110,9 @@ function updateDogActivity (place_ID, owner_ID, estimate) {
 	var params = {
 		place_ID : place_ID,
 		owner_ID : owner_ID,
-		estimate: estimate
+		estimate: estimate,
+		lat:	mySession.lat,
+		lon:	mySession.lon
 	};
 	
 	var response = 0;
@@ -135,12 +129,12 @@ function updateDogActivity (place_ID, owner_ID, estimate) {
 				$.checkin.close();
 				$.checkin = null;
 				
-				/*		 save Place ID, checkin state, and timestamp in session  	*/
-				session.checkedIn = true;										// checkin now officially complete
+				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
+				mySession.checkedIn = true;										// checkin now officially complete
 				var timestamp = new Date().getTime();
-				session.checkin_place_ID 	= place_ID;
-				session.lastCheckIn 			= timestamp;
-				session.checkinInProgress = false;				// remove "in progress" state
+				mySession.checkin_place_ID 	= place_ID;
+				mySession.lastCheckIn 			= timestamp;
+				mySession.checkinInProgress = false;				// remove "in progress" state
 				
 				var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
 				placeoverview.open();
@@ -165,13 +159,18 @@ addToAppWindowStack( $.checkin, "checkin" );
 addMenubar( $.menubar );
 
 var args 	= arguments[0] || {};
-//Ti.API.info("* checkin.js { #" + args._place_ID  + " } * ");	
-
+Ti.API.info("* checkin.js #" + args._place_ID );
+Ti.API.info("geofencePlaceArray: "+ JSON.stringify(mySession.geofencePlaceArray) );
+		
+//Ti.API.info (' *** ' + mySession.geofencePlaceArray[args._place_ID].name  + " } * ");	
+$.place_checkin.text = mySession.geofencePlaceArray[args._array_pos].name;
 
 // initial value set
 $.slider_label.text = ""; 		
 $.slider_int_val.text = "";
 
-$.place_checkin.text = session.currentPlace.name;
-Ti.API.log( "* Checking in at "+ session.currentPlace.name +"(" + session.currentPlace.ID +")" );
+$.checkInBtn.addEventListener('click', function(e) {
+	var estimate = Math.round( $.slider.value );
+	updateEstimates(args._place_ID, estimate);
+});
 

@@ -8,24 +8,24 @@
 
 function addMenubar( parent_object ) {
 	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
-	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 44, backgroundColor: "#58c6d5", 
+	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 40, backgroundColor: "#58c6d5", 
 											opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 2, shadowOffset: {x:2, y:2} });
 											
 	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: "12%", borderWidth: 0, borderColor: "red" });
 	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "50%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
 	var menuRight 	= Ti.UI.createView( {id: "menuRight", right: 0, layout: "horizontal", width: Ti.UI.SIZE });
 	
-	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '', zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
 	
-	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1, height: 34, width: 34, borderRadius: 12 });
 	
-	var	refreshBtn	= Ti.UI.createButton( {id: "refreshBtn", color: '#ffffff', backgroundColor: '',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	var	refreshBtn	= Ti.UI.createButton( {id: "refreshBtn", color: '#ffffff', backgroundColor: '',	zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: "y", right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
-	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: "Y", left: 4, right: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
+	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '',zIndex: 10,
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: "Y", right: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "#wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 6, height: "auto", 
@@ -139,7 +139,7 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 	/* 	move file from photo gallery to Ti app data directory first */
 	var filename 		= Ti.Platform.createUUID()+".jpg";
 	/* 	save recently uploaded photo as current profile photo; update profile photo ImageView image=... */
-	session.user.dog_photo = filename;
+	mySession.user.dog_photo = filename;
 	//photoPlaceholder.image = filehandle;
 	
 	/* Returns a File object representing the file identified by the path arguments  */
@@ -169,11 +169,11 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 // 	Purpose:	keep breadcrumb of user navigation + close windows in correct order
 //=================================================================================
 function addToAppWindowStack( winObject, win_name )  {
-	session.windowStack.push( winObject );
+	mySession.windowStack.push( winObject );
 	Ti.App.Properties.current_window = win_name;
 	
-	//Ti.API.info ( "windowStack:"+ JSON.stringify( session.windowStack ) + " || array size: " + ( session.windowStack.length ) );
-	Ti.API.info ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( session.windowStack.length ) +" =========//" );
+	//Ti.API.info ( "windowStack:"+ JSON.stringify( mySession.windowStack ) + " || array size: " + ( mySession.windowStack.length ) );
+	Ti.API.info ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( mySession.windowStack.length ) +" =========//" );
 }
 
 //=================================================================================
@@ -181,7 +181,7 @@ function addToAppWindowStack( winObject, win_name )  {
 // 	Purpose:	generic cleanup function usually attached to Back Button
 //=================================================================================
 function closeWin() {
-	var currentWindow = session.windowStack.pop();
+	var currentWindow = mySession.windowStack.pop();
 		
 	Ti.API.info( "[x] closing window ["+ Ti.App.Properties.current_window +"]");
 	
@@ -241,7 +241,7 @@ if(Ti.Platform.osname === 'android'){
 // NextSpace Culver City
 // 34.024 / -118.394
 
-var session = {
+var mySession = {
 	user : {
 		owner_ID: 	null,
 		username: 	null,
@@ -255,8 +255,10 @@ var session = {
 	lastWindow		: null,
 	local_icon_path		:	"images/icons",
 	local_banner_path : "images/places",
-	placeArray		: [],
-	lat: null, lon: null, 
+	placeArray				: [],				// top N places that are near user's location (n=20, 30, etc)
+	geofencePlaceArray: [], 			// contains up to N places that are within the geofence
+	lat: null, 
+	lon: null, 
 	currentPlace: { 
 		ID				: null,
 		name			: null,
@@ -282,23 +284,16 @@ var session = {
 	}
 };
 
-/*  saved credentialsand app status in local storage  */
-/*
-Ti.App.Properties.setString('user', 'email@this.com');
-Ti.App.Properties.setString('pass', 'passwod');
-*/
-
-
 var winStack = [];			// create window stack array to keep track of what's open
 Ti.App.Properties.windowStack = winStack;
 Ti.App.Properties.current_window = null;
 
 /*  include amazon AWS module + authorize w/ credentials   */
 Alloy.Globals.AWS = require('ti.aws');						
-Alloy.Globals.AWS.authorize( session.AWS.access_key_id, session.AWS.secret_access );
+Alloy.Globals.AWS.authorize( mySession.AWS.access_key_id, mySession.AWS.secret_access );
 
-Alloy.Globals.placeList_clicks = 0;
-Alloy.Globals.placeList_ID = null;
+Alloy.Globals.placeList_clicks 	= 0;
+Alloy.Globals.placeList_ID 			= null;
 /*----------------------------------------------------------------------
  *  	GEOLOCATION
  *-----------------------------------------------------------------------*/
@@ -318,6 +313,4 @@ Alloy.Globals.wbMapView 	= "";
 Alloy.Globals.annotations = [];
 
 var longPress;
-
-
 

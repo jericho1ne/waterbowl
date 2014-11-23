@@ -11,7 +11,7 @@
 			<Label id="slider_int_val" class="checkin_label"/>
 			<Label id="slider_label"	 class="checkin_label"/>
 			
-			<Button id="checkInBtn" onClick="checkIn"/>
+			<Button id="checkInBtn"/>
 	 	</ScrollView>
  	</Window>
 
