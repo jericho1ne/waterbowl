@@ -1,0 +1,14 @@
+<Alloy>
+	
+	<Window id="checkin" class="container">
+		<View id="menubar" />
+		
+		<ScrollView>
+			<Label id="place_checkout" class="bg_white"/>
+			<Label id="question" class="form_label">Getting out of here?</Label>	
+	
+			<Button id="checkoutBtn" onClick="checkOut"/>
+	 	</ScrollView>
+ 	</Window>
+
+</Alloy>

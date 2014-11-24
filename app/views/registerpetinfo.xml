@@ -1,0 +1,85 @@
+/*
+  +=== register ===============+
+  |	+------------------------+ |
+  | |    		menubar          | |
+  |	+------------------------+ |
+  | +----ScrollView----------+ |
+ 	|	|				dog_name				 | |
+	|	|				gender_toggle		 | | 	
+	|	|				breed						 | | 
+	|	|				age							 | |
+	|	+------------------------+ |
+	|	+------------------------+ |	
+	|	|				continueBtn			 | |
+	| +------------------------+ |	
+	+============================+
+*/
+
+
+<Alloy>
+	<Window id="registerpetinfo" class="container">
+		<View id="menubar"/>
+		
+		<ScrollView id="petinfoScrollView" class="layout_vert fill_width bg_lt_blue">
+			<Label class="form_label top_5">what is your dog's name?</Label>
+			<TextField id="dog_name"/>
+		
+			
+			<Label class="form_label top_5">gender</Label>
+			<View class="layout_horz" width="100%" height="30">
+				<View>
+					<TabbedBar id="gender_button_bar" platform="ios" width="70%" height="30" tintColor="#ec3c95">
+						<Labels>
+							<Label class="bg_lt_gray">female</Label>
+	          	<Label class="bg_lt_gray">male</Label>
+						</Labels>
+					</TabbedBar>
+				</View>
+				<!--
+				<Label class="" id="male_label" width="40%">M</Label>
+      		<Switch id="gender_toggle" value="true"  width="20%" class="" onChange="genderToggled"/>
+				<Label class=""  id="female_label" width="40%">F</Label>
+				-->
+			</View>
+			<Label class="form_label top_5">breed</Label>
+			<TextField id="breed"/>
+			
+			<Label class="form_label top_5">birthdate</Label>
+			<Picker id="age_picker" height="20" width="85%" class="top_5"
+          onChange="ageChanged" type="Ti.UI.PICKER_TYPE_DATE"
+          minDate="1980,1,1" maxDate="2014,12,1"
+          value="2014-01-01T12:00:00">
+       </Picker>
+			
+			<!-- <Button id="continueBtn" class="btn_large top_10 bg_dk_gray" onClick="gotoPhotoUpload">continue</Button> -->
+			
+	 	</ScrollView> 
+	 	
+	</Window>
+</Alloy>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
