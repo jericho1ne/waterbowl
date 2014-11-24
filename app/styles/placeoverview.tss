@@ -9,8 +9,4 @@
 "#headerTop"				: { height: "60%",  width: "100%", top: 20, left: 0 }
 "#headerBottom" 		: { height: Ti.UI.SIZE, width: "100%",  left: 0, top: 0, opacity: 1.0 }		// backgroundImage : "images/ui/header-overlay-white.png"
 
-
-
-
-
 "#place_name_label" : {  }

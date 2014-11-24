@@ -27,12 +27,13 @@
 			<ImageView id="photoPlaceholder"/>
 		
 			<View class="layout_horz top_20 height_60dp width_80">
-				<View class="layout_horz width_50">
+				<View class="layout_horz width_100">
 					<Button id="galleryBtn" class="float_right">gallery</Button>
 				</View>
+				<!-- 
 				<View class="layout_horz width_50">
 					<Button id="cameraBtn" onClick="uploadFromCamera" class="float_left">camera</Button>
-				</View>
+				</View> -->
 			</View>
 			
 			<Button id="continueBtn" class="btn_large top_20" onClick="createAccount">create account</Button>

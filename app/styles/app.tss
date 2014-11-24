@@ -9,7 +9,7 @@
 	7. General						Gray			787578
 */
 
-".bg_dk_blue" : { backgroundColor: "#58c6d5"}
+".bg_dk_blue" : { backgroundColor: "#58c6d5"}  
 ".bg_lt_blue" : { backgroundColor: "#DCF1FC"}
 ".bg_lt_gray" : { backgroundColor: "#787578"}
 ".bg_dk_gray" : { backgroundColor: "#777477"}
@@ -51,14 +51,14 @@
 "Button": { 
 	color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Raleway-Bold', fontSize: 13 },
-	width: '65%', height: 35, borderRadius: 3, borderWidth: 0, bottom: 6
+	width: '70%', height: 35, borderRadius: 3, borderWidth: 0, bottom: 6
 }
 
 "TextField": {
 	autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
 	autocorrect: false,
-	backgroundColor: '#ffffff', color: "#777477", width: '65%', height: 40, top: 10, 
-	font: { fontFamily: 'Raleway-Light', fontSize: 18 },
+	backgroundColor: '#ffffff', color: "#777477", width: '70%', height: 36, top: 5, 
+	font: { fontFamily: 'Raleway-Light', fontSize: 16 },
 	keyboardType: Titanium.UI.KEYBOARD_DEFAULT,
 	returnKeyType: Titanium.UI.RETURNKEY_DEFAULT,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
@@ -102,6 +102,7 @@
 ".container" : { height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", backgroundColor: "#343434", exitOnClose: true }
 
 /* --------------- ALL OF THE SPACING STUFF  -------------------------- */ 
+".top_5"  : { top: 5 }
 ".top_10"  : { top: 10 }
 ".top_20"  : { top: 20 }
 ".top_40"  : { top: 40 }
@@ -159,6 +160,7 @@
 ".text_large_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 28 } }
 ".text_large_bold"		: { font:{ fontFamily: 'Raleway-Medium', fontSize: 28 } }
 
+".text_number"	: { font:{ fontFamily: 'Futura-Medium', fontSize: 24 } }
 
 /*  border colors for layout / debug purposes  */
 ".border" 			 : { borderWidth: 2, borderColor: "#000000" }
@@ -167,11 +169,12 @@
 ".border_red"  	 : { borderWidth: 2, borderColor: "ff0000" }
 
 ".btn_large" : { height: 50, font:{ fontSize: 24, fontFamily: "Raleway-Light" } }
+".btn_medium" : { height: 35, font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
 ".text_field_large" : { height: 40, font:{ fontSize: 20 } }
 
 ".wb_blue" : { backgroundColor: "#58c6d5" }
 
-".form_label" : { top: 20, font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#000000"} }
+".form_label" : { top: 10, font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#000000"} }
 
 ".header_label" : { 
 	height: 50, top: 70, zIndex: 3, backgroundColor: "#ffffff", color: "#777477",

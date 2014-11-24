@@ -25,8 +25,8 @@ function getPlaceActivity( place_ID ) {
 		var time_elapsed_label 	= Ti.UI.createLabel({text: "Be the first!", top: 0});
 		$.addClass( time_elapsed_label, "feed_label_left text_medium_bold");
 		
-		var dogs_amount_label = Ti.UI.createLabel({text: "...", top: 4});
-		$.addClass( dogs_amount_label, "feed_label_center_lg text_large_medium");
+		var dogs_amount_label = Ti.UI.createLabel({text: "...", top: 4, width: "100%" });
+		$.addClass( dogs_amount_label, "feed_label_center_lg text_number");
 					
 		if (jsonResponse != "" && jsonResponse !="[]") {
 			var activity = JSON.parse( jsonResponse );
@@ -81,7 +81,11 @@ function getPlaceActivity( place_ID ) {
 					$.addClass( dog_name_label, "feed_label_left text_medium_light");
 					
 					status_update_label.text 	= activity[i].dog_name;			// TODO: grab other status updates instead
-					dog_name_label.text 			= "Saw " + activity[i].amount + " dogs 	";
+					
+					var dog_suffix = " dogs";
+					if (activity[i].amount == 1)
+						dog_suffix = " dog";
+					dog_name_label.text 			= "Saw " + activity[i].amount + dog_suffix;
 					
 					middle_view.add(status_update_label);
 					middle_view.add(dog_name_label);
@@ -256,10 +260,11 @@ getPlaceActivity( args._place_ID );
 //----------------------------------------------------------------------------
 var nearbyPlaceIDs = [];
 
-for (var j=0; j<mySession.geofencePlaceArray.length; j++) {
-	nearbyPlaceIDs.push( mySession.geofencePlaceArray[ j ].id );
+if (typeof variable != 'undefined') {
+	for (var j=0; j<mySession.geofencePlaceArray.length; j++) {
+		nearbyPlaceIDs.push( mySession.geofencePlaceArray[j].id );
+	}
 }
-
 // alert (JSON.stringify (nearbyPlaceIDs) );
 
 // Ti.API.info( nearbyPlaceIDs )

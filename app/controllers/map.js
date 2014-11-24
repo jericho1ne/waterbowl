@@ -275,7 +275,7 @@ function findNearbyPlaces(lat, lon) {
 	// DEBUG / HACK: Search for places near a specific location
 	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
 	// lat: 024268,  lon: -118.394,			/*	 centered on Nextspace 	*/
-	var params = { lat: 34.024268,  lon: -118.394 };
+	// var params = { lat: 34.024268,  lon: -118.394 };
 	place_query.send(params);
 	
 	place_query.onload = function() {

@@ -66,14 +66,6 @@ function addMenubar( parent_object ) {
 
 }
 
-/*
-function sleep(callback, ms) {
-	setTimeout(function() {
-		callback();
-	}, ms);
-} */
-
-
 //==================================================================================================
 //	Name:			uploadFromCamera ( )
 //	Purpose:	return file handle of camera photo
@@ -139,7 +131,7 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 	/* 	move file from photo gallery to Ti app data directory first */
 	var filename 		= Ti.Platform.createUUID()+".jpg";
 	/* 	save recently uploaded photo as current profile photo; update profile photo ImageView image=... */
-	mySession.user.dog_photo = filename;
+	mySession.dog.photo = filename;
 	//photoPlaceholder.image = filehandle;
 	
 	/* Returns a File object representing the file identified by the path arguments  */
@@ -234,10 +226,6 @@ if(Ti.Platform.osname === 'android'){
 };
 */
 
-// Bucharest
-//var lat = 44.4275;		
-//var lon = 26.125;			
-
 // NextSpace Culver City
 // 34.024 / -118.394
 
@@ -245,10 +233,15 @@ var mySession = {
 	user : {
 		owner_ID: 	null,
 		username: 	null,
-		password: 	null,
-		dog_id: 		null,
-		dog_name:		null,
-		dog_photo:	null
+		password: 	null
+	},
+	dog : {
+		dog_ID : 	null,
+		name:		 	null,
+		sex: 			null,
+		age:			null,
+		weight:		null,
+		photo:		null
 	},
 	windowStack		: [],
 	currentWindow	: "index", 
@@ -269,8 +262,8 @@ var mySession = {
 		distance  : null
 	},
 	checkinInProgress	: null,
-	checkedIn					: 1,								// where we are actually checked in (as opposed to currentPlace, which is simply nearby)
-	checkin_place_ID	: 1, 
+	checkedIn					: null,						// where we are actually checked in (as opposed to currentPlace, which is simply nearby)
+	checkin_place_ID	: null, 						// TODO:  consider moving these fields to the local dog arrays 
 	lastCheckIn				: null,
 	checkinTimestamp	: null,
 	AWS : {

@@ -41,11 +41,12 @@
                 <key>UIAppFonts</key>
                 <array>
                     <string>Raleway.ttf</string>
-                    <string>Sosa-Regular.ttf</string>
                     <string>Raleway-Light.ttf</string>
-                    <string>Raleway-ExtraLight.ttf</string>
                     <string>Raleway-Medium.ttf</string>
                     <string>Raleway-Bold.ttf</string>
+                    <string>Sosa-Regular.ttf</string>
+                    <string>Futura-CondensedExtraBold.ttf</string>
+                    <string>Futura-Medium.ttf</string>
                 </array>
             </dict>
         </plist>

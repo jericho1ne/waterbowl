@@ -88,8 +88,8 @@ if( mySession.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 /*  		we also require a user to log in since we need an owner_ID for most interactions */
 //Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
 //Ti.App.Properties.setString('pass', 'mihai1');
-//var new_window = Alloy.createController( "registerpetinfo" ).getView();
-//new_window.open();
+var new_window = Alloy.createController( "map" ).getView();
+new_window.open();
 
 
 // loginRequest.open triggers > loginRequest.onload 
