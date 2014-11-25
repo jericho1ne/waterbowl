@@ -289,7 +289,7 @@ var mySession = {
 	local_icon_path		:	"images/icons",
 	local_banner_path : "images/places",
 	placeArray				: [],				// top N places that are near user's location (n=20, 30, etc)
-	geofencePlaceArray: [], 			// contains up to N places that are within the geofence
+	placesInGeofence	: [], 			// contains up to N places that are within the geofence
 	lat: null, 
 	lon: null, 
 	currentPlace: { 
@@ -301,7 +301,7 @@ var mySession = {
 		zip 			: null,
 		distance  : null
 	},
-	proximity					: 0.06,
+	proximity					: 0.26,
 	checkinInProgress	: null,
 	checkedIn					: null,						// where we are actually checked in (as opposed to currentPlace, which is simply nearby)
 	checkin_place_ID	: null, 						// TODO:  consider moving these fields to the local dog arrays 

@@ -264,14 +264,14 @@ getPlaceActivity( args._place_ID );
 //		(3)		Checkin/Checkout button attach + related button listeners
 //
 //----------------------------------------------------------------------------
-var nearbyPlaceIDs = [];
 
-if (typeof variable != 'undefined') {
-	for (var j=0; j<mySession.geofencePlaceArray.length; j++) {
-		nearbyPlaceIDs.push( mySession.geofencePlaceArray[j].id );
+/*
+if (typeof mySession.placesInGeofence != 'undefined') {
+	for (var j=0; j < mySession.placesInGeofence.length; j++) {
+		nearbyPlaceIDs.push( mySession.placesInGeofence[j].id );
 	}
 }
-// alert (JSON.stringify (nearbyPlaceIDs) );
+*/
 
 // Ti.API.info( nearbyPlaceIDs )
 /*  if viewing place details on a place we're currently, show the checkboxx   */

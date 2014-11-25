@@ -165,9 +165,9 @@ addMenubar( $.menubar );
 
 var args 	= arguments[0] || {};
 Ti.API.info("* checkin.js #" + args._place_ID );
-Ti.API.info("geofencePlaceArray: "+ JSON.stringify(mySession.geofencePlaceArray) );
+Ti.API.info( "placeIDinGeofence: "+ JSON.stringify( mySession.placesInGeofence )  );
 		
-//Ti.API.info (' *** ' + mySession.geofencePlaceArray[args._place_ID].name  + " } * ");	
+//Ti.API.info (' *** ' + mySession.placeArray[args._place_ID].name  + " } * ");	
 $.place_checkin.text = mySession.placeArray[args._place_ID].name;
 
 // initial value set

@@ -261,7 +261,7 @@ function createPlaceList() {
 function findNearbyPlaces(lat, lon) {
 	var place_query = Ti.Network.createHTTPClient();
 
-	if (mySession.user.owner_ID == 1)
+	if (mySession.user.owner_ID == 2)
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity-admin.php");
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity.php");
@@ -273,27 +273,26 @@ function findNearbyPlaces(lat, lon) {
 	
 	// DEBUG / HACK: Search for places near a specific location
 	// lat: 34.014,  lon: -118.375,		// West LA
-	// lat: 024268,  lon: -118.394,			
-	// var params = { lat: 34.024268,  lon: -118.394 };		// Nextspace 
+	// lat: 024268,  lon: -118.394,				
+	var params = { lat: 34.024268,  lon: -118.394 };		// Nextspace 
 	place_query.send(params);
 	
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
 		if (jsonResponse != "") {
 			Ti.API.info("...[i] nearby locations " + jsonResponse);
-			//var placesArray = JSON.parse(jsonResponse);
+			
 			/* save up to 5 nearby places to global array */
 			var responseArray = JSON.parse(jsonResponse);
-			mySession.geofencePlaceArray = responseArray.places; 
-			
-			//	Ti.API.info("geofencePlaceArray: "+ JSON.stringify(mySession.geofencePlaceArray) );
 			
 			/*  if anything is nearby, gotta notify the user  */
 			if ( responseArray.nearby > 0) {
 				/* build options array, allow user to pick from multiple nearby places */
 				var opts = [];
-				for (var i=0; i<mySession.geofencePlaceArray.length; i++) {
-					opts.push( mySession.geofencePlaceArray[i].name );
+				for (var i=0; i<responseArray.places.length; i++) {
+					/* save place ID to global nearby place array */
+					mySession.placesInGeofence.push ( responseArray.places[i].id ); 
+					opts.push( responseArray.places[i].name );
 				}
 				opts.push('Cancel');
 				
@@ -301,8 +300,8 @@ function findNearbyPlaces(lat, lon) {
 				var optns = { 	// build up Checkin modal popup
 					options : opts,
 					//selectedIndex : 0,
-					// destructive : mySession.geofencePlaceArray.places.length,		// red text
-					cancel : mySession.geofencePlaceArray.length,
+					// destructive : mySession.placesInGeofence.length,		// red text
+					cancel : mySession.placesInGeofence.length,
 					title : 'Check in here?'
 				};
 				var dialog = Ti.UI.createOptionDialog(optns);
@@ -316,11 +315,11 @@ function findNearbyPlaces(lat, lon) {
 				dialog.addEventListener('click', function(e) {// take user to Checkin View
 					Ti.API.info ( "...[i] clicked on " + JSON.stringify(e.index) );
 					/* user clicked something other than Cancel */
-					if (e.index != mySession.geofencePlaceArray.length) { 
+					if (e.index != mySession.placesInGeofence.length) { 
 						mySession.checkinInProgress = true;
 						// checkin now officially in progress  <-- TODO: move to checkin.js
 						var checkinPage = Alloy.createController("checkin", {
-							_place_ID : mySession.geofencePlaceArray[e.index].id		// pass in place ID
+							_place_ID : mySession.placesInGeofence[e.index]		// pass in place ID
 						}).getView();
 							
 						mySession.previousWindow = "map";
