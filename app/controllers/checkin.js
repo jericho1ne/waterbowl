@@ -79,14 +79,19 @@ function updateEstimates (place_ID, estimate) {
 				$.checkin = null;
 				
 				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
-				mySession.checkedIn = true;										// checkin now officially complete
+				mySession.checkedIn = true;									// checkin now officially complete
 				var timestamp = new Date().getTime();
 				mySession.checkin_place_ID 	= place_ID;
 				mySession.lastCheckIn 			= timestamp;
 				mySession.checkinInProgress = false;				// remove "in progress" state
 				
-				var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
-				placeoverview.open();
+				
+				// if placeoverview is already open, then don't do anything
+				// otherwise, the Map window sent us here, so we have to open placeoverview window
+				if  (mySession.previousWindow != "placeoverview" ) {
+					var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
+					placeoverview.open();
+				}
 			}
 			else
 				alert("Unable to save estimate"); 
@@ -163,7 +168,7 @@ Ti.API.info("* checkin.js #" + args._place_ID );
 Ti.API.info("geofencePlaceArray: "+ JSON.stringify(mySession.geofencePlaceArray) );
 		
 //Ti.API.info (' *** ' + mySession.geofencePlaceArray[args._place_ID].name  + " } * ");	
-$.place_checkin.text = mySession.geofencePlaceArray[args._array_pos].name;
+$.place_checkin.text = mySession.placeArray[args._place_ID].name;
 
 // initial value set
 $.slider_label.text = ""; 		

@@ -6,6 +6,36 @@
 // 		make things accessible globally by attaching them to the Alloy.Globals object
 //=================================================================================
 
+//=============================================================================
+//	Name:			getDistance ( lat1, lon1, lat2, lon2 )
+//=============================================================================
+function getDistance(lat1, lon1, lat2, lon2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; // Distance in km
+  d = d * 0.621371;
+  return Number ( d.toFixed(2) );		// typecast just in case toFixed returns a string...
+}
+
+//=============================================================================
+//	Name:			deg2rad ( deg )
+//=============================================================================
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}
+
+//=============================================================================
+//	Name:			addMenubar ( parent_object )
+//	Purpose:	dynamically build menu bar and attach it to the parent object,
+//						which is already positioned in the parent Window
+//=============================================================================
 function addMenubar( parent_object ) {
 	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
 	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 40, backgroundColor: "#58c6d5", 
@@ -31,7 +61,6 @@ function addMenubar( parent_object ) {
 			{ id: "#wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 6, height: "auto", 
 			color: "#ffffff", font:{ fontFamily: 'Raleway', fontSize: 20 } } );
 	
-	
 	menuLeft.add(backBtn);
 	menuCenter.add(wbLogoMenubar);	
 	
@@ -47,11 +76,9 @@ function addMenubar( parent_object ) {
 			// TODO: add refresh function for Place Activity feed
 		});
 	}
-	
 	menuRight.add(infoBtn);
 	//menuRight.add(refreshBtn);
 	menuRight.add(settingsBtn);
-	
 
 	/* Add items to container divs, then add menubar to Window object */
 	menubar.add(menuLeft);	
@@ -63,7 +90,6 @@ function addMenubar( parent_object ) {
 	infoBtn.addEventListener('click', mainInfoBtn);
 	settingsBtn.addEventListener('click', showSettings);
 	//refreshBtn.addEventListener('click', createPlaceList);
-
 }
 
 //==================================================================================================
@@ -168,6 +194,20 @@ function addToAppWindowStack( winObject, win_name )  {
 	Ti.API.info ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( mySession.windowStack.length ) +" =========//" );
 }
 
+
+//=================================================================================
+// 	Name:  		closeWin()
+// 	Purpose:	generic cleanup function usually attached to Back Button
+//=================================================================================
+function openWindow( win_name ) {
+	var new_window = Alloy.createController( win_name ).getView();
+	new_window.open();
+	// 	TODO:	create list of properties that need to get passed into new window
+	//  TODO: prepare window open animation
+	mySession.previousWindow = mySession.currentWindow;
+	mySession.currentWindow = win_name;
+}
+
 //=================================================================================
 // 	Name:  		closeWin()
 // 	Purpose:	generic cleanup function usually attached to Back Button
@@ -244,8 +284,8 @@ var mySession = {
 		photo:		null
 	},
 	windowStack		: [],
-	currentWindow	: "index", 
-	lastWindow		: null,
+	currentWindow			: "index", 
+	previousWindow		: null,
 	local_icon_path		:	"images/icons",
 	local_banner_path : "images/places",
 	placeArray				: [],				// top N places that are near user's location (n=20, 30, etc)
@@ -261,6 +301,7 @@ var mySession = {
 		zip 			: null,
 		distance  : null
 	},
+	proximity					: 0.06,
 	checkinInProgress	: null,
 	checkedIn					: null,						// where we are actually checked in (as opposed to currentPlace, which is simply nearby)
 	checkin_place_ID	: null, 						// TODO:  consider moving these fields to the local dog arrays 

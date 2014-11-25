@@ -99,7 +99,6 @@ function currentLocation() {
 					"lat" : e.coords.latitude,
 					"lon" : e.coords.longitude
 				};
-
 				return coords;
 			}
 		});
@@ -171,7 +170,7 @@ function createPlaceList() {
 
 	var place_query = Ti.Network.createHTTPClient();
 
-	if (mySession.user.owner_ID == 1 || mySession.user.owner_ID == 2)// usually, Mihai=1
+	if (mySession.user.owner_ID == 1)// usually, Mihai=1
 		place_query.open("POST", "http://waterbowl.net/mobile/places-admin.php");
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/places.php");
@@ -262,7 +261,7 @@ function createPlaceList() {
 function findNearbyPlaces(lat, lon) {
 	var place_query = Ti.Network.createHTTPClient();
 
-	if (mySession.user.owner_ID == 1 || mySession.user.owner_ID == 2)
+	if (mySession.user.owner_ID == 1)
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity-admin.php");
 	else
 		place_query.open("POST", "http://waterbowl.net/mobile/place-proximity.php");
@@ -273,9 +272,9 @@ function findNearbyPlaces(lat, lon) {
 	};
 	
 	// DEBUG / HACK: Search for places near a specific location
-	// lat: 34.014,  lon: -118.375,		/* 	centered on West LA	 		*/
-	// lat: 024268,  lon: -118.394,			/*	 centered on Nextspace 	*/
-	// var params = { lat: 34.024268,  lon: -118.394 };
+	// lat: 34.014,  lon: -118.375,		// West LA
+	// lat: 024268,  lon: -118.394,			
+	// var params = { lat: 34.024268,  lon: -118.394 };		// Nextspace 
 	place_query.send(params);
 	
 	place_query.onload = function() {
@@ -321,10 +320,12 @@ function findNearbyPlaces(lat, lon) {
 						mySession.checkinInProgress = true;
 						// checkin now officially in progress  <-- TODO: move to checkin.js
 						var checkinPage = Alloy.createController("checkin", {
-							_place_ID : mySession.geofencePlaceArray[e.index].id,			// pass in place info!
-							_array_pos: e.index
+							_place_ID : mySession.geofencePlaceArray[e.index].id		// pass in place ID
 						}).getView();
 							
+						mySession.previousWindow = "map";
+						mySession.currentWindow = "checkin";
+
 						checkinPage.open({
 							transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
 						});
@@ -361,6 +362,7 @@ function goToPlaceOverview (place_ID) {
 addToAppWindowStack($.map, "map");
 addMenubar($.menubar);
 
+//  alert("logged in as UID# "+mySession.user.owner_ID);
 /* 	check for nearby places every 6 minutes */
 setInterval(function () { findNearbyPlaces(mySession.lat, mySession.lon) }, 360000 );  	
 

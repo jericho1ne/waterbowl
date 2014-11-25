@@ -185,7 +185,6 @@ function getPlaceInfo( place_ID ) {
 				
 				$.headerContainer.backgroundImage = banner_image;		// add place header image
 				Ti.API.info( " * Place banner: " + banner_image );
-				// alert( " * Place banner: " + banner_image );
 			}
 
 		}	
@@ -214,7 +213,14 @@ var args 	= arguments[0] || {};
 Ti.API.info("* placeoverview.js { #" + args._place_ID  + " } * ");	
 /*  save globally stored place info into a local variable */
 var placeInfo = mySession.placeArray[ args._place_ID ];
-Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( placeInfo )  );
+
+mySession.lat = 34.024268;
+mySession.lon = -118.394;
+
+var how_close = getDistance( mySession.lat, mySession.lon, mySession.placeArray[args._place_ID].lat, mySession.placeArray[args._place_ID].lon );
+// alert( how_close + " miles");
+
+//Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( placeInfo )  );
 
 //----------------------------------------------------------------------------
 //
@@ -304,7 +310,9 @@ if ( args._place_ID == mySession.checkin_place_ID && mySession.checkedIn == true
 	});		
 }
 /*  if we are nearby this place, show manual checkin button   */
-else if ( nearbyPlaceIDs.indexOf( args._place_ID ) != -1) {
+else if ( how_close < mySession.proximity )  {   
+	//	originally we checked for current place IDs presence in nearbyPlaceIDs array
+	//	>> nearbyPlaceIDs.indexOf( args._place_ID ) != -1
 	//alert("this is nearby!");
 	
 	var checkinBtn = Ti.UI.createButton ( { 
@@ -320,10 +328,11 @@ else if ( nearbyPlaceIDs.indexOf( args._place_ID ) != -1) {
 	
 	checkinBtn.addEventListener('click', function(e) {
 		var checkinPage = Alloy.createController("checkin", {
-			_place_ID : args._place_ID,			// pass in place info!
-			_array_pos: 0
+			_place_ID : args._place_ID			// pass in place ID!
 		}).getView();
 			
+		mySession.previousWindow = "placeoverview";
+		mySession.currentWindow = "checkin";
 		checkinPage.open({
 			transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
 		});

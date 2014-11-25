@@ -174,7 +174,7 @@
 
 ".wb_blue" : { backgroundColor: "#58c6d5" }
 
-".form_label" : { top: 10, font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#000000"} }
+".form_label" : { top: 20, font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#000000"} }
 
 ".header_label" : { 
 	height: 50, top: 70, zIndex: 3, backgroundColor: "#ffffff", color: "#777477",

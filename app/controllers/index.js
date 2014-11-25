@@ -70,6 +70,8 @@ else {
 	Ti.API.info( "* << IOS 7 or older *" );
 }
 
+Ti.App.Properties.setString('user', 'herbyang@gmail.com');
+Ti.App.Properties.setString('pass', 'herb2');
 // if credentials are already saved in mySession
 if( mySession.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
 	$.email.value = mySession.user.email;
@@ -88,8 +90,9 @@ if( mySession.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 /*  		we also require a user to log in since we need an owner_ID for most interactions */
 //Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
 //Ti.App.Properties.setString('pass', 'mihai1');
-var new_window = Alloy.createController( "map" ).getView();
-new_window.open();
+openWindow("registerpetinfo");
+//var new_window = Alloy.createController( win_name ).getView();
+//new_window.open();
 
 
 // loginRequest.open triggers > loginRequest.onload 

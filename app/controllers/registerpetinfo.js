@@ -20,6 +20,7 @@ function ageChanged() {
 	Ti.API.info('Age changed to: ' + $.age_picker.value);
 }
 
+
 function gender_male() {
 	alert("itzaBoy");
 }
