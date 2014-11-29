@@ -6,6 +6,84 @@
 // 		make things accessible globally by attaching them to the Alloy.Globals object
 //=================================================================================
 
+//=========================================================================================
+//	Name:			checkinAtPlace (place_ID, owner_ID, estimate)
+//	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
+//						TODO:			Allow selection between multiple dogs
+//=========================================================================================
+function checkinAtPlace (place_ID, owner_ID, estimate) {
+	/* create an HTTP client object  */ 
+	var checkin_http_obj = Ti.Network.createHTTPClient();
+	/* create an HTTP client object  */ 
+	checkin_http_obj.open("POST", "http://waterbowl.net/mobile/place-checkin.php");
+	
+	var params = {
+		place_ID : place_ID,
+		owner_ID : owner_ID,
+		estimate: estimate,
+		lat:	mySession.lat,
+		lon:	mySession.lon
+	};
+	
+	var response = 0;
+	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
+	checkin_http_obj.send(params);
+	/* response data received */
+	checkin_http_obj.onload = function() {
+		var json = this.responseText;
+		if (json != "") {
+			Ti.API.info("* checkin JSON " + json);
+			var response = JSON.parse(json);
+			if (response.status == 1) { 		// success
+				Ti.API.log("  [>]  Checkin added successfully ");
+	
+				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
+				mySession.checkedIn = true;										// checkin now officially complete
+				mySession.checkin_place_ID 	= place_ID;
+				var timestamp = new Date().getTime();
+				mySession.lastCheckIn 			= timestamp;
+				mySession.checkinInProgress = false;				// remove "in progress" state
+				
+				// in case we want to bounce user straight to place overview
+				// var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
+				// placeoverview.open();
+			}
+			else
+				alert( response.message ); 
+		}
+		else
+				alert("No data received from server"); 
+	};
+	return response;
+}
+
+//=============================================================================
+//	Name:			getPlaces ( lat, lon )
+//	Purpose:	get all places in db, plus a smaller subset of nearby ones
+//=============================================================================
+function getPlaces( user_lat, user_lon ) {
+	/* create an HTTP client object  */
+	var place_query = Ti.Network.createHTTPClient();
+	/* open the HTTP client object  (locally at http://127.0.0.1/___ )  */
+	place_query.open("POST", "http://waterbowl.net/mobile/places.php");
+	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
+	var params = {
+		lat : user_lat,
+		lon : user_lon
+	};
+	place_query.send(params);
+	/* response data is available */
+	place_query.onload = function() {
+		var jsonResponse = this.responseText;
+
+		var jsonPlaces = [];
+		if (jsonResponse != "") {
+			var jsonPlaces = JSON.parse(jsonResponse);	
+			Ti.API.info( "* raw jsonResponse from getPlaces: " + JSON.stringify(jsonPlaces) );	
+		};
+		return jsonPlaces;
+	};
+}
 //=============================================================================
 //	Name:			getDistance ( lat1, lon1, lat2, lon2 )
 //=============================================================================
@@ -41,9 +119,9 @@ function addMenubar( parent_object ) {
 	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 40, backgroundColor: "#58c6d5", 
 											opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 2, shadowOffset: {x:2, y:2} });
 											
-	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: "12%", borderWidth: 0, borderColor: "red" });
-	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "50%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
-	var menuRight 	= Ti.UI.createView( {id: "menuRight", right: 0, layout: "horizontal", width: Ti.UI.SIZE });
+	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: 44, borderWidth: 0, borderColor: "red" });
+	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "75%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
+	var menuRight 	= Ti.UI.createView( {id: "menuRight", width: 44, right: 0, layout: "horizontal", width: Ti.UI.SIZE });
 	
 	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '', zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
@@ -59,24 +137,32 @@ function addMenubar( parent_object ) {
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "#wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 6, height: "auto", 
-			color: "#ffffff", font:{ fontFamily: 'Raleway', fontSize: 20 } } );
+			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
 	
-	menuLeft.add(backBtn);
+	//menuLeft.add(backBtn);
 	menuCenter.add(wbLogoMenubar);	
 	
+	/*  don't want users going back to login screen once authenticated */
+	if (Ti.App.Properties.current_window != "map") {	
+		Ti.API.info(" >> Ti.App.Properties.current_window :"+ Ti.App.Properties.current_window);
+		menuLeft.add(backBtn);
+	}
+	
+	/*
 	if (Ti.App.Properties.current_window == "map") {	
 		menuRight.add(refreshBtn);
 		refreshBtn.addEventListener('click', function() {			// REFRESH button
-			Ti.API.info("...[+] Refresh button click");
+			Ti.API.info("...[+] Refresh button clicked on map");
 			// createPlaceList();
 		});
 	}
 	else if (Ti.App.Properties.current_window == "placeoverview") {	
 		refreshBtn.addEventListener('click', function() {			// REFRESH button
+			Ti.API.info("...[+] Refresh button clicked on placeoverview");
 			// TODO: add refresh function for Place Activity feed
 		});
-	}
-	menuRight.add(infoBtn);
+	}*/
+	// menuRight.add(infoBtn);
 	//menuRight.add(refreshBtn);
 	menuRight.add(settingsBtn);
 

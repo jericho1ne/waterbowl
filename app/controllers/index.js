@@ -70,8 +70,11 @@ else {
 	Ti.API.info( "* << IOS 7 or older *" );
 }
 
-Ti.App.Properties.setString('user', 'herbyang@gmail.com');
-Ti.App.Properties.setString('pass', 'herb2');
+//Ti.App.Properties.setString('user', 'herbyang@gmail.com');
+//Ti.App.Properties.setString('pass', 'herb2');
+Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
+Ti.App.Properties.setString('pass', 'mihai1');
+
 // if credentials are already saved in mySession
 if( mySession.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
 	$.email.value = mySession.user.email;
@@ -91,7 +94,7 @@ setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for 
 //Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
 //Ti.App.Properties.setString('pass', 'mihai1');
 //openWindow("registerpetinfo");
-//var new_window = Alloy.createController( win_name ).getView();
+//var new_window = Alloy.createController( "map" ).getView();
 //new_window.open();
 
 

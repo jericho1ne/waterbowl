@@ -20,15 +20,15 @@
 	<Window id="photoupload" class="container">
 		<View id="menubar"/>
 			
-		<ScrollView class="fill_width bg_lt_blue">
-			<Label class="form_label top_40">choose a profile photo</Label>
+		<ScrollView class="fill_width bg_lt_blue top_40">
+			<Label class="form_label">choose a profile photo</Label>
 			<Label class="text_small_light">no humans allowed!</Label>
 			
 			<ImageView id="photoPlaceholder"/>
 		
-			<View class="layout_horz top_20 height_60dp width_80">
+			<View class="layout_horz top_20 height_60dp">
 				<View class="layout_horz width_100">
-					<Button id="galleryBtn" class="float_right">gallery</Button>
+					<Button id="galleryBtn" class="float_right width_60">gallery</Button>
 				</View>
 				<!-- 
 				<View class="layout_horz width_50">

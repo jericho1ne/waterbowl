@@ -1,3 +1,12 @@
+//
+//	Waterbowl App
+//		:: placeoverview.js
+//	
+//	Created by Mihai Peteu Oct 2014
+//	(c) 2014 waterbowl
+//
+
+
 //================================================================================
 //		Name:				getPlaceActivity( place_ID )
 //		Purpose:		get latest checkins
@@ -158,14 +167,21 @@ function getPlaceInfo( place_ID ) {
 	query.send( params );
 	query.onload = function() {
 		var placeJSON = this.responseText;
-		Ti.API.info( " * Place JSON: " + placeJSON );
+		Ti.API.info( " * getPlaceInfo JSON: " + placeJSON );
 		
 		if (placeJSON != "" && placeJSON !="[]") {
 			var place = JSON.parse( placeJSON );
 
 			/*  sanity check :: only replace the stuff that hasn't loaded yet */
-			if ( $.place_name_label.text == "" )
+			if ( $.place_name_label.text == "" ) {
+				if ( place['name'].length > 36)  {
+					$.addClass( $.place_name_label, "text_medium_medium");
+				}
+				else {
+					$.addClass( $.place_name_label, "text_large_medium");
+				}
 				$.place_name_label.text 	= place['name'];			// add place name header
+			}
 			if ( $.place_address_label.text == "" )
 				$.place_address_label.text=	place['street_address'];		// address, city, zip
 			if ( $.place_city_label.text == "")
@@ -214,8 +230,10 @@ Ti.API.info("* placeoverview.js { #" + args._place_ID  + " } * ");
 /*  save globally stored place info into a local variable */
 var placeInfo = mySession.placeArray[ args._place_ID ];
 
-mySession.lat = 34.024268;
-mySession.lon = -118.394;
+
+/* HACK - show places near NextSpace */
+//mySession.lat = 34.024268;
+//mySession.lon = -118.394;
 
 var how_close = getDistance( mySession.lat, mySession.lon, mySession.placeArray[args._place_ID].lat, mySession.placeArray[args._place_ID].lon );
 // alert( how_close + " miles");
@@ -301,8 +319,8 @@ if ( args._place_ID == mySession.checkin_place_ID && mySession.checkedIn == true
 				mySession.checkin_place_ID = null;
 				mySession.checkedIn = null;
 				 
-				// TODO: ping checkin.php w/ owner_ID, dog_ID, checkout_timestamp, park_ID 
-				// OR simply mySession.dog_activity_ID, which requires checkin.php to return mysql_last_insert_ID
+				// TODO: ping backend w/ owner_ID, dog_ID, checkout_timestamp, park_ID 
+				// OR simply mySession.dog_activity_ID, which requires backend API to return mysql_last_insert_ID
 				closeWin();	
 			}
 		});

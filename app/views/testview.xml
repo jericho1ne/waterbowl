@@ -1,9 +1,12 @@
 <Alloy>
 	<Window id="testview" class="container">
 		<View id="menubar"/>
+	
+		<ScrollView id="test_scrollview" class="fit_height fill_width border_red">
+			<Label id="menubar_debug" top="30" height="100" width="100%" class="form_label border">
+					LOADING...
+				</Label>
 		
-		<ScrollView class="fit_height fill_width border_red">
-			
 			<Label class="font_icon_sm">1234567890-=</Label>
 			<Label class="font_icon_sm">~!@#$%^*()_+</Label>
 			

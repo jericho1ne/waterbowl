@@ -7,10 +7,11 @@ $.galleryBtn.addEventListener('click', function() {
 	uploadFromGallery( $.photoPlaceholder );	
 });
 
+/*
 $.cameraBtn.addEventListener('click', function() {
 	uploadFromCamera( $.photoPlaceholder );	
 });
-
+*/
 
 function createAccount() {
 	Ti.API.info (" * createAccount btn clicked ");

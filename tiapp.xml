@@ -61,9 +61,9 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-        <!-- <module platform="android" version="2.1.4">ti.map</module>  -->
-        <module platform="iphone" version="2.0.4">ti.map</module>
         <module platform="commonjs">ti.aws</module>
+        <module platform="iphone" version="1.0.0">com.waterbowl.winmgr</module>
+        <module platform="iphone" version="2.0.4">ti.map</module>
     </modules>
     <deployment-targets>
         <target device="android">false</target>

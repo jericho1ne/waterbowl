@@ -1,3 +1,11 @@
+//
+//	Waterbowl App
+//		:: checkin.js
+//	
+//	Created by Mihai Peteu Oct 2014
+//	(c) 2014 waterbowl
+//
+
 //===========================================================
 //	name:			updateLabel(e)
 //	purpose:	display slider estimate ranges
@@ -49,7 +57,7 @@ function updateLabel(e){
 //========================================================================
 function updateEstimates (place_ID, estimate) {
 	var grabPlaces = Ti.Network.createHTTPClient();
-	grabPlaces.open("POST", "http://waterbowl.net/mobile/update-estimate.php");
+	grabPlaces.open("POST", "http://waterbowl.net/mobile/place-estimate.php");
 	
 	Ti.API.log( "* Check In @ place ID " + place_ID + 
 		" | owner_ID: " + mySession.user.owner_ID + 
@@ -102,56 +110,6 @@ function updateEstimates (place_ID, estimate) {
 	return response;
 }
 
-
-//========================================================================
-//	Name:			updateDogActivity (place_ID, owner_ID, estimate)
-//	Purpose:	check into a place - user_estimates table
-//	TODO:			Allow selection between multiple dogs
-//========================================================================
-function updateDogActivity (place_ID, owner_ID, estimate) {
-	var grabPlaces = Ti.Network.createHTTPClient();
-	grabPlaces.open("POST", "http://waterbowl.net/mobile/update-estimate.php");
-	
-	var params = {
-		place_ID : place_ID,
-		owner_ID : owner_ID,
-		estimate: estimate,
-		lat:	mySession.lat,
-		lon:	mySession.lon
-	};
-	
-	var response = 0;
-	grabPlaces.send(params);
-	grabPlaces.onload = function() {
-		var json = this.responseText;
-		if (json != "") {
-			Ti.API.info("* checkin JSON " + json);
-			var response = JSON.parse(json);
-			if (response.status == 1) { 		// success
-				Ti.API.log("  [>]  Estimate added successfully ");
-	
-				// close current window and bounce user to Place Overview
-				$.checkin.close();
-				$.checkin = null;
-				
-				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
-				mySession.checkedIn = true;										// checkin now officially complete
-				var timestamp = new Date().getTime();
-				mySession.checkin_place_ID 	= place_ID;
-				mySession.lastCheckIn 			= timestamp;
-				mySession.checkinInProgress = false;				// remove "in progress" state
-				
-				var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
-				placeoverview.open();
-			}
-			else
-				alert("Unable to save estimate"); 
-		}
-		else
-				alert("No data received from server"); 
-	};
-	return response;
-}
 
 //===========================================================================================
 // 				LOGIC FLOW

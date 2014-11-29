@@ -18,7 +18,7 @@
 					</View>
 				</View>
 				<View id="headerBottom" class="layout_vert">
-					<Label id="place_name_label" 		text="" class="feed_label_left_lg white text_large_medium"/>
+					<Label id="place_name_label" 		text="" class="feed_label_left_lg white"/>
 					<Label id="place_address_label" text="" class="feed_label_left white text_medium_medium" />
 					<Label id="place_city_label" 		text="" class="feed_label_left white text_medium_medium" />
 					<Label id="place_dist_label" 		text="" class="feed_label_left white text_medium_medium" />			
