@@ -56,23 +56,13 @@ function currentLocation() {
 		alert('Please turn on Location Services');
 	} else {// assuming GPS is turned ON
 		Ti.Geolocation.getCurrentPosition(function(e) {
-
-			/* Other values that are made available by getCurrentPosition:
-
-			 var alt = e.coords.altitude;
-			 var heading = e.coords.heading;
-			 var accuracy = e.coords.accuracy;
-			 var speed = e.coords.speed;
-			 var timestamp = e.coords.timestamp;
-			 var altitudeAccuracy = e.coords.altitudeAccuracy; */
-
 			if (!e.success || e.error) {// uh oh, time to worry
 				alert('Unable to find your current location');
 				Ti.API.debug(JSON.stringify(e));
 				Ti.API.debug(e);
 				return;
 			} else {// everything is kosher, do the damn thing
-				Ti.API.info('...(-+-) currentLocation [ ' + e.coords.latitude + '/' + e.coords.longitude + ' ]');
+				Ti.API.info('...(-+-) location CHANGED [ ' + e.coords.latitude + '/' + e.coords.longitude + ' ]');
 
 				if (mySession.lastCheckIn != null) {
 					var current_ts = new Date().getTime();
@@ -161,7 +151,6 @@ function createAnnotation( place_data ) {
 //=========================================================================
 function createPlaceList() {
 	Ti.API.info("* createPlaceList() called *");
-
 	/* clear existing place scrolling list */
 	placeListTable.data = null;
 	
@@ -377,7 +366,7 @@ function goToPlaceOverview (place_ID) {
 //-----------------------------------------------------------------------
 addToAppWindowStack($.map, "map");
 addMenubar($.menubar);
-
+Titanium.API.info ('...[~]Available memory [map.js]: ' + Titanium.Platform.availableMemory);
 //  alert("logged in as UID# "+mySession.user.owner_ID);
 /* 	check for nearby places every 6 minutes */
 //setInterval(function () { findNearbyPlaces(mySession.lat, mySession.lon) }, 360000 );  	
@@ -439,17 +428,19 @@ Ti.Geolocation.getCurrentPosition(function(e) {
 	
 	/* Grab JSON data and populate Place TableView */
 	createPlaceList();
+	Titanium.API.info ('...[~]Available memory [map.js, after createPlaceList() call] ' + Titanium.Platform.availableMemory);
 });
 
 //-----------------------------------------------------------------------
 //
-//		(2)		Location change event listener
+//		(2)		Location Change event listener
 //					- make sure Ti.Geolocation.distanceFilter is set in alloy.js!
 //-----------------------------------------------------------------------
 Ti.Geolocation.addEventListener('location', function() {
 	Ti.API.info("...(-+-) location event listener trigger ");
-	currentLocation();
 	// update map view and check for nearby places
+	currentLocation();
+	Titanium.API.info ('...[~]Available memory [map.js, after map move] ' + Titanium.Platform.availableMemory);
 });
 
 //-----------------------------------------------------------------------
@@ -457,17 +448,16 @@ Ti.Geolocation.addEventListener('location', function() {
 // 		(3) 	Add Click Event Listeners
 //
 //-----------------------------------------------------------------------
-placeListTable.addEventListener('click', function(e) {// PLACES TableView
-	Ti.API.info("...[o] POI list click [ " + e.rowData.name + " ]");
-	Ti.API.info("...[o] e.index [ " + e.index + " ]");
-	setRegion(e.rowData.lat, e.rowData.lon);
+placeListTable.addEventListener('click', function(e_row) {// PLACES TableView
+	Ti.API.info("...[o] POI list click [ " + e_row.rowData.name + " ]");
+	Ti.API.info("...[o] e_row.index [ " + e_row.index + " ]");
+	setRegion(e_row.rowData.lat, e_row.rowData.lon);
 
 	Alloy.Globals.placeList_clicks ++;
-	Ti.API.info("...[o] clicked on [" + e.rowData.id + " - " + e.rowData.name + " ]");
-	Ti.API.info("...  ~~ annotations [" + JSON.stringify ( Alloy.Globals.annotations[e.index] ) + " ]");
+	Ti.API.info("...[o] clicked on [" + e_row.rowData.id + " - " + e_row.rowData.name + " ]");
 	
 	// TODO:  make sure that place annotation opens on TableViewRow click
-	// Alloy.Globals.wbMapView.selectAnnotation( 0 );			// Alloy.Globals.annotations[e.index]
+	// Alloy.Globals.wbMapView.selectAnnotation( 0 );			// Alloy.Globals.annotations[e_row.index]
 	
 	
 	//============================== CHECKIN MODAL POPUP
@@ -476,31 +466,28 @@ placeListTable.addEventListener('click', function(e) {// PLACES TableView
 		cancel : 1,
 		selectedIndex : 0,
 		destructive : 1,
-		title : 'Check in at ' + e.rowData.name + '?'
+		title : 'Check in at ' + e_row.rowData.name + '?'
 	};
 	var checkin_dialog = Ti.UI.createOptionDialog(optns);
+	checkin_dialog.show();
 	
-	/*
 	// add click listener for "Yes" button 
-	checkin_dialog.addEventListener('click', function(e) {
-		if (e.index == 0) {// user clicked OK
+	checkin_dialog.addEventListener('click', function(e_dialog) {
+		if (e_dialog.index == 0) {// user clicked OK
 			mySession.checkinInProgress = false;
-			mySession.checkin_place_ID = null;
-			mySession.checkedIn = null;
-			 
+			
+			checkinAtPlace (e_row.rowData.id);
 			// TODO: ping backend w/ owner_ID, dog_ID, checkout_timestamp, park_ID 
 			// OR simply mySession.dog_activity_ID, which requires backend API to return mysql_last_insert_ID
-			closeWin();	
 		}
 	});
-	checkout_dialog.show();
-	*/
-	//=====================================================
 	
+
+	//=====================================================
 	/*
 	if ( Alloy.Globals.placeList_clicks == 2 ) {
-		if (Alloy.Globals.placeList_ID == e.rowData.id ) {
-			goToPlaceOverview ( e.rowData.id );		// 2nd click on same place name
+		if (Alloy.Globals.placeList_ID == e_row.rowData.id ) {
+			goToPlaceOverview ( e_row.rowData.id );		// 2nd click on same place name
 			Alloy.Globals.placeList_ID 			= null;
 			Alloy.Globals.placeList_clicks 	= 0;
 		}
@@ -508,9 +495,11 @@ placeListTable.addEventListener('click', function(e) {// PLACES TableView
 			Alloy.Globals.placeList_clicks 	= 1;
 		}
 	}
+	// save most recent table view click
+	Alloy.Globals.placeList_ID = e_row.rowData.id;	
 	*/
-	Alloy.Globals.placeList_ID = e.rowData.id;	
 });
 
+Titanium.API.info ('...[~]Available memory [map.js, after placeListTable event listeners added] ' + Titanium.Platform.availableMemory);
 
 

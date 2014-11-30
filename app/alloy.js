@@ -11,20 +11,21 @@
 //	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
 //						TODO:			Allow selection between multiple dogs
 //=========================================================================================
-function checkinAtPlace (place_ID, owner_ID, estimate) {
+function checkinAtPlace (place_ID) {
 	/* create an HTTP client object  */ 
 	var checkin_http_obj = Ti.Network.createHTTPClient();
 	/* create an HTTP client object  */ 
 	checkin_http_obj.open("POST", "http://waterbowl.net/mobile/place-checkin.php");
 	
 	var params = {
-		place_ID : place_ID,
-		owner_ID : owner_ID,
-		estimate: estimate,
-		lat:	mySession.lat,
-		lon:	mySession.lon
+		place_ID	: place_ID,
+		owner_ID	: mySession.user.owner_ID,
+		dog_ID		: mySession.dog.dog_ID,
+		lat				:	mySession.lat,
+		lon				:	mySession.lon
 	};
 	
+	Ti.API.info ( "... sending stuff to place-checkin.php " + JSON.stringify(params) );
 	var response = 0;
 	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
 	checkin_http_obj.send(params);
@@ -38,18 +39,15 @@ function checkinAtPlace (place_ID, owner_ID, estimate) {
 				Ti.API.log("  [>]  Checkin added successfully ");
 	
 				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
-				mySession.checkedIn = true;										// checkin now officially complete
+				mySession.checkedIn 				= true;										// checkin now officially complete
 				mySession.checkin_place_ID 	= place_ID;
-				var timestamp = new Date().getTime();
-				mySession.lastCheckIn 			= timestamp;
-				mySession.checkinInProgress = false;				// remove "in progress" state
-				
+				mySession.lastCheckIn 			= new Date().getTime();
+				mySession.checkinInProgress = false;				// remove "in progress" state	
 				// in case we want to bounce user straight to place overview
 				// var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
 				// placeoverview.open();
 			}
-			else
-				alert( response.message ); 
+			alert( response.message ); 
 		}
 		else
 				alert("No data received from server"); 

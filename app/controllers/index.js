@@ -70,6 +70,9 @@ else {
 	Ti.API.info( "* << IOS 7 or older *" );
 }
 
+Titanium.API.info ('...[~]Available memory: ' + Titanium.Platform.availableMemory);
+
+
 //Ti.App.Properties.setString('user', 'herbyang@gmail.com');
 //Ti.App.Properties.setString('pass', 'herb2');
 Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
@@ -109,6 +112,11 @@ loginRequest.onload = function() {			// parse the JSON response
 		mySession.user.email 		= $.email.value;
 		mySession.user.password = $.password.value;
 		mySession.user.owner_ID = response.owner_ID;
+		mySession.dog.dog_ID = response.dog_ID;
+		
+		Ti.App.Properties.setString('user', $.email.value);
+		Ti.App.Properties.setString('pass', $.password.value);
+
 		// TODO: dog info
 		
 		Ti.API.log( "* Saved Creds: "+mySession.user.owner_ID+ "/" +mySession.user.email+ "/" + mySession.user.password);
