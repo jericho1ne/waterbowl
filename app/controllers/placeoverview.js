@@ -6,6 +6,42 @@
 //	(c) 2014 waterbowl
 //
 
+//================================================================================
+//		Name:				drawCheckoutButton( )
+//		Purpose:		add checkout button if we're currently checked in here
+//================================================================================
+function drawCheckoutButton () {
+	//var checkoutBtn = Ti.UI.createButton ( { id: "checkoutBtn", width: 48, height: 48, backgroundImage: "images/icons/checkbox.png" } );
+	var checkoutBtn = Ti.UI.createButton ( { 
+		id: "checkoutBtn", width: 48, height: 48, top: 10, title: "~", backgroundColor: '#ec3c95', borderRadius: 10,
+		font:{ fontFamily: 'Sosa-Regular', fontSize: 32 }, color: "#ffffff", 
+		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
+	} );
+	
+	$.checkboxHeader.add( checkoutBtn );
+	checkoutBtn.addEventListener('click', function() {	
+		var optns = {// build up Checkin modal popup
+			options : ['Yes', 'Cancel'],
+			cancel : 1,
+			selectedIndex : 0,
+			destructive : 0,
+			title : 'Are you leaving ' + placeInfo['name'] + '?'
+		};
+		var checkout_dialog = Ti.UI.createOptionDialog(optns);
+	
+		/* add click listener for "Yes" button */
+		checkout_dialog.addEventListener('click', function(e) {// take user to Checkin View
+			if (e.index == 0) {			// user clicked OK
+				// mySession.checkin_place_ID = null;
+				// mySession.checkedIn = null;
+				 
+				// TODO: ping backend w/ place_ID, owner_ID, dog_ID 
+				checkoutFromPlace( placeInfo['id'] );	
+			}
+		});
+		checkout_dialog.show();
+	});	
+}	
 
 //================================================================================
 //		Name:				getPlaceActivity( place_ID )
@@ -154,25 +190,31 @@ function hideMiniHeader () {
 //		Name:				getPlaceInfo(place_ID)
 //		Purpose:		get place header info (name, address, bg image, etc)
 //================================================================================
-function getPlaceInfo( place_ID ) {
+function getPlaceInfo( place_ID, owner_ID ) {
 	Ti.API.info("* getPlaceInfo("+ place_ID +") called ");
-	var query = Ti.Network.createHTTPClient();
+	var http_query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID  : place_ID,
-		lat				: mySession.lat,
-		lon				:	mySession.lon
+		owner_ID	: owner_ID
 	};
 	
-	query.open("POST", "http://waterbowl.net/mobile/place-info.php");	
-	query.send( params );
-	query.onload = function() {
+	http_query.open("POST", "http://waterbowl.net/mobile/place-info.php");	
+	http_query.send( params );
+	http_query.onload = function() {
 		var placeJSON = this.responseText;
 		Ti.API.info( " * getPlaceInfo JSON: " + placeJSON );
 		
 		if (placeJSON != "" && placeJSON !="[]") {
 			var place = JSON.parse( placeJSON );
-
+	
+			if ( place.here==1 ) {
+				mySession.checkin_place_ID = place_ID;
+				
+				/* populate checkout button + listener */
+				drawCheckoutButton();
+			}
 			/*  sanity check :: only replace the stuff that hasn't loaded yet */
+			/*
 			if ( $.place_name_label.text == "" ) {
 				if ( place['name'].length > 36)  {
 					$.addClass( $.place_name_label, "text_medium_medium");
@@ -186,22 +228,13 @@ function getPlaceInfo( place_ID ) {
 				$.place_address_label.text=	place['street_address'];		// address, city, zip
 			if ( $.place_city_label.text == "")
 				$.place_city_label.text	  =	place['city'] +' ' + place['zipcode'];
-				
 			if ( place['dist'] != "")
-				$.place_dist_label.text 	= place['dist'] + " miles away";   // TODO: send in distance in miles from backend
+				$.place_dist_label.text 	= place['dist'] + " miles away";   
 				 
-			/*  fill in mini header info */
+			//  fill in mini header info 
 			if ( $.miniHeaderPlaceName.text == "" )
 				$.miniHeaderPlaceName.text = place['name'];	
-			
-			/*  only attempt to set the bg image if it exists */
-			if ( place['banner'] != "" ) {
-				//var banner_image = mySession.AWS.url_base+'/'+mySession.AWS.bucket_place+'/'+place['banner'];
-				var banner_image = mySession.local_banner_path+'/'+place['banner'];
-				
-				$.headerContainer.backgroundImage = banner_image;		// add place header image
-				Ti.API.info( " * Place banner: " + banner_image );
-			}
+			*/
 
 		}	
 	};
@@ -274,7 +307,10 @@ $.place_city_label.text	  		=	placeInfo.city + ' ' + placeInfo.zip;
 $.mini_place_name_label.text 	= placeInfo.name;
 $.mini_place_second_label.text	=	placeInfo.city;  // + ' ('+ placeInfo.dist + " mi away)";
 
-// getPlaceInfo( args._place_ID );		// ideally, only called 
+/* get feed of checkins, including your current checkin status */
+Ti.API.info( "CALLING PLACE INFO WITH THESE GUYS: "+ args._place_ID + " / " + mySession.user.owner_ID );
+getPlaceInfo( args._place_ID, mySession.user.owner_ID );		 
+/* get feed of estimates */
 getPlaceActivity( args._place_ID );
 
 //----------------------------------------------------------------------------
@@ -282,7 +318,6 @@ getPlaceActivity( args._place_ID );
 //		(3)		Checkin/Checkout button attach + related button listeners
 //
 //----------------------------------------------------------------------------
-
 /*
 if (typeof mySession.placesInGeofence != 'undefined') {
 	for (var j=0; j < mySession.placesInGeofence.length; j++) {
@@ -291,44 +326,9 @@ if (typeof mySession.placesInGeofence != 'undefined') {
 }
 */
 
-// Ti.API.info( nearbyPlaceIDs )
-/*  if viewing place details on a place we're currently, show the checkboxx   */
-if ( args._place_ID == mySession.checkin_place_ID && mySession.checkedIn == true ) {
-	//var checkoutBtn = Ti.UI.createButton ( { id: "checkoutBtn", width: 48, height: 48, backgroundImage: "images/icons/checkbox.png" } );
-	var checkoutBtn = Ti.UI.createButton ( { 
-		id: "checkoutBtn", width: 48, height: 48, top: 10, title: "~", backgroundColor: '#ec3c95', borderRadius: 10,
-		font:{ fontFamily: 'Sosa-Regular', fontSize: 32 }, color: "#ffffff", 
-		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
-	} );
-	
-	$.checkboxHeader.add( checkoutBtn );
-	checkoutBtn.addEventListener('click', function() {	
-		var optns = {// build up Checkin modal popup
-			options : ['Yes', 'Cancel'],
-			cancel : 1,
-			selectedIndex : 0,
-			destructive : 0,
-			title : 'Are you leaving ' + placeInfo['name'] + '?'
-		};
-		var checkout_dialog = Ti.UI.createOptionDialog(optns);
-	
-		/* add click listener for "Yes" button */
-		checkout_dialog.addEventListener('click', function(e) {// take user to Checkin View
-			if (e.index == 0) {// user clicked OK
-				mySession.checkinInProgress = false;
-				mySession.checkin_place_ID = null;
-				mySession.checkedIn = null;
-				 
-				// TODO: ping backend w/ owner_ID, dog_ID, checkout_timestamp, park_ID 
-				// OR simply mySession.dog_activity_ID, which requires backend API to return mysql_last_insert_ID
-				closeWin();	
-			}
-		});
-		checkout_dialog.show();
-	});		
-}
 /*  if we are nearby this place, show manual checkin button   */
-else if ( how_close < mySession.proximity )  {   
+/*
+if ( how_close < mySession.proximity )  {   
 	//	originally we checked for current place IDs presence in nearbyPlaceIDs array
 	//	>> nearbyPlaceIDs.indexOf( args._place_ID ) != -1
 	//alert("this is nearby!");
@@ -340,7 +340,6 @@ else if ( how_close < mySession.proximity )  {
 	} );
 	
 	$.checkboxHeader.add( checkinBtn );
-	/*  bounce user to checkin.js, passing in current    */
 	mySession.checkinInProgress = true;
 	// checkin now officially in progress  <-- TODO: move to checkin.js
 	
@@ -355,7 +354,7 @@ else if ( how_close < mySession.proximity )  {
 			transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
 		});
 	});
-}
+} */
 
 ///----------------------------------------------------------------------------
 //

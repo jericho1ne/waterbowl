@@ -7,8 +7,9 @@
 //=================================================================================
 
 //=========================================================================================
-//	Name:			checkinAtPlace (place_ID, owner_ID, estimate)
+//	Name:			checkinAtPlace ( place_ID )
 //	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
+//																		( all available globally except for place_ID )
 //						TODO:			Allow selection between multiple dogs
 //=========================================================================================
 function checkinAtPlace (place_ID) {
@@ -52,7 +53,48 @@ function checkinAtPlace (place_ID) {
 		else
 				alert("No data received from server"); 
 	};
-	return response;
+	// return response;
+}
+
+//=========================================================================================
+//	Name:			checkoutFromPlace (place_ID)
+//	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
+//						TODO:			Allow selection between multiple dogs
+//=========================================================================================
+function checkoutFromPlace (place_ID) {
+	/* create an HTTP client object  */ 
+	var checkout_http_obj = Ti.Network.createHTTPClient();
+	/* create an HTTP client object  */ 
+	checkout_http_obj.open("POST", "http://waterbowl.net/mobile/place-checkout.php");
+	
+	var params = {
+		place_ID	: place_ID,
+		owner_ID	: mySession.user.owner_ID,
+		dog_ID		: mySession.dog.dog_ID,
+	};
+	var response = 0;
+	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
+	checkout_http_obj.send(params);
+	/* response data received */
+	checkout_http_obj.onload = function() {
+		var json = this.responseText;
+		if (json != "") {
+			Ti.API.info("* checkout JSON " + json);
+			var response = JSON.parse(json);
+			if (response.status == 1) { 		// success
+				Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
+	
+				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
+				mySession.checkedIn 				= false;										// checkin now officially complete
+				mySession.checkin_place_ID 	= null;
+				closeWin();
+			}
+			alert( response.message ); 
+		}
+		else
+				alert("No data received from server"); 
+	};
+	// return response;
 }
 
 //=============================================================================

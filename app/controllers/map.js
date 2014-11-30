@@ -8,14 +8,14 @@ function drawDefaultMap(lat, lon) {
 		region : {
 			latitude : lat,
 			longitude : lon,
-			latitudeDelta : 0.01,
-			longitudeDelta : 0.01
+			latitudeDelta : 0.015,
+			longitudeDelta : 0.015
 		},
 		zoom : 10,
 		top : 0,
 		enableZoomControls : true,
-		maxZoomLevel : 14,
 		minZoomLevel : 2,
+		maxZoomLevel : 10,
 		id : "wbMapView",
 		animate : true,
 		regionFit : true,
@@ -77,9 +77,7 @@ function currentLocation() {
 				var region = {// Redraw the bounding box, recenter the map View
 					latitude : e.coords.latitude,
 					longitude : e.coords.longitude,
-					animate : true,
-					latitudeDelta : .007,
-					longitudeDelta : .007
+					animate : true
 				};
 				Alloy.Globals.wbMapView.setLocation(region);
 
