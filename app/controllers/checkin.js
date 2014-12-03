@@ -57,19 +57,19 @@ function updateLabel(e){
 //========================================================================
 function updateEstimates (place_ID, estimate) {
 	var grabPlaces = Ti.Network.createHTTPClient();
-	grabPlaces.open("POST", "http://waterbowl.net/mobile/place-estimate.php");
+	grabPlaces.open("POST", "http://waterbowl.net/mobile/set-place-estimate.php");
 	
 	Ti.API.log( "* Check In @ place ID " + place_ID + 
-		" | owner_ID: " + mySession.user.owner_ID + 
+		" | owner_ID: " + MYSESSION.user.owner_ID + 
 		" | estimate: " + estimate + 
-		" | @ ["+ mySession.lat +', '+ mySession.lon+ "]" );
+		" | @ ["+ MYSESSION.geo.lat +', '+ MYSESSION.geo.lon+ "]" );
 	
 	var params = {
 		place_ID : place_ID,
-		owner_ID : mySession.user.owner_ID,
+		owner_ID : MYSESSION.user.owner_ID,
 		estimate: estimate,
-		lat:	mySession.lat,
-		lon:	mySession.lon
+		lat:	MYSESSION.geo.lat,
+		lon:	MYSESSION.geo.lon
 	};
 	
 	var response = 0;
@@ -86,17 +86,17 @@ function updateEstimates (place_ID, estimate) {
 				$.checkin.close();
 				$.checkin = null;
 				
-				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
-				mySession.checkedIn = true;									// checkin now officially complete
+				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
+				MYSESSION.checkedIn = true;									// checkin now officially complete
 				var timestamp = new Date().getTime();
-				mySession.checkin_place_ID 	= place_ID;
-				mySession.lastCheckIn 			= timestamp;
-				mySession.checkinInProgress = false;				// remove "in progress" state
+				MYSESSION.checkin_place_ID 	= place_ID;
+				MYSESSION.lastCheckIn 			= timestamp;
+				MYSESSION.checkinInProgress = false;				// remove "in progress" state
 				
 				
 				// if placeoverview is already open, then don't do anything
 				// otherwise, the Map window sent us here, so we have to open placeoverview window
-				if  (mySession.previousWindow != "placeoverview" ) {
+				if  (MYSESSION.previousWindow != "placeoverview" ) {
 					var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
 					placeoverview.open();
 				}
@@ -123,10 +123,10 @@ addMenubar( $.menubar );
 
 var args 	= arguments[0] || {};
 Ti.API.info("* checkin.js #" + args._place_ID );
-Ti.API.info( "placeIDinGeofence: "+ JSON.stringify( mySession.placesInGeofence )  );
+Ti.API.info( "placeIDinGeofence: "+ JSON.stringify( MYSESSION.nearbyPlaces )  );
 		
-//Ti.API.info (' *** ' + mySession.placeArray[args._place_ID].name  + " } * ");	
-$.place_checkin.text = mySession.placeArray[args._place_ID].name;
+//Ti.API.info (' *** ' + MYSESSION.allPlaces[args._place_ID].name  + " } * ");	
+$.place_checkin.text = MYSESSION.allPlaces[args._place_ID].name;
 
 // initial value set
 $.slider_label.text = ""; 		

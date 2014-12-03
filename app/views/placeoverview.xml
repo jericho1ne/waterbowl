@@ -1,65 +1,65 @@
 <Alloy>
-	<Window id="placeoverview" class="container">	
-		<View id="menubar" class=""/>
+	<Window id="placeoverview" class="absolute">	
+		<View id="content" class="container">
 		
-		<View id="miniHeaderContainer" height="60" class="" backgroundColor="#777477" zIndex="97" opacity="0" >	
-			<Label id="mini_place_name_label" 		text="" class="feed_label_left_lg white text_large_light"/>
-			<Label id="mini_place_second_label" text="" class="feed_label_left white text_medium_bold" />
-			<!-- <Label id="mini_place_dist_label" 		text="" class="feed_label_left white text_medium_bold" />	 -->
-		</View>
-		
-		<ScrollView id="scrollView" class="fill_height" top="-60" opacity="1">
-		
-			<View id="headerContainer" class="layout_vert">
-				<View id="headerTop" class="layout_horz">
-					<View class="width_50"/>
-					<View class="fill_width">
-						<View id="checkboxHeader" class="float_right" /> 
-					</View>
-				</View>
-				<View id="headerBottom" class="layout_vert">
-					<Label id="place_name_label" 		text="" class="feed_label_left_lg white"/>
-					<Label id="place_address_label" text="" class="feed_label_left white text_medium_medium" />
-					<Label id="place_city_label" 		text="" class="feed_label_left white text_medium_medium" />
-					<Label id="place_dist_label" 		text="" class="feed_label_left white text_medium_medium" />			
-				</View>
+			<View id="miniHeaderContainer" height="60" class="" backgroundColor="#777477" zIndex="97" opacity="0" >	
+				<Label id="mini_place_name_label" 		text="" class="feed_label_left_lg white text_large_light"/>
+				<Label id="mini_place_second_label" text="" class="feed_label_left white text_medium_bold" />
+				<!-- <Label id="mini_place_dist_label" 		text="" class="feed_label_left white text_medium_bold" />	 -->
 			</View>
 			
-			// 								LATEST UPDATE
-			// +============= feed_item =================================+
-			// |  +-photo-+ +-- middleColumn ---+ +-- rightColumn ---+  |
-			// |  |       | |   midColTopLabel  | |   rightLabelTop  |  |
-			// |  |       | |   midColMidLabel  | |                  |  |
-			// |  |       | |   midColBotLabel  | |   rightLabelTop  |  |		
-			// |  +-------+ +-------------------+ +------------------+  |		
-			// +========================================================+
-			<View class="feed_item_lg">
-				<ImageView class="thumbnail" id="last_update_thumb"/>
-				<View class="middle_view" id="last_update_middle">
-					<Label class="feed_label_left text_medium_light" id="latest_update_static">latest update</Label>
+			<ScrollView id="scrollView" class="fill_height" top="-60" opacity="1">
+			
+				<View id="headerContainer" class="layout_vert">
+					<View id="headerTop" class="layout_horz">
+						<View class="width_50"/>
+						<View class="fill_width">
+							<View id="checkboxHeader" class="float_right" /> 
+						</View>
+					</View>
+					<View id="headerBottom" class="layout_vert">
+						<Label id="place_name_label" 		text="" class="feed_label_left_lg white"/>
+						<Label id="place_address_label" text="" class="feed_label_left white text_medium_medium" />
+						<Label id="place_city_label" 		text="" class="feed_label_left white text_medium_medium" />
+						<Label id="place_dist_label" 		text="" class="feed_label_left white text_medium_medium" />			
+					</View>
+				</View>
+				
+				// 								LATEST UPDATE
+				// +============= feed_item =================================+
+				// |  +-photo-+ +-- middleColumn ---+ +-- rightColumn ---+  |
+				// |  |       | |   midColTopLabel  | |   rightLabelTop  |  |
+				// |  |       | |   midColMidLabel  | |                  |  |
+				// |  |       | |   midColBotLabel  | |   rightLabelTop  |  |		
+				// |  +-------+ +-------------------+ +------------------+  |		
+				// +========================================================+
+				<View class="feed_item_lg">
+					<ImageView class="thumbnail" id="last_update_thumb"/>
+					<View class="middle_view" id="last_update_middle">
+						<Label class="feed_label_left text_medium_light" id="latest_update_static">latest update</Label>
+							<!-- add most recent update labels here programmatically -->
+					</View>
+					<View class="right_view" id="last_update_right">
 						<!-- add most recent update labels here programmatically -->
+					</View>
 				</View>
-				<View class="right_view" id="last_update_right">
-					<!-- add most recent update labels here programmatically -->
-				</View>
-			</View>
-				
-			// +============== feedContainer ===============================+
-			// |  +----------- feed_item (#1) ---------------------------+  |
-			// |  | +-photo-+ +------------------+  +------------------+ |  |                
-			// |  | |  			| | feed_label_left  |  | feed_label_right | |  |            
-			// |  | | 	    | | feed_label_left  |  |                  | |  |  		
-			// |  | +-------+ +------------------+  +------------------+ |  | 
-			// |  +------------------------------------------------------+  |	
-			// |																				                    |
-			// |  +---------- feed_item (#2) ------------+                  |
-			// |	|				    e t c . . .                |                  |
-			// |  |                                      |                  |
-			// |  ^                                      ^                  |
-			// +============================================================+
-			<View id="feedContainer"/>
-				
-		</ScrollView>
-
+					
+				// +============== feedContainer ===============================+
+				// |  +----------- feed_item (#1) ---------------------------+  |
+				// |  | +-photo-+ +------------------+  +------------------+ |  |                
+				// |  | |  			| | feed_label_left  |  | feed_label_right | |  |            
+				// |  | | 	    | | feed_label_left  |  |                  | |  |  		
+				// |  | +-------+ +------------------+  +------------------+ |  | 
+				// |  +------------------------------------------------------+  |	
+				// |																				                    |
+				// |  +---------- feed_item (#2) ------------+                  |
+				// |	|				    e t c . . .                |                  |
+				// |  |                                      |                  |
+				// |  ^                                      ^                  |
+				// +============================================================+
+				<View id="feedContainer"/>
+					
+			</ScrollView>
+		</View>
 	</Window>
 </Alloy>

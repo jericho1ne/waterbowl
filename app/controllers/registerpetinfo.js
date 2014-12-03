@@ -35,10 +35,10 @@ addMenubar( $.menubar );
 $.gender_button_bar.addEventListener('click', function(e) {
 	//alert( JSON.stringify(e) );
 	if (e.index == 0) {  
-		mySession.dog.sex = "F";
+		MYSESSION.dog.sex = "F";
 	}
 	else if (e.index == 1) {
-		mySession.dog.sex = "M";
+		MYSESSION.dog.sex = "M";
 	}
 });	
 

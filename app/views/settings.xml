@@ -1,0 +1,12 @@
+<Alloy>
+	<Window id="settings" class="absolute">
+		<View id="content" class="container">
+			<ScrollView id="settings_scrollview" class="fit_height fill_width border_red">
+				<Label id="dog_name" height="40" width="100%" class="border" text="..."/>
+				<Label id="user_email" height="40" width="100%" class="border" text="..."/>
+				<Label id="dog_photo" height="40" width="100%" class="border" text="..."/>
+				
+			</ScrollView>
+		</View>
+	</Window>
+</Alloy>

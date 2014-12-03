@@ -32,8 +32,8 @@ function drawCheckoutButton () {
 		/* add click listener for "Yes" button */
 		checkout_dialog.addEventListener('click', function(e) {// take user to Checkin View
 			if (e.index == 0) {			// user clicked OK
-				// mySession.checkin_place_ID = null;
-				// mySession.checkedIn = null;
+				// MYSESSION.checkin_place_ID = null;
+				// MYSESSION.checkedIn = null;
 				 
 				// TODO: ping backend w/ place_ID, owner_ID, dog_ID 
 				checkoutFromPlace( placeInfo['id'] );	
@@ -54,7 +54,7 @@ function getPlaceActivity( place_ID ) {
 		place_ID	: place_ID
 	};
 	
-	query.open("POST", "http://waterbowl.net/mobile/place-activity.php");	
+	query.open("POST", "http://waterbowl.net/mobile/get-place-activity.php");	
 	query.send( params );
 	query.onload = function() {
 		var jsonResponse = this.responseText;
@@ -76,7 +76,7 @@ function getPlaceActivity( place_ID ) {
 		if (jsonResponse != "" && jsonResponse !="[]") {
 			var activity = JSON.parse( jsonResponse );
 			/*					POPULATE LATEST FEED ITEM 					*/
-			var last_update_photo = mySession.AWS.url_base+ '/' +mySession.AWS.bucket_profile+ '/' +activity[0].dog_photo;
+			var last_update_photo = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
 			Ti.API.info( "latest update photo: " + last_update_photo  );
 			 
 			$.last_update_thumb.image = last_update_photo;					// TODO: change storage location	
@@ -117,7 +117,7 @@ function getPlaceActivity( place_ID ) {
 					$.addClass( thumb, "thumbnail_sm");
 					
 					// TODO: change storage location	*ERROR* here
-					thumb.image = mySession.AWS.url_base + '/' + mySession.AWS.bucket_profile + '/' + activity[i].dog_photo;		
+					thumb.image = MYSESSION.AWS.url_base + '/' + MYSESSION.AWS.bucket_profile + '/' + activity[i].dog_photo;		
 					
 					var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
 					$.addClass( status_update_label, "feed_label_left text_medium_bold");
@@ -187,55 +187,34 @@ function hideMiniHeader () {
 }
 
 //================================================================================
-//		Name:				getPlaceInfo(place_ID)
-//		Purpose:		get place header info (name, address, bg image, etc)
+//		Name:				getPlaceCheckins(place_ID, dog_ID)
+//		Purpose:		
 //================================================================================
-function getPlaceInfo( place_ID, owner_ID ) {
-	Ti.API.info("* getPlaceInfo("+ place_ID +") called ");
+function getPlaceCheckins( place_ID, dog_ID ) {
+	Ti.API.info("* getPlaceCheckins for ["+ place_ID +"] called ");
 	var http_query = Ti.Network.createHTTPClient();
 	var params = {
-		place_ID  : place_ID,
-		owner_ID	: owner_ID
+		place_ID: place_ID,
+		dog_ID	: dog_ID	
 	};
 	
-	http_query.open("POST", "http://waterbowl.net/mobile/place-info.php");	
+	http_query.open("POST", "http://waterbowl.net/mobile/get-place-checkins.php");	
 	http_query.send( params );
 	http_query.onload = function() {
 		var placeJSON = this.responseText;
-		Ti.API.info( " * getPlaceInfo JSON: " + placeJSON );
+		Ti.API.info( " * getPlaceCheckins JSON: " + placeJSON );
 		
 		if (placeJSON != "" && placeJSON !="[]") {
 			var place = JSON.parse( placeJSON );
 	
 			if ( place.here==1 ) {
-				mySession.checkin_place_ID = place_ID;
+				MYSESSION.checkin_place_ID = place_ID;
 				
 				/* populate checkout button + listener */
 				drawCheckoutButton();
 			}
-			/*  sanity check :: only replace the stuff that hasn't loaded yet */
-			/*
-			if ( $.place_name_label.text == "" ) {
-				if ( place['name'].length > 36)  {
-					$.addClass( $.place_name_label, "text_medium_medium");
-				}
-				else {
-					$.addClass( $.place_name_label, "text_large_medium");
-				}
-				$.place_name_label.text 	= place['name'];			// add place name header
-			}
-			if ( $.place_address_label.text == "" )
-				$.place_address_label.text=	place['street_address'];		// address, city, zip
-			if ( $.place_city_label.text == "")
-				$.place_city_label.text	  =	place['city'] +' ' + place['zipcode'];
-			if ( place['dist'] != "")
-				$.place_dist_label.text 	= place['dist'] + " miles away";   
-				 
-			//  fill in mini header info 
-			if ( $.miniHeaderPlaceName.text == "" )
-				$.miniHeaderPlaceName.text = place['name'];	
-			*/
-
+			/*  populate current checkins view with all the dog profile photos  */
+			
 		}	
 	};
 }
@@ -248,9 +227,6 @@ function getPlaceInfo( place_ID, owner_ID ) {
 //		(0)		Add window to global stack, display menubar
 //
 //-----------------------------------------------------------------------
-addToAppWindowStack( $.placeoverview, "placeoverview" );
-addMenubar( $.menubar );
-	
 var mini_header_display = 0;
 
 //--------------------------------------------------------------------------------
@@ -259,16 +235,15 @@ var mini_header_display = 0;
 //
 //--------------------------------------------------------------------------------
 var args 	= arguments[0] || {};
-Ti.API.info("* placeoverview.js { #" + args._place_ID  + " } * ");	
+Ti.API.info("* placeoverview.js #{ " + args._place_ID  + " } * ");	
 /*  save globally stored place info into a local variable */
-var placeInfo = mySession.placeArray[ args._place_ID ];
-
+var placeInfo = MYSESSION.allPlaces[ args._index ];
 
 /* HACK - show places near NextSpace */
-//mySession.lat = 34.024268;
-//mySession.lon = -118.394;
+//MYSESSION.geo.lat = 34.024268;
+//MYSESSION.geo.lon = -118.394;
 
-var how_close = getDistance( mySession.lat, mySession.lon, mySession.placeArray[args._place_ID].lat, mySession.placeArray[args._place_ID].lon );
+var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, MYSESSION.allPlaces[args._index].lat, MYSESSION.allPlaces[args._index].lon );
 // alert( how_close + " miles");
 
 //Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( placeInfo )  );
@@ -283,7 +258,7 @@ var bg_image = "images/missing/place-header.png";
 $.headerContainer.backgroundImage = bg_image;
 
 if ( placeInfo.banner != "" ) {
-	bg_image = mySession.AWS.url_base+'/'+mySession.AWS.bucket_place+'/'+placeInfo.banner;
+	bg_image = MYSESSION.AWS.url_base+'/'+MYSESSION.AWS.bucket_place+'/'+placeInfo.banner;
 	/*  image preloader of sorts  */
 	var c = Titanium.Network.createHTTPClient();
 	c.setTimeout(10000);
@@ -308,8 +283,8 @@ $.mini_place_name_label.text 	= placeInfo.name;
 $.mini_place_second_label.text	=	placeInfo.city;  // + ' ('+ placeInfo.dist + " mi away)";
 
 /* get feed of checkins, including your current checkin status */
-Ti.API.info( "CALLING PLACE INFO WITH THESE GUYS: "+ args._place_ID + " / " + mySession.user.owner_ID );
-getPlaceInfo( args._place_ID, mySession.user.owner_ID );		 
+Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
+getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID );		 
 /* get feed of estimates */
 getPlaceActivity( args._place_ID );
 
@@ -319,16 +294,16 @@ getPlaceActivity( args._place_ID );
 //
 //----------------------------------------------------------------------------
 /*
-if (typeof mySession.placesInGeofence != 'undefined') {
-	for (var j=0; j < mySession.placesInGeofence.length; j++) {
-		nearbyPlaceIDs.push( mySession.placesInGeofence[j].id );
+if (typeof MYSESSION.nearbyPlaces != 'undefined') {
+	for (var j=0; j < MYSESSION.nearbyPlaces.length; j++) {
+		nearbyPlaceIDs.push( MYSESSION.nearbyPlaces[j].id );
 	}
 }
 */
 
 /*  if we are nearby this place, show manual checkin button   */
 /*
-if ( how_close < mySession.proximity )  {   
+if ( how_close < MYSESSION.proximity )  {   
 	//	originally we checked for current place IDs presence in nearbyPlaceIDs array
 	//	>> nearbyPlaceIDs.indexOf( args._place_ID ) != -1
 	//alert("this is nearby!");
@@ -340,7 +315,7 @@ if ( how_close < mySession.proximity )  {
 	} );
 	
 	$.checkboxHeader.add( checkinBtn );
-	mySession.checkinInProgress = true;
+	MYSESSION.checkinInProgress = true;
 	// checkin now officially in progress  <-- TODO: move to checkin.js
 	
 	checkinBtn.addEventListener('click', function(e) {
@@ -348,8 +323,8 @@ if ( how_close < mySession.proximity )  {
 			_place_ID : args._place_ID			// pass in place ID!
 		}).getView();
 			
-		mySession.previousWindow = "placeoverview";
-		mySession.currentWindow = "checkin";
+		MYSESSION.previousWindow = "placeoverview";
+		MYSESSION.currentWindow = "checkin";
 		checkinPage.open({
 			transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
 		});

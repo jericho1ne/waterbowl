@@ -1,33 +1,33 @@
 <Alloy>
-	<Window id="testview" class="container">
-		<View id="menubar"/>
-	
-		<ScrollView id="test_scrollview" class="fit_height fill_width border_red">
-			<Label id="menubar_debug" top="30" height="100" width="100%" class="form_label border">
-					LOADING...
-				</Label>
+	<Window id="testview" class="absolute">
+		<View id="content" class="container border_blu">
+			<ScrollView id="test_scrollview" class="fit_height fill_width border_red">
+				<Label id="menubar_debug" height="40" width="100%" class="border">
+						LOADING...
+					</Label>
+			
+				<Label class="font_icon_sm">1234567890-=</Label>
+				<Label class="font_icon_sm">~!@#$%^*()_+</Label>
+				
+				<Label class="font_icon_sm">qwertyuiop[]</Label>
+				<Label class="font_icon_sm">QWERTYUIOP{}</Label>
+				
+				<Label class="font_icon_sm">asdfghjkl;'</Label>
+				<Label class="font_icon_sm">ASDFGHJKL:""</Label>
+				
+				<Label class="font_icon_sm">zxcvbnm,./</Label>
+				<Label class="font_icon_sm">ZXCVBNM?</Label>
 		
-			<Label class="font_icon_sm">1234567890-=</Label>
-			<Label class="font_icon_sm">~!@#$%^*()_+</Label>
-			
-			<Label class="font_icon_sm">qwertyuiop[]</Label>
-			<Label class="font_icon_sm">QWERTYUIOP{}</Label>
-			
-			<Label class="font_icon_sm">asdfghjkl;'</Label>
-			<Label class="font_icon_sm">ASDFGHJKL:""</Label>
-			
-			<Label class="font_icon_sm">zxcvbnm,./</Label>
-			<Label class="font_icon_sm">ZXCVBNM?</Label>
-	
-			<Button class="font_icon_sm" id="cameraBtn">1</Button>
-			<Button class="font_icon_sm" id="xBtn">~</Button>
-			<Button class="font_icon_sm" id="starBtn">e</Button>
-			<Button class="font_icon_sm" id="refreshBtn">y</Button>
-			<Button class="font_icon_sm" id="infoBtn">i</Button>
-			<Button class="font_icon_sm" id="settingsBtn">Y</Button>
-			<Button class="font_icon_sm" id="flipToNext">p</Button>
-			
-		</ScrollView>
-		
+				<Button class="font_icon_sm" id="searchBtn">]</Button>
+				<Button class="font_icon_sm" id="cameraBtn">1</Button>
+				<Button class="font_icon_sm" id="xBtn">~</Button>
+				<Button class="font_icon_sm" id="starBtn">e</Button>
+				<Button class="font_icon_sm" id="refreshBtn">y</Button>
+				<Button class="font_icon_sm" id="infoBtn">i</Button>
+				<Button class="font_icon_sm" id="settingsBtn">Y</Button>
+				<Button class="font_icon_sm" id="flipToNext">p</Button>
+				
+			</ScrollView>
+		</View>
 	</Window>
 </Alloy>

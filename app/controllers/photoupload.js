@@ -18,12 +18,7 @@ function createAccount() {
 	
 	// TODO:  if photo shows up inside IMageView, trigger success modal
 		/*
-		var alertDialog = Titanium.UI.createAlertDialog({
-			title : 'Account Created!',
-			message : response.message,
-			buttonNames : ['OK']
-		});
-		alertDialog.show();
+		 createSimpleDialog('Account Created!', response.message);
 	*/
 }
 

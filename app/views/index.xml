@@ -18,22 +18,22 @@
 */
 
 <Alloy>
-	<Window id="index" class="container login_bg">
-		
-		<Label id="appTitle" class="top_100">waterbowl</Label>
-		
-		<View id="loginStuff" class="top_20">
-			<TextField class="text_field_large" id="email"/>
-			<TextField class="text_field_large top_10" id="password"/>
-			<Button class="btn_large top_10" id="loginBtn"    onClick="goToLogin"/>
-			<Button class="btn_large top_10" id="registerBtn" onClick="goToRegister"/>		
-		</View>
-		
-		<View id="footerContainer" class="top_80">
-			<ImageView id="footer"/>
-			<View class="fill_height bg_dk_blue"/>
-		</View>
-		
+	<Window id="index" class="absolute login_bg">
+		<View class="container">
+			<Label id="appTitle" class="top_100">waterbowl</Label>
+			
+			<View id="loginStuff" class="top_20">
+				<TextField class="text_field_large" id="email"/>
+				<TextField class="text_field_large top_10" id="password"/>
+				<Button class="btn_large top_10" id="loginBtn"    onClick="goToLogin"/>
+				<Button class="btn_large top_10" id="registerBtn" onClick="goToRegister"/>		
+			</View>
+			
+			<View id="footerContainer" class="top_80">
+				<ImageView id="footer"/>
+				<View class="fill_height bg_dk_blue"/>
+			</View>
+		</View>	
 	</Window>
 </Alloy>
 

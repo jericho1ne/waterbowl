@@ -29,18 +29,10 @@ function checkemail(emailAddress) {
 function checkUserDetails( ) {
 	if ($.password1.value != '' && $.password2.value != '' && $.email.value != '') {
 		if ($.password1.value != $.password2.value) {
-			var error = Titanium.UI.createAlertDialog({
-				title : "Passwords do not match",
-				message : "Please handle that and try again"
-			});
-			error.show();
+			createSimpleDialog("Passwords do not match","Please handle that and try again");
 		} else {
 			if (!checkemail($.email.value)) {
-				var error = Titanium.UI.createAlertDialog({
-					title : "Email error",
-					message : "Please enter a valid email"
-				});
-				error.show();
+				createSimpleDialog("Email error","Please enter a valid email");
 			}
 			else {
 				// TODO:  save dog info here locally
@@ -55,19 +47,15 @@ function checkUserDetails( ) {
 				var params = {
 					pwd 	: $.password1.value,
 					email : $.email.value,
-					lat		: mySession.lat,
-					lon		: mySession.lon
+					lat		: MYSESSION.geo.lat,
+					lon		: MYSESSION.geo.lon
 				};
 				createAccountRequest.send(params);
 				*/
 			}
 		}
 	} else {
-		var error = Titanium.UI.createAlertDialog({
-			title : "Eror",
-			message : "All fields are required"
-		});
-		error.show();
+		createSimpleDialog("Error","All fields are required");
 	}
 }
 
@@ -79,8 +67,8 @@ function checkUserDetails( ) {
 //		(0)		Add window to global stack, display menubar
 //
 //-----------------------------------------------------------------------
-addToAppWindowStack( $.register, "register" );
-addMenubar( $.menubar );
+// addToAppWindowStack( $.register, "register" );
+// addMenubar( $.menubar );
 
 // response from create-account.php =========================================================
 var createAccountRequest = Titanium.Network.createHTTPClient();
@@ -106,11 +94,7 @@ createAccountRequest.onload = function() {
 		new_window.open();
 	} 
 	else {
-		var error = Titanium.UI.createAlertDialog({
-			title : "Cannot create account",
-			message : response.message
-		});
-		error.show();
+		createSimpleDialog("Cannot create account", response.message);
 	}
 	// regardless of success or error, reactivate Submit button
 	$.continueBtn.enabled = true;

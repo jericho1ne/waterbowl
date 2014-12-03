@@ -2,9 +2,66 @@
 // 	alloy.js gets executed before index.js or any other view controllers
 // 	You have access to all functionality on the `Alloy` namespace.
 //
+//	Things made accessible globally by attaching them to the Alloy.Globals object
+//
 // 	Initializion / Global Variable + Function creation
-// 		make things accessible globally by attaching them to the Alloy.Globals object
+// 		
 //=================================================================================
+
+function isset( value ) {
+	if ( typeof value !== 'undefined' )
+		return value;
+	else
+		return "";
+}
+
+//===========================================================================================
+//	Name:		 	createSimpleDialog ( title, msg )
+//	Purpose:	nice clean way to do alert modals
+//===========================================================================================
+function createSimpleDialog (title, msg) {
+	var simple_dialog = Titanium.UI.createAlertDialog({
+		title		:	title,
+		message	: msg 
+	});
+	simple_dialog.show();
+}	
+
+
+//===========================================================================================
+//	Name:		 	createWindowController ( win_name, args, animation[optional])
+//	Purpose:	to be the bestest window manager ever
+//===========================================================================================
+function createWindowController ( win_name, args, animation ) {
+	MYSESSION.previousWindow = MYSESSION.currentWindow;
+	MYSESSION.currentWindow = win_name;
+
+	var winObject = Alloy.createController(win_name, args).getView();
+	addToAppWindowStack( winObject, win_name );
+	
+	var animStyle = [];
+	if (animation=="flip") {
+		animStyle = { transition: Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT };
+	} 
+	else if (animation=="slide_up") {
+		winObject.top = 800;
+ 		winObject.opacity = 0.15;
+		animStyle = {	top: 0, opacity: 1,	duration: 320, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
+	}
+	else {
+		/* default == quick fade-in animation   */
+		winObject.opacity = 0.05;
+		animStyle = {	opacity:1, duration:280, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT };
+	}	
+	
+	// TODO: figure out how to attach the goddamn menubar to each new Window controller
+	addMenubar(winObject);
+	winObject.open( animStyle );
+	
+	Ti.API.info( " >>> User Array : "+ JSON.stringify( MYSESSION.user ) );
+	Ti.API.info( " >>> Dog Array : "+ JSON.stringify( MYSESSION.dog ) );
+}
+
 
 //=========================================================================================
 //	Name:			checkinAtPlace ( place_ID )
@@ -16,14 +73,14 @@ function checkinAtPlace (place_ID) {
 	/* create an HTTP client object  */ 
 	var checkin_http_obj = Ti.Network.createHTTPClient();
 	/* create an HTTP client object  */ 
-	checkin_http_obj.open("POST", "http://waterbowl.net/mobile/place-checkin.php");
+	checkin_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkin.php");
 	
 	var params = {
 		place_ID	: place_ID,
-		owner_ID	: mySession.user.owner_ID,
-		dog_ID		: mySession.dog.dog_ID,
-		lat				:	mySession.lat,
-		lon				:	mySession.lon
+		owner_ID	: MYSESSION.user.owner_ID,
+		dog_ID		: MYSESSION.dog.dog_ID,
+		lat				:	MYSESSION.geo.lat,
+		lon				:	MYSESSION.geo.lon
 	};
 	
 	Ti.API.info ( "... sending stuff to place-checkin.php " + JSON.stringify(params) );
@@ -39,19 +96,19 @@ function checkinAtPlace (place_ID) {
 			if (response.status == 1) { 		// success
 				Ti.API.log("  [>]  Checkin added successfully ");
 	
-				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
-				mySession.checkedIn 				= true;										// checkin now officially complete
-				mySession.checkin_place_ID 	= place_ID;
-				mySession.lastCheckIn 			= new Date().getTime();
-				mySession.checkinInProgress = false;				// remove "in progress" state	
+				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
+				MYSESSION.checkedIn 				= true;										// checkin now officially complete
+				MYSESSION.checkin_place_ID 	= place_ID;
+				MYSESSION.lastCheckIn 			= new Date().getTime();
+				MYSESSION.checkinInProgress = false;				// remove "in progress" state	
 				// in case we want to bounce user straight to place overview
 				// var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
 				// placeoverview.open();
 			}
-			alert( response.message ); 
+			createSimpleDialog( response.title, response.message ); 
 		}
 		else
-				alert("No data received from server"); 
+			createSimpleDialog( "Problem", "No data received from server"); 
 	};
 	// return response;
 }
@@ -65,12 +122,12 @@ function checkoutFromPlace (place_ID) {
 	/* create an HTTP client object  */ 
 	var checkout_http_obj = Ti.Network.createHTTPClient();
 	/* create an HTTP client object  */ 
-	checkout_http_obj.open("POST", "http://waterbowl.net/mobile/place-checkout.php");
+	checkout_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkout.php");
 	
 	var params = {
 		place_ID	: place_ID,
-		owner_ID	: mySession.user.owner_ID,
-		dog_ID		: mySession.dog.dog_ID,
+		owner_ID	: MYSESSION.user.owner_ID,
+		dog_ID		: MYSESSION.dog.dog_ID,
 	};
 	var response = 0;
 	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
@@ -84,46 +141,20 @@ function checkoutFromPlace (place_ID) {
 			if (response.status == 1) { 		// success
 				Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
 	
-				/*		 save Place ID, checkin state, and timestamp in mySession  	*/
-				mySession.checkedIn 				= false;										// checkin now officially complete
-				mySession.checkin_place_ID 	= null;
+				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
+				MYSESSION.checkedIn 				= false;										// checkin now officially complete
+				MYSESSION.checkin_place_ID 	= null;
 				closeWin();
 			}
-			alert( response.message ); 
+			createSimpleDialog( "Success", response.message ); 
 		}
 		else
-				alert("No data received from server"); 
+			createSimpleDialog( "Problem", "No data received from server"); 
 	};
 	// return response;
 }
 
-//=============================================================================
-//	Name:			getPlaces ( lat, lon )
-//	Purpose:	get all places in db, plus a smaller subset of nearby ones
-//=============================================================================
-function getPlaces( user_lat, user_lon ) {
-	/* create an HTTP client object  */
-	var place_query = Ti.Network.createHTTPClient();
-	/* open the HTTP client object  (locally at http://127.0.0.1/___ )  */
-	place_query.open("POST", "http://waterbowl.net/mobile/places.php");
-	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
-	var params = {
-		lat : user_lat,
-		lon : user_lon
-	};
-	place_query.send(params);
-	/* response data is available */
-	place_query.onload = function() {
-		var jsonResponse = this.responseText;
 
-		var jsonPlaces = [];
-		if (jsonResponse != "") {
-			var jsonPlaces = JSON.parse(jsonResponse);	
-			Ti.API.info( "* raw jsonResponse from getPlaces: " + JSON.stringify(jsonPlaces) );	
-		};
-		return jsonPlaces;
-	};
-}
 //=============================================================================
 //	Name:			getDistance ( lat1, lon1, lat2, lon2 )
 //=============================================================================
@@ -146,7 +177,7 @@ function getDistance(lat1, lon1, lat2, lon2) {
 //	Name:			deg2rad ( deg )
 //=============================================================================
 function deg2rad(deg) {
-  return deg * (Math.PI/180)
+  return deg * (Math.PI/180);
 }
 
 //=============================================================================
@@ -156,28 +187,25 @@ function deg2rad(deg) {
 //=============================================================================
 function addMenubar( parent_object ) {
 	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
-	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 40, backgroundColor: "#58c6d5", 
-											opacity: 1, zIndex: 99, shadowColor: '#222222', shadowRadius: 2, shadowOffset: {x:2, y:2} });
+	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 40, 
+											backgroundColor: "#58c6d5", opacity: 1, zIndex: 99, opacity: 0.9 });
 											
 	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: 44, borderWidth: 0, borderColor: "red" });
 	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "75%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
 	var menuRight 	= Ti.UI.createView( {id: "menuRight", width: 44, right: 0, layout: "horizontal", width: Ti.UI.SIZE });
 	
 	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '', zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
 	
 	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1, height: 34, width: 34, borderRadius: 12 });
-	
-	var	refreshBtn	= Ti.UI.createButton( {id: "refreshBtn", color: '#ffffff', backgroundColor: '',	zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: "y", right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1, height: 34, width: 34, borderRadius: 12 });
 	
 	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '',zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, title: "Y", right: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "Y", right: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
-			{ id: "#wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 6, height: "auto", 
-			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
+			{ id: "wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 6, height: "auto", 
+			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 22 } } );
 	
 	//menuLeft.add(backBtn);
 	menuCenter.add(wbLogoMenubar);	
@@ -186,36 +214,22 @@ function addMenubar( parent_object ) {
 	if (Ti.App.Properties.current_window != "map") {	
 		Ti.API.info(" >> Ti.App.Properties.current_window :"+ Ti.App.Properties.current_window);
 		menuLeft.add(backBtn);
+		backBtn.addEventListener('click', closeWin);
 	}
 	
-	/*
-	if (Ti.App.Properties.current_window == "map") {	
-		menuRight.add(refreshBtn);
-		refreshBtn.addEventListener('click', function() {			// REFRESH button
-			Ti.API.info("...[+] Refresh button clicked on map");
-			// createPlaceList();
-		});
+	/* only show settings button if not currently on that window */	
+	if (Ti.App.Properties.current_window!="index" && Ti.App.Properties.current_window=="settings") {	
+		menuRight.add(settingsBtn);
+		settingsBtn.addEventListener('click', showSettings);
 	}
-	else if (Ti.App.Properties.current_window == "placeoverview") {	
-		refreshBtn.addEventListener('click', function() {			// REFRESH button
-			Ti.API.info("...[+] Refresh button clicked on placeoverview");
-			// TODO: add refresh function for Place Activity feed
-		});
-	}*/
+
 	// menuRight.add(infoBtn);
-	//menuRight.add(refreshBtn);
-	menuRight.add(settingsBtn);
 
 	/* Add items to container divs, then add menubar to Window object */
 	menubar.add(menuLeft);	
 	menubar.add(menuCenter); 
 	menubar.add(menuRight);
 	parent_object.add( menubar );
-	
-	backBtn.addEventListener('click', closeWin);
-	infoBtn.addEventListener('click', mainInfoBtn);
-	settingsBtn.addEventListener('click', showSettings);
-	//refreshBtn.addEventListener('click', createPlaceList);
 }
 
 //==================================================================================================
@@ -231,7 +245,7 @@ function uploadFromCamera() {
 				// var fileInfoArray = uploadToAWS( event.media );		
 				//return fileInfoArray;		
 			} else {
-				alert("Hmm, this seems to be a "+event.mediaType +". Please select a photo instead.  =) ");
+				createSimpleDialog( "Not a photo", "This seems to be a "+event.mediaType+". Please select a photo instead.  =) "  ); 
 			}
 		},
 		cancel:function() {
@@ -239,13 +253,11 @@ function uploadFromCamera() {
 		},
 		error:function(error) {
 			// called when there's an error
-			var a = Titanium.UI.createAlertDialog( {title:'Camera'} );
+			var msg = 'Unexpected error: ' + error.code;
 			if (error.code == Titanium.Media.NO_CAMERA) {
-				a.setMessage('Please run this test on device');
-			} else {
-				a.setMessage('Unexpected error: ' + error.code);
-			}
-			a.show();
+				msg = 'Please run this test on device';
+			} 
+			createSimpleDialog('Camera Error', message);
 		},
 		saveToPhotoGallery:	true,		// necessary??
 		allowEditing:	true,		 			// allowEditing and mediaTypes are iOS-only settings
@@ -269,7 +281,7 @@ function uploadFromGallery( photoPlaceholder ) {
 			}
 		});
 	} else {
-		alert ('Internet connection unavailable');
+		createSimpleDialog('No network connectio', 'Cannot upload photo');
 	}
 	return null;
 }
@@ -283,7 +295,7 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 	/* 	move file from photo gallery to Ti app data directory first */
 	var filename 		= Ti.Platform.createUUID()+".jpg";
 	/* 	save recently uploaded photo as current profile photo; update profile photo ImageView image=... */
-	mySession.dog.photo = filename;
+	MYSESSION.dog.photo = filename;
 	//photoPlaceholder.image = filehandle;
 	
 	/* Returns a File object representing the file identified by the path arguments  */
@@ -313,36 +325,21 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 // 	Purpose:	keep breadcrumb of user navigation + close windows in correct order
 //=================================================================================
 function addToAppWindowStack( winObject, win_name )  {
-	mySession.windowStack.push( winObject );
+	MYSESSION.windowStack.push( winObject );
 	Ti.App.Properties.current_window = win_name;
 	
-	//Ti.API.info ( "windowStack:"+ JSON.stringify( mySession.windowStack ) + " || array size: " + ( mySession.windowStack.length ) );
-	Ti.API.info ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( mySession.windowStack.length ) +" =========//" );
+	//Ti.API.info ( "windowStack:"+ JSON.stringify( MYSESSION.windowStack ) + " || array size: " + ( MYSESSION.windowStack.length ) );
+	Ti.API.info ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( MYSESSION.windowStack.length ) +" =========//" );
 }
 
-
-//=================================================================================
-// 	Name:  		closeWin()
-// 	Purpose:	generic cleanup function usually attached to Back Button
-//=================================================================================
-function openWindow( win_name ) {
-	var new_window = Alloy.createController( win_name ).getView();
-	new_window.open();
-	// 	TODO:	create list of properties that need to get passed into new window
-	//  TODO: prepare window open animation
-	mySession.previousWindow = mySession.currentWindow;
-	mySession.currentWindow = win_name;
-}
 
 //=================================================================================
 // 	Name:  		closeWin()
 // 	Purpose:	generic cleanup function usually attached to Back Button
 //=================================================================================
 function closeWin() {
-	var currentWindow = mySession.windowStack.pop();
-		
+	var currentWindow = MYSESSION.windowStack.pop();
 	Ti.API.info( "[x] closing window ["+ Ti.App.Properties.current_window +"]");
-	
 	currentWindow.close( { 
 		top: 0, opacity: 0.01, duration: 200, 
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
@@ -364,6 +361,7 @@ function mainInfoBtn() {
 //=================================================================================
 function showSettings() {
 	Ti.API.info( "[+] settings button clicked");
+	createWindowController('settings','','');
 }
 
 //==========================================================================================
@@ -392,13 +390,15 @@ if(Ti.Platform.osname === 'android'){
 };
 */
 
-// NextSpace Culver City
-// 34.024 / -118.394
-
-var mySession = {
+/*----------------------------------------------------------------------
+ *  	GLOBAL VARIABLES
+ *-----------------------------------------------------------------------*/
+// NextSpace Culver City  34.024 / -118.394
+// Oberrieder 		33.971995 / -118.420496
+var MYSESSION = {
 	user : {
 		owner_ID: 	null,
-		username: 	null,
+		email:		 	null,
 		password: 	null
 	},
 	dog : {
@@ -414,10 +414,13 @@ var mySession = {
 	previousWindow		: null,
 	local_icon_path		:	"images/icons",
 	local_banner_path : "images/places",
-	placeArray				: [],				// top N places that are near user's location (n=20, 30, etc)
-	placesInGeofence	: [], 			// contains up to N places that are within the geofence
-	lat: null, 
-	lon: null, 
+	allPlaces		 : [],				// top N places that are near user's location (n=20, 30, etc)
+	nearbyPlaces : [], 			// contains up to N places that are within the geofence
+	geo: {
+		lat						: null, 
+		lon						: null,
+		last_acquired	: null
+	}, 
 	currentPlace: { 
 		ID				: null,
 		name			: null,
@@ -427,7 +430,7 @@ var mySession = {
 		zip 			: null,
 		distance  : null
 	},
-	proximity					: 0.26,
+	proximity					: 0.06,
 	checkinInProgress	: null,
 	checkedIn					: null,						// where we are actually checked in (as opposed to currentPlace, which is simply nearby)
 	checkin_place_ID	: null, 						// TODO:  consider moving these fields to the local dog arrays 
@@ -450,27 +453,30 @@ Ti.App.Properties.current_window = null;
 
 /*  include amazon AWS module + authorize w/ credentials   */
 Alloy.Globals.AWS = require('ti.aws');						
-Alloy.Globals.AWS.authorize( mySession.AWS.access_key_id, mySession.AWS.secret_access );
+Alloy.Globals.AWS.authorize( MYSESSION.AWS.access_key_id, MYSESSION.AWS.secret_access );
 
 Alloy.Globals.placeList_clicks 	= 0;
 Alloy.Globals.placeList_ID 			= null;
+
 /*----------------------------------------------------------------------
  *  	GEOLOCATION
  *-----------------------------------------------------------------------*/
 // minimum change in location (meters) which triggers the 'location' eventListener
-// 	*** note:	10m triggers too often ***
-Ti.Geolocation.distanceFilter = 20;
+// 	*** Geolocation Threshhold trigger.  Note:	10m triggers too often ***
+Ti.Geolocation.distanceFilter = 30;			// 10m = 33 ft
+Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_BEST doesn't work on iOS
 Ti.Geolocation.purpose = "Receive User Location";
 Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
 
-// load the map module
+/*----------------------------------------------------------------------
+ *  	LOADING MAP MODULE
+ *-----------------------------------------------------------------------*/
 if (Ti.Platform.osname === "iphone")	
  	Alloy.Globals.Map = require('ti.map');
 else if (Ti.Platform.osname == "android")
 	Alloy.Globals.Map = Ti.Map;
-	
-Alloy.Globals.wbMapView 	= "";
+
+
 Alloy.Globals.annotations = [];
 
 var longPress;
-

@@ -28,7 +28,8 @@
 
 /*				PREDEFIND   TITANIUM  UI  ELEMENTS  									*/
 "Window":{
-	exitOnClose: "true", fullscreen: "true", horizontalWrap: "true", statusBarStyle: Ti.UI.iPhone.StatusBar.TRANSLUCENT_BLACK
+	exitOnClose: "true", fullscreen: "true", horizontalWrap: "true" 
+	 // statusBarStyle: Ti.UI.iPhone.StatusBar.TRANSLUCENT_BLACK
 }
 
 "NavigationWindow":{ exitOnClose: "true", fullscreen: "false" }
@@ -99,7 +100,8 @@
  /* 									Class Selectors and ScrollViews																				  								 */
 /**************************************************************************************************************/
 // every top level div in each XML view is a .container * Forewarned. *
-".container" : { height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", backgroundColor: "#343434", exitOnClose: true }
+".absolute" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "absolute", width: "100%", backgroundColor: "#cccccc", exitOnClose: true }
+".container" : { top:40, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", exitOnClose: true }
 
 /* --------------- ALL OF THE SPACING STUFF  -------------------------- */ 
 ".top_5"  : { top: 5 }
