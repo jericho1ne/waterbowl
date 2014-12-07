@@ -1,5 +1,3 @@
-addToAppWindowStack( $.photoupload, "photoupload" );
-addMenubar( $.menubar );
 
 /* 								photo upload buttons									*/
 $.galleryBtn.addEventListener('click', function() {

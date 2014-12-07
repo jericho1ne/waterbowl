@@ -1,10 +1,4 @@
 
-function gotoPetInfo() {
-	var new_window = Alloy.createController( "registerpetinfo" ).getView();
-	new_window.open();			
-}
-
-
 //================================================================================
 //		Name: checkemail
 //		Purpose:  error check user input
@@ -37,8 +31,8 @@ function checkUserDetails( ) {
 			else {
 				// TODO:  save dog info here locally
 
-				gotoPetInfo();
-				
+        createWindowController( "registerpetinfo", "", "slide_left" ); 
+        				
 				// TODO:  move this AJAX portion registerNewUser to final confirmation page
 				/*
 				$.continueBtn.enabled = false;
@@ -67,10 +61,9 @@ function checkUserDetails( ) {
 //		(0)		Add window to global stack, display menubar
 //
 //-----------------------------------------------------------------------
-// addToAppWindowStack( $.register, "register" );
-// addMenubar( $.menubar );
 
 // response from create-account.php =========================================================
+// TODO:  should be wrapped inside a User.create() function
 var createAccountRequest = Titanium.Network.createHTTPClient();
 
 //================================================================================
@@ -85,13 +78,12 @@ createAccountRequest.onload = function() {
 	var response = JSON.parse(json);
 
 	if (response.logged == 1) {
-		$.email.value = '';
+		$.email.value     = '';
 		$.password1.value = '';
 		$.password2.value = '';
 		
 		/* 		--- EVERYTHING IS KOSHER, LET USER UPLOAD PHOTO NOW   ----- */
-		var new_window = Alloy.createController( "registerpetinfo" ).getView();
-		new_window.open();
+    createWindowController( "registerpetinfo", "", "slide_left" ); 
 	} 
 	else {
 		createSimpleDialog("Cannot create account", response.message);

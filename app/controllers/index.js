@@ -30,6 +30,7 @@ function goToLogin(e) {
 				MYSESSION.user.password = $.password.value;
 				MYSESSION.user.owner_ID = response.human.owner_ID;
 				MYSESSION.dog.dog_ID 		= response.dog.dog_ID;
+				MYSESSION.dog.current_place_ID = response.dog.current_place_ID;
 				MYSESSION.dog.name	 		= response.dog.dog_name;
 				MYSESSION.dog.photo	 		= response.dog.dog_photo;
 			
@@ -40,7 +41,7 @@ function goToLogin(e) {
 				Ti.API.log( "* Saved Creds: "+MYSESSION.user.owner_ID+ "/" +MYSESSION.user.email+ "/" + MYSESSION.user.password);
 				
 				// take user to the post-login window
-				createWindowController( "map", "", "flip" ); 
+				createWindowController( "mapview", "", "slide_left" ); 
 			} else {
 				/* pass on error message from backend */
 				createSimpleDialog('Login Error', response.message);
@@ -62,7 +63,7 @@ function goToLogin(e) {
 //================================================================================
 function goToRegister (e) {
 	Ti.API.log("* Register clicked * ");
- 	createWindowController("register", "", "slide_up"); 
+ 	createWindowController("register", "", "slide_left"); 
 }
 
 //========================== Create and Open top level UI components ======================================= 
@@ -91,10 +92,9 @@ else {
 
 Titanium.API.info ('...[~]Available memory: ' + Titanium.Platform.availableMemory);
 
-//Ti.App.Properties.setString('user', 'herbyang@gmail.com');
-//Ti.App.Properties.setString('pass', 'herb2');
-Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
-Ti.App.Properties.setString('pass', 'mihai1');
+/*  	LOGIN HACK  */
+// Ti.App.Properties.setString('user', '');
+// Ti.App.Properties.setString('pass', '');
 
 // if credentials are already saved in MYSESSION
 if( MYSESSION.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
@@ -112,8 +112,7 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 /*  saved credentialsand app status in local storage  */
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 /*  		we also require a user to log in since we need an owner_ID for most interactions */
-//Ti.App.Properties.setString('user', 'jericho1ne@yahoo.com');
-//Ti.App.Properties.setString('pass', 'mihai1');
-createWindowController("mapview","","");
+
+// createWindowController("mapview","","");
 
 

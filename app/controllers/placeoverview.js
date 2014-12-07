@@ -253,7 +253,6 @@ var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, MYSESSION.all
 //		(2)		Populate place header + activity feed
 //
 //----------------------------------------------------------------------------
-
 var bg_image = "images/missing/place-header.png";
 $.headerContainer.backgroundImage = bg_image;
 

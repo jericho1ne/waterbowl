@@ -6,11 +6,11 @@
 											width: "100%" }
 "#appTitle"				: { color: "#ffffff", zIndex: 2, font:{ fontFamily: 'Raleway-Medium', fontSize: 40 } }  
 										
-"#email"					:	{ hintText: 'Email', zIndex: 2, opacity: 0.9 }
-"#password"				:	{ hintText: 'Password', passwordMask: true, zIndex: 2,  opacity: 0.9 }
-"#loginBtn"				:	{ title: 'login',    zIndex: 2, backgroundColor: '#777477', opacity: 0.9 }
-"#registerBtn"		: { title: 'register', zIndex: 2, backgroundColor: '#ec3c95', opacity: 0.9 } 
+"#email"					:	{ hintText: 'Email', zIndex: 2 }
+"#password"				:	{ hintText: 'Password', passwordMask: true, zIndex: 2  }
+"#loginBtn"				:	{ title: 'login',    zIndex: 2, backgroundColor: '#777477' }
+"#registerBtn"		: { title: 'register', zIndex: 2, backgroundColor: '#ec3c95' } 
 
 
-"#footer" 		: { image: 'images/WB-FooterBar-White.png', opacity: 1.0, bottom: 0, width: "100%" }
+"#footer" 		: { image: 'images/WB-FooterBar.png', opacity: 1, bottom: -2, width: "100%" }
 

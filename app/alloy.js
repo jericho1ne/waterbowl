@@ -8,11 +8,16 @@
 // 		
 //=================================================================================
 
+//===========================================================================================
+//	Name:    isset ( value )
+//	Desc:	   fail silently if value is undefined
+//  Return:   the actual value or null
+//===========================================================================================
 function isset( value ) {
 	if ( typeof value !== 'undefined' )
 		return value;
 	else
-		return "";
+		return null;
 }
 
 //===========================================================================================
@@ -45,8 +50,20 @@ function createWindowController ( win_name, args, animation ) {
 	} 
 	else if (animation=="slide_up") {
 		winObject.top = 800;
- 		winObject.opacity = 0.15;
+ 		winObject.opacity = 0.1;
 		animStyle = {	top: 0, opacity: 1,	duration: 320, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
+	}
+	else if (animation=="slide_left") {
+	 	winObject.left = 600;
+	 	winObject.top = 0;
+ 		winObject.opacity = 0.1;
+		animStyle = {	left: 0, opacity: 1,	duration: 320, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
+	}	
+	else if (animation=="slide_right") {
+	 	winObject.left = -600;
+	  winObject.top = 0;
+ 		winObject.opacity = 0.1;
+		animStyle = {	left: 0, opacity: 1,	duration: 320, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}
 	else {
 		/* default == quick fade-in animation   */
@@ -58,10 +75,10 @@ function createWindowController ( win_name, args, animation ) {
 	addMenubar(winObject);
 	winObject.open( animStyle );
 	
-	Ti.API.info( " >>> User Array : "+ JSON.stringify( MYSESSION.user ) );
-	Ti.API.info( " >>> Dog Array : "+ JSON.stringify( MYSESSION.dog ) );
+	Ti.API.info( " >>> User Array: "+ JSON.stringify( MYSESSION.user ) );
+	Ti.API.info( " >>> Dog Array: "+ JSON.stringify( MYSESSION.dog ) );
+	Ti.API.info( " >>> Checkin Place ID : "+ MYSESSION.checkin_place_ID );
 }
-
 
 //=========================================================================================
 //	Name:			checkinAtPlace ( place_ID )
@@ -144,7 +161,7 @@ function checkoutFromPlace (place_ID) {
 				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
 				MYSESSION.checkedIn 				= false;										// checkin now officially complete
 				MYSESSION.checkin_place_ID 	= null;
-				closeWin();
+				closeWindowController();
 			}
 			createSimpleDialog( "Success", response.message ); 
 		}
@@ -211,10 +228,10 @@ function addMenubar( parent_object ) {
 	menuCenter.add(wbLogoMenubar);	
 	
 	/*  don't want users going back to login screen once authenticated */
-	if (Ti.App.Properties.current_window != "map") {	
+	if (Ti.App.Properties.current_window != "mapview") {	
 		Ti.API.info(" >> Ti.App.Properties.current_window :"+ Ti.App.Properties.current_window);
 		menuLeft.add(backBtn);
-		backBtn.addEventListener('click', closeWin);
+		backBtn.addEventListener('click', closeWindowController);
 	}
 	
 	/* only show settings button if not currently on that window */	
@@ -334,14 +351,15 @@ function addToAppWindowStack( winObject, win_name )  {
 
 
 //=================================================================================
-// 	Name:  		closeWin()
+// 	Name:  		closeWindowController()
 // 	Purpose:	generic cleanup function usually attached to Back Button
 //=================================================================================
-function closeWin() {
+function closeWindowController() {
 	var currentWindow = MYSESSION.windowStack.pop();
 	Ti.API.info( "[x] closing window ["+ Ti.App.Properties.current_window +"]");
+
 	currentWindow.close( { 
-		top: 0, opacity: 0.01, duration: 200, 
+		opacity: 0.1, duration: 300, left: 800,                                                   
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
 	} );
 	currentWindow = null;
@@ -403,6 +421,7 @@ var MYSESSION = {
 	},
 	dog : {
 		dog_ID : 	null,
+		current_place_ID: null,
 		name:		 	null,
 		sex: 			null,
 		age:			null,
@@ -414,8 +433,9 @@ var MYSESSION = {
 	previousWindow		: null,
 	local_icon_path		:	"images/icons",
 	local_banner_path : "images/places",
-	allPlaces		 : [],				// top N places that are near user's location (n=20, 30, etc)
-	nearbyPlaces : [], 			// contains up to N places that are within the geofence
+	allPlaces		      : [],				// top N places that are near user's location (n=20, 30, etc)
+	nearbyPlaces      : [], 			// contains up to N places that are within the geofence
+	placeAnnotations  : [],
 	geo: {
 		lat						: null, 
 		lon						: null,
@@ -447,6 +467,7 @@ var MYSESSION = {
 	}
 };
 
+// TODO: get rid of this and see what happens; should no longer be in use 
 var winStack = [];			// create window stack array to keep track of what's open
 Ti.App.Properties.windowStack = winStack;
 Ti.App.Properties.current_window = null;

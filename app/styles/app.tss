@@ -16,8 +16,8 @@
 ".bg_dk_pink" : { backgroundColor: "#ec3c95"}
 ".bg_lt_pink" : { backgroundColor: "#f587e7"}		// TODO:  need current light pink from Herb
 
-".bg_white" : { backgroundColor: "#ffffff"}	
-".white" 		: { color: "#ffffff"}	
+".bg_white" : { backgroundColor: "#ffffff" }	
+".white" 		: { color: "#ffffff" }	
 
 ".poi_park" 	: { backgroundColor: "#986d4f" }
 ".poi_retail" : { backgroundColor: "#34b44a" }
@@ -58,8 +58,8 @@
 "TextField": {
 	autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
 	autocorrect: false,
-	backgroundColor: '#ffffff', color: "#777477", width: '70%', height: 36, top: 5, 
-	font: { fontFamily: 'Raleway-Light', fontSize: 16 },
+	backgroundColor: '#ffffff', color: "#777477", width: '70%', height: 32, top: 5, 
+	font: { fontFamily: 'Raleway-Light', fontSize: 14 },
 	keyboardType: Titanium.UI.KEYBOARD_DEFAULT,
 	returnKeyType: Titanium.UI.RETURNKEY_DEFAULT,
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
@@ -70,8 +70,8 @@
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, scrollable: true, showVerticalScrollIndicator: true, 
 	scrollIndicatorStyle: Ti.UI.iPhone.ScrollIndicatorStyle.BLACK	}
 
-  /**************************************************************************************************************/
- /* 									Predefined Ti Selectors																		  														 */
+/**************************************************************************************************************/
+/* 									Predefined Ti Selectors																		  														 */
 /**************************************************************************************************************/
 "#menubar"			: { height: 36, width: "100%" }		// the rest is defined post-page load in Alloy.js
 										
@@ -90,14 +90,14 @@
 ".wbLogoMenubar" 	: { width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: 48,
 											color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18 } }
 
-  /**************************************************************************************************************/
- /* 									Headers and ScrollViews																				  												 */
+/**************************************************************************************************************/
+/* 									Headers and ScrollViews																				  												 */
 /**************************************************************************************************************/
 "#scrollView" 			: { backgroundColor: "" }
 "#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
 
-  /**************************************************************************************************************/
- /* 									Class Selectors and ScrollViews																				  								 */
+/**************************************************************************************************************/
+/* 									Class Selectors and ScrollViews																				  								 */
 /**************************************************************************************************************/
 // every top level div in each XML view is a .container * Forewarned. *
 ".absolute" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "absolute", width: "100%", backgroundColor: "#cccccc", exitOnClose: true }
@@ -170,11 +170,15 @@
 ".border_blu" 	 : { borderWidth: 2, borderColor: "#00ffff" }
 ".border_red"  	 : { borderWidth: 2, borderColor: "ff0000" }
 
-".btn_large" : { height: 50, font:{ fontSize: 24, fontFamily: "Raleway-Light" } }
-".btn_medium" : { height: 35, font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
-".text_field_large" : { height: 40, font:{ fontSize: 20 } }
+".btn_large" : { height: 48, font:{ fontSize: 24, fontFamily: "Raleway-Light" } }
+".btn_medium" : { height: 36, font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
+".text_field_large" : { height: 36, font:{ fontSize: 17 } }
 
 ".wb_blue" : { backgroundColor: "#58c6d5" }
+
+".opacity_high" : { opacity: 0.95 }
+".opacity_mid"  : { opacity: 0.80 }
+".opacity_low"  : { opacity: 0.60 }
 
 ".form_label" : { top: 20, font:{ fontFamily: 'Raleway-Light', fontSize: 18, color: "#000000"} }
 

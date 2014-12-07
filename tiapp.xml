@@ -6,8 +6,8 @@
     <version>1.0</version>
     <publisher>mpeteu</publisher>
     <url>http://waterbowl.net</url>
-    <description>Socialize your dog!</description>
-    <copyright>2014 by Mihai Peteu</copyright>
+    <description>Making LA more dog friendly</description>
+    <copyright>(c)2014 Mihai Peteu</copyright>
     <fullscreen>false</fullscreen>
     <navbar-hidden>false</navbar-hidden>
     <analytics>false</analytics>
@@ -45,7 +45,6 @@
                     <string>Raleway-Medium.ttf</string>
                     <string>Raleway-Bold.ttf</string>
                     <string>Sosa-Regular.ttf</string>
-                    <string>Futura-CondensedExtraBold.ttf</string>
                     <string>Futura-Medium.ttf</string>
                 </array>
             </dict>

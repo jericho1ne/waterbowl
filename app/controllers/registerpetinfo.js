@@ -12,26 +12,22 @@ function genderToggled() {
 }
 
 function gotoPhotoUpload() {
-	var new_window = Alloy.createController( "photoupload" ).getView();
-	new_window.open();
+  createWindowController( "photoupload", "", "slide_left" ); 
 }
 
 function ageChanged() {
 	Ti.API.info('Age changed to: ' + $.age_picker.value);
 }
 
-
 function gender_male() {
 	alert("itzaBoy");
 }
+
 function gender_female() {
 	alert("itzaGirl");
 }
 
 //===========================================================================
-addToAppWindowStack( $.registerpetinfo, "registerpetinfo" );
-addMenubar( $.menubar );
-
 $.gender_button_bar.addEventListener('click', function(e) {
 	//alert( JSON.stringify(e) );
 	if (e.index == 0) {  

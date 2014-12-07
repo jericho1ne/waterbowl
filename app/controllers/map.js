@@ -149,9 +149,9 @@ function getPlaces( user_lat, user_lon ) {
 			if (MYSESSION.nearbyPlaces.length == 0)
 				placeListTitle.text = "no nearby places";
 			else if (MYSESSION.nearbyPlaces.length>0)
-				placeListTitle.text = "found " + MYSESSION.nearbyPlaces.length + " nearby places";
+				placeListTitle.text = "found " + MYSESSION.nearbyPlaces.length + " nearby places. tap to mark it!";
 			else if (MYSESSION.nearbyPlaces.length==1)
-				placeListTitle.text = "found " + MYSESSION.nearbyPlaces.length + " nearby place";
+				placeListTitle.text = "found " + MYSESSION.nearbyPlaces.length + " nearby place. tap to mark!";
 
 			buildMap();
 			buildNearbyPlaceList();
@@ -228,11 +228,13 @@ function buildNearbyPlaceList() {
 			width : 10, height : 30, left : 0, zIndex : 20, backgroundColor : bg_color
 		});
 		var place_name = MYSESSION.nearbyPlaces[i].name;
-		var font_size = 14;
+		var font_size  = 14;
 		
-		if (place_name.length > 40)
-			font_size = 12;
-		
+		if (place_name.length > 40 && place_name.length < 60)
+			font_size    = 12;
+		else if (place_name.length > 60)
+		  font_size    = 10;
+		  
 		// place_name = jsonPlaces[i].id + ' ' + place_name;
 		var contentView = Ti.UI.createView({ layout : "horizontal", height : 36, width : "100%" });
 		var placeLabel = Ti.UI.createLabel({
@@ -386,14 +388,14 @@ placeListTable.addEventListener('click', function(e_row) {// PLACES TableView
 	// Ti.API.info("...[o] clicked on [" + e_row.rowData.id + " - " + e_row.rowData.name + " ]");
 	
 	// TODO:  make sure that place annotation opens on TableViewRow click
-	
+	e.row.id
 	//============================== CHECKIN MODAL POPUP
 	var optns = {
 		options : ['Yes', 'Cancel'],
 		cancel : 1,
 		selectedIndex : 0,
 		destructive : 1,
-		title : 'Check in at ' + e_row.source.text + '?'
+		title : 'Mark your presence at ' + e_row.source.text + '?'
 	};
 	var checkin_dialog = Ti.UI.createOptionDialog(optns);
 	checkin_dialog.show();
