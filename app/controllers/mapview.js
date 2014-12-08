@@ -14,8 +14,7 @@ var map = {
  *-----------------------------------------------------------------------*/
 Map = require('ti.map');
 
-//========================================================================================================================
-
+//=====================================================================================================================
 
 //=================================================================================
 // 	Name:  		drawDefaultMap (lat, lon)
@@ -119,7 +118,7 @@ function buildMap(mapObject) {
 	var annotationArray = [];
 	// ALL PLACES ARRAY
 	for (var i=0; i<MYSESSION.allPlaces.length; i++) {
-		/* make sure to pass current array index or good luck sifting through that fucking array */
+		/* make sure to pass current array index, anything other than array index is useless */
 		annotationArray.push ( createMapAnnotation(MYSESSION.allPlaces[i], i) );	  
 	}
 	/* attach all POI marker annotations to map */
@@ -142,7 +141,6 @@ function getPlaceIndexById( array, value ) {
   return -1;
 }
 
-
 //=============================================================
 //	Name:			createMapAnnotation( place_data, index )
 //	Purpose:	build Apple Maps place marker from incoming array
@@ -163,13 +161,12 @@ function createMapAnnotation( place_data, index ) {
 			_index		: index,
 			_place_ID : place_data.id		// pass in array index and placeID so we can hit the backend for more details
 		};
-		createWindowController( "placeoverview", necessary_args, "" );
+		createWindowController( "placeoverview", necessary_args, 'slide_left' );
  	});
 	var annotation = Alloy.Globals.Map.createAnnotation({
     id        : place_data.id, 
 		latitude  : place_data.lat, 
 		longitude : place_data.lon,
-		opacity   :  0.8,
 		title     : place_data.name,
 		subtitle  : place_data.city + " (" + place_data.dist + " mi)",
 		animate   : true,
@@ -195,23 +192,30 @@ function buildRefreshButton( mapObject ) {
 	refreshBtn.addEventListener('click', function() {			// REFRESH button
 		Ti.API.info("...[+] Refresh button clicked on map");
 		/* will refresh all map elements + rebuild nearbyPlaces table rows */
+		
+		// ADD MARKERS + ANNOTATIONS TO MAP
 		getPlaces(mapObject, MYSESSION.geo.lat, MYSESSION.geo.lon);
-		getNearbyPlaces($.placeListTable);
+		// POPULATE NEARBY PLACE TABLE
+		setTimeout ( function(){ getNearbyPlaces($.placeListTable); }, 1200);
+		// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
+		setTimeout ( function(){ updatePlaceListLabel($.placeListTitle); }, 900);
+		// ADD PLACE LIST CLICK EVENT LISTENER
+		setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 1210);
 	});
 	
 	return refreshBtn;
 }
 
 //=================================================================================
-//	Name:			getNearbyPlaces()
+//	Name:			getNearbyPlaces( tableViewObject)
 //	Purpose:	use global data array to populate a table view
 //=================================================================================
-function getNearbyPlaces( tableObject ) {
+function getNearbyPlaces( tableViewObject ) {
 	Ti.API.info("...[~] getNearbyPlaces called");
 	/* clear existing place scrolling list */
-	tableObject.data = null;
-	
-	Ti.API.info("... nearbyPlaces >>"+JSON.stringify( MYSESSION.nearbyPlaces ));
+	tableViewObject.data = null;
+	//tableViewObject = null;
+	// Ti.API.info("... nearbyPlaces >>"+JSON.stringify( MYSESSION.nearbyPlaces ));
 		
 	/* create table view data array */
 	var placeData = new Array();
@@ -224,52 +228,123 @@ function getNearbyPlaces( tableObject ) {
 	
 	/* NEARBY PLACES ARRAY */
 	for (var i = 0; i < nearby.length; i++) {
-		var hasChildBoolean = false;
-		var custom_place_name = nearby[i].name;
-		
-		if ( MYSESSION.checkin_place_ID == nearby[i].id ) {
-			hasChildBoolean 		= true;
-			custom_place_name 	= custom_place_name + " ( * here * ) ";
-		}	
-		
-		var dataRow = Ti.UI.createTableViewRow(	{	// create each TableView row of place info
-			//leftImage : jsonPlaces[i].icon,				// as defined above
+		var dataRow = Ti.UI.createTableViewRow(	{	
+		  // object info not exposed to user
 			name 			: nearby[i].name,
 			id 				: nearby[i].id,
 			lat 			: nearby[i].lat,
 			lon 			: nearby[i].lon,
-		/*	address		: nearby[i].address,
-			city 			: nearby[i].city,
-			zip 			: nearby[i].zip, */
 			distance	: nearby[i].dist,
-			hasChild	: hasChildBoolean
+			hasChild	: false
 		});
-		Ti.API.info (" >> dataRow:" + dataRow );
+		Ti.API.info ("... >> [" + nearby[i].id + "] - "+nearby[i].name );
 		
 		/* leftmost color sliver */
-		var bg_color		 = nearby[i].icon_color;
-		var color_block	 = Ti.UI.createView({
-			width : 10, height : 32, left : 0, zIndex : 20, backgroundColor : bg_color
+		var block_bg_color		 = nearby[i].icon_color;
+		var colorBlock	 = Ti.UI.createView({
+			width : 8, height : 25, top:2, left : 6, zIndex : 20, backgroundColor : block_bg_color, borderRadius: 2
 		});
 		
+		/* accomodate long place names */
 		var font_size = 14;
-		if (custom_place_name.length > 40)
-			font_size = 12;
+    if (nearby[i].name.length > 40 && nearby[i].name.length < 60)
+			font_size    = 12;
+		else if (nearby[i].name.length > 60)
+		  font_size    = 10;
 	
-		var contentView = Ti.UI.createView({ layout : "horizontal", height : 32, width : "100%" });
-		var placeLabel = Ti.UI.createLabel({
-			text : custom_place_name,  height : Ti.UI.SIZE, width : Ti.UI.FILL,
-			left : 10, color : "#000000", textAlign : 'left', 
-			font : { fontFamily : 'Raleway', fontSize : font_size } 
+    /* IF CURRENTLY CHECKED IN HERE, DISPLAY ALL FANCY  */	  
+    // TODO:  createTableView row should be wrapped in a TableRow member function
+    var row_bg_color = "#ffffff";
+    
+		if ( MYSESSION.dog.current_place_ID == nearby[i].id ) {
+  		row_bg_color="#ec3c95";
+      var placeLabel = Ti.UI.createLabel({
+  			text : nearby[i].name +" > HERE <",  height : Ti.UI.SIZE, width : Ti.UI.FILL,
+  			left : 8, color : "#ffffff", textAlign : 'left',  
+  			font : { fontFamily : 'Raleway-Bold', fontSize : font_size } 
+  		});
+    }
+    else {
+  		var placeLabel = Ti.UI.createLabel({
+  			text : nearby[i].name,  height : Ti.UI.SIZE, width : Ti.UI.FILL,
+  			left : 10, color : "#000000", textAlign : 'left', 
+  			font : { fontFamily : 'Raleway', fontSize : font_size } 
+  		});
+		}
+		var contentView = Ti.UI.createView({ 
+		  layout : "horizontal", height : 30, width : "100%", 
+		  backgroundColor: row_bg_color 
 		});
-		contentView.add(color_block);
+		contentView.add(colorBlock);
 		contentView.add(placeLabel);
 		/*  add the custom row content we've just created  */
 		dataRow.add(contentView);
 		placeData.push(dataRow);
 	}
 	/* populate placeList TableViewRows*/
-	tableObject.data = placeData;
+	tableViewObject.data = placeData;
+}
+
+//=========================================================================================
+//	Name:			checkinAtPlace ( place_ID )
+//	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
+//																		( all available globally except for place_ID )
+//						TODO:			Allow selection between multiple dogs
+//=========================================================================================
+function checkinAtPlace (place_ID) {
+	/* create an HTTP client object  */ 
+	var checkin_http_obj = Ti.Network.createHTTPClient();
+	/* create an HTTP client object  */ 
+	checkin_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkin.php");
+	
+	var params = {
+		place_ID	: place_ID,
+		owner_ID	: MYSESSION.user.owner_ID,
+		dog_ID		: MYSESSION.dog.dog_ID,
+		lat				:	MYSESSION.geo.lat,
+		lon				:	MYSESSION.geo.lon
+	};
+	
+	Ti.API.info ( "... sending stuff to place-checkin.php " + JSON.stringify(params) );
+	var response = 0;
+	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
+	checkin_http_obj.send(params);
+	/* response data received */
+	checkin_http_obj.onload = function() {
+		var json = this.responseText;
+		if (json != "") {
+			Ti.API.info("* checkin JSON " + json);
+			var response = JSON.parse(json);
+			if (response.status == 1) { 		// success
+				Ti.API.log("  [>]  Checkin added successfully ");
+	
+				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
+				MYSESSION.checkedIn 				= true;										// checkin now officially complete
+				MYSESSION.dog.current_place_ID 	= place_ID;
+				MYSESSION.lastCheckIn 			= new Date().getTime();
+				MYSESSION.checkinInProgress = false;				// remove "in progress" state	
+				
+				// POPULATE NEARBY PLACE TABLE
+  		  setTimeout ( function(){ getNearbyPlaces($.placeListTable); }, 1200);
+  		  // ADD PLACE LIST CLICK EVENT LISTENER
+  		  setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 1210);
+  		
+				// in case we want to bounce user straight to place overview
+			  var place_index = getPlaceIndexById( MYSESSION.placeAnnotations, place_ID );
+			  // instead of success message, bounce user to place overview
+			  var necessary_args = {
+			    _index		: place_index,
+		      _place_ID : place_ID		// pass in array index and placeID so we can hit the backend for more details
+		    };
+        createWindowController( "placeoverview", necessary_args, 'slide_left' );
+			} else {
+			   createSimpleDialog( response.title, response.message );
+			} 
+		}
+		else
+			createSimpleDialog( "Problem", "No data received from server"); 
+	};
+	// return response;
 }
 
 //=================================================================================
@@ -280,13 +355,105 @@ function updatePlaceListLabel(textLabel) {
 	var array_size = MYSESSION.nearbyPlaces.length;
 	if (array_size == 0)
 		textLabel.text = "no nearby places";
-	else if (array_size>0)
-		textLabel.text = "found " + array_size + " nearby places";
+	else if (array_size>1)
+		textLabel.text = "tap to mark one of the " + array_size + " nearby places";
 	else if (array_size==1)
-		textLabel.text = "found " + array_size + " nearby place";
+		textLabel.text = "found " + array_size + " place nearby. tap to mark it.";
 }
 
+function removePlaceListClickListeners () {
+  placeListObject.removeEventListener('click', function (e) {} );
+}
+
+//=================================================================================
+//	Name:			addPlaceListClickListeners( placeListObject )
+//	Purpose:	add one click listener for all rows in the nearby place TableView 
+//=================================================================================
+function addPlaceListClickListeners( placeListObject ) {
+  placeListObject.removeEventListener('click', placeListListener)
+  placeListObject.addEventListener('click', placeListListener);
+}
+
+//=================================================================================
+//	Name:			presentUserCheckinOptions( place )
+//	Purpose:	allow user to check in or check out depending on current status 
+//=================================================================================
+function presentUserCheckinOptions( place ) {;
+  var modal_title = 'Are you near ' + place.name + '?';
+  if (MYSESSION.dog.current_place_ID == place.id) {
+    var modal_title = 'Leaving ' + place.name + '?';
+  }
+  // modal popup 
+	var optns = {
+		options : ['Yes', 'Cancel'],
+		cancel        : 1,
+		selectedIndex : 0,
+		destructive   : 1,
+		title : modal_title
+	};
+	var checkin_dialog = Ti.UI.createOptionDialog(optns);
+	checkin_dialog.show();
+	
+	// add click listener for "Yes" button 
+	checkin_dialog.addEventListener('click', function(e_dialog) {
+		if (e_dialog.index == 0) {  // user clicked OK
+			MYSESSION.checkinInProgress = false;
+		  if (MYSESSION.dog.current_place_ID == place.id)	
+			  checkoutFromPlace (place.id);
+		  else
+		    checkinAtPlace (place.id);
+		}
+	});
+} 
+
+function placeListListener(e) {
+	Ti.API.info("...[o] POI list click [ " + JSON.stringify(e.row) + " ]");
+	Ti.API.info("...[o] event index [ " + e.index + " ]");
+	setRegion(wbMapView, e.row.lat, e.row.lon, 0.02);
+
+  // figure out which annotation index to trigger
+  var anno_index = getPlaceIndexById( MYSESSION.placeAnnotations, e.row.id );
+	wbMapView.selectAnnotation( MYSESSION.placeAnnotations[anno_index] );		
+	
+	// pop up a check in or check out dialog box based on current checkin status
+	presentUserCheckinOptions( e.row );
+	
+	//  in case we ever want to listen place list double clicks in the future 
+  /*
+	Alloy.Globals.placeList_clicks ++;
+	Ti.API.info("...[o] clicked on [" + e_row.rowData.id + " - " + e_row.rowData.name + " ]");
+
+	
+	if ( Alloy.Globals.placeList_clicks == 2 ) {
+		if (Alloy.Globals.placeList_ID == e_row.rowData.id ) {
+			goToPlaceOverview ( e_row.rowData.id );		// 2nd click on same place name
+			Alloy.Globals.placeList_ID 			= null;
+			Alloy.Globals.placeList_clicks 	= 0;
+		}
+		else {
+			Alloy.Globals.placeList_clicks 	= 1;
+		}
+	}
+	// save most recent table view click
+	Alloy.Globals.placeList_ID = e_row.rowData.id;	
+	*/
+}
+  
 //===========================================================================================================================================
+
+//=================================================================================
+//	app:refreshNearbyPlaceList
+//=================================================================================
+Ti.App.addEventListener("app:refreshNearbyPlaceList", 
+  function(e) {
+    Ti.API.info ( " *** app:refreshNearbyPlaceList called ***");
+    // POPULATE NEARBY PLACE TABLE
+    setTimeout ( function(){ getNearbyPlaces($.placeListTable); }, 1000);
+    // ADD PLACE LIST CLICK EVENT LISTENER
+    setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 1100);
+  }
+);
+
 if(Ti.Network.online ) { 
   Titanium.Geolocation.getCurrentPosition(function(e){
     var lat = 33.971995;
@@ -309,66 +476,14 @@ if(Ti.Network.online ) {
 	
 		// ADD MARKERS + ANNOTATIONS TO MAP
 		getPlaces( wbMapView, lat, lon );
-		setTimeout ( function(){ getNearbyPlaces($.placeListTable); }, 2000);
-		// SET CORRECT PLACE LIST LABEL
-		setTimeout ( function(){ updatePlaceListLabel($.placeListTitle); }, 2000);
-		
-		//=========================== PLACELIST TABLEVIEWROW EVENT LISTENER =======================================================
-		$.placeListTable.addEventListener('click', function(e) {
-			Ti.API.info("...[o] POI list click [ " + JSON.stringify(e) + " ]");
-			Ti.API.info("...[o] e_row.index [ " + e.index + " ]");
-			Ti.API.info("...[o] e_row.rowData [ " + e.rowData + " ]");
-			setRegion(wbMapView, e.row.lat, e.row.lon, 0.02);
-		
-		  // figure out which annotation index to trigger
-		  var anno_index = getPlaceIndexById( MYSESSION.placeAnnotations, e.row.id );
-			wbMapView.selectAnnotation( MYSESSION.placeAnnotations[anno_index] );		
-			
-			// Alloy.Globals.placeList_clicks ++;
-			// Ti.API.info("...[o] clicked on [" + e_row.rowData.id + " - " + e_row.rowData.name + " ]");
-			// TODO:  make sure that place annotation opens on TableViewRow click
-			
-			//============================== CHECKIN MODAL POPUP
-			var optns = {
-				options : ['Yes', 'Cancel'],
-				cancel        : 1,
-				selectedIndex : 0,
-				destructive   : 1,
-				title : 'Are you at ' + e.row.name + ' now?'    // ! e.source.text sometimes undefined...
-			};
-			var checkin_dialog = Ti.UI.createOptionDialog(optns);
-			checkin_dialog.show();
-			
-			// add click listener for "Yes" button 
-			checkin_dialog.addEventListener('click', function(e_dialog) {
-				if (e_dialog.index == 0) {// user clicked OK
-					MYSESSION.checkinInProgress = false;
-					
-					checkinAtPlace (e.row.id);
-					// TODO: ping backend w/ owner_ID, dog_ID, checkout_timestamp, park_ID 
-					// OR simply MYSESSION.dog_activity_ID, which requires backend API to return mysql_last_insert_ID
-				}
-			});
-			
-			//=====================================================
-			/*
-			if ( Alloy.Globals.placeList_clicks == 2 ) {
-				if (Alloy.Globals.placeList_ID == e_row.rowData.id ) {
-					goToPlaceOverview ( e_row.rowData.id );		// 2nd click on same place name
-					Alloy.Globals.placeList_ID 			= null;
-					Alloy.Globals.placeList_clicks 	= 0;
-				}
-				else {
-					Alloy.Globals.placeList_clicks 	= 1;
-				}
-			}
-			// save most recent table view click
-			Alloy.Globals.placeList_ID = e_row.rowData.id;	
-			*/
-		});
-		//=========================== / PLACELIST EVENT LISTENER =======================================================
-	});
-	
+		// POPULATE NEARBY PLACE TABLE
+		setTimeout ( function(){ getNearbyPlaces($.placeListTable); }, 1200);
+		// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
+		setTimeout ( function(){ updatePlaceListLabel($.placeListTitle); }, 900);
+		// ADD PLACE LIST CLICK EVENT LISTENER
+		// remove( PlaceListClickListeners )
+		setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 1210);
+  });
 } 
 else{
 	Ti.API.log("Internet connection is required to use localization features");

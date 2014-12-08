@@ -89,7 +89,6 @@ function updateEstimates (place_ID, estimate) {
 				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
 				MYSESSION.checkedIn = true;									// checkin now officially complete
 				var timestamp = new Date().getTime();
-				MYSESSION.checkin_place_ID 	= place_ID;
 				MYSESSION.lastCheckIn 			= timestamp;
 				MYSESSION.checkinInProgress = false;				// remove "in progress" state
 				

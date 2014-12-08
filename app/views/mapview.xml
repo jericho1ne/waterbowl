@@ -1,12 +1,13 @@
 <Alloy>
   <Window id="map" class="absolute">
   	<View class="container" id="content">
-  		<View id="outerMapContainer" height="75%" contentHeight="auto" width="100%">
+  		<View id="outerMapContainer" class="" height="77%" contentHeight="auto" width="100%">
   			<View id="mapContainer" class="fill_height absolute" contentHeight="auto" width="100%" />
   		</View>
   		<View id="placeListContainer" class="fill_height bg_lt_blue" contentHeight="auto">
-  			<Label id="placeListTitle" width="100%" height="36" text="nearby places" class="bg_lt_pink text_medium_medium white" /> 
-  			<TableView id="placeListTable"  contentHeight="auto" width="100%" class="fill_height"/>
+  			<Label id="placeListTitle" width="100%" height="36" text="nearby places" class="bg_dk_gray text_medium_medium white" /> 
+  			<TableView id="placeListTable" separatorStyle="Titanium.UI.iPhone.TableViewSeparatorStyle.NONE"
+  			 contentHeight="auto" width="100%" class="fill_height" />
   		</View>
 		</View>
   </Window>

@@ -77,98 +77,7 @@ function createWindowController ( win_name, args, animation ) {
 	
 	Ti.API.info( " >>> User Array: "+ JSON.stringify( MYSESSION.user ) );
 	Ti.API.info( " >>> Dog Array: "+ JSON.stringify( MYSESSION.dog ) );
-	Ti.API.info( " >>> Checkin Place ID : "+ MYSESSION.checkin_place_ID );
-}
-
-//=========================================================================================
-//	Name:			checkinAtPlace ( place_ID )
-//	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
-//																		( all available globally except for place_ID )
-//						TODO:			Allow selection between multiple dogs
-//=========================================================================================
-function checkinAtPlace (place_ID) {
-	/* create an HTTP client object  */ 
-	var checkin_http_obj = Ti.Network.createHTTPClient();
-	/* create an HTTP client object  */ 
-	checkin_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkin.php");
-	
-	var params = {
-		place_ID	: place_ID,
-		owner_ID	: MYSESSION.user.owner_ID,
-		dog_ID		: MYSESSION.dog.dog_ID,
-		lat				:	MYSESSION.geo.lat,
-		lon				:	MYSESSION.geo.lon
-	};
-	
-	Ti.API.info ( "... sending stuff to place-checkin.php " + JSON.stringify(params) );
-	var response = 0;
-	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
-	checkin_http_obj.send(params);
-	/* response data received */
-	checkin_http_obj.onload = function() {
-		var json = this.responseText;
-		if (json != "") {
-			Ti.API.info("* checkin JSON " + json);
-			var response = JSON.parse(json);
-			if (response.status == 1) { 		// success
-				Ti.API.log("  [>]  Checkin added successfully ");
-	
-				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
-				MYSESSION.checkedIn 				= true;										// checkin now officially complete
-				MYSESSION.checkin_place_ID 	= place_ID;
-				MYSESSION.lastCheckIn 			= new Date().getTime();
-				MYSESSION.checkinInProgress = false;				// remove "in progress" state	
-				// in case we want to bounce user straight to place overview
-				// var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
-				// placeoverview.open();
-			}
-			createSimpleDialog( response.title, response.message ); 
-		}
-		else
-			createSimpleDialog( "Problem", "No data received from server"); 
-	};
-	// return response;
-}
-
-//=========================================================================================
-//	Name:			checkoutFromPlace (place_ID)
-//	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
-//						TODO:			Allow selection between multiple dogs
-//=========================================================================================
-function checkoutFromPlace (place_ID) {
-	/* create an HTTP client object  */ 
-	var checkout_http_obj = Ti.Network.createHTTPClient();
-	/* create an HTTP client object  */ 
-	checkout_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkout.php");
-	
-	var params = {
-		place_ID	: place_ID,
-		owner_ID	: MYSESSION.user.owner_ID,
-		dog_ID		: MYSESSION.dog.dog_ID,
-	};
-	var response = 0;
-	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
-	checkout_http_obj.send(params);
-	/* response data received */
-	checkout_http_obj.onload = function() {
-		var json = this.responseText;
-		if (json != "") {
-			Ti.API.info("* checkout JSON " + json);
-			var response = JSON.parse(json);
-			if (response.status == 1) { 		// success
-				Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
-	
-				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
-				MYSESSION.checkedIn 				= false;										// checkin now officially complete
-				MYSESSION.checkin_place_ID 	= null;
-				closeWindowController();
-			}
-			createSimpleDialog( "Success", response.message ); 
-		}
-		else
-			createSimpleDialog( "Problem", "No data received from server"); 
-	};
-	// return response;
+	Ti.API.info( " >>> Checkin Place ID : "+ MYSESSION.dog.current_place_ID );
 }
 
 
@@ -204,31 +113,33 @@ function deg2rad(deg) {
 //=============================================================================
 function addMenubar( parent_object ) {
 	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
-	var menubar 		= Ti.UI.createView( {id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 40, 
-											backgroundColor: "#58c6d5", opacity: 1, zIndex: 99, opacity: 0.9 });
+	var menubar = Ti.UI.createView( {
+	  id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 34, 
+    backgroundColor: "58c6d5", opacity: 1, zIndex: 99, opacity: 0.92 
+  });  // bg color #58c6d5
 											
 	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: 44, borderWidth: 0, borderColor: "red" });
 	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "75%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
 	var menuRight 	= Ti.UI.createView( {id: "menuRight", width: 44, right: 0, layout: "horizontal", width: Ti.UI.SIZE });
 	
 	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '', zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 0, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
 	
 	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 2, opacity: 1, height: 34, width: 34, borderRadius: 12 });
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 0, opacity: 1, height: 34, width: 34, borderRadius: 12 });
 	
 	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '',zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "Y", right: 4, width: Ti.UI.SIZE, top: 2, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
+	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "Y", right: 4, width: Ti.UI.SIZE, top: 0, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
-			{ id: "wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 6, height: "auto", 
-			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 22 } } );
+			{ id: "wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: "auto", 
+			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
 	
 	//menuLeft.add(backBtn);
 	menuCenter.add(wbLogoMenubar);	
 	
 	/*  don't want users going back to login screen once authenticated */
-	if (Ti.App.Properties.current_window != "mapview") {	
+	if (Ti.App.Properties.current_window != "map") {	
 		Ti.API.info(" >> Ti.App.Properties.current_window :"+ Ti.App.Properties.current_window);
 		menuLeft.add(backBtn);
 		backBtn.addEventListener('click', closeWindowController);
@@ -394,6 +305,49 @@ function zeroPad( number, width )  {
   return number + ""; 			// always return a string
 }
 
+//=========================================================================================
+//	Name:			checkoutFromPlace (place_ID)
+//	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
+//						TODO:			Allow selection between multiple dogs
+//=========================================================================================
+function checkoutFromPlace (place_ID) {
+	/* create an HTTP client object  */ 
+	var checkout_http_obj = Ti.Network.createHTTPClient();
+	/* create an HTTP client object  */ 
+	checkout_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkout.php");
+	
+	var params = {
+		place_ID	: place_ID,
+		owner_ID	: MYSESSION.user.owner_ID,
+		dog_ID		: MYSESSION.dog.dog_ID,
+	};
+	var response = 0;
+	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
+	checkout_http_obj.send(params);
+	/* response data received */
+	checkout_http_obj.onload = function() {
+		var json = this.responseText;
+		if (json != "") {
+			Ti.API.info("* checkout JSON " + json);
+			var response = JSON.parse(json);
+			if (response.status == 1) { 		// success
+				Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
+	
+				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
+				MYSESSION.checkedIn 				= false;										// checkin now officially complete
+				MYSESSION.dog.current_place_ID 	= null;
+				// populate nearby place table
+			}
+			createSimpleDialog( "Success", response.message ); 
+		}
+		else
+			createSimpleDialog( "Problem", "No data received from server"); 
+	};
+	// return response;
+}
+
+
+
 
 //============================================================================================
 /*
@@ -453,8 +407,6 @@ var MYSESSION = {
 	proximity					: 0.06,
 	checkinInProgress	: null,
 	checkedIn					: null,						// where we are actually checked in (as opposed to currentPlace, which is simply nearby)
-	checkin_place_ID	: null, 						// TODO:  consider moving these fields to the local dog arrays 
-	lastCheckIn				: null,
 	checkinTimestamp	: null,
 	AWS : {
 		access_key_id		: "AKIAILLMVRRDGDBDZ5XQ",

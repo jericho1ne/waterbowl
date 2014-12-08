@@ -1,7 +1,0 @@
-"#placeLabel":{ top: "3%", zIndex: 3, opacity: 0.85 }
-
-"#mapContainer" : { top: -4 }
-
-"#placeListContainer" : {  }
-
-"#refreshBtn" : { width: 36, height: 36, top:20, left:20 }

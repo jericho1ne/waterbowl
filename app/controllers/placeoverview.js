@@ -32,11 +32,12 @@ function drawCheckoutButton () {
 		/* add click listener for "Yes" button */
 		checkout_dialog.addEventListener('click', function(e) {// take user to Checkin View
 			if (e.index == 0) {			// user clicked OK
-				// MYSESSION.checkin_place_ID = null;
+				// MYSESSION.dog.current_place_ID = null;
 				// MYSESSION.checkedIn = null;
 				 
-				// TODO: ping backend w/ place_ID, owner_ID, dog_ID 
-				checkoutFromPlace( placeInfo['id'] );	
+				// ping backend w/ place_ID, owner_ID, dog_ID to check yo self out
+		    checkoutFromPlace( placeInfo['id'] );	
+		    closeWindowController();
 			}
 		});
 		checkout_dialog.show();
@@ -208,7 +209,7 @@ function getPlaceCheckins( place_ID, dog_ID ) {
 			var place = JSON.parse( placeJSON );
 	
 			if ( place.here==1 ) {
-				MYSESSION.checkin_place_ID = place_ID;
+				MYSESSION.dog.current_place_ID = place_ID;
 				
 				/* populate checkout button + listener */
 				drawCheckoutButton();

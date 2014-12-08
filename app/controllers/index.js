@@ -38,7 +38,8 @@ function goToLogin(e) {
 				Ti.App.Properties.setString('pass', $.password.value);
 		
 				// TODO: dog info
-				Ti.API.log( "* Saved Creds: "+MYSESSION.user.owner_ID+ "/" +MYSESSION.user.email+ "/" + MYSESSION.user.password);
+				Ti.API.log( "*** Saved Creds: "+MYSESSION.user.owner_ID+ "/" +MYSESSION.user.email+ "/" + MYSESSION.user.password);
+				Ti.API.log( "*** CURRENT CHECKINS: " + MYSESSION.dog.current_place_ID );
 				
 				// take user to the post-login window
 				createWindowController( "mapview", "", "slide_left" ); 
@@ -109,10 +110,7 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
 // setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for the login fields to get populate
 
-/*  saved credentialsand app status in local storage  */
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-/*  		we also require a user to log in since we need an owner_ID for most interactions */
-
 // createWindowController("mapview","","");
 
 
