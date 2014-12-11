@@ -3,7 +3,7 @@
 		<View id="content" class="container">
 		
 			<View id="miniHeaderContainer" height="60" class="" backgroundColor="#777477" zIndex="97" opacity="0" >	
-				<Label id="mini_place_name_label" 		text="" class="feed_label_left_lg white text_large_light"/>
+				<Label id="mini_place_name_label" text="" class="feed_label_left_lg white text_large_light"/>
 				<Label id="mini_place_second_label" text="" class="feed_label_left white text_medium_bold" />
 				<!-- <Label id="mini_place_dist_label" 		text="" class="feed_label_left white text_medium_bold" />	 -->
 			</View>
@@ -18,10 +18,10 @@
 						</View>
 					</View>
 					<View id="headerBottom" class="layout_vert">
-						<Label id="place_name_label" 		text="" class="feed_label_left_lg white"/>
-						<Label id="place_address_label" text="" class="feed_label_left white text_medium_medium" />
-						<Label id="place_city_label" 		text="" class="feed_label_left white text_medium_medium" />
-						<Label id="place_dist_label" 		text="" class="feed_label_left white text_medium_medium" />			
+						<Label id="place_name_label" 		text="" class="white feed_label_left_lg text_large_light"/>
+						<Label id="place_address_label" text="" class="white feed_label_left text_small_light" />
+						<Label id="place_city_label" 		text="" class="white feed_label_left text_small_light" />
+						<Label id="place_dist_label" 		text="" class="white feed_label_left text_small_light" />			
 					</View>
 				</View>
 				

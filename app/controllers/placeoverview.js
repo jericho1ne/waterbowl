@@ -212,7 +212,8 @@ function getPlaceCheckins( place_ID, dog_ID ) {
 				MYSESSION.dog.current_place_ID = place_ID;
 				
 				/* populate checkout button + listener */
-				drawCheckoutButton();
+				// TODO:  re add this later on once we figure out a app wide event trigger
+				// drawCheckoutButton();
 			}
 			/*  populate current checkins view with all the dog profile photos  */
 			
@@ -236,7 +237,7 @@ var mini_header_display = 0;
 //
 //--------------------------------------------------------------------------------
 var args 	= arguments[0] || {};
-Ti.API.info("* placeoverview.js #{ " + args._place_ID  + " } * ");	
+Ti.API.info(".... .... .... .... placeoverview.js #[ " + args._place_ID  + " ] * ");	
 /*  save globally stored place info into a local variable */
 var placeInfo = MYSESSION.allPlaces[ args._index ];
 
@@ -280,6 +281,7 @@ $.place_name_label.text 			= placeInfo.name;
 $.place_address_label.text		=	placeInfo.address;
 $.place_city_label.text	  		=	placeInfo.city + ' ' + placeInfo.zip;
 $.mini_place_name_label.text 	= placeInfo.name;
+$.miniHeaderContainer.backgroundColor = placeInfo.icon_color;
 $.mini_place_second_label.text	=	placeInfo.city;  // + ' ('+ placeInfo.dist + " mi away)";
 
 /* get feed of checkins, including your current checkin status */

@@ -20,13 +20,13 @@
 <Alloy>
 	<Window id="index" class="absolute login_bg">
 		<View class="container">
-			<Label id="appTitle" class="top_40">waterbowl</Label>
+			<Label id="appTitle" class="top_80">waterbowl</Label>
 			
 			<View id="loginStuff" class="top_80">
-				<TextField class="text_field_large semi_opaque" id="email"/>
-				<TextField class="text_field_large top_10 semi_opaque" id="password"/>
-				<Button class="btn_large top_20 opacity_high" id="loginBtn"    onClick="goToLogin"/>
-				<Button class="btn_large top_40 opacity_high" id="registerBtn" onClick="goToRegister"/>		
+				<TextField class="text_field_large opacity_high" id="email"/>
+				<TextField class="text_field_large top_10 opacity_high" id="password"/>
+				<Button class="btn_large top_10 opacity_high" id="loginBtn"    onClick="goToLogin"/>
+				<Button class="btn_large top_20 opacity_high" id="registerBtn" onClick="goToRegister"/>		
 			</View>
 			
 			<View id="footerContainer" class="top_40">

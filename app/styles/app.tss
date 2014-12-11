@@ -52,13 +52,13 @@
 "Button": { 
 	color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Raleway-Bold', fontSize: 13 },
-	width: '70%', height: 35, borderRadius: 3, borderWidth: 0, bottom: 6
+	width: '62%', height: 35, borderRadius: 3, borderWidth: 0, bottom: 6
 }
 
 "TextField": {
 	autocapitalization: Titanium.UI.TEXT_AUTOCAPITALIZATION_NONE,
 	autocorrect: false,
-	backgroundColor: '#ffffff', color: "#777477", width: '70%', height: 32, top: 5, 
+	backgroundColor: '#ffffff', color: "#777477", width: '62%', height: 32, top: 5, 
 	font: { fontFamily: 'Raleway-Light', fontSize: 14 },
 	keyboardType: Titanium.UI.KEYBOARD_DEFAULT,
 	returnKeyType: Titanium.UI.RETURNKEY_DEFAULT,
@@ -102,7 +102,7 @@
 // every top level div in each XML view is a .container * Forewarned. *
 ".absolute" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "absolute", width: "100%", backgroundColor: "#cccccc", exitOnClose: true }
 // menubar height should equal top value of .container!
-".container" : { top: 30, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", exitOnClose: true }
+".container" : { top: 32, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", exitOnClose: true }
 
 /* --------------- ALL OF THE SPACING STUFF  -------------------------- */ 
 ".top_5"  : { top: 5 }
@@ -153,15 +153,17 @@
 ".layout_vert"	: { layout:"vertical", width: Ti.UI.SIZE, contentHeight: "auto" }
 ".layout_horz"	: {	layout:"horizontal", contentWidth: "auto"	}
 
-".text_small_light"		: { font:{ fontFamily: 'Raleway-Light', fontSize: 12 } }
+".text_small_light"		: { font:{ fontFamily: 'Raleway-Light', fontSize: 11 } }
+".text_small_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 12 } }
+".text_small_bold"	  : { font:{ fontFamily: 'Raleway-Bold', fontSize: 13 } }
 
-".text_medium_bold"	: { font:{ fontFamily: 'Raleway-Bold', fontSize: 14 } }
-".text_medium_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 14 } }
 ".text_medium_light"		: { font:{ fontFamily: 'Raleway-Light', fontSize: 14 } }
+".text_medium_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 15 } }
+".text_medium_bold"	: { font:{ fontFamily: 'Raleway-Bold', fontSize: 16 } }
 
-".text_large_light"		: { font:{ fontFamily: 'Raleway-Light', fontSize: 28 } }
-".text_large_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 28 } }
-".text_large_bold"		: { font:{ fontFamily: 'Raleway-Medium', fontSize: 28 } }
+".text_large_light"		: { font:{ fontFamily: 'Raleway-Light', fontSize: 24 } }
+".text_large_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 25 } }
+".text_large_bold"		: { font:{ fontFamily: 'Raleway-Bold', fontSize: 26 } }
 
 ".text_number"	: { font:{ fontFamily: 'Futura-Medium', fontSize: 24 } }
 
@@ -171,7 +173,7 @@
 ".border_blu" 	 : { borderWidth: 2, borderColor: "#00ffff" }
 ".border_red"  	 : { borderWidth: 2, borderColor: "ff0000" }
 
-".btn_large" : { height: 48, font:{ fontSize: 24, fontFamily: "Raleway-Light" } }
+".btn_large" : { height: 44, font:{ fontSize: 24, fontFamily: "Raleway-Light" } }
 ".btn_medium" : { height: 36, font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
 ".text_field_large" : { height: 36, font:{ fontSize: 17 } }
 

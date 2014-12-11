@@ -8,11 +8,41 @@
 // 		
 //=================================================================================
 
-//===========================================================================================
+// CLASS OBJECTS
+var geoUtil = function () {
+  //=============================================================================
+  //	Name:			getDistance ( lat1, lon1, lat2, lon2 )
+  //=============================================================================
+  function getDistance(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1); 
+    var a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ; 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c; // Distance in km
+    d = d * 0.621371;
+    return Number ( d.toFixed(2) );		// typecast just in case toFixed returns a string...
+  }
+  
+  //=============================================================================
+  //	Name:			deg2rad ( deg )
+  //=============================================================================
+  function deg2rad(deg) {
+    return deg * (Math.PI/180);
+  }
+
+}
+
+//*************************************************************************************************
+//===============================================
 //	Name:    isset ( value )
 //	Desc:	   fail silently if value is undefined
 //  Return:   the actual value or null
-//===========================================================================================
+//===============================================
 function isset( value ) {
 	if ( typeof value !== 'undefined' )
 		return value;
@@ -20,10 +50,10 @@ function isset( value ) {
 		return null;
 }
 
-//===========================================================================================
+//=====================================================
 //	Name:		 	createSimpleDialog ( title, msg )
 //	Purpose:	nice clean way to do alert modals
-//===========================================================================================
+//=====================================================
 function createSimpleDialog (title, msg) {
 	var simple_dialog = Titanium.UI.createAlertDialog({
 		title		:	title,
@@ -31,7 +61,6 @@ function createSimpleDialog (title, msg) {
 	});
 	simple_dialog.show();
 }	
-
 
 //===========================================================================================
 //	Name:		 	createWindowController ( win_name, args, animation[optional])
@@ -51,30 +80,33 @@ function createWindowController ( win_name, args, animation ) {
 	else if (animation=="slide_up") {
 		winObject.top = 800;
  		winObject.opacity = 0.1;
-		animStyle = {	top: 0, opacity: 1,	duration: 320, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
+		animStyle = {	top: 0, opacity: 1,	duration: 320, 
+		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}
 	else if (animation=="slide_left") {
 	 	winObject.left = 600;
 	 	winObject.top = 0;
  		winObject.opacity = 0.1;
-		animStyle = {	left: 0, opacity: 1,	duration: 320, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
+		animStyle = {	left: 0, opacity: 1,	duration: 320, 
+		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}	
 	else if (animation=="slide_right") {
 	 	winObject.left = -600;
 	  winObject.top = 0;
  		winObject.opacity = 0.1;
-		animStyle = {	left: 0, opacity: 1,	duration: 320, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
+		animStyle = {	left: 0, opacity: 1,	duration: 320, 
+		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}
 	else {
 		/* default == quick fade-in animation   */
 		winObject.opacity = 0.05;
-		animStyle = {	opacity:1, duration:280, curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT };
+		animStyle = {	opacity:1, duration:280, 
+		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT };
 	}	
-	
-	// TODO: figure out how to attach the goddamn menubar to each new Window controller
+	// attach menubar to each new Window controller
 	addMenubar(winObject);
 	winObject.open( animStyle );
-	
+	// status checks
 	Ti.API.info( " >>> User Array: "+ JSON.stringify( MYSESSION.user ) );
 	Ti.API.info( " >>> Dog Array: "+ JSON.stringify( MYSESSION.dog ) );
 	Ti.API.info( " >>> Checkin Place ID : "+ MYSESSION.dog.current_place_ID );
@@ -114,8 +146,8 @@ function deg2rad(deg) {
 function addMenubar( parent_object ) {
 	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
 	var menubar = Ti.UI.createView( {
-	  id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 34, 
-    backgroundColor: "58c6d5", opacity: 1, zIndex: 99, opacity: 0.92 
+	  id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 32, 
+    backgroundColor: "58c6d5", opacity: 1, zIndex: 99, opacity: 1
   });  // bg color #58c6d5
 											
 	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: 44, borderWidth: 0, borderColor: "red" });
@@ -257,9 +289,8 @@ function addToAppWindowStack( winObject, win_name )  {
 	Ti.App.Properties.current_window = win_name;
 	
 	//Ti.API.info ( "windowStack:"+ JSON.stringify( MYSESSION.windowStack ) + " || array size: " + ( MYSESSION.windowStack.length ) );
-	Ti.API.info ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( MYSESSION.windowStack.length ) +" =========//" );
+	Ti.API.debug ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( MYSESSION.windowStack.length ) +" =========//" );
 }
-
 
 //=================================================================================
 // 	Name:  		closeWindowController()
@@ -304,49 +335,6 @@ function zeroPad( number, width )  {
   }
   return number + ""; 			// always return a string
 }
-
-//=========================================================================================
-//	Name:			checkoutFromPlace (place_ID)
-//	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
-//						TODO:			Allow selection between multiple dogs
-//=========================================================================================
-function checkoutFromPlace (place_ID) {
-	/* create an HTTP client object  */ 
-	var checkout_http_obj = Ti.Network.createHTTPClient();
-	/* create an HTTP client object  */ 
-	checkout_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkout.php");
-	
-	var params = {
-		place_ID	: place_ID,
-		owner_ID	: MYSESSION.user.owner_ID,
-		dog_ID		: MYSESSION.dog.dog_ID,
-	};
-	var response = 0;
-	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
-	checkout_http_obj.send(params);
-	/* response data received */
-	checkout_http_obj.onload = function() {
-		var json = this.responseText;
-		if (json != "") {
-			Ti.API.info("* checkout JSON " + json);
-			var response = JSON.parse(json);
-			if (response.status == 1) { 		// success
-				Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
-	
-				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
-				MYSESSION.checkedIn 				= false;										// checkin now officially complete
-				MYSESSION.dog.current_place_ID 	= null;
-				// populate nearby place table
-			}
-			createSimpleDialog( "Success", response.message ); 
-		}
-		else
-			createSimpleDialog( "Problem", "No data received from server"); 
-	};
-	// return response;
-}
-
-
 
 
 //============================================================================================
@@ -393,6 +381,8 @@ var MYSESSION = {
 	geo: {
 		lat						: null, 
 		lon						: null,
+		region_lat    : null,
+		region_lon    : null,
 		last_acquired	: null
 	}, 
 	currentPlace: { 

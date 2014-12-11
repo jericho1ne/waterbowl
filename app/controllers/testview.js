@@ -1,4 +1,4 @@
-/*
+
 var WindowModule = require('com.waterbowl.winmgr');
 var new_window = new WindowModule.LoadWindow();
 var test_label = Ti.UI.createLabel( { 
@@ -7,4 +7,3 @@ var test_label = Ti.UI.createLabel( {
 $.content.add(test_label);					
 new_window.setTitle(test_label, "YAY TEXT!");
 
-*/
