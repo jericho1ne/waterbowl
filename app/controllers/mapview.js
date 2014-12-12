@@ -34,7 +34,7 @@ function drawDefaultMap(lat, lon, delta) {
 		top 					: 0,
 		opacity				: 1,
 		zIndex				: 20,
-		animate 			: true,
+		animate 			: false,
 		maxZoom				: 1,
 		minZoom				: 2,
 		regionFit	 		: true,
@@ -53,19 +53,24 @@ function drawDefaultMap(lat, lon, delta) {
 
 
 //=================================================================================
-// 	Name:  		mapInit ()
+// 	Name:  		initializeMap ()
 // 	Purpose:	draw default Apple map
 //=================================================================================
-function mapInit(lat, lon) {
+function initializeMap(lat, lon) {
 	// DRAW MAP
 	var wbMapView = drawDefaultMap( MYSESSION.geo.lat, MYSESSION.geo.lon, 0.07  );     // 0.05 
 	$.mapContainer.add( wbMapView );
 	$.mapContainer.add( buildRefreshButton(wbMapView) );
-  $.mapContainer.add( buildRecenterButton(wbMapView) );
-   
-	// ADD MARKERS + ANNOTATIONS TO MAP
+  $.mapContainer.add( buildRecenterButton(wbMapView) );   
+}
+
+function refreshMapData() {
+  // ADD MARKERS + ANNOTATIONS TO MAP
 	getPlacesMap( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 0, 0); // will affect map
-	getPlacesNearby( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon );   // will affect place list
+}
+
+function refreshPlaceListData() {
+  getPlacesNearby( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon );   // will affect place list
 	// POPULATE NEARBY PLACE TABLE
 	setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 600);
 	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
@@ -231,7 +236,7 @@ function createMapAnnotation( place_data, index ) {
 		longitude : place_data.lon,
 		title     : place_data.name,
 		subtitle  : place_data.city + " (" + place_data.dist + " mi)",
-		animate   : true,
+		animate   : false,
 		image     : MYSESSION.local_icon_path+'/'+place_data.icon, 		// or pull icon from AWS: MYSESSION.AWS.base_icon_url
 		rightView : temp_button
 	});
@@ -254,9 +259,12 @@ function buildRefreshButton( mapObject ) {
 		/* will refresh all map elements + rebuild nearbyPlaces table rows */
 		
 		// Only refresh MAP markers + annotations
-		getPlacesMap(mapObject, 
+		getPlacesMap(
+		  mapObject, 
 		  MYSESSION.geo.lat, MYSESSION.geo.lon, 
-		  MYSESSION.geo.view_lat, MYSESSION.geo.view_lon);
+		  MYSESSION.geo.view_lat, MYSESSION.geo.view_lon
+		);
+		
 	});
 	
 	return refreshBtn;
@@ -468,7 +476,6 @@ function checkoutFromPlace (place_ID) {
 				MYSESSION.dog.current_place_ID 	= null;
 				// populate nearby place table
 				// createSimpleDialog( "Goodbye", response.message );
-				
 			} else {
 			 createSimpleDialog( "Uh oh", response.message ); 
 		  }
@@ -576,9 +583,13 @@ function checkGeofenceLeave(lat,lon) {
   if (MYSESSION.dog.current_place_lat!=null && MYSESSION.dog.current_place_lon!=null) {
     var current_distance = getDistance(lat, lon, MYSESSION.dog.current_place_lat, MYSESSION.dog.current_place_lon);
     if (current_distance > MYSESSION.dog.current_place_geo_radius) {
-      createSimpleDialog( "Left Geofence", "Automatically checked you out from " +
-        MYSESSION.dog.current_place_name);
+      createSimpleDialog( "Left Geofence", "Automatically checked you out from " + MYSESSION.dog.current_place_name);
       checkoutFromPlace(MYSESSION.dog.current_place_ID);
+      
+      // POPULATE NEARBY PLACE TABLE
+      setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 400);
+    	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
+    	setTimeout ( function(){ updatePlaceListLabel($.placeListTitle); }, 400);
     }
   }
 }
@@ -586,7 +597,9 @@ function checkGeofenceLeave(lat,lon) {
 
 
 //====================================================================================================================
-// do this once upon Window load
+//
+//    Things to initialize upon Window load
+//
 //====================================================================================================================
 
 Titanium.Geolocation.getCurrentPosition(function(e){
@@ -603,24 +616,29 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   	MYSESSION.geo.lon = e.coords.longitude;
   }
   Ti.API.log("............... lat: " + MYSESSION.geo.lat  + " / lon: " + MYSESSION.geo.lon);
+  
   // DRAW MAP FOR THE FIRST TIME
-  mapInit();
+  initializeMap();
+  // Get Map and PlaceList data
+  refreshMapData();
+  refreshPlaceListData();
 });
   
 
 if(Ti.Network.online ) {  
-  // Refresh map and nearby place TableView each time user moves
+  // ~~~ Geolocation Event Listener ~~~ Refresh map + nearby places table
   Titanium.Geolocation.addEventListener('location',function(){
     Ti.API.info(".... .... .... geolocation changed");
-    // TODO:  break map init do stuff after drawDefault because we may
-    //        want to redraw POIs and annotations but not map itself
-    // mapInit();
-    
+   
     Titanium.Geolocation.getCurrentPosition(function(e) {
       if(e.success) {
+        // see if user is still checked in somewhere 
+        // and if so, have they left the geofence
         if(MYSESSION.dog.current_place_ID != null) {  
           checkGeofenceLeave(e.coords.latitude, e.coords.longitude);
         }
+        refreshMapData();
+        refreshPlaceListData();
       }
     });
   });
