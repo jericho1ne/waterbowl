@@ -369,6 +369,7 @@ var MYSESSION = {
 		weight:		null,
 		photo:		null,
 		current_place_ID  : null,
+		current_place_name : null,
 		current_place_geo_radius : null,
 		current_place_lat : null,
 		current_place_lon : null,

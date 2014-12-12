@@ -408,7 +408,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				MYSESSION.dog.current_place_lat     = place_lat;
 				MYSESSION.dog.current_place_lon     = place_lon;
 				MYSESSION.dog.current_place_name    = place_name;
-				MYSESSION.dog.last_checkin_timestamp  = new Date().getTime();
+				MYSESSION.dog.last_checkin_timestamp= new Date().getTime();
 				
 				Ti.API.info ( "... MYSESSION.dog: " + JSON.stringify(MYSESSION.dog) );
 				// POPULATE NEARBY PLACE TABLE
@@ -573,11 +573,13 @@ function placeListListener(e) {
 //	Purpose:	center map on whichever  
 //=================================================================================
 function checkGeofenceLeave(lat,lon) {
-  var current_distance =  getDistance(lat, lon, MYSESSION.dog.current_place_lat, MYSESSION.dog.current_place_lon);
-  if (current_distance > MYSESSION.dog.current_place_geo_radius) {
-    createSimpleDialog( "Left Geofence", "Automatically checked you out from " +
-      MYSESSION.dog.current_place_name);
-    checkoutFromPlace(MYSESSION.dog.current_place_ID);
+  if (MYSESSION.dog.current_place_lat!=null && MYSESSION.dog.current_place_lon!=null) {
+    var current_distance = getDistance(lat, lon, MYSESSION.dog.current_place_lat, MYSESSION.dog.current_place_lon);
+    if (current_distance > MYSESSION.dog.current_place_geo_radius) {
+      createSimpleDialog( "Left Geofence", "Automatically checked you out from " +
+        MYSESSION.dog.current_place_name);
+      checkoutFromPlace(MYSESSION.dog.current_place_ID);
+    }
   }
 }
 

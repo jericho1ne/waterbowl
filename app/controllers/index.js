@@ -29,8 +29,17 @@ function goToLogin(e) {
 				MYSESSION.user.email 		= $.email.value;
 				MYSESSION.user.password = $.password.value;
 				MYSESSION.user.owner_ID = response.human.owner_ID;
-				MYSESSION.dog.dog_ID 		= response.dog.dog_ID;
-				MYSESSION.dog.current_place_ID = response.dog.current_place_ID;
+				
+				MYSESSION.dog.dog_ID 		              = response.dog.dog_ID;
+				
+				MYSESSION.dog.current_place_ID        = response.dog.current_place_ID;
+				if (response.place!=null) {
+				  MYSESSION.dog.current_place_name      = response.place.name;
+				  MYSESSION.dog.current_place_lat       = response.place.lat;
+				  MYSESSION.dog.current_place_lon       = response.place.lon;
+        }
+				MYSESSION.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
+
 				MYSESSION.dog.name	 		= response.dog.dog_name;
 				MYSESSION.dog.photo	 		= response.dog.dog_photo;
 			
