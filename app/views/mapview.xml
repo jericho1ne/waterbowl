@@ -1,7 +1,7 @@
 <Alloy>
   <Window id="map" class="absolute">
   	<View class="container" id="content">
-  		<View id="outerMapContainer" class="" height="77%" contentHeight="auto" width="100%">
+  		<View id="outerMapContainer" class="" height="100%" contentHeight="auto" width="100%">
   			<View id="mapContainer" class="fill_height absolute" contentHeight="auto" width="100%" />
   		</View>
   		<View id="placeListContainer" class="fill_height" contentHeight="auto">

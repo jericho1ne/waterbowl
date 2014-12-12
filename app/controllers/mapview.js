@@ -44,46 +44,35 @@ function drawDefaultMap(lat, lon, delta) {
 	wbMapView.addEventListener('regionChanged',function(evt) {
 		// Ti.API.log( JSON.stringify (evt.source.region) );
 		// Ti.API.log( 'regionChanged:'+evt.source.region.latitude+"/"+evt.source.region.longitude );
-		MYSESSION.geo.region_lat = evt.source.region.latitude;
-		MYSESSION.geo.region_lon = evt.source.region.longitude;
+		MYSESSION.geo.view_lat = evt.source.region.latitude;
+		MYSESSION.geo.view_lon = evt.source.region.longitude;
 	});
 	Ti.API.log("...[~] Map object built ");
 	return wbMapView;
 }
 
-function mapInit() {
-  Titanium.Geolocation.getCurrentPosition(function(e){
-  
-		if (!e.success || e.error) {
-    	Ti.API.log('............... Could not find the device location');
-      // use default Playa Del Rey coordinates
-      MYSESSION.geo.lat = 33.971995;
-      MYSESSION.geo.lon = -118.420496;
-    }
-    else {
-    	/* overwrite hardcoded coordinates with device geolocation */
-    	MYSESSION.geo.lat = e.coords.latitude;
-    	MYSESSION.geo.lon = e.coords.longitude;
-    }
-    Ti.API.log("............... lat: " + MYSESSION.geo.lat  + " / lon: " + MYSESSION.geo.lon);
-    
-		// DRAW MAP
-		var wbMapView = drawDefaultMap( MYSESSION.geo.lat, MYSESSION.geo.lon, 0.07  );     // 0.05 
-		$.mapContainer.add( wbMapView );
-		$.mapContainer.add( buildRefreshButton(wbMapView) );
-	  $.mapContainer.add( buildRecenterButton(wbMapView) );
-	   
-		// ADD MARKERS + ANNOTATIONS TO MAP
-		getPlaces( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, "all" );      // will affect map
-		getPlaces( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, "nearby" );   // will affect place list
-		// POPULATE NEARBY PLACE TABLE
-		setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 1200);
-		// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
-		setTimeout ( function(){ updatePlaceListLabel($.placeListTitle); }, 900);
-		// ADD PLACE LIST CLICK EVENT LISTENER
-		// remove( PlaceListClickListeners )
-		setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 1210);
-  });
+
+//=================================================================================
+// 	Name:  		mapInit ()
+// 	Purpose:	draw default Apple map
+//=================================================================================
+function mapInit(lat, lon) {
+	// DRAW MAP
+	var wbMapView = drawDefaultMap( MYSESSION.geo.lat, MYSESSION.geo.lon, 0.07  );     // 0.05 
+	$.mapContainer.add( wbMapView );
+	$.mapContainer.add( buildRefreshButton(wbMapView) );
+  $.mapContainer.add( buildRecenterButton(wbMapView) );
+   
+	// ADD MARKERS + ANNOTATIONS TO MAP
+	getPlacesMap( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 0, 0); // will affect map
+	getPlacesNearby( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon );   // will affect place list
+	// POPULATE NEARBY PLACE TABLE
+	setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 600);
+	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
+	setTimeout ( function(){ updatePlaceListLabel($.placeListTitle); }, 600);
+	// ADD PLACE LIST CLICK EVENT LISTENER
+	// remove( PlaceListClickListeners )
+	setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 700);
 }
 
 //=================================================================================
@@ -103,22 +92,63 @@ function centerMapOnLocation(mapObject, lat, lon, delta) {
 }
 
 //=============================================================================
-//	Name:			getPlaces ( mapObject, user_lat, user_lon, subset )
+//	Name:			getPlacesMap ( mapObject, user_lat, user_lon, view_lat, view_lon )
 //	Purpose:	get places in db, plus a smaller subset of nearby ones
 //=============================================================================
-function getPlaces( mapObject, user_lat, user_lon, all_or_nearby ) {
-	Ti.API.info("...[~] getPlaces() [ "+all_or_nearby+" ] at [ "+user_lat+"/"+user_lon+" ]");
+function getPlacesMap( mapObject, user_lat, user_lon, view_lat, view_lon ) {
+	Ti.API.info("...[~] getPlacesMap() user[ "+user_lat+"/"+user_lon+"  ], view [ "+view_lat+"/"+view_lon+" ]");
+
+  var params = {
+		lat       : user_lat,
+		lon       : user_lon, 
+		view_lat  : view_lat,
+		view_lon  : view_lon
+	};
+  // TODO: write a generic function to queryBackend
+  // eg:  getJsonData("http://waterbowl.net/mobile/get-places-map.php", params);
+  
+	/* create an HTTP client object  */
+	var place_query = Ti.Network.createHTTPClient();
+	/* open the HTTP client object  (locally at http://127.0.0.1/___ )  */
+	place_query.open("POST", "http://waterbowl.net/mobile/get-places-map.php");
+	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
+	place_query.send(params);
+	/* response data is available */
+	place_query.onload = function() {
+		var jsonResponse = this.responseText;
+		// Ti.API.info( "jsonResponse: " + jsonResponse );
+		/* create object container, grab places JSON */
+		var jsonPlaces = [];
+		if (jsonResponse != "") {
+			var jsonPlaces = JSON.parse(jsonResponse);	
+		  Ti.API.info( ".... .... .... .... total map places: " + jsonPlaces.length );	
+			MYSESSION.allPlaces = jsonPlaces;
+			refreshAnnotations(mapObject);
+		}
+		else {
+			createSimpleDialog('Loading place list','No data received');
+		}
+	};
+}
+
+//=============================================================================
+//	Name:			getPlacesNearby ( mapObject, user_lat, user_lon )
+//	Purpose:	get places in db, plus a smaller subset of nearby ones
+//=============================================================================
+function getPlacesNearby( mapObject, user_lat, user_lon ) {
+	Ti.API.info("...[~] getPlacesNearby() user[ "+user_lat+"/"+user_lon+" ]");
+  var params = {
+		lat       : user_lat,
+		lon       : user_lon
+	};
+  // TODO: write a generic function to queryBackend
+  // eg:  getJsonData("http://waterbowl.net/mobile/get-places-nearby.php", params);
 
 	/* create an HTTP client object  */
 	var place_query = Ti.Network.createHTTPClient();
 	/* open the HTTP client object  (locally at http://127.0.0.1/___ )  */
-	place_query.open("POST", "http://waterbowl.net/mobile/places.php");
+	place_query.open("POST", "http://waterbowl.net/mobile/get-places-nearby.php");
 	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
-  var params = {
-		lat     : user_lat,
-		lon     : user_lon, 
-		subset  : all_or_nearby
-	};
 	place_query.send(params);
 	/* response data is available */
 	place_query.onload = function() {
@@ -127,25 +157,17 @@ function getPlaces( mapObject, user_lat, user_lon, all_or_nearby ) {
 		var jsonPlaces = [];
 		if (jsonResponse != "") {
 			var jsonPlaces = JSON.parse(jsonResponse);	
-		  Ti.API.info( ".... .... .... .... .... incoming ["+all_or_nearby+"] places: " + jsonPlaces.length );	
-			/* save both full list and smaller nearby list to global arrays */
-			
-			if (all_or_nearby=="all") {
-		    MYSESSION.allPlaces 		= jsonPlaces;
-			  //Ti.API.info( "* MYSESSION.allPlaces sample: " + JSON.stringify( MYSESSION.allPlaces[0] ) );
-	      refreshAnnotations(mapObject);
-		  }
-			else if (all_or_nearby=="nearby") {
-        MYSESSION.nearbyPlaces 	= jsonPlaces;
-			  //Ti.API.info( "* MYSESSION.nearbyPlaces sample: " + JSON.stringify( MYSESSION.nearbyPlaces[0] ) );
-			}
+		  Ti.API.info( ".... .... .... .... total nearby places: " + jsonPlaces.length );	
+			MYSESSION.nearbyPlaces = jsonPlaces;
+			// refreshAnnotations(mapObject);
 		}
 		else {
 			createSimpleDialog('Loading place list','No data received');
 		}
 	};
 	// set time last acquired (minutes since start of Unix Epoch)
-	MYSESSION.geo.last_acquired_min = Math.round( Date.now() / (1000*60) );
+	// TODO:  move this to getLocation!! 
+	//   MYSESSION.geo.last_acquired_min = Math.round( Date.now() / (1000*60) );
 }
 
 //=========================================================================
@@ -231,18 +253,15 @@ function buildRefreshButton( mapObject ) {
 		Ti.API.info("...[+] Refresh button clicked on map");
 		/* will refresh all map elements + rebuild nearbyPlaces table rows */
 		
-		// ADD MARKERS + ANNOTATIONS TO MAP
-		getPlaces(mapObject, MYSESSION.geo.region_lat, MYSESSION.geo.region_lon, "all");
-		// POPULATE NEARBY PLACE TABLE
-		// setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 1200);
-		// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
-		//setTimeout ( function(){ updatePlaceListLabel($.placeListTitle); }, 900);
-		// ADD PLACE LIST CLICK EVENT LISTENER
-		// setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 1210);
+		// Only refresh MAP markers + annotations
+		getPlacesMap(mapObject, 
+		  MYSESSION.geo.lat, MYSESSION.geo.lon, 
+		  MYSESSION.geo.view_lat, MYSESSION.geo.view_lon);
 	});
 	
 	return refreshBtn;
 }
+
 //=============================================================
 //	Name:			buildRecenterButton
 //	Purpose:	to recenter map on current user position
@@ -268,9 +287,6 @@ function buildRecenterButton( mapObject ) {
   });
 	return recenterBtn;
 }
-
-
-
 
 //=================================================================================
 //	Name:			displayNearbyPlaces( tableViewObject)
@@ -303,7 +319,7 @@ function displayNearbyPlaces( tableViewObject ) {
 			distance	: nearby[i].dist,
 			hasChild	: false
 		});
-		Ti.API.info ("... >> [" + nearby[i].id + "] - "+nearby[i].name );
+		Ti.API.info ("... displayNearbyPlaces >> [" + nearby[i].id + "] - "+nearby[i].name );
 		
 		/* leftmost color sliver */
 		var block_bg_color		 = nearby[i].icon_color;
@@ -352,12 +368,12 @@ function displayNearbyPlaces( tableViewObject ) {
 }
 
 //=========================================================================================
-//	Name:			checkIntoPlace ( place_ID )
+//	Name:			checkIntoPlace ( place_ID, place_lat, place_lon, place_name )
 //	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
 //																		( all available globally except for place_ID )
 //						TODO:			Allow selection between multiple dogs
 //=========================================================================================
-function checkIntoPlace (place_ID) {
+function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 	/* create an HTTP client object  */ 
 	var checkin_http_obj = Ti.Network.createHTTPClient();
 	/* create an HTTP client object  */ 
@@ -385,11 +401,16 @@ function checkIntoPlace (place_ID) {
 				Ti.API.log("  [>]  Checkin added successfully ");
 	
 				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
-				MYSESSION.checkedIn 				= true;										// checkin now officially complete
+				// checkin now officially complete
 				MYSESSION.dog.current_place_ID 	= place_ID;
-				MYSESSION.lastCheckIn 			= new Date().getTime();
-				MYSESSION.checkinInProgress = false;				// remove "in progress" state	
 				
+				// grab place lat
+				MYSESSION.dog.current_place_lat     = place_lat;
+				MYSESSION.dog.current_place_lon     = place_lon;
+				MYSESSION.dog.current_place_name    = place_name;
+				MYSESSION.dog.last_checkin_timestamp  = new Date().getTime();
+				
+				Ti.API.info ( "... MYSESSION.dog: " + JSON.stringify(MYSESSION.dog) );
 				// POPULATE NEARBY PLACE TABLE
   		  setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 1200);
   		  // ADD PLACE LIST CLICK EVENT LISTENER
@@ -444,7 +465,6 @@ function checkoutFromPlace (place_ID) {
 				Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
 	
 				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
-				MYSESSION.checkedIn 				= false;										// checkin now officially complete
 				MYSESSION.dog.current_place_ID 	= null;
 				// populate nearby place table
 				// createSimpleDialog( "Goodbye", response.message );
@@ -466,12 +486,18 @@ function checkoutFromPlace (place_ID) {
 //=================================================================================
 function updatePlaceListLabel(textLabel) {
 	var array_size = MYSESSION.nearbyPlaces.length;
-	if (array_size == 0)
-		textLabel.text = "no nearby places";
-	else if (array_size>1)
+	if (array_size == 0) {
+    textLabel.text = "no nearby places";
+	  $.outerMapContainer.height = '100%';
+  }
+	else if (array_size>1) {
 		textLabel.text = "tap to mark one of the " + array_size + " nearby places";
-	else if (array_size==1)
+	  $.outerMapContainer.height = '77%';
+	}
+	else if (array_size==1) {
 		textLabel.text = "found " + array_size + " place nearby. tap to mark it.";
+    $.outerMapContainer.height = '88%';
+  }
 }
 
 function removePlaceListClickListeners () {
@@ -494,7 +520,7 @@ function addPlaceListClickListeners( placeListObject ) {
 function presentUserCheckinOptions( place ) {;
   var modal_title = 'Mark your presence at';
   if (MYSESSION.dog.current_place_ID == place.id) {
-    var modal_title = 'Are you leaving?';
+    var modal_title = 'Are you leaving';
   }
   // modal popup 
 	var optns = {
@@ -510,16 +536,24 @@ function presentUserCheckinOptions( place ) {;
 	// add click listener for "Yes" button 
 	checkin_dialog.addEventListener('click', function(e_dialog) {
 		if (e_dialog.index == 0) {  // user clicked OK
-			MYSESSION.checkinInProgress = false;
-		  if (MYSESSION.dog.current_place_ID == place.id)	{
+	    if (MYSESSION.dog.current_place_ID == place.id)	{
 			  checkoutFromPlace (place.id);
+			  // need to refresh nearbyPlace list
+			  // POPULATE NEARBY PLACE TABLE
+    		setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 400);
+    		// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
+    		setTimeout ( function(){ updatePlaceListLabel($.placeListTitle); }, 400);
 		  } else {
-		    checkIntoPlace (place.id);
+		    checkIntoPlace (place.id, place.lat, place.lon, place.name);
 		  }
 		}
 	});
 } 
 
+//=================================================================================
+//	Name:			placeListListener( event )
+//	Purpose:	center map on whichever  
+//=================================================================================
 function placeListListener(e) {
 	Ti.API.info("...[o] POI list click [ " + JSON.stringify(e.row) + " ]");
 	Ti.API.info("...[o] event index [ " + e.index + " ]");
@@ -533,18 +567,63 @@ function placeListListener(e) {
 	// pop up a check in or check out dialog box based on current checkin status
 	presentUserCheckinOptions( e.row );
 }
-  
+ 
+//=================================================================================
+//	Name:			checkGeofenceLeave(lat,lon)
+//	Purpose:	center map on whichever  
+//=================================================================================
+function checkGeofenceLeave(lat,lon) {
+  var current_distance =  getDistance(lat, lon, MYSESSION.dog.current_place_lat, MYSESSION.dog.current_place_lon);
+  if (current_distance > MYSESSION.dog.current_place_geo_radius) {
+    createSimpleDialog( "Left Geofence", "Automatically checked you out from " +
+      MYSESSION.dog.current_place_name);
+    checkoutFromPlace(MYSESSION.dog.current_place_ID);
+  }
+}
+
+
+
 //====================================================================================================================
-if(Ti.Network.online ) { 
-  // do this once upon Window load
-  mapInit();  
+// do this once upon Window load
+//====================================================================================================================
+
+Titanium.Geolocation.getCurrentPosition(function(e){
+	if (!e.success || e.error) {
+  	Ti.API.log('............... Could not find the device location');
+  	createSimpleDialog("Can't get your location","Please check location services on your mobile device.");
+    // use default Playa Del Rey coordinates
+    MYSESSION.geo.lat = 33.970;
+    MYSESSION.geo.lon = -118.4201;
+  }
+  else {
+  	/* overwrite hardcoded coordinates with device geolocation */
+  	MYSESSION.geo.lat = e.coords.latitude;
+  	MYSESSION.geo.lon = e.coords.longitude;
+  }
+  Ti.API.log("............... lat: " + MYSESSION.geo.lat  + " / lon: " + MYSESSION.geo.lon);
+  // DRAW MAP FOR THE FIRST TIME
+  mapInit();
+});
   
+
+if(Ti.Network.online ) {  
   // Refresh map and nearby place TableView each time user moves
   Titanium.Geolocation.addEventListener('location',function(){
     Ti.API.info(".... .... .... geolocation changed");
-    mapInit();
+    // TODO:  break map init do stuff after drawDefault because we may
+    //        want to redraw POIs and annotations but not map itself
+    // mapInit();
+    
+    Titanium.Geolocation.getCurrentPosition(function(e) {
+      if(e.success) {
+        if(MYSESSION.dog.current_place_ID != null) {  
+          checkGeofenceLeave(e.coords.latitude, e.coords.longitude);
+        }
+      }
+    });
   });
 } 
 else{
-	Ti.API.log("Internet connection is required to use localization features");
+  createSimpleDialog("No data connection","The Internets are required to browse the map.");
+	Ti.API.log("No Internet connection...");
 }

@@ -171,7 +171,7 @@ function addMenubar( parent_object ) {
 	menuCenter.add(wbLogoMenubar);	
 	
 	/*  don't want users going back to login screen once authenticated */
-	if (Ti.App.Properties.current_window != "map") {	
+	if (Ti.App.Properties.current_window != "mapview") {	
 		Ti.API.info(" >> Ti.App.Properties.current_window :"+ Ti.App.Properties.current_window);
 		menuLeft.add(backBtn);
 		backBtn.addEventListener('click', closeWindowController);
@@ -363,12 +363,16 @@ var MYSESSION = {
 	},
 	dog : {
 		dog_ID : 	null,
-		current_place_ID: null,
 		name:		 	null,
 		sex: 			null,
 		age:			null,
 		weight:		null,
-		photo:		null
+		photo:		null,
+		current_place_ID  : null,
+		current_place_geo_radius : null,
+		current_place_lat : null,
+		current_place_lon : null,
+		last_checkin_timestamp : null
 	},
 	windowStack		: [],
 	currentWindow			: "index", 
@@ -381,8 +385,8 @@ var MYSESSION = {
 	geo: {
 		lat						: null, 
 		lon						: null,
-		region_lat    : null,
-		region_lon    : null,
+		view_lat      : null,
+		view_lon      : null,
 		last_acquired	: null
 	}, 
 	currentPlace: { 
@@ -394,10 +398,7 @@ var MYSESSION = {
 		zip 			: null,
 		distance  : null
 	},
-	proximity					: 0.06,
 	checkinInProgress	: null,
-	checkedIn					: null,						// where we are actually checked in (as opposed to currentPlace, which is simply nearby)
-	checkinTimestamp	: null,
 	AWS : {
 		access_key_id		: "AKIAILLMVRRDGDBDZ5XQ",
 		secret_access		: "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",
@@ -426,7 +427,7 @@ Alloy.Globals.placeList_ID 			= null;
  *-----------------------------------------------------------------------*/
 // minimum change in location (meters) which triggers the 'location' eventListener
 // 	*** Geolocation Threshhold trigger.  Note:	10m triggers too often ***
-Ti.Geolocation.distanceFilter = 30;			// 10m = 33 ft
+Ti.Geolocation.distanceFilter = 20;			// 10m=33 ft, 20m=65ft, 30m=100 ft
 Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_BEST doesn't work on iOS
 Ti.Geolocation.purpose = "Receive User Location";
 Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
