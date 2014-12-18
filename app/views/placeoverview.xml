@@ -27,16 +27,16 @@
 
 
         // 								WHO'S HERE
-				// +============= feed_item =================================+
-				// |  +-    --+ +-------------   ---+ +-------------- ---+  |
-				// |  |       | |   midColTopLabel  | |   rightLabelTop  |  |
-				// |  |       | |   midColMidLabel  | |                  |  |
-				// |  |       | |   midColBotLabel  | |   rightLabelTop  |  |		
+				// +============= feed_item ================================+
+				// |  +-    --+ +-----+ +-----------+ +------------------+  |
+				// |  |       | |     | |           | |
+				// |  |       | |     | |           | |
+				// |  |       | |     | |           | |		
 				// |  +-------+ +-------------------+ +------------------+  |		
 				// +========================================================+				
-				<View id="activityContainer" class="feed_item_lg border_red">
+				<View id="activityContainer" class="layout_vert border_red">
   			  <Label id="activityListTitle" height="36" text="WHO'S HERE" class="bg_dk_gray text_medium_medium white" /> 
-  			  <View id="activityListTableContainer" height="0" class="border"/>
+  			  <View id="activityList" contentHeight="auto" width="100%" class="feedContainer border bg_white"/>
   		  </View>
  		  
   		  
@@ -72,7 +72,7 @@
 				// |  |                                      |                  |
 				// |  ^                                      ^                  |
 				// +============================================================+
-				<View id="feedContainer"/>
+				<View class="feedContainer"/>
 					
 			</ScrollView>
 		</View>

@@ -168,15 +168,21 @@ function getPlaceEstimates( place_ID ) {
 }
 
 //====================================================================================================
+//		Name:				buildActivityList(place_ID)
+//		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
 function buildActivityList(data, parentObject) {
   if( data.length > 1) {
     for (var i=0, len=data.length; i<len; i++) {		// only calculate array size once
-		  var dog_name	= Ti.UI.createLabel( {text: data[i].name, top: 0, width: 44, height: 44} );
+		  var dog_item_view =  Ti.UI.createView();
+			$.addClass( dog_item_view, "feed_item");
+		  
+		  var dog_name	= Ti.UI.createLabel( { text: data[i].name, top: 0, width: 44, height: 44, backgroundColor: "#cccccc" } );
 		  //var dog_photo =  Ti.UI.createImageView();
 		  //var dog =  Ti.UI.createImageView();
 			$.addClass( dog_name, "feed_item border");
-		  //parentObject.add(dog_name);
+		  dog_item_view.add(dog_name);
+		  parentObject.add(dog_item_view);
 		}				
   }
 }
@@ -228,7 +234,7 @@ function getPlaceCheckins( place_ID, dog_ID ) {
 				// drawCheckoutButton();
 			}
 			/*  use the current checkins to build the activityList  */
-      buildActivityList(place.checkins, $.activityListContainer);
+      buildActivityList(place.checkins, $.activityList);
 		}
 	};
   return "";	

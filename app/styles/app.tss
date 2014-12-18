@@ -41,6 +41,9 @@
 	verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
 }
 
+"View" : { layout: 'vertical' }
+
+
 "ScrollView": {
 	layout: 'vertical', contentHeight: 'auto',
 	showVerticalScrollIndicator: "true",
@@ -92,7 +95,7 @@
 /* 									Headers and ScrollViews																				  												 */
 /**************************************************************************************************************/
 "#scrollView" 			: { backgroundColor: "" }
-"#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
+".feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
 
 /**************************************************************************************************************/
 /* 									Class Selectors and ScrollViews																				  								 */
