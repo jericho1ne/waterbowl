@@ -45,11 +45,11 @@ function drawCheckoutButton () {
 }	
 
 //================================================================================
-//		Name:				getPlaceActivity( place_ID )
-//		Purpose:		get latest checkins
+//		Name:				getPlaceEstimates( place_ID )
+//		Purpose:		get latest user-provided estimates
 //================================================================================
-function getPlaceActivity( place_ID ) {
-	Ti.API.info("* getPlaceActivity() called *");
+function getPlaceEstimates( place_ID ) {
+	Ti.API.info("* getPlaceEstimates() called *");
 	var query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID	: place_ID
@@ -162,9 +162,23 @@ function getPlaceActivity( place_ID ) {
 			$.latest_update_static.text = "";
 			$.last_update_middle.add ( dog_name_label );	
 			$.last_update_middle.add ( time_elapsed_label );
-			Ti.API.info(" * no checkins here... * ");
+			Ti.API.info(" * no estimates provided... * ");
 		}		
 	};
+}
+
+//====================================================================================================
+//====================================================================================================
+function buildActivityList(data, parentObject) {
+  if( data.length > 1) {
+    for (var i=0, len=data.length; i<len; i++) {		// only calculate array size once
+		  var dog_name	= Ti.UI.createLabel( {text: data[i].name, top: 0, width: 44, height: 44} );
+		  //var dog_photo =  Ti.UI.createImageView();
+		  //var dog =  Ti.UI.createImageView();
+			$.addClass( dog_name, "feed_item border");
+		  //parentObject.add(dog_name);
+		}				
+  }
 }
 
 //=================================================================================
@@ -192,7 +206,7 @@ function hideMiniHeader () {
 //		Purpose:		
 //================================================================================
 function getPlaceCheckins( place_ID, dog_ID ) {
-	Ti.API.info("* getPlaceCheckins for ["+ place_ID +"] called ");
+	Ti.API.info("* getPlaceCheckins [place_ID, dog_ID] ["+ place_ID+", "+dog_ID+"] ");
 	var http_query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID: place_ID,
@@ -202,23 +216,22 @@ function getPlaceCheckins( place_ID, dog_ID ) {
 	http_query.open("POST", "http://waterbowl.net/mobile/get-place-checkins.php");	
 	http_query.send( params );
 	http_query.onload = function() {
-		var placeJSON = this.responseText;
-		Ti.API.info( " * getPlaceCheckins JSON: " + placeJSON );
-		
+		var placeJSON = this.responseText;	
+	 
 		if (placeJSON != "" && placeJSON !="[]") {
-			var place = JSON.parse( placeJSON );
+	    var place = JSON.parse( placeJSON );
 	
 			if ( place.here==1 ) {
 				MYSESSION.dog.current_place_ID = place_ID;
-				
-				/* populate checkout button + listener */
-				// TODO:  re add this later on once we figure out a app wide event trigger
+		    // TODO:  checkout button should be globally available
+				// populate checkout button + listener
 				// drawCheckoutButton();
 			}
-			/*  populate current checkins view with all the dog profile photos  */
-			
-		}	
+			/*  use the current checkins to build the activityList  */
+      buildActivityList(place.checkins, $.activityListContainer);
+		}
 	};
+  return "";	
 }
 
 
@@ -252,7 +265,7 @@ var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, MYSESSION.all
 
 //----------------------------------------------------------------------------
 //
-//		(2)		Populate place header + activity feed
+//		(2)		Populate place header
 //
 //----------------------------------------------------------------------------
 var bg_image = "images/missing/place-header.png";
@@ -273,6 +286,7 @@ if ( placeInfo.banner != "" ) {
 	Ti.API.info ( "...(i) banner image [ "+ bg_image +" ]");
 }
 
+
 /*  fill in header and miniheader information */
 $.place_dist_label.text 	= placeInfo.dist + " miles away";   // TODO: send in distance in miles from backend
 //$.mini_place_dist_label.text 	= placeInfo.dist + " mi away"; 
@@ -284,24 +298,34 @@ $.mini_place_name_label.text 	= placeInfo.name;
 $.miniHeaderContainer.backgroundColor = placeInfo.icon_color;
 $.mini_place_second_label.text	=	placeInfo.city;  // + ' ('+ placeInfo.dist + " mi away)";
 
+//----------------------------------------------------------------------------------------------------------
+//
+//		(3)		Who else is here?
+//
+//----------------------------------------------------------------------------------------------------------
+// <TableView id="activityList" separatorStyle="Titanium.UI.iPhone.TableViewSeparatorStyle.NONE" width="100%" class="border_yel" />
+
+
+//----------------------------------------------------------------------------------------------------------
+//    (4)		Most recent estimates
+//----------------------------------------------------------------------------------------------------------
 /* get feed of checkins, including your current checkin status */
 Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
-getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID );		 
+getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID );	
+	
 /* get feed of estimates */
-getPlaceActivity( args._place_ID );
+getPlaceEstimates( args._place_ID );
 
 //----------------------------------------------------------------------------
 //
 //		(3)		Checkin/Checkout button attach + related button listeners
 //
 //----------------------------------------------------------------------------
-/*
-if (typeof MYSESSION.nearbyPlaces != 'undefined') {
+/* if (typeof MYSESSION.nearbyPlaces != 'undefined') {
 	for (var j=0; j < MYSESSION.nearbyPlaces.length; j++) {
 		nearbyPlaceIDs.push( MYSESSION.nearbyPlaces[j].id );
 	}
-}
-*/
+}*/
 
 /*  if we are nearby this place, show manual checkin button   */
 /*
@@ -341,7 +365,7 @@ if ( how_close < MYSESSION.proximity )  {
 $.scrollView.addEventListener('scroll', function(e) {
   if (e.y!=null) {
     var offsetY = e.y;
-    var threshold = 210;
+    var threshold = 173;
    
     if  ( offsetY >= threshold && offsetY != null && mini_header_display==0 ) {
     	miniHeader = attachMiniHeader();			// show the mini header

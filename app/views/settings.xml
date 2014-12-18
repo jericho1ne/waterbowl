@@ -1,10 +1,16 @@
 <Alloy>
 	<Window id="settings" class="absolute">
 		<View id="content" class="container">
-			<ScrollView id="settings_scrollview" class="fit_height fill_width border_red">
-				<Label id="dog_name" height="40" width="100%" class="border" text="..."/>
-				<Label id="user_email" height="40" width="100%" class="border" text="..."/>
-				<Label id="dog_photo" height="40" width="100%" class="border" text="..."/>
+			<ScrollView id="settings_scrollview" class="fit_height fill_width bg_white">
+				
+				<View class="absolute border_red" top=0 height="30%">
+				  <Label id="dog_name" top=10 height="80" width="100%" backgroundColor="#ccc" text="Dog Name"/>
+				  <Label id="dog_photo" top=0 height="240" width="100%" class="border" text="[X]"
+				  backgroundImage=''/>
+				</View>
+				<View class="container border_red"> 
+				  <Label id="user_email" height="40" width="100%" class="border" text="User email"/>
+				</View>
 				
 			</ScrollView>
 		</View>

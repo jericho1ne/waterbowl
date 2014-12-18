@@ -37,6 +37,7 @@ function goToLogin(e) {
 				  MYSESSION.dog.current_place_name      = response.place.name;
 				  MYSESSION.dog.current_place_lat       = response.place.lat;
 				  MYSESSION.dog.current_place_lon       = response.place.lon;
+				  MYSESSION.dog.current_place_geo_radius= response.place.geofence_radius;
         }
 				MYSESSION.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
 
@@ -94,10 +95,10 @@ if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0
           Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE
       ]
   });
-  Ti.API.info( "* >> IOS 8 or greater *" );
+  Ti.API.info( ">>> IOS 8 or greater *" );
 }
 else {
-	Ti.API.info( "* << IOS 7 or older *" );
+	Ti.API.info( ">>> IOS 7 or older *" );
 }
 
 Titanium.API.info ('...[~]Available memory: ' + Titanium.Platform.availableMemory);
@@ -116,8 +117,9 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 	$.password.value = Ti.App.Properties.getString('pass');
 }	
 
+
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
-// setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for the login fields to get populate
+setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 // createWindowController("mapview","","");

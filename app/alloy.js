@@ -17,15 +17,19 @@ var geoUtil = function () {
     var R = 6371; // Radius of the earth in km
     var dLat = deg2rad(lat2-lat1);  // deg2rad below
     var dLon = deg2rad(lon2-lon1); 
-    var a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-      ; 
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2); 
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
     var d = R * c; // Distance in km
     d = d * 0.621371;
-    return Number ( d.toFixed(2) );		// typecast just in case toFixed returns a string...
+    var formattedDistance = Number( d.toFixed(2) );   // typecast just in case toFixed returns a string...
+    Ti.API.debug(".... ..... [#] getDistance - (Pos1) (Pos2) dist: "+
+              "("+lat1+","+lon1+") "+
+              "("+lat2+","+lon2+") "+
+              formattedDistance+"] ");
+              
+    return formattedDistance;		
   }
   
   //=============================================================================
@@ -35,7 +39,11 @@ var geoUtil = function () {
     return deg * (Math.PI/180);
   }
 
-}
+};
+
+// var myGeo = new geoUtil();
+// Ti.API.debug( "myGeo.deg2rad(90): " + myGeo.deg2rad(90) ); 
+
 
 //*************************************************************************************************
 //===============================================
@@ -138,6 +146,20 @@ function deg2rad(deg) {
   return deg * (Math.PI/180);
 }
 
+
+//======================================================================
+//	Name:			getArrayIndexById( array, value )
+//	Purpose:	figure out array item's number index via associative key
+//======================================================================
+function getArrayIndexById( array, value ) {
+  for (var i=0; i<array.length; i++) {
+    if (array[i].id == value) {
+      return i;
+	 }
+  }
+  return -1;
+}
+
 //=============================================================================
 //	Name:			addMenubar ( parent_object )
 //	Purpose:	dynamically build menu bar and attach it to the parent object,
@@ -147,25 +169,24 @@ function addMenubar( parent_object ) {
 	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
 	var menubar = Ti.UI.createView( {
 	  id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 32, 
-    backgroundColor: "58c6d5", opacity: 1, zIndex: 99, opacity: 1
-  });  // bg color #58c6d5
+    backgroundColor: "#ffffff", opacity: 1, zIndex: 99 });  // bg color #58c6d5
 											
 	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: 44, borderWidth: 0, borderColor: "red" });
 	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "75%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
 	var menuRight 	= Ti.UI.createView( {id: "menuRight", width: 44, right: 0, layout: "horizontal", width: Ti.UI.SIZE });
 	
-	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#ffffff', backgroundColor: '', zIndex: 10,
+	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#58c6d5', backgroundColor: '', zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 0, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
 	
-	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	zIndex: 10,
+	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#58c6d5', backgroundColor: '',	zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 0, opacity: 1, height: 34, width: 34, borderRadius: 12 });
 	
-	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '',zIndex: 10,
+	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#58c6d5', backgroundColor: '',zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "Y", right: 4, width: Ti.UI.SIZE, top: 0, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: "auto", 
-			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
+			color: "#58c6d5", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
 	
 	//menuLeft.add(backBtn);
 	menuCenter.add(wbLogoMenubar);	
@@ -178,7 +199,7 @@ function addMenubar( parent_object ) {
 	}
 	
 	/* only show settings button if not currently on that window */	
-	if (Ti.App.Properties.current_window!="index" && Ti.App.Properties.current_window=="settings") {	
+	if (Ti.App.Properties.current_window!="index" && Ti.App.Properties.current_window!="settings") {	
 		menuRight.add(settingsBtn);
 		settingsBtn.addEventListener('click', showSettings);
 	}
@@ -241,7 +262,7 @@ function uploadFromGallery( photoPlaceholder ) {
 			}
 		});
 	} else {
-		createSimpleDialog('No network connectio', 'Cannot upload photo');
+		createSimpleDialog('No network connection', 'Cannot upload photo');
 	}
 	return null;
 }
@@ -299,7 +320,7 @@ function addToAppWindowStack( winObject, win_name )  {
 function closeWindowController() {
 	var currentWindow = MYSESSION.windowStack.pop();
 	Ti.API.info( "[x] closing window ["+ Ti.App.Properties.current_window +"]");
-
+	// default close window animation is SLIDE RIGHT
 	currentWindow.close( { 
 		opacity: 0.1, duration: 300, left: 800,                                                   
 		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
@@ -321,7 +342,7 @@ function mainInfoBtn() {
 //=================================================================================
 function showSettings() {
 	Ti.API.info( "[+] settings button clicked");
-	createWindowController('settings','','');
+	createWindowController('settings','','slide_left');
 }
 
 //==========================================================================================
@@ -388,7 +409,7 @@ var MYSESSION = {
 		lon						: null,
 		view_lat      : null,
 		view_lon      : null,
-		last_acquired	: null
+		last_acquired	: 0           // minutes since start of UNIX epoch
 	}, 
 	currentPlace: { 
 		ID				: null,

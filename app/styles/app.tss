@@ -41,8 +41,6 @@
 	verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
 }
 
-"View": { layout: 'vertical',	height: '100%' }
-
 "ScrollView": {
 	layout: 'vertical', contentHeight: 'auto',
 	showVerticalScrollIndicator: "true",
@@ -102,7 +100,7 @@
 // every top level div in each XML view is a .container * Forewarned. *
 ".absolute" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "absolute", width: "100%", backgroundColor: "#cccccc", exitOnClose: true }
 // menubar height should equal top value of .container!
-".container" : { top: 32, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", exitOnClose: true }
+".container" : { top: 32, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", exitOnClose: true }  // top: 32
 
 /* --------------- ALL OF THE SPACING STUFF  -------------------------- */ 
 ".top_5"  : { top: 5 }
@@ -168,10 +166,10 @@
 ".text_number"	: { font:{ fontFamily: 'Futura-Medium', fontSize: 24 } }
 
 /*  border colors for layout / debug purposes  */
-".border" 			 : { borderWidth: 2, borderColor: "#000000" }
-".border_yel" : { borderWidth: 2, borderColor: "#ffff00" }
-".border_blu" 	 : { borderWidth: 2, borderColor: "#00ffff" }
-".border_red"  	 : { borderWidth: 2, borderColor: "ff0000" }
+".border" 		: { borderWidth: 1, borderColor: "#000000" }
+".border_yel" : { borderWidth: 1, borderColor: "#ffff00" }
+".border_blu" : { borderWidth: 1, borderColor: "#00ffff" }
+".border_red" : { borderWidth: 1, borderColor: "#ff0000" }
 
 ".btn_large" : { height: 44, font:{ fontSize: 24, fontFamily: "Raleway-Light" } }
 ".btn_medium" : { height: 36, font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
@@ -207,9 +205,9 @@
 
 ".feed_label_left_md"	: { height: "auto", width:"auto", left : 6 }
 
-".feed_label_left_lg"	  : { width: Ti.UI.SIZE, height: "auto", left : 6 }
-".feed_label_center_lg" : { width: Ti.UI.SIZE, height: "auto", top: 6 }
-".feed_label_right_lg"	: { width: Ti.UI.SIZE, height: "auto", right: 6 }
+".feed_label_left_lg"	  : { width: Ti.UI.SIZE, height: "30", left : 6 }
+".feed_label_center_lg" : { width: Ti.UI.SIZE, height: "30", top: 6 }
+".feed_label_right_lg"	: { width: Ti.UI.SIZE, height: "30", right: 6 }
 
 ".left_view"  : { layout:"vertical",	width: "50%", left: 4  }
 ".middle_view"  : { layout:"vertical", width:"50%", left:2, borderColor: "#ccc", borderWidth: 0 }
