@@ -1,6 +1,6 @@
 <Alloy>
 	<Window id="placeoverview" class="absolute">	
-		<View id="content" class="container">
+		<View id="content" class="window_container">
 		
 			<View id="miniHeaderContainer" width="100%" height="60" top="0" class="layout_vert" backgroundColor="#777477" zIndex="97" opacity="0" >	
 				<Label id="mini_place_name_label" text="" class="feed_label_left_lg white text_large_light"/>
@@ -26,17 +26,22 @@
 				</View>
 
 
-        // 								WHO'S HERE
-				// +============= feed_item ================================+
-				// |  +-    --+ +-----+ +-----------+ +------------------+  |
-				// |  |       | |     | |           | |
-				// |  |       | |     | |           | |
-				// |  |       | |     | |           | |		
-				// |  +-------+ +-------------------+ +------------------+  |		
-				// +========================================================+				
-				<View id="activityContainer" class="layout_vert border_red">
-  			  <Label id="activityListTitle" height="36" text="WHO'S HERE" class="bg_dk_gray text_medium_medium white" /> 
-  			  <View id="activityList" contentHeight="auto" width="100%" class="feedContainer border bg_white"/>
+        // 						WHO'S HERE
+				// +===== activityContainer ===========+
+				// |  +------activityTitle-----------+ |
+				//	 |  |         WHO'S HERE           | |
+				//	 |	+------------------------------+ |
+				// |  +------activityList------------+ |
+				//	 |	| +----+ +----+ +----+ +----+  | |
+				// |  | |    | |    | |    | |    |  | |
+				// |  | +----+ +----+ +----+ +----+  | |
+				// |  | ^  fit up to 8            ^  | |
+				// |  |    thumbnails total          | |
+				// |  +------------------------------+ |		
+				// +===================================+				
+				<View id="activityContainer" class="container">
+  			  <Label id="activityTitle" text="WHO'S HERE" class="section_header bg_dk_gray text_medium_medium white" /> 
+  			  <View id="activityList" contentHeight="auto" width="100%" class="thumbnail_sm_container layout_horz border bg_lt_blue"/>
   		  </View>
  		  
   		  
@@ -48,9 +53,9 @@
 				// |  |       | |   midColBotLabel  | |   rightLabelTop  |  |		
 				// |  +-------+ +-------------------+ +------------------+  |		
 				// +========================================================+
-				<View class="feed_item_lg">
-					<ImageView class="thumbnail" id="last_update_thumb"/>
-					<View class="middle_view" id="last_update_middle">
+				<View id="last_update_container" class="feed_item_lg">
+					<ImageView id="last_update_thumb" class="thumbnail"/>
+					<View id="last_update_middle" class="middle_view">
 						<Label class="feed_label_left text_medium_light" id="latest_update_static">latest update</Label>
 							<!-- add most recent update labels here programmatically -->
 					</View>
@@ -62,17 +67,17 @@
 				// +============== feedContainer ===============================+
 				// |  +----------- feed_item (#1) ---------------------------+  |
 				// |  | +-photo-+ +------------------+  +------------------+ |  |                
-				// |  | |  			| | feed_label_left  |  | feed_label_right | |  |            
-				// |  | | 	    | | feed_label_left  |  |                  | |  |  		
+				// |  | |  		 	| | feed_label_left  |  | feed_label_right | |  |            
+				// |  | | 	      | | feed_label_left  |  |                  | |  |  		
 				// |  | +-------+ +------------------+  +------------------+ |  | 
 				// |  +------------------------------------------------------+  |	
-				// |																				                    |
+				// |																				                      |
 				// |  +---------- feed_item (#2) ------------+                  |
-				// |	|				    e t c . . .                |                  |
+				// |  	|				    e t c . . .                |                  |
 				// |  |                                      |                  |
 				// |  ^                                      ^                  |
 				// +============================================================+
-				<View class="feedContainer"/>
+				<View id="feedContainer"/>
 					
 			</ScrollView>
 		</View>

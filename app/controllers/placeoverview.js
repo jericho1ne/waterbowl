@@ -25,7 +25,7 @@ function drawCheckoutButton () {
 			cancel : 1,
 			selectedIndex : 0,
 			destructive : 0,
-			title : 'Are you leaving ' + placeInfo['name'] + '?'
+			title : 'Are you leaving ' + poiInfo['name'] + '?'
 		};
 		var checkout_dialog = Ti.UI.createOptionDialog(optns);
 	
@@ -36,7 +36,7 @@ function drawCheckoutButton () {
 				// MYSESSION.checkedIn = null;
 				 
 				// ping backend w/ place_ID, owner_ID, dog_ID to check yo self out
-		    checkoutFromPlace( placeInfo['id'] );	
+		    checkoutFromPlace( poiInfo['id'] );	
 		    closeWindowController();
 			}
 		});
@@ -45,7 +45,7 @@ function drawCheckoutButton () {
 }	
 
 //================================================================================
-//		Name:				getPlaceEstimates( place_ID )
+//		Name:			getPlaceEstimates( place_ID )
 //		Purpose:		get latest user-provided estimates
 //================================================================================
 function getPlaceEstimates( place_ID ) {
@@ -80,10 +80,10 @@ function getPlaceEstimates( place_ID ) {
 			var last_update_photo = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
 			Ti.API.info( "latest update photo: " + last_update_photo  );
 			 
-			$.last_update_thumb.image = last_update_photo;					// TODO: change storage location	
-			dog_name_label.text 			= activity[0].dog_name;				// dog that provided most recent update
-			time_elapsed_label.text 	= activity[0].time_elapsed;		// dog that provided most recent update
-			dogs_amount_label.text 		= activity[0].amount;					// dog that provided most recent update
+			$.last_update_thumb.image = last_update_photo;				// TODO: change storage location	
+			dog_name_label.text 				= activity[0].dog_name;				// dog that provided most recent update
+			time_elapsed_label.text 		= activity[0].time_elapsed;		// dog that provided most recent update
+			dogs_amount_label.text 		= activity[0].amount;				// dog that provided most recent update
 			
 			var dogs_suffix_text = "dogs here";
 			if	( activity[0].amount == 1)
@@ -105,7 +105,7 @@ function getPlaceEstimates( place_ID ) {
 		
 			/* ensure that there is more than 1 recent checkin */
 			if( activity.length > 1) {
-				for (var i=1; i<activity.length; i++) {		// optimize loop to only calculate array size once
+				for (var i=1, len=activity.length; i<len; i++) {		// optimize loop to only calculate array size once
 					///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
 					var feed_item_view =  Ti.UI.createView();
 					$.addClass( feed_item_view, "feed_item");
@@ -115,10 +115,15 @@ function getPlaceEstimates( place_ID ) {
 					$.addClass( middle_view, "middle_view");
 					
 					var thumb = Ti.UI.createImageView ();
-					$.addClass( thumb, "thumbnail_sm");
+					$.addClass( thumb, "thumbnail");
 					
+					// make it pink if it's ME
+					if(activity[i].dog_ID==MYSESSION.dog.dog_ID)
+						$.addClass( thumb, "border_pink");
+						
 					// TODO: change storage location	*ERROR* here
-					thumb.image = MYSESSION.AWS.url_base + '/' + MYSESSION.AWS.bucket_profile + '/' + activity[i].dog_photo;		
+					//thumb.image = MYSESSION.AWS.url_base + '/' + MYSESSION.AWS.bucket_profile + '/' + activity[i].dog_photo;		
+					thumb.image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + activity[i].dog_photo;
 					
 					var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
 					$.addClass( status_update_label, "feed_label_left text_medium_bold");
@@ -131,7 +136,7 @@ function getPlaceEstimates( place_ID ) {
 					var dog_suffix = " dogs";
 					if (activity[i].amount == 1)
 						dog_suffix = " dog";
-					dog_name_label.text 			= "Saw " + activity[i].amount + dog_suffix;
+					dog_name_label.text = "Saw " + activity[i].amount + dog_suffix;
 					
 					middle_view.add(status_update_label);
 					middle_view.add(dog_name_label);
@@ -172,17 +177,31 @@ function getPlaceEstimates( place_ID ) {
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
 function buildActivityList(data, parentObject) {
-  if( data.length > 1) {
+	Ti.API.debug(".... [~] buildActivityList ["+JSON.stringify(data) +"]");
+  if( data.length > 0) {
+  	Ti.API.debug(".... [~] buildActivityList:: found ["+ data.length +"] dog");
+  	if( data.length > 4) {
+  		// size up parent container so that we can fit two rows, up to 8 thumbnails
+  		parentObject.height = 150;  	
+  	}
     for (var i=0, len=data.length; i<len; i++) {		// only calculate array size once
-		  var dog_item_view =  Ti.UI.createView();
-			$.addClass( dog_item_view, "feed_item");
+		  // var dog_item_view =  Ti.UI.createView();
+		  var dog_thumb =  Ti.UI.createImageView();
+		 	// careful with assignment order, classes below have PRESET image placeholder
+		  $.addClass( dog_thumb, "thumbnail");
 		  
-		  var dog_name	= Ti.UI.createLabel( { text: data[i].name, top: 0, width: 44, height: 44, backgroundColor: "#cccccc" } );
+		  if(data[i].dog_ID == MYSESSION.dog.dog_ID)
+		  	$.addClass( dog_thumb, "border_pink");
+		 
+		 // grab actual photo LAST
+		  dog_thumb.image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data[i].photo;
+		  		  
+		  //var dog_name	= Ti.UI.createLabel( { text: data[i].name, top: 0, width: 44, height: 44, backgroundColor: "#cccccc" } );
 		  //var dog_photo =  Ti.UI.createImageView();
 		  //var dog =  Ti.UI.createImageView();
-			$.addClass( dog_name, "feed_item border");
-		  dog_item_view.add(dog_name);
-		  parentObject.add(dog_item_view);
+			//$.addClass( dog_name, "feed_item border");
+		  //dog_item_view.add(dog_name);
+		  parentObject.add(dog_thumb);
 		}				
   }
 }
@@ -212,7 +231,7 @@ function hideMiniHeader () {
 //		Purpose:		
 //================================================================================
 function getPlaceCheckins( place_ID, dog_ID ) {
-	Ti.API.info("* getPlaceCheckins [place_ID, dog_ID] ["+ place_ID+", "+dog_ID+"] ");
+	Ti.API.info(".... .... getPlaceCheckins [place_ID, dog_ID] ["+ place_ID+", "+dog_ID+"] ");
 	var http_query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID: place_ID,
@@ -224,8 +243,9 @@ function getPlaceCheckins( place_ID, dog_ID ) {
 	http_query.onload = function() {
 		var placeJSON = this.responseText;	
 	 
-		if (placeJSON != "" && placeJSON !="[]") {
+	 	if (placeJSON != "" && placeJSON !="[]") {
 	    var place = JSON.parse( placeJSON );
+			Ti.API.debug(".... .... .... getPlaceCheckins ["+ JSON.stringify(placeJSON)+"] ");
 	
 			if ( place.here==1 ) {
 				MYSESSION.dog.current_place_ID = place_ID;
@@ -256,18 +276,14 @@ var mini_header_display = 0;
 //
 //--------------------------------------------------------------------------------
 var args 	= arguments[0] || {};
-Ti.API.info(".... .... .... .... placeoverview.js #[ " + args._place_ID  + " ] * ");	
-/*  save globally stored place info into a local variable */
-var placeInfo = MYSESSION.allPlaces[ args._index ];
+var poiInfo = MYSESSION.allPlaces[args._index];
 
 /* HACK - show places near NextSpace */
-//MYSESSION.geo.lat = 34.024268;
-//MYSESSION.geo.lon = -118.394;
 
-var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, MYSESSION.allPlaces[args._index].lat, MYSESSION.allPlaces[args._index].lon );
+var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, poiInfo.lat, poiInfo.lon );
 // alert( how_close + " miles");
 
-//Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( placeInfo )  );
+//Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
 
 //----------------------------------------------------------------------------
 //
@@ -277,8 +293,8 @@ var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, MYSESSION.all
 var bg_image = "images/missing/place-header.png";
 $.headerContainer.backgroundImage = bg_image;
 
-if ( placeInfo.banner != "" ) {
-	bg_image = MYSESSION.AWS.url_base+'/'+MYSESSION.AWS.bucket_place+'/'+placeInfo.banner;
+if ( poiInfo.banner != "" ) {
+	bg_image = MYSESSION.AWS.url_base+'/'+MYSESSION.AWS.bucket_place+'/'+poiInfo.banner;
 	/*  image preloader of sorts  */
 	var c = Titanium.Network.createHTTPClient();
 	c.setTimeout(10000);
@@ -294,15 +310,15 @@ if ( placeInfo.banner != "" ) {
 
 
 /*  fill in header and miniheader information */
-$.place_dist_label.text 	= placeInfo.dist + " miles away";   // TODO: send in distance in miles from backend
-//$.mini_place_dist_label.text 	= placeInfo.dist + " mi away"; 
+$.place_dist_label.text 	= poiInfo.dist + " miles away";   // TODO: send in distance in miles from backend
+//$.mini_place_dist_label.text 	= poiInfo.dist + " mi away"; 
 
-$.place_name_label.text 			= placeInfo.name;
-$.place_address_label.text		=	placeInfo.address;
-$.place_city_label.text	  		=	placeInfo.city + ' ' + placeInfo.zip;
-$.mini_place_name_label.text 	= placeInfo.name;
-$.miniHeaderContainer.backgroundColor = placeInfo.icon_color;
-$.mini_place_second_label.text	=	placeInfo.city;  // + ' ('+ placeInfo.dist + " mi away)";
+$.place_name_label.text 			= poiInfo.name;
+$.place_address_label.text		=	poiInfo.address;
+$.place_city_label.text	  		=	poiInfo.city + ' ' + poiInfo.zip;
+$.mini_place_name_label.text 	= poiInfo.name;
+$.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
+$.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi away)";
 
 //----------------------------------------------------------------------------------------------------------
 //

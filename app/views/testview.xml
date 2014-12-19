@@ -1,6 +1,6 @@
 <Alloy>
 	<Window id="testview" class="absolute">
-		<View id="content" class="container border_blu">
+		<View id="content" class="window_container border_blu">
 			<ScrollView id="test_scrollview" class="fit_height fill_width border_red">
 				<Label id="menubar_debug" height="40" width="100%" class="border">
 						LOADING...

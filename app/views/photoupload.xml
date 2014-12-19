@@ -17,7 +17,7 @@
 */
 
 <Alloy>
-	<Window id="photoupload" class="container">
+	<Window id="photoupload" class="window_container">
 		<View id="menubar"/>
 			
 		<ScrollView class="fill_width bg_lt_blue top_40">

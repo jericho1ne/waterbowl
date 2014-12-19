@@ -9,7 +9,7 @@
 	7. General						Gray			787578
 */
 
-".bg_dk_blue" : { backgroundColor: "#58c6d5"}  
+".bg_dk_blue" : { backgroundColor: "#58c6d5"}     
 ".bg_lt_blue" : { backgroundColor: "#DCF1FC"}
 ".bg_lt_gray" : { backgroundColor: "#bab9b9"}
 ".bg_dk_gray" : { backgroundColor: "#525252"}
@@ -41,8 +41,7 @@
 	verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
 }
 
-"View" : { layout: 'vertical' }
-
+"View" : { layout: 'vertical', height: Ti.UI.SIZE }
 
 "ScrollView": {
 	layout: 'vertical', contentHeight: 'auto',
@@ -51,7 +50,7 @@
 }
 
 "Button": { 
-	color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
+	color: '#ffffff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
 	font:{ fontFamily: 'Raleway-Bold', fontSize: 13 },
 	width: '62%', height: 35, borderRadius: 3, borderWidth: 0, bottom: 6
 }
@@ -71,9 +70,9 @@
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, scrollable: true, showVerticalScrollIndicator: true, 
 	scrollIndicatorStyle: Ti.UI.iPhone.ScrollIndicatorStyle.BLACK	}
 
-/**************************************************************************************************************/
-/* 									Predefined Ti Selectors																		  														 */
-/**************************************************************************************************************/
+//************************************************************************************************************/
+// 									Predefined Ti Selectors																		  														 
+//***********************************************************************************************************
 "#menubar"			: { height: 36, width: "100%" }		// the rest is defined post-page load in Alloy.js
 										
 ".menuLeft"			: { width: "20%", height: 36 }
@@ -91,21 +90,28 @@
 ".wbLogoMenubar" 	: { width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: 48,
 											color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18 } }
 
-/**************************************************************************************************************/
-/* 									Headers and ScrollViews																				  												 */
-/**************************************************************************************************************/
+//***********************************************************************************************************
+// 									Layouts and ScrollViews																				  												 
+//***********************************************************************************************************
 "#scrollView" 			: { backgroundColor: "" }
-".feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
+"#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
 
-/**************************************************************************************************************/
-/* 									Class Selectors and ScrollViews																				  								 */
-/**************************************************************************************************************/
-// every top level div in each XML view is a .container * Forewarned. *
+
+// SINGLE USE -- height should equal top value of .container!
+".window_container" : { top: 32, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", exitOnClose: true }  // top: 32
+
+//*********************************************************************************************************
+// 						ALL OUTER DIVS -- div in each XML view is a .container * Forewarned. *
+//*********************************************************************************************************
+// OVERLAYS ALLOWED
 ".absolute" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "absolute", width: "100%", backgroundColor: "#cccccc", exitOnClose: true }
-// menubar height should equal top value of .container!
-".container" : { top: 32, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", exitOnClose: true }  // top: 32
 
-/* --------------- ALL OF THE SPACING STUFF  -------------------------- */ 
+// VERTICAL STACKING -- also try >>  height: Ti.UI.FILL
+".container" : { top: 0, layout: 'vertical', contentHeight: 'auto', width: "100%",  }  
+
+/**************************************************************************************************************/
+/* 									Class Selectors 																	  								 */
+/**************************************************************************************************************//* --------------- ALL OF THE SPACING STUFF  -------------------------- */ 
 ".top_5"  : { top: 5 }
 ".top_10"  : { top: 10 }
 ".top_20"  : { top: 20 }
@@ -121,8 +127,6 @@
 
 ".width_60dp"  : { width: 60 }
 ".width_80dp"  : { width: 80 }
-
-// ".col_spacer_5"		: { width:   5, height: Ti.UI.FILL }
 
 ".height_20"  : { height: "20%" }
 ".height_40"  : { height: "40%" }
@@ -174,6 +178,11 @@
 ".border_blu" : { borderWidth: 1, borderColor: "#00ffff" }
 ".border_red" : { borderWidth: 1, borderColor: "#ff0000" }
 
+/* border colors for UI elements  */ 
+".border_pink" 			 : { borderWidth: 2, borderColor: "#ec3c95" }
+".border_brightblue" : { borderWidth: 2, borderColor: "#58c6d5" }
+".border_gray" 	 		 : { borderWidth: 1, borderColor: "#bab9b9" }
+
 ".btn_large" : { height: 44, font:{ fontSize: 24, fontFamily: "Raleway-Light" } }
 ".btn_medium" : { height: 36, font:{ fontSize: 18, fontFamily: "Raleway-Bold" } }
 ".text_field_large" : { height: 36, font:{ fontSize: 17 } }
@@ -199,8 +208,19 @@
 
 ".bottom_spacer_10" : { width: "100%", height: "10%" }
 
-".feed_item" 					: { layout: 'horizontal', height: 50, width: "100%", left: 0, top: 1, backgroundColor: '#DCF1FC' }
-".feed_item_lg" 			: { layout: 'horizontal', height: 65, width: "100%", left: 0, top: 0, backgroundColor: '#58c6d5' }
+".section_header"	  : { height: 28, width: "100%", left: 0 }
+
+//===============================================================================================
+// 	Place Overview + Marks
+//===============================================================================================
+".thumbnail_sm_container" : { height: 74, layout: 'horizontal', width: "100%", left: 0, top: 0 }
+
+".thumbnail_sm" : { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 48, width: 48, borderRadius: 24, left: 4, top: 1 }
+".thumbnail" 		: { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 72, width: 72, borderRadius: 36, left: 4, top: 2 }
+".thumbnail_lg" : { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 120, width: 120, borderRadius: 60, left: 4, top: 4 }
+
+".feed_item" 				: { layout: 'horizontal', height: 74, width: "100%", left: 0, top: 1, backgroundColor: '#DCF1FC' }
+".feed_item_lg" 			: { layout: 'horizontal', height: 74, width: "100%", left: 0, top: 0, backgroundColor: '#58c6d5' }
 
 ".feed_label_left" 	  : { width: Ti.UI.SIZE, height: "auto", left: 6 }
 ".feed_label_center" 	: { width: Ti.UI.SIZE, height: "auto", }
@@ -216,6 +236,3 @@
 ".middle_view"  : { layout:"vertical", width:"50%", left:2, borderColor: "#ccc", borderWidth: 0 }
 ".right_view"   : { layout:"vertical",	 width: Ti.UI.FILL, left:0, borderColor: "#000", borderWidth: 0 } 
 
-".thumbnail_sm" : { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 48, width: 48, borderRadius: 10, left: 4 }
-".thumbnail" 		: { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 60, width: 60, borderRadius: 12, left: 4, top: 2 }
-".thumbnail_lg" : { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 120, width: 120, borderRadius: 24, left: 4, top: 4 }

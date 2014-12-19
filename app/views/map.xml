@@ -1,9 +1,0 @@
-<Alloy>
-  <Window id="map" class="absolute">
-  	<View class="container" id="content">
-  		<View id="outerMapContainer" height="75%" contentHeight="auto" width="100%">
-  			<View id="mapContainer" class="fill_height absolute" contentHeight="auto" width="100%" />
-  		</View>
-		</View>
-  </Window>
-</Alloy> 

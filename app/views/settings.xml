@@ -1,6 +1,6 @@
 <Alloy>
 	<Window id="settings" class="absolute">
-		<View id="content" class="container">
+		<View id="content" class="window_container">
 			<ScrollView id="settings_scrollview" class="fit_height fill_width bg_white">
 				
 				<View class="absolute border_red" top=0 height="30%">

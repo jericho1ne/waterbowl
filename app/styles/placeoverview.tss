@@ -1,5 +1,3 @@
-"#placeoverview"  		: {}
-
 "#headerContainer" 	: { zIndex: 30, top:0, height: "53%", width: "100%" }
 
 "#checkboxHeader" 		: { 
@@ -11,5 +9,3 @@
   height: Ti.UI.SIZE, width: "100%", left: 0, top: 0, opacity: 1.0,
   backgroundImage : "images/ui/header-overlay-black.png"
 }	
-
-"#place_name_label" : {  }

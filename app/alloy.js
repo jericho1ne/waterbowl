@@ -77,6 +77,8 @@ function createSimpleDialog (title, msg) {
 function createWindowController ( win_name, args, animation ) {
 	MYSESSION.previousWindow = MYSESSION.currentWindow;
 	MYSESSION.currentWindow = win_name;
+	
+	Ti.API.debug(" ::::: createWindowController ::::: " + JSON.stringify(args));
 
 	var winObject = Alloy.createController(win_name, args).getView();
 	addToAppWindowStack( winObject, win_name );
@@ -402,13 +404,15 @@ var MYSESSION = {
 	local_icon_path		:	"images/icons",
 	local_banner_path : "images/places",
 	allPlaces		      : [],				// top N places that are near user's location (n=20, 30, etc)
-	nearbyPlaces      : [], 			// contains up to N places that are within the geofence
+	nearbyPlaces      : [], 				// contains up to N places that are within the geofence
 	placeAnnotations  : [],
 	geo: {
 		lat						: null, 
 		lon						: null,
 		view_lat      : null,
 		view_lon      : null,
+		geo_trigger_count : 0,
+		refresh_interval 	: 1,
 		last_acquired	: 0           // minutes since start of UNIX epoch
 	}, 
 	currentPlace: { 
@@ -421,7 +425,7 @@ var MYSESSION = {
 		distance  : null
 	},
 	checkinInProgress	: null,
-	AWS : {
+	AWS: {
 		access_key_id		: "AKIAILLMVRRDGDBDZ5XQ",
 		secret_access		: "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",
 		url_base 				: "http://s3.amazonaws.com",
@@ -429,6 +433,12 @@ var MYSESSION = {
 		bucket_place		: "wb-place",
 		bucket_profile	: "wb-profile",
 		bucket_uitext		: "wb-ui-text"
+	},
+	WBnet: {
+		url_base 			: "http://www.waterbowl.net/mobile",
+		bucket_place		: "wb-place",
+		bucket_profile	: "wb-profile",
+		bucket_uitext	: "wb-ui-text"
 	}
 };
 
@@ -449,7 +459,7 @@ Alloy.Globals.placeList_ID 			= null;
  *-----------------------------------------------------------------------*/
 // minimum change in location (meters) which triggers the 'location' eventListener
 // 	*** Geolocation Threshhold trigger.  Note:	10m triggers too often ***
-Ti.Geolocation.distanceFilter = 20;			// 10m=33 ft, 20m=65ft, 30m=100 ft
+Ti.Geolocation.distanceFilter = 10;			// 10m=33 ft, 20m=65ft, 30m=100 ft
 Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_BEST doesn't work on iOS
 Ti.Geolocation.purpose = "Receive User Location";
 Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");

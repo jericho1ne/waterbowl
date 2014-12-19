@@ -18,7 +18,7 @@
 <Alloy>
 	<Window id="register" class="absolute">
 		
-		<View id="content" class="container">
+		<View id="content" class="window_container">
 		
 		  <ScrollView id="registerScrollView" class="fill_width bg_lt_blue">
 				<Label class="form_label top_100">email</Label>

@@ -17,7 +17,7 @@
 
 
 <Alloy>
-	<Window id="registerpetinfo" class="container">
+	<Window id="registerpetinfo" class="window_container">
 		<View id="menubar"/>
 		
 		<ScrollView id="petinfoScrollView" height="100%" class="layout_vert fill_width fit_height bg_lt_blue">
