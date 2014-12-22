@@ -41,8 +41,8 @@ function goToLogin(e) {
         }
 				MYSESSION.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
 
-				MYSESSION.dog.name	 		= response.dog.dog_name;
-				MYSESSION.dog.photo	 		= response.dog.dog_photo;
+				MYSESSION.dog.name	 	= response.dog.dog_name;
+				MYSESSION.dog.photo	= response.dog.dog_photo;
 			
 				Ti.App.Properties.setString('user', $.email.value);
 				Ti.App.Properties.setString('pass', $.password.value);
@@ -117,11 +117,8 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 	$.password.value = Ti.App.Properties.getString('pass');
 }	
 
-
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
-// setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for the login fields to get populate
+setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 // createWindowController("mapview","","");
-
-

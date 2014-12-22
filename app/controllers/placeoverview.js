@@ -7,7 +7,7 @@
 //
 
 //================================================================================
-//		Name:				drawCheckoutButton( )
+//		Name:			drawCheckoutButton( )
 //		Purpose:		add checkout button if we're currently checked in here
 //================================================================================
 function drawCheckoutButton () {
@@ -60,116 +60,120 @@ function getPlaceEstimates( place_ID ) {
 	query.onload = function() {
 		var jsonResponse = this.responseText;
 		var activityData = new Array();												// create empty object container
-		
-		// TODO:  save place feeds incrementally to placeArray[x]['feed'] as they become available
-		// TODO:  Ti.App.Properties or to 
-		
-		/*			CREATE BLANK TEMPLATE FOR LATEST FEED ITEM 				*/
-		var dog_name_label 			= Ti.UI.createLabel({text: "None so far ...", top: 0});
-		$.addClass( dog_name_label, "feed_label_left_md text_medium_bold");
-		
-		var time_elapsed_label 	= Ti.UI.createLabel({text: "Be the first!", top: 0});
-		$.addClass( time_elapsed_label, "feed_label_left text_medium_bold");
-		
-		var dogs_amount_label = Ti.UI.createLabel({text: "...", top: 4, width: "100%" });
-		$.addClass( dogs_amount_label, "feed_label_center_lg text_number");
-					
+									
 		if (jsonResponse != "" && jsonResponse !="[]") {
 			var activity = JSON.parse( jsonResponse );
-			/*					POPULATE LATEST FEED ITEM 					*/
-			var last_update_photo = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
-			Ti.API.info( "latest update photo: " + last_update_photo  );
-			 
-			$.last_update_thumb.image = last_update_photo;				// TODO: change storage location	
-			dog_name_label.text 				= activity[0].dog_name;				// dog that provided most recent update
-			time_elapsed_label.text 		= activity[0].time_elapsed;		// dog that provided most recent update
-			dogs_amount_label.text 		= activity[0].amount;				// dog that provided most recent update
-			
-			var dogs_suffix_text = "dogs here";
-			if	( activity[0].amount == 1)
-				dogs_suffix_text = "dog here";
-				
-			var dogs_amount_suffix = Ti.UI.createLabel({text: dogs_suffix_text, top: -2});
-			$.addClass( dogs_amount_suffix, "feed_label_center text_medium_light");
-			
-			$.last_update_middle.add ( dog_name_label );				// add most recent update info to middle and right views
-			$.last_update_middle.add ( time_elapsed_label );
-			$.last_update_right.add ( dogs_amount_label );
-			$.last_update_right.add ( dogs_amount_suffix );
-			
-			activity.sort(function(a,b) {			// 		sort updates based on datetime posted
-			  return b.rank - a.rank;
-			});
-			
-			var max = 10;		// activity.length;
-		
-			/* ensure that there is more than 1 recent checkin */
-			if( activity.length > 1) {
-				for (var i=1, len=activity.length; i<len; i++) {		// optimize loop to only calculate array size once
-					///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
-					var feed_item_view =  Ti.UI.createView();
-					$.addClass( feed_item_view, "feed_item");
-					
-					///////////// MIDDLE VIEW OF STUFF ////////////////////////////////////////////
-					var middle_view = Ti.UI.createView ();
-					$.addClass( middle_view, "middle_view");
-					
-					var thumb = Ti.UI.createImageView ();
-					$.addClass( thumb, "thumbnail");
-					
-					// make it pink if it's ME
-					if(activity[i].dog_ID==MYSESSION.dog.dog_ID)
-						$.addClass( thumb, "border_pink");
-						
-					// TODO: change storage location	*ERROR* here
-					//thumb.image = MYSESSION.AWS.url_base + '/' + MYSESSION.AWS.bucket_profile + '/' + activity[i].dog_photo;		
-					thumb.image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + activity[i].dog_photo;
-					
-					var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
-					$.addClass( status_update_label, "feed_label_left text_medium_bold");
-					
-					var dog_name_label = Ti.UI.createLabel({text: "..."});
-					$.addClass( dog_name_label, "feed_label_left text_medium_light");
-					
-					status_update_label.text 	= activity[i].dog_name;			// TODO: grab other status updates instead
-					
-					var dog_suffix = " dogs";
-					if (activity[i].amount == 1)
-						dog_suffix = " dog";
-					dog_name_label.text = "Saw " + activity[i].amount + dog_suffix;
-					
-					middle_view.add(status_update_label);
-					middle_view.add(dog_name_label);
-					
-					///////// RIGHT VIEW OF STUFF ///////////////////////////
-					var right_view = Ti.UI.createView();
-					var time_elapsed_label = Titanium.UI.createLabel({text: "..."});
-					time_elapsed_label.text = activity[i].time_elapsed;
-					
-					$.addClass( right_view, "right_view");
-					$.addClass( time_elapsed_label, "feed_label_right text_medium_light");
-					
-					right_view.add( time_elapsed_label );
-					///////// BUILD FEED ITEM  ///////////////////////////////////
-					feed_item_view.add( thumb );
-					feed_item_view.add( middle_view );
-					feed_item_view.add( right_view );
-					
-					///////// ADD ITEM TO FEED CONTAINER ////////////////////////
-					$.feedContainer.add( feed_item_view );	
-					if (i>=max)
-						break;	
-				}
-			}
-			//$.feedList.data = activityData;				// populate placeList TableView (defined in XML file, styled in TSS)
+			displayPlaceEstimates(activity);	
 		}
-		else {
+	};
+}
+
+//================================================================================
+//		Name:			displayPlaceEstimates( data )
+//		Purpose:	add place estimate modules to Window and fill them in w/ data
+//================================================================================
+function displayPlaceEstimates(activity) {
+	/*			CREATE BLANK TEMPLATE FOR LATEST FEED ITEM 				*/
+	var dog_name_label 			= Ti.UI.createLabel({text: "None so far ...", top: 0});
+	$.addClass( dog_name_label, "feed_label_left_md text_medium_bold");
+		
+	var time_elapsed_label 	= Ti.UI.createLabel({text: "Be the first!", top: 0});
+	$.addClass( time_elapsed_label, "feed_label_left text_medium_bold");
+	
+	var dogs_amount_label = Ti.UI.createLabel({text: "...", top: 4, width: "100%" });
+	$.addClass( dogs_amount_label, "feed_label_center_lg text_number");
+
+	/*					POPULATE LATEST FEED ITEM 					*/
+	var last_update_photo = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
+	Ti.API.info( "latest update photo: " + last_update_photo  );
+	 
+	$.last_update_thumb.image = last_update_photo;					// TODO: change storage location	
+	dog_name_label.text 			= activity[0].dog_name;				// dog that provided most recent update
+	time_elapsed_label.text 	= activity[0].time_elapsed;		// dog that provided most recent update
+	dogs_amount_label.text 		= activity[0].amount;					// dog that provided most recent update
+	
+	var dogs_suffix_text = "dogs here";
+	if	( activity[0].amount == 1)
+		dogs_suffix_text = "dog here";
+		
+	var dogs_amount_suffix = Ti.UI.createLabel({text: dogs_suffix_text, top: -2});
+	$.addClass( dogs_amount_suffix, "feed_label_center text_medium_light");
+	
+	$.last_update_middle.add ( dog_name_label );				// add most recent update info to middle and right views
+	$.last_update_middle.add ( time_elapsed_label );
+	$.last_update_right.add ( dogs_amount_label );
+	$.last_update_right.add ( dogs_amount_suffix );
+	
+	activity.sort(function(a,b) {			// 		sort updates based on datetime posted
+	  return b.rank - a.rank;
+	});
+	
+	var max = 10;		// activity.length;
+
+	/* ensure that there is more than 1 recent checkin */
+	if( activity.length > 1) {
+		for (var i=1, len=activity.length; i<len; i++) {		// optimize loop to only calculate array size once
+			///////////// CREATE INDIVIDUAL FEED ITEM  ////////////////////////////////////
+			var feed_item_view =  Ti.UI.createView();
+			$.addClass( feed_item_view, "feed_item");
+			
+			///////////// MIDDLE VIEW OF STUFF ////////////////////////////////////////////
+			var middle_view = Ti.UI.createView ();
+			$.addClass( middle_view, "middle_view");
+			
+			var thumb = Ti.UI.createImageView ();
+			$.addClass( thumb, "thumbnail");
+			
+			// make it pink if it's ME
+			if(activity[i].dog_ID==MYSESSION.dog.dog_ID)
+				$.addClass( thumb, "border_pink");
+				
+			// TODO: change storage location	*ERROR* here
+			//thumb.image = MYSESSION.AWS.url_base + '/' + MYSESSION.AWS.bucket_profile + '/' + activity[i].dog_photo;		
+			thumb.image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + activity[i].dog_photo;
+			
+			var status_update_label = Ti.UI.createLabel({text: "...", top: 4});
+			$.addClass( status_update_label, "feed_label_left text_medium_bold");
+			
+			var dog_name_label = Ti.UI.createLabel({text: "..."});
+			$.addClass( dog_name_label, "feed_label_left text_medium_light");
+			
+			status_update_label.text 	= activity[i].dog_name;			// TODO: grab other status updates instead
+			
+			var dog_suffix = " dogs";
+			if (activity[i].amount == 1)
+				dog_suffix = " dog";
+			dog_name_label.text = "Saw " + activity[i].amount + dog_suffix;
+			
+			middle_view.add(status_update_label);
+			middle_view.add(dog_name_label);
+			
+			///////// RIGHT VIEW OF STUFF ///////////////////////////
+			var right_view = Ti.UI.createView();
+			var time_elapsed_label = Titanium.UI.createLabel({text: "..."});
+			time_elapsed_label.text = activity[i].time_elapsed;
+			
+			$.addClass( right_view, "right_view");
+			$.addClass( time_elapsed_label, "feed_label_right text_medium_light");
+			
+			right_view.add( time_elapsed_label );
+			///////// BUILD FEED ITEM  ///////////////////////////////////
+			feed_item_view.add( thumb );
+			feed_item_view.add( middle_view );
+			feed_item_view.add( right_view );
+			
+			///////// ADD ITEM TO FEED CONTAINER ////////////////////////
+			$.feedContainer.add( feed_item_view );	
+			if (i>=max)
+				break;	
+		}
+	} else {
 			$.latest_update_static.text = "";
 			$.last_update_middle.add ( dog_name_label );	
 			$.last_update_middle.add ( time_elapsed_label );
 			Ti.API.info(" * no estimates provided... * ");
 		}		
-	};
+	//$.feedList.data = activityData;				// populate placeList TableView (defined in XML file, styled in TSS)
 }
 
 //====================================================================================================
@@ -193,7 +197,7 @@ function buildActivityList(data, parentObject) {
 		  if(data[i].dog_ID == MYSESSION.dog.dog_ID)
 		  	$.addClass( dog_thumb, "border_pink");
 		 
-		 // grab actual photo LAST
+		  // grab actual photo LAST
 		  dog_thumb.image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data[i].photo;
 		  		  
 		  //var dog_name	= Ti.UI.createLabel( { text: data[i].name, top: 0, width: 44, height: 44, backgroundColor: "#cccccc" } );
@@ -245,7 +249,6 @@ function getPlaceCheckins( place_ID, dog_ID ) {
 	 
 	 	if (placeJSON != "" && placeJSON !="[]") {
 	    var place = JSON.parse( placeJSON );
-			Ti.API.debug(".... .... .... getPlaceCheckins ["+ JSON.stringify(placeJSON)+"] ");
 	
 			if ( place.here==1 ) {
 				MYSESSION.dog.current_place_ID = place_ID;
@@ -283,7 +286,7 @@ var poiInfo = MYSESSION.allPlaces[args._index];
 var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, poiInfo.lat, poiInfo.lon );
 // alert( how_close + " miles");
 
-//Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
+Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
 
 //----------------------------------------------------------------------------
 //
@@ -334,9 +337,19 @@ $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi a
 /* get feed of checkins, including your current checkin status */
 Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
 getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID );	
+
+// only show Park Estimates if this is indeed a dog park
+if (poiInfo.category==601) {
+	/* get feed of estimates */
+	//var estimates_section_header = createSectionHeader( "estimates", "park_estimates_label", "PARK ESTIMATES" );
 	
-/* get feed of estimates */
-getPlaceEstimates( args._place_ID );
+	var park_estimates_label = Ti.UI.createLabel( {id: "park_estimates_label", text: "PARK ESTIMATES" } );
+	$.addClass(park_estimates_label, "section_header bg_dk_gray text_medium_medium white");
+	$.estimates.add(park_estimates_label);
+	
+	//estimates_section_header.add(estimates_section_header);
+	getPlaceEstimates( args._place_ID );
+}
 
 //----------------------------------------------------------------------------
 //

@@ -71,6 +71,39 @@ function createSimpleDialog (title, msg) {
 }	
 
 //===========================================================================================
+//	Name:		 	createColorBlock (block_bg_color)
+//	Purpose:		simple nearby place list ui element
+//===========================================================================================
+function createColorBlock (block_bg_color) {
+	return Ti.UI.createView({
+		width : 8, height : 25, top:2, left : 6, zIndex : 20, backgroundColor : block_bg_color, borderRadius: 2
+	});
+}
+
+//===========================================================================================
+//	Name:		 	createSectionHeader (container_id, label_id, title)
+//	Purpose:		standardize section header
+//===========================================================================================
+function createSectionHeader (container_id, label_id, title) {
+	var section_label = Ti.UI.createLabel( {id: label_id, text: title} );
+	$.addClass(section_label, "section_header bg_dk_gray text_medium_medium white"); 
+	
+	var view_container = Ti.UI.createView( {id: container_id, height: 45, backgroundColor: "#ffffff", borderRadius: 2} );
+	$.addClass(view_container, "section_header bg_dk_gray text_medium_medium white"); 
+	view_container.add(section_label);
+
+	return view_container;
+}
+
+/*
+	<View id="activityContainer" class="container">
+  			  <Label id="activityTitle" text="WHO'S HERE" class="section_header bg_dk_gray text_medium_medium white" /> 
+  			  <View id="activityList" contentHeight="auto" width="100%" class="thumbnail_sm_container layout_horz border bg_lt_blue"/>
+  		  </View>
+
+*/
+
+//===========================================================================================
 //	Name:		 	createWindowController ( win_name, args, animation[optional])
 //	Purpose:	to be the bestest window manager ever
 //===========================================================================================
