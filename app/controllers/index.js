@@ -15,15 +15,14 @@ function goToLogin(e) {
 		loginRequest.open("POST", "http://www.waterbowl.net/mobile/login.php");
 		var params = {
 			email : $.email.value,
-			pass  : $.password.value,
-			uuid  : Ti.Platform.createUUID()
+			pass  : $.password.value
 		};
 		loginRequest.send(params);
 		Ti.API.info ( "SENDING: "+JSON.stringify(params) );
 		loginRequest.onload = function() {			// parse the JSON response
 			var json = this.responseText;	
 			var response = JSON.parse(json);			// debug message
-			//alert ( "Login Response: " + JSON.stringify(response) );
+			Ti.API.debug( "Login Response: " + JSON.stringify(response) );
 			if (response.status == 1) {
 				// save credentials locally in MYSESSION global arrays
 				MYSESSION.user.email 		= $.email.value;
@@ -37,7 +36,7 @@ function goToLogin(e) {
 				  MYSESSION.dog.current_place_name      = response.place.name;
 				  MYSESSION.dog.current_place_lat       = response.place.lat;
 				  MYSESSION.dog.current_place_lon       = response.place.lon;
-				  MYSESSION.dog.current_place_geo_radius= response.place.geofence_radius;
+				  MYSESSION.dog.current_place_geofence_radius = response.place.geofence_radius;
         }
 				MYSESSION.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
 

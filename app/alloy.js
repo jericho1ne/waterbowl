@@ -234,7 +234,11 @@ function addMenubar( parent_object ) {
 	}
 	
 	/* only show settings button if not currently on that window */	
-	if (Ti.App.Properties.current_window!="index" && Ti.App.Properties.current_window!="settings") {	
+	if (Ti.App.Properties.current_window!="mapview" ||
+			Ti.App.Properties.current_window!="placeoverview" &&
+			Ti.App.Properties.current_window!="markview") {	
+			//TODO:  add the other register windows
+			// OR:  	 only show settings btn on map, place, and mark
 		menuRight.add(settingsBtn);
 		settingsBtn.addEventListener('click', showSettings);
 	}
@@ -445,6 +449,7 @@ var MYSESSION = {
 		view_lat      : null,
 		view_lon      : null,
 		geo_trigger_count : 0,
+		geo_trigger_success: 0,
 		refresh_interval 	: 1,
 		last_acquired	: 0           // minutes since start of UNIX epoch
 	}, 
@@ -469,9 +474,9 @@ var MYSESSION = {
 	},
 	WBnet: {
 		url_base 			: "http://www.waterbowl.net/mobile",
-		bucket_place		: "wb-place",
-		bucket_profile	: "wb-profile",
-		bucket_uitext	: "wb-ui-text"
+		bucket_banner	: "images/wb-banner",
+		bucket_profile	: "images/wb-profile",
+		bucket_uitext	: "images/wb-ui-text"
 	}
 };
 
@@ -492,9 +497,9 @@ Alloy.Globals.placeList_ID 			= null;
  *-----------------------------------------------------------------------*/
 // minimum change in location (meters) which triggers the 'location' eventListener
 // 	*** Geolocation Threshhold trigger.  Note:	10m triggers too often ***
-Ti.Geolocation.distanceFilter = 10;			// 10m=33 ft, 20m=65ft, 30m=100 ft
-Ti.Geolocation.accuracy = Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_BEST doesn't work on iOS
-Ti.Geolocation.purpose = "Receive User Location";
+Ti.Geolocation.distanceFilter = 20;			// 10m=33 ft, 20m=65ft, 30m=100 ft
+Ti.Geolocation.accuracy 			= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_BEST doesn't work on iOS
+Ti.Geolocation.purpose 				= "Receive User Location";
 Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
 
 /*----------------------------------------------------------------------

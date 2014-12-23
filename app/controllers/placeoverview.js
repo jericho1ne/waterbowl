@@ -84,7 +84,8 @@ function displayPlaceEstimates(activity) {
 	$.addClass( dogs_amount_label, "feed_label_center_lg text_number");
 
 	/*					POPULATE LATEST FEED ITEM 					*/
-	var last_update_photo = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
+	//var last_update_photo = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
+	var last_update_photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +activity[0].dog_photo;
 	Ti.API.info( "latest update photo: " + last_update_photo  );
 	 
 	$.last_update_thumb.image = last_update_photo;					// TODO: change storage location	
@@ -182,30 +183,39 @@ function displayPlaceEstimates(activity) {
 //====================================================================================================
 function buildActivityList(data, parentObject) {
 	Ti.API.debug(".... [~] buildActivityList ["+JSON.stringify(data) +"]");
+  // WHO'S HERE LIST
+  // TODO:  need two labels inside dog_count_container View
+  // eg:  CURRECT CHECKINGS (Raleway regular):  6 (Raleway bold)
+  /*var dog_count_banner =  Ti.UI.createLabel( {text:"and "+data.length+" more", color: "#ec3c95" } );
+	$.addClass(dog_count_banner, "");
+	parentObject.add(dog_count_banner);
+	*/
   if( data.length > 0) {
   	Ti.API.debug(".... [~] buildActivityList:: found ["+ data.length +"] dog");
   	if( data.length > 4) {
   		// size up parent container so that we can fit two rows, up to 8 thumbnails
-  		parentObject.height = 150;  	
+  		parentObject.height = parentObject.height * 2;  	
   	}
     for (var i=0, len=data.length; i<len; i++) {		// only calculate array size once
 		  // var dog_item_view =  Ti.UI.createView();
 		  var dog_thumb =  Ti.UI.createImageView();
 		 	// careful with assignment order, classes below have PRESET image placeholder
-		  $.addClass( dog_thumb, "thumbnail");
-		  
+		  $.addClass( dog_thumb, "thumbnail");  
 		  if(data[i].dog_ID == MYSESSION.dog.dog_ID)
 		  	$.addClass( dog_thumb, "border_pink");
 		 
 		  // grab actual photo LAST
 		  dog_thumb.image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data[i].photo;
-		  		  
-		  //var dog_name	= Ti.UI.createLabel( { text: data[i].name, top: 0, width: 44, height: 44, backgroundColor: "#cccccc" } );
-		  //var dog_photo =  Ti.UI.createImageView();
-		  //var dog =  Ti.UI.createImageView();
-			//$.addClass( dog_name, "feed_item border");
-		  //dog_item_view.add(dog_name);
 		  parentObject.add(dog_thumb);
+		  if (i>7)
+		  	break;
+		}
+		if(data.length > 7) {
+			var how_many_more_text = data.length - 7;
+			var how_many_more =  Ti.UI.createLabel( {text:"and "+how_many_more_text+" more", color: "#ec3c95" } );
+			$.addClass(how_many_more, "thumbnail");
+			how_many_more.image = "";
+			parentObject.add(how_many_more);
 		}				
   }
 }
@@ -297,7 +307,9 @@ var bg_image = "images/missing/place-header.png";
 $.headerContainer.backgroundImage = bg_image;
 
 if ( poiInfo.banner != "" ) {
-	bg_image = MYSESSION.AWS.url_base+'/'+MYSESSION.AWS.bucket_place+'/'+poiInfo.banner;
+	//bg_image = MYSESSION.AWS.url_base+'/'+MYSESSION.AWS.bucket_place+'/'+poiInfo.banner;
+	bg_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_banner + '/' + poiInfo.banner;
+		 
 	/*  image preloader of sorts  */
 	var c = Titanium.Network.createHTTPClient();
 	c.setTimeout(10000);

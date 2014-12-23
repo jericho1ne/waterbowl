@@ -61,12 +61,12 @@ function initializeMap(lat, lon) {
 	$.mapContainer.add( wbMapView );
 	$.mapContainer.add( buildMarkButton(wbMapView) );
 	$.mapContainer.add( buildRefreshButton(wbMapView) );
-  $.mapContainer.add( buildRecenterButton(wbMapView) );   
+  $.mapContainer.add( buildRecenterButton(wbMapView) );
 }
 
 function refreshMapData() {
   // ADD MARKERS + ANNOTATIONS TO MAP
-	getPlacesMap( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 0, 0); // will affect map
+	getPlacesMap( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 0, 0);		// will affect map
 }
 
 function refreshPlaceListData() {
@@ -156,8 +156,10 @@ function getPlacesNearby( mapObject, user_lat, user_lon ) {
 	var place_query = Ti.Network.createHTTPClient();
 	/* open the HTTP client object  (locally at http://127.0.0.1/___ )  */
 	place_query.open("POST", "http://waterbowl.net/mobile/get-places-nearby.php");
+	
 	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
 	place_query.send(params);
+	
 	/* response data is available */
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
@@ -167,7 +169,14 @@ function getPlacesNearby( mapObject, user_lat, user_lon ) {
 			var jsonPlaces = JSON.parse(jsonResponse);	
 		  Ti.API.info( ".... .... .... .... total nearby places: " + jsonPlaces.length );	
 			MYSESSION.nearbyPlaces = jsonPlaces;
-			// refreshAnnotations(mapObject);
+			
+		  // CHECK #1 - Have we left previous place's geofence?  Only check this if current_place_ID is not null
+      if (MYSESSION.dog.current_place_ID>0 && getArrayIndexById(MYSESSION.nearbyPlaces, MYSESSION.dog.current_place_ID)==-1 ) {
+    	  checkoutFromPlace(MYSESSION.dog.current_place_ID);
+   		  createSimpleDialog( "Seems you've left", "Automatically checked you out from " + MYSESSION.dog.current_place_name);
+    	}
+    	// CHECK #2 - If there a Checkin modal currently up, then check if situation is still valid 
+    	//    eg: is the currently displayed place name still part of MYSESSION.nearbyPlaces
 		}
 		else {
 			createSimpleDialog('Loading place list','No data received');
@@ -295,7 +304,7 @@ function buildRecenterButton( mapObject ) {
   recenterBtn.addEventListener('click', function() {			// REFRESH button
     Ti.API.info("...[+] Recenter button clicked on map");
 		Ti.Geolocation.getCurrentPosition(function(e) {
-      if (e.error && Titanium.Platform.model!="Simulator") {
+      if (e.error && Titanium.Platform.model!="Simulator") {			// sim always return SF coords
         // Only display error if running in simulator
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
         createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
@@ -431,8 +440,10 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 	
 	Ti.API.info ( "... sending stuff to place-checkin.php " + JSON.stringify(params) );
 	var response = 0;
+	
 	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
 	checkin_http_obj.send(params);
+	
 	/* response data received */
 	checkin_http_obj.onload = function() {
 		var json = this.responseText;
@@ -443,7 +454,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				Ti.API.log("  [>]  Checkin added successfully ");
 	
 				// in case we want to look up more info on this specific place in the global place array
-			  var place_index = getArrayIndexById( MYSESSION.allPlaces, place_ID );
+			  var place_index = getArrayIndexById( MYSESSION.nearbyPlaces, place_ID );
 				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
 				// checkin now officially complete
 				MYSESSION.dog.current_place_ID 	= place_ID;
@@ -452,7 +463,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				MYSESSION.dog.current_place_lat     = place_lat;
 				MYSESSION.dog.current_place_lon     = place_lon;
 				MYSESSION.dog.current_place_name    = place_name;
-				MYSESSION.dog.current_place_geo_radius = MYSESSION.allPlaces[place_index].geo_radius;
+				MYSESSION.dog.current_place_geo_radius = MYSESSION.nearbyPlaces[place_index].geo_radius;
 				MYSESSION.dog.last_checkin_timestamp= new Date().getTime();
 				
 				Ti.API.info ( "... MYSESSION.dog: " + JSON.stringify(MYSESSION.dog) );
@@ -581,12 +592,13 @@ function presentUserCheckinOptions( place ) {;
 	checkin_dialog.show();
 	
 	// add click listener for "Yes" button 
+	// TODO:  
 	checkin_dialog.addEventListener('click', function(e_dialog) {
 		if (e_dialog.index == 0) {  // user clicked OK
 	    if (MYSESSION.dog.current_place_ID == place.id)	{
 			  checkoutFromPlace (place.id);
 		  } else {
-		    checkIntoPlace (place.id, place.lat, place.lon, place.name);
+		    checkIntoPlace(place.id, place.lat, place.lon, place.name);
 		  }
 		}
 	});
@@ -594,7 +606,7 @@ function presentUserCheckinOptions( place ) {;
 
 //=================================================================================
 //	Name:			placeListListener( event )
-//	Purpose:	center map on whichever  
+//	Purpose:	listen for clicks on nearby place list  
 //=================================================================================
 function placeListListener(e) {
 	Ti.API.info("...[o] POI list click [ " + JSON.stringify(e.row) + " ]");
@@ -609,26 +621,49 @@ function placeListListener(e) {
 	// pop up a check in or check out dialog box based on current checkin status
 	presentUserCheckinOptions( e.row );
 }
- 
+
+
 //=================================================================================
-//	Name:			checkGeofenceLeave(lat,lon)
-//	Purpose:	center map on whichever  
+//	Name:			refreshGeolocation()
+//	Purpose:	  
 //=================================================================================
-function checkGeofenceLeave(new_lat,new_lon) {
-  if (MYSESSION.dog.current_place_lat!=null && MYSESSION.dog.current_place_lon!=null && new_lat!=null && new_lon!=null) {
-    var current_distance = getDistance(new_lat, new_lon, MYSESSION.dog.current_place_lat, MYSESSION.dog.current_place_lon);
-    
-    // DEBUG 
-    Ti.API.debug( "current_distance/geo_radius: ["+ current_distance +"/"+  MYSESSION.dog.current_place_geo_radius+']');
-    
-    if (current_distance > MYSESSION.dog.current_place_geo_radius) {
-      checkoutFromPlace(MYSESSION.dog.current_place_ID);
-   		createSimpleDialog( "Left Geofence", "Automatically checked you out from " + MYSESSION.dog.current_place_name);
-   	}
-  }
+function refreshGeo() {
+	Ti.API.debug("[[[[[[[[[[[ refreshGeo called ]]]]]]]]]] ");
+  
+  if(Ti.Network.online ) {
+	  var mins_elapsed = Math.round( Date.now() / (1000*60) ) - MYSESSION.geo.last_acquired;
+	  MYSESSION.geo.geo_trigger_count++;
+	  $.geo_trigger.text = "Geo trigger #"+MYSESSION.geo.geo_trigger_count;
+	  MYSESSION.geo.last_acquired = Math.round( Date.now() / (1000*60) );    
+	     
+	  //if (mins_elapsed > MYSESSION.geo.refresh_interval) {   // only if 2 mins have passed since last geo update
+	  // set time last acquired (minutes since start of Unix Epoch)
+	      
+	  Titanium.Geolocation.getCurrentPosition(function(e) {
+	  	if (!e.success || e.error) {
+	  		Ti.API.debug( "  X X X  Problems with Geolocation...  "+e.error);
+	  	}
+	  	else {   
+	    	Ti.API.debug(".... NEW GEO CHECK #[" + MYSESSION.geo.geo_trigger_count + "] "+e.coords.latitude+", "+e.coords.longitude);     	    
+				MYSESSION.geo.geo_trigger_success ++;
+				$.geo_success.text = "lat/lng rec'd #" + MYSESSION.geo.geo_trigger_success;
+				$.geo_latlng.text = e.coords.latitude+"/" +e.coords.longitude;
+	      $.current_place_ID.text = "Checked in at : "+MYSESSION.dog.current_place_ID;
+	      
+	      /* save newly acquired coordinates */
+	    	MYSESSION.geo.lat = e.coords.latitude;
+	  	  MYSESSION.geo.lon = e.coords.longitude;
+	      // see if user is still checked in somewhere 
+	      // and if so, have they left the geofence
+	      // refreshMapData();
+	      refreshPlaceListData();
+	  	}
+		});
+	}	else {
+	  createSimpleDialog("No data connection","The Internets are required to browse the map.");
+		Ti.API.log("No Internet connection...");
+	}
 }
-
-
 
 //====================================================================================================================
 //
@@ -636,18 +671,20 @@ function checkGeofenceLeave(new_lat,new_lon) {
 //
 //====================================================================================================================
 Titanium.Geolocation.getCurrentPosition(function(e){
-	Ti.API.debug("[[[[[[[[[[[ getCurrentPosition called ]]]]]]]]]] ");
+	Ti.API.debug("[ [ [ [ getCurrentPosition called ] ] ] ] ");
+	// error occurred
 	if (!e.success || e.error) {
 	  if (Titanium.Platform.model!="Simulator") {
       Ti.API.log('............... Could not find the device location');
   	  createSimpleDialog("Can't get your location","Please check location services are enabled on your mobile device.");
     }
+    Ti.API.debug( "GEO ERROR Code: "+ e.code);
+    Ti.API.debug( 'ERROR TEXT: ' + JSON.stringify(e.error) );
     // use default Playa Del Rey coordinates
     MYSESSION.geo.lat = 33.970;
     MYSESSION.geo.lon = -118.4201;
-  }
-  else {
-  	/* overwrite hardcoded coordinates with device geolocation */
+  } else {		// RECEIVED COORDINATES
+  	// overwrite hardcoded coordinates with device geolocation */
   	MYSESSION.geo.lat = e.coords.latitude;
   	MYSESSION.geo.lon = e.coords.longitude;
     // set time last acquired (minutes since start of Unix Epoch)
@@ -656,57 +693,21 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   Ti.API.log("............... lat: " + MYSESSION.geo.lat  + " / lon: " + MYSESSION.geo.lon);
   
   // Go through these steps regardless of whether we receiving an actual lat/lon
-  // 
+  
   // DRAW MAP FOR THE FIRST TIME
   initializeMap();
+  
   // Get Map and PlaceList data
   refreshMapData();
   refreshPlaceListData();
-
 });
   
 
-if(Ti.Network.online ) {
-	//====================================================================================
-	//  
-  // 		Geolocation Change Event Listener
-  //
-  //		1)  Refresh nearby places table
-  //		2)  Save latest user location into MYSESSION.geo.lat, MYSESSION.geo.lon
-  //
-  //====================================================================================
-  Titanium.Geolocation.addEventListener('location',function(){
-  	Ti.API.debug("[[[[[[[[[[[ Geolocation.addEventListener called ]]]]]]]]]] ");
-    var mins_elapsed = Math.round( Date.now() / (1000*60) ) - MYSESSION.geo.last_acquired;
-    Ti.API.info("....[ GEOLOCATION TRIGGER ]....");
-    MYSESSION.geo_trigger_count++;
-   	// TODO:  try to update #geotrigger in $.menubar
-    // $['menubar']
-   
-    if (mins_elapsed > MYSESSION.geo.refresh_interval) {   // only if 2 mins have passed since last geo update
-      // set time last acquired (minutes since start of Unix Epoch)
-      MYSESSION.geo.last_acquired = Math.round( Date.now() / (1000*60) );    
-      Ti.API.info("....[ 2 MINS PASSED SINCE LAST GEO CHECK, DOIN STUFF ]....");
-      Titanium.Geolocation.getCurrentPosition(function(e) {
-        if(e.success) {        	    
-			    if(MYSESSION.dog.current_place_ID!=null && Titanium.Platform.model!="Simulator") {  
-			   	 	checkGeofenceLeave(e.coords.latitude, e.coords.longitude);
-			    }
-
-          /* save newly acquired coordinates */
-    	    MYSESSION.geo.lat = e.coords.latitude;
-  	      MYSESSION.geo.lon = e.coords.longitude;
-          // see if user is still checked in somewhere 
-          // and if so, have they left the geofence
-          // refreshMapData();
-          refreshPlaceListData();
-        }
-      });
-    }
-    
-  });
-} 
-else{
-  createSimpleDialog("No data connection","The Internets are required to browse the map.");
-	Ti.API.log("No Internet connection...");
-}
+//====================================================================================
+// 		Geolocation Change Event Listener
+//		Purpose:  
+//		1) 	Check for stale checkings
+//		2) 	Refresh nearby places table
+//		2)  Save latest user location into MYSESSION.geo.lat, MYSESSION.geo.lon
+//====================================================================================
+setInterval(refreshGeo, 20000);			// LOOP every 20 seconds
