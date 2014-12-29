@@ -108,7 +108,8 @@ function getPlacesMap( mapObject, user_lat, user_lon, view_lat, view_lon ) {
 		lat       : user_lat,
 		lon       : user_lon, 
 		view_lat  : view_lat,
-		view_lon  : view_lon
+		view_lon  : view_lon,
+		owner_ID  : MYSESSION.user.owner_ID
 	};
   // TODO: write a generic function to queryBackend
   // eg:  getJsonData("http://waterbowl.net/mobile/get-places-map.php", params);
@@ -147,7 +148,8 @@ function getPlacesNearby( mapObject, user_lat, user_lon ) {
 	Ti.API.info("...[~] getPlacesNearby() user[ "+user_lat+"/"+user_lon+" ]");
   var params = {
 		lat       : user_lat,
-		lon       : user_lon
+		lon       : user_lon,
+		owner_ID	  : MYSESSION.user.owner_ID
 	};
   // TODO: write a generic function to queryBackend
   // eg:  getJsonData("http://waterbowl.net/mobile/get-places-nearby.php", params);
