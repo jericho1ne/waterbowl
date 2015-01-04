@@ -258,7 +258,12 @@ function buildMarkButton( mapObject ) {
 		// - dog_ID, dog_current_place_ID, dog_friend_list,
 		//   figure out most recent 
 		//
-		
+		/*
+		var necessary_args = {
+				_place_ID  : place_ID,
+				_estimates : activity
+		}; */
+		createWindowController( "marks", "", "slide_left" );
 		// call stuff		
 	});
 	

@@ -10,9 +10,9 @@
 			
 			<ScrollView id="scrollView" class="fill_height" top="-92" opacity="1">
 				//------------------------------------------------------------------------------------------------------
-				//		This scrollView contains the following top level elements, all dynamically filled in by controller
-				//		(0)		headerContainer / miniHeaderContainer
-				//		(1)		activityContainer
+				//  This scrollView contains the following top level elements, all dynamically filled in by controller
+				//	  (0)		headerContainer / miniHeaderContainer
+				//	  (1)		activityContainer
 				//					|
 				//					+-- checkinContainer
 				//					|
@@ -35,14 +35,13 @@
 					</View>
 				</View>
 
-
         // 						WHO'S HERE
 				// +===== activityContainer ===========+
 				// |  +------activityTitle-----------+ |
-				//	 |  |         WHO'S HERE           | |
-				//	 |	+------------------------------+ |
+				// |  |         WHO'S HERE           | |
+				// |	+------------------------------+ |
 				// |  +------activityList------------+ |
-				//	 |	| +----+ +----+ +----+ +----+  | |
+				// |	| +----+ +----+ +----+ +----+  | |
 				// |  | |    | |    | |    | |    |  | |
 				// |  | +----+ +----+ +----+ +----+  | |
 				// |  | ^  fit up to 8            ^  | |
@@ -54,7 +53,8 @@
   			  <View id="activityList" contentHeight="auto" width="100%" class="thumbnail_sm_container layout_horz border bg_lt_blue"/> 
   		  </View>
  		   		  
-  		  <View id="estimates">
+  		 
+  		  <View id="latest_estimate_container" class="feed_item_lg">
 			  	// 								LATEST ESTIMATE
 					// +============= feed_item =================================+
 					// |  +-photo-+ +-- middleColumn ---+ +-- rightColumn ---+  |
@@ -63,34 +63,23 @@
 					// |  |       | |   midColBotLabel  | |   rightLabelTop  |  |		
 					// |  +-------+ +-------------------+ +------------------+  |		
 					// +========================================================+
+					<!--
 					<View id="last_update_container" class="feed_item_lg">
 						<ImageView id="last_update_thumb" class="thumbnail"/>
+						
 						<View id="last_update_middle" class="middle_view">
 							<Label class="feed_label_left text_medium_light" id="latest_update_static">latest update</Label>
-								<!-- add most recent update labels here programmatically -->
+								// add most recent update labels here programmatically
 						</View>
 						<View class="right_view" id="last_update_right">
-							<!-- add most recent update labels here programmatically -->
-						</View>
-					</View>		
+								// add most recent update labels here programmatically
+						</View>	
+					-->
 				</View>
 				
 				
-				// +============== feedContainer ===============================+
-				// |  +----------- feed_item (#1) ---------------------------+  |
-				// |  | +-photo-+ +------------------+  +------------------+ |  |                
-				// |  | |  		 	| | feed_label_left  |  | feed_label_right | |  |            
-				// |  | | 	      | | feed_label_left  |  |                  | |  |  		
-				// |  | +-------+ +------------------+  +------------------+ |  | 
-				// |  +------------------------------------------------------+  |	
-				// |																				                      |
-				// |  +---------- feed_item (#2) ------------+                  |
-				// |  	|				    e t c . . .                |                  |
-				// |  |                                      |                  |
-				// |  ^                                      ^                  |
-				// +============================================================+
-				<View id="feedContainer"/>
-					
+				
+								
 			</ScrollView>
 		</View>
 	</Window>

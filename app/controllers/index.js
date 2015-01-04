@@ -80,6 +80,24 @@ function goToRegister (e) {
 $.index.open();	
 addToAppWindowStack( $.index, "index" );
 
+
+// CLASS TESTS
+var myFactory = new UiFactoryModule.UiFactory();
+//myFactory.getName();
+var section_header = myFactory.buildSectionHeader("temp_view_id", "WELCOME TO WATERBOWL");
+var style = $.createStyle({
+  classes: ['section_header', 'bg_dk_gray', 'text_medium_medium', 'white'	]
+});
+section_header.applyProperties(style);
+//section_header.children[0].applyProperties(style);
+
+var test_btn = myFactory.buildSmallButton( "test_btn", "Login" );
+test_btn.addEventListener('click', goToLogin);
+section_header.add(test_btn);
+Ti.API.debug(">> SECTION HEADER CONTENTS: >>"+JSON.stringify( section_header.children) );
+$.loginStuff.add(section_header);
+
+
 // check network connection 
 if(Titanium.Network.networkType == Titanium.Network.NETWORK_NONE) {
 	createSimpleDialog('Uh oh', 'No network connection detected');
@@ -117,7 +135,7 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 }	
 
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
-setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for the login fields to get populate
+// setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 // createWindowController("mapview","","");

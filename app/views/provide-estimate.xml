@@ -1,0 +1,24 @@
+<Alloy>
+	
+	<Window id="parkestimate" class="absolute">
+	
+		<View id="content" class="window_container">
+		
+			<ScrollView class="fill_height">
+				<!-- Create s liders and readouts -->
+				<Label id="place_checkin" class="bg_white text_large_bold"></Label>	
+				<Label id="question" class="form_label">How many dogs are playing here?</Label>	
+				<Slider id="slider" onChange="updateLabel"/>				
+				<Label id="slider_int_val" class="checkin_label text_large_bold"/>
+				<Label id="slider_label" class="checkin_label text_large_medium"/>
+		
+				<!-- TODO:  add second slider *IF* park has two play areas; 
+				both sliders should be dynamically added -->
+				<Button id="checkInBtn"/>
+		 	</ScrollView>
+
+		</View>
+		
+ 	</Window>
+
+</Alloy>

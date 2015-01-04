@@ -1,0 +1,13 @@
+'#checkin' 		:	{	backgroundColor: "#DCF1FC" }
+
+"#place_checkin"	: {	top: 40, height: 60 }
+"#question"				: { height: 80 }
+"#slider"					:	{	top: 10, height: 80, backgroundColor: "", borderRadius: 12,
+											min: "1", max:"7", width:"85%", value: "4" }
+											
+"#slider_int_val" : {	width: "100%", top: 10, left: 0, height: 40 }							
+"#slider_label"		: { width: "100%", top: 10, left: 0, height: 40 }
+ 
+"#checkInBtn"	: { title: 'Check In', height: 40, width: "40%", top: 20 }
+																						
+".checkin_label" 	: { textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER } 

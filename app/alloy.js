@@ -8,7 +8,11 @@
 // 		
 //=================================================================================
 
-// CLASS OBJECTS
+
+//
+// 						CLASS OBJECTS
+//
+//================================================================================
 var geoUtil = function () {
   //=============================================================================
   //	Name:			getDistance ( lat1, lon1, lat2, lon2 )
@@ -32,7 +36,7 @@ var geoUtil = function () {
     return formattedDistance;		
   }
   
-  //=============================================================================
+	 //=============================================================================
   //	Name:			deg2rad ( deg )
   //=============================================================================
   function deg2rad(deg) {
@@ -46,6 +50,22 @@ var geoUtil = function () {
 
 
 //*************************************************************************************************
+
+//===========================================================================================
+//	Name:		createAlloyObject( )
+//	Purp:		alloy object factory
+//===========================================================================================
+function createAlloyObject (container_id, label_id, title) {
+	var section_label = Ti.UI.createLabel( {id: label_id, text: title} );
+	$.addClass(section_label, "section_header bg_dk_gray text_medium_medium white"); 
+	
+	var view_container = Ti.UI.createView( {id: container_id, height: 45, backgroundColor: "#ffffff", borderRadius: 2} );
+	$.addClass(view_container, "section_header bg_dk_gray text_medium_medium white"); 
+	view_container.add(section_label);
+
+	return view_container;
+}
+
 //===============================================
 //	Name:    isset ( value )
 //	Desc:	   fail silently if value is undefined
@@ -111,7 +131,7 @@ function createWindowController ( win_name, args, animation ) {
 	MYSESSION.previousWindow = MYSESSION.currentWindow;
 	MYSESSION.currentWindow = win_name;
 	
-	Ti.API.debug(" ::::: createWindowController ::::: " + JSON.stringify(args));
+	Ti.API.debug(" ::::: createWindowController ::::: ["+win_name+"]" + JSON.stringify(args));
 
 	var winObject = Alloy.createController(win_name, args).getView();
 	addToAppWindowStack( winObject, win_name );
@@ -148,7 +168,7 @@ function createWindowController ( win_name, args, animation ) {
 	}	
 	// attach menubar to each new Window controller
 	addMenubar(winObject);
-	winObject.open( animStyle );
+	winObject.open(animStyle);
 	// status checks
 	Ti.API.info( " >>> User Array: "+ JSON.stringify( MYSESSION.user ) );
 	Ti.API.info( " >>> Dog Array: "+ JSON.stringify( MYSESSION.dog ) );
@@ -514,3 +534,6 @@ else if (Ti.Platform.osname == "android")
 Alloy.Globals.annotations = [];
 
 var longPress;
+
+// instantiate UI factory
+var UiFactoryModule = require('lib/UiFactoryClass');
