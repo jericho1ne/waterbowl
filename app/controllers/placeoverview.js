@@ -101,6 +101,7 @@ function displayPlaceEstimates(activity, place_ID) {
 
 	/*			CREATE BLANK TEMPLATE FOR LATEST FEED ITEM 				*/
 	// MIDDLE
+	// TODO:  buildNameLabel
 	var dog_name_label 			= Ti.UI.createLabel({text: "None so far ...", top: 0});
 	$.addClass( dog_name_label, "feed_label_left_md text_medium_bold");
 		
@@ -132,17 +133,12 @@ function displayPlaceEstimates(activity, place_ID) {
 	middle.add ( time_elapsed_label );
 	middle.add ( dogs_amount_label );
 	middle.add ( dogs_amount_suffix );
-	
  	
 	/* ensure that there is more than 1 estimate for this park */
 	if( activity.length > 1) {
-		var temp_button = Ti.UI.createButton({ 
-			font:{ fontFamily: 'Raleway', fontSize: 10 }, title: "more >",
-			height : '20', width : '60', borderRadius: 6, 
-			color : '#ffffff', backgroundColor : "#ec3c95"
-		});
-				
- 		temp_button.addEventListener('click', function(){
+		var more_btn = myUiFactory.buildSmallButton("more_btn", "more >"); 
+		Ti.API.debug( "***********temp_button **********" + JSON.stringify(more_btn) );
+ 		more_btn.addEventListener('click', function(){
  			Ti.API.info("...[+] Estimate History button clicked");
 			// TODO:  Create gray "see more >" button 
 			// 				package estimate info in args._estimates, open if clicked
@@ -153,7 +149,7 @@ function displayPlaceEstimates(activity, place_ID) {
 			// createWindowController( "marks", "", "slide_left" );
 			createWindowController( "viewparkestimate", "", "slide_left" );
 		});
-		right.add(temp_button);
+		right.add(more_btn);
 	} 
 	else {
 			$.latest_update_static.text = "";
@@ -163,13 +159,13 @@ function displayPlaceEstimates(activity, place_ID) {
 	}
 
 	// put all the elements together, minding the hierarchy
- 	$.latest_estimate_container.add(thumb);
- 	$.latest_estimate_container.add(middle);
-  $.latest_estimate_container.add(right);		
+ 	$.container_last_estimate.add(thumb);
+ 	$.container_last_estimate.add(middle);
+  $.container_last_estimate.add(right);		
 }
 
 //====================================================================================================
-//		Name:				buildActivityList(place_ID)
+//		Name:				buildActivityList(dataArray, parentObject)
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
 function buildActivityList(data, parentObject) {
@@ -188,15 +184,16 @@ function buildActivityList(data, parentObject) {
   		parentObject.height = parentObject.height * 2;  	
   	}
     for (var i=0, len=data.length; i<len; i++) {		// only calculate array size once
-		  // var dog_item_view =  Ti.UI.createView();
-		  var dog_thumb =  Ti.UI.createImageView();
-		 	// careful with assignment order, classes below have PRESET image placeholder
-		  $.addClass( dog_thumb, "thumbnail");  
+		  var border = 0; 			// this is nobody we know by default (0=other, 1=me, 2=friends)
+		  
 		  if(data[i].dog_ID == MYSESSION.dog.dog_ID)
-		  	$.addClass( dog_thumb, "border_pink");
-		 
-		  // grab actual photo LAST
-		  dog_thumb.image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data[i].photo;
+		  	border = 1;
+		  	
+		 	var dog_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data[i].photo;
+		  var dog_thumb = myUiFactory.buildImageView("dog_thumb_"+i, dog_image, border);
+		 	// careful with assignment order, classes below have PRESET image placeholder
+		  //$.addClass( dog_thumb, "thumbnail");  
+  
 		  parentObject.add(dog_thumb);
 		  if (i>7)
 		  	break;
@@ -235,7 +232,7 @@ function hideMiniHeader () {
 //		Name:				getPlaceCheckins(place_ID, dog_ID)
 //		Purpose:		
 //================================================================================
-function getPlaceCheckins( place_ID, dog_ID ) {
+function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 	Ti.API.info(".... .... getPlaceCheckins [place_ID, dog_ID] ["+ place_ID+", "+dog_ID+"] ");
 	var http_query = Ti.Network.createHTTPClient();
 	var params = {
@@ -258,7 +255,7 @@ function getPlaceCheckins( place_ID, dog_ID ) {
 				// drawCheckoutButton();
 			}
 			/*  use the current checkins to build the activityList  */
-      buildActivityList(place.checkins, $.activityList);
+      buildActivityList(place.checkins, parent_view);
 		}
 	};
   return "";	
@@ -272,9 +269,7 @@ function getPlaceCheckins( place_ID, dog_ID ) {
 //		(0)		Add window to global stack, display menubar
 //
 //-----------------------------------------------------------------------
-var myFactory = new UiFactoryModule.UiFactory();
-
-
+var myUiFactory = new UiFactoryModule.UiFactory();
 var mini_header_display = 0;
 
 //--------------------------------------------------------------------------------
@@ -284,14 +279,10 @@ var mini_header_display = 0;
 //--------------------------------------------------------------------------------
 var args 	= arguments[0] || {};
 Ti.API.debug ("args._index :" + args._index );
-
 var poiInfo = MYSESSION.allPlaces[args._index];
-// alert( " Args passed: "+JSON.stringify(args) );
-
+Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
 var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, poiInfo.lat, poiInfo.lon );
 // alert( how_close + " miles");
-
-Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
 
 //----------------------------------------------------------------------------
 //
@@ -330,26 +321,33 @@ $.mini_place_name_label.text 	= poiInfo.name;
 $.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
 $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi away)";
 
-var large_dog_section_header = myFactory.buildSectionHeader("", "LARGE DOG AREA");
-$.scrollView.add(large_dog_section_header);
 //----------------------------------------------------------------------------------------------------------
 //
-//		(3)		Who else is here?
+//		(3)		Add the rest of the view containers
 //
 //----------------------------------------------------------------------------------------------------------
-// <TableView id="activityList" separatorStyle="Titanium.UI.iPhone.TableViewSeparatorStyle.NONE" width="100%" class="border_yel" />
+var whos_here_section_header = myUiFactory.buildSectionHeader("whos_here", "WHO'S HERE");
+$.scrollView.add(whos_here_section_header);
+// the thumbs of dogs have to display inline-block (and wrap) 
+var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal");	
+$.scrollView.add(whos_here_list);
+
+/* 	get feed of checkins, including your current checkin status; 
+		add the list to the view we've just created 												*/
+Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
+getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID, whos_here_list);	
+
+var large_dog_section_header = myUiFactory.buildSectionHeader("large_dog", "LARGE DOG AREA");
+//$.scrollView.add(large_dog_section_header);
 
 
 //----------------------------------------------------------------------------------------------------------
 //    (4)		Most recent estimates
 //----------------------------------------------------------------------------------------------------------
-/* get feed of checkins, including your current checkin status */
-Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
-getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID );	
-
 // only show Park Estimates if this is indeed a dog park
 if (poiInfo.category==601) {
-	getPlaceEstimates( args._place_ID );
+	// TODO:  redo this using class methods
+	// getPlaceEstimates( args._place_ID );
 	
 	/* get feed of estimates */
 	//var estimates_section_header = createSectionHeader( "estimates", "park_estimates_label", "PARK ESTIMATES" );

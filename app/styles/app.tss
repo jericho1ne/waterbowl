@@ -107,7 +107,7 @@
 ".absolute" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "absolute", width: "100%", backgroundColor: "#cccccc", exitOnClose: true }
 
 // VERTICAL STACKING -- also try >>  height: Ti.UI.FILL
-".container" : { top: 0, layout: 'vertical', contentHeight: 'auto', width: "100%",  }  
+".container" : { top: 0, layout: 'vertical', contentHeight: 'auto', width: "100%"  }  
 
 /**************************************************************************************************************/
 /* 									Class Selectors 																	  								 */
