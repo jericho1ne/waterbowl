@@ -80,7 +80,7 @@ function goToRegister (e) {
 $.index.open();	
 addToAppWindowStack( $.index, "index" );
 
-
+/*
 // CLASS TESTS
 var myFactory = new UiFactoryModule.UiFactory();
 //myFactory.getName();
@@ -96,7 +96,7 @@ test_btn.addEventListener('click', goToLogin);
 section_header.add(test_btn);
 Ti.API.debug(">> SECTION HEADER CONTENTS: >>"+JSON.stringify( section_header.children) );
 $.loginStuff.add(section_header);
-
+*/
 
 // check network connection 
 if(Titanium.Network.networkType == Titanium.Network.NETWORK_NONE) {
@@ -135,7 +135,7 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 }	
 
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
-// setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 100 );  // wait for the login fields to get populate
+setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-// createWindowController("mapview","","");
+// createWindowController("mapview","","slide_left");

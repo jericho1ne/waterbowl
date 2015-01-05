@@ -222,7 +222,7 @@ function createMapAnnotation( place_data, index ) {
  		Ti.API.info ( "...[+] Clicked on >>>" + JSON.stringify(e.source.name) );
  		/*  prep all the required data to placeoverview.js */
  		var necessary_args = {
-			_index		: index,
+			_index		: index, 
 			_place_ID : place_data.id		// pass in array index and placeID so we can hit the backend for more details
 		};
 		createWindowController( "placeoverview", necessary_args, 'slide_left' );
@@ -679,6 +679,9 @@ function refreshGeo() {
 //====================================================================================================================
 Titanium.Geolocation.getCurrentPosition(function(e){
 	Ti.API.debug("[ [ [ [ getCurrentPosition called ] ] ] ] ");
+	// use default Playa Del Rey coordinates
+  MYSESSION.geo.lat = 33.970;
+  MYSESSION.geo.lon = -118.4201;
 	// error occurred
 	if (!e.success || e.error) {
 	  if (Titanium.Platform.model!="Simulator") {
@@ -687,15 +690,16 @@ Titanium.Geolocation.getCurrentPosition(function(e){
     }
     Ti.API.debug( "GEO ERROR Code: "+ e.code);
     Ti.API.debug( 'ERROR TEXT: ' + JSON.stringify(e.error) );
-    // use default Playa Del Rey coordinates
-    MYSESSION.geo.lat = 33.970;
-    MYSESSION.geo.lon = -118.4201;
+
   } else {		// RECEIVED COORDINATES
   	// overwrite hardcoded coordinates with device geolocation */
-  	MYSESSION.geo.lat = e.coords.latitude;
-  	MYSESSION.geo.lon = e.coords.longitude;
-    // set time last acquired (minutes since start of Unix Epoch)
-	  MYSESSION.geo.last_acquired = Math.round( Date.now() / (1000*60) );
+  	if (Titanium.Platform.model!="Simulator") {		
+  		// Alternatively, check for Math.round(lat)!=38 && Math.round(lat)!=122 (SF Apple Store)
+  		MYSESSION.geo.lat = e.coords.latitude;
+  		MYSESSION.geo.lon = e.coords.longitude;
+   	 // set time last acquired (minutes since start of Unix Epoch)
+	 	 MYSESSION.geo.last_acquired = Math.round( Date.now() / (1000*60) );
+  	}
   }
   Ti.API.log("............... lat: " + MYSESSION.geo.lat  + " / lon: " + MYSESSION.geo.lon);
   
@@ -709,6 +713,16 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   refreshPlaceListData();
 });
   
+/*
+   HACK :: To skip to a specific window, uncomment block below and change which window name to jump to		
+*/
+var new_args = {
+			_index		: 0,
+			_place_ID : 601000001	// pass in array index and placeID 
+};
+setTimeout(function() {
+	createWindowController('placeoverview',new_args,'slide_left');
+}, 1000);
 
 //====================================================================================
 // 		Geolocation Change Event Listener

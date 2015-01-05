@@ -55,14 +55,6 @@
  		   		  
   		 
   		  <View id="latest_estimate_container" class="feed_item_lg">
-			  	// 								LATEST ESTIMATE
-					// +============= feed_item =================================+
-					// |  +-photo-+ +-- middleColumn ---+ +-- rightColumn ---+  |
-					// |  |       | |   midColTopLabel  | |   rightLabelTop  |  |
-					// |  |       | |   midColMidLabel  | |                  |  |
-					// |  |       | |   midColBotLabel  | |   rightLabelTop  |  |		
-					// |  +-------+ +-------------------+ +------------------+  |		
-					// +========================================================+
 					<!--
 					<View id="last_update_container" class="feed_item_lg">
 						<ImageView id="last_update_thumb" class="thumbnail"/>

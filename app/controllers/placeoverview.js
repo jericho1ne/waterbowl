@@ -75,8 +75,8 @@ function getPlaceEstimates( place_ID ) {
 function displayPlaceEstimates(activity, place_ID) {
 	//					CREATE LATEST FEED ITEM 						
   //
-	// +============= last_estimate_view (in XML) ====+
-	// |  +-thumb-+ +-- middle --+ +-- right---+  |
+	// +=== last_estimate_view (in XML) ==============+
+	// |  +-thumb-+ +-- middle --+ +-- right-------+  |
 	// |  |       | |            | |   rightLabelT |  |
 	// |  |       | |            | |               |  |
 	// |  |       | |            | |   rightLabelT |  |		
@@ -85,15 +85,15 @@ function displayPlaceEstimates(activity, place_ID) {
 	
 	// LEFT
 	var thumb 	= Ti.UI.createImageView();
-	$.addClass( thumb, "thumbnail");
+	$.addClass( thumb, "thumbnail border_red");
  	
  	// MIDDLE
  	var middle 	= Ti.UI.createView();
-	$.addClass( middle, "middle_view");
+	$.addClass( middle, "middle_view border");
  	
  	// RIGHT
  	var right 	= Ti.UI.createView({ text: "???" });
-	$.addClass( right, "right_view");
+	$.addClass( right, "right_view border");
 	
  	var latest_update_static 	= Ti.UI.createLabel({ text: "latest update" });
 	$.addClass( latest_update_static, "feed_label_left text_medium_light");
@@ -105,7 +105,7 @@ function displayPlaceEstimates(activity, place_ID) {
 	$.addClass( dog_name_label, "feed_label_left_md text_medium_bold");
 		
 	var time_elapsed_label 	= Ti.UI.createLabel({text: "Be the first!", top: 0});
-	$.addClass( time_elapsed_label, "feed_label_left text_medium_bold");
+	$.addClass( time_elapsed_label, "feed_label_left text_smal_bold");
 	
 	// RIGHT
 	var dogs_amount_label 	= Ti.UI.createLabel({text: "...", top: 4, width: "100%" });
@@ -137,8 +137,8 @@ function displayPlaceEstimates(activity, place_ID) {
 	/* ensure that there is more than 1 estimate for this park */
 	if( activity.length > 1) {
 		var temp_button = Ti.UI.createButton({ 
-			font:{ fontFamily: 'Raleway', fontSize: 30 }, title: "more >",
-			height : '40', width : '40', borderRadius: 6, 
+			font:{ fontFamily: 'Raleway', fontSize: 10 }, title: "more >",
+			height : '20', width : '60', borderRadius: 6, 
 			color : '#ffffff', backgroundColor : "#ec3c95"
 		});
 				
@@ -272,7 +272,7 @@ function getPlaceCheckins( place_ID, dog_ID ) {
 //		(0)		Add window to global stack, display menubar
 //
 //-----------------------------------------------------------------------
-var myFactory = new myFactoryModule.UiFactory();
+var myFactory = new UiFactoryModule.UiFactory();
 
 
 var mini_header_display = 0;
@@ -283,7 +283,10 @@ var mini_header_display = 0;
 //
 //--------------------------------------------------------------------------------
 var args 	= arguments[0] || {};
+Ti.API.debug ("args._index :" + args._index );
+
 var poiInfo = MYSESSION.allPlaces[args._index];
+// alert( " Args passed: "+JSON.stringify(args) );
 
 var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, poiInfo.lat, poiInfo.lon );
 // alert( how_close + " miles");
