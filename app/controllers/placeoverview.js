@@ -7,44 +7,6 @@
 //
 
 //================================================================================
-//		Name:			drawCheckoutButton( )
-//		Purpose:		add checkout button if we're currently checked in here
-//================================================================================
-function drawCheckoutButton () {
-	//var checkoutBtn = Ti.UI.createButton ( { id: "checkoutBtn", width: 48, height: 48, backgroundImage: "images/icons/checkbox.png" } );
-	var checkoutBtn = Ti.UI.createButton ( { 
-		id: "checkoutBtn", width: 48, height: 48, top: 10, title: "~", backgroundColor: '#ec3c95', borderRadius: 10,
-		font:{ fontFamily: 'Sosa-Regular', fontSize: 32 }, color: "#ffffff", 
-		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
-	} );
-	
-	$.checkboxHeader.add( checkoutBtn );
-	checkoutBtn.addEventListener('click', function() {	
-		var optns = {// build up Checkin modal popup
-			options : ['Yes', 'Cancel'],
-			cancel : 1,
-			selectedIndex : 0,
-			destructive : 0,
-			title : 'Are you leaving ' + poiInfo['name'] + '?'
-		};
-		var checkout_dialog = Ti.UI.createOptionDialog(optns);
-	
-		/* add click listener for "Yes" button */
-		checkout_dialog.addEventListener('click', function(e) {// take user to Checkin View
-			if (e.index == 0) {			// user clicked OK
-				// MYSESSION.dog.current_place_ID = null;
-				// MYSESSION.checkedIn = null;
-				 
-				// ping backend w/ place_ID, owner_ID, dog_ID to check yo self out
-		    checkoutFromPlace( poiInfo['id'] );	
-		    closeWindowController();
-			}
-		});
-		checkout_dialog.show();
-	});	
-}	
-
-//================================================================================
 //		Name:			getPlaceEstimates( place_ID )
 //		Purpose:		get latest user-provided estimates
 //================================================================================
@@ -73,6 +35,9 @@ function getPlaceEstimates( place_ID ) {
 //		Purpose:	add place estimate modules to Window and fill them in w/ data
 //================================================================================
 function displayPlaceEstimates(activity, place_ID) {
+	
+	
+	//================== BLANK TEMPLATE FOR MOST RECENT ESTIMATE======================
 	//					CREATE LATEST FEED ITEM 						
   //
 	// +=== last_estimate_view (in XML) ==============+
@@ -82,24 +47,19 @@ function displayPlaceEstimates(activity, place_ID) {
 	// |  |       | |            | |   rightLabelT |  |		
 	// |  +-------+ +------------+ +---------------+  |		
 	// +==============================================+
-	
 	// LEFT
 	var thumb 	= Ti.UI.createImageView();
 	$.addClass( thumb, "thumbnail border_red");
- 	
  	// MIDDLE
  	var middle 	= Ti.UI.createView();
 	$.addClass( middle, "middle_view border");
- 	
  	// RIGHT
  	var right 	= Ti.UI.createView({ text: "???" });
 	$.addClass( right, "right_view border");
-	
+	// just "latest update" text 
  	var latest_update_static 	= Ti.UI.createLabel({ text: "latest update" });
 	$.addClass( latest_update_static, "feed_label_left text_medium_light");
- 	
-
-	/*			CREATE BLANK TEMPLATE FOR LATEST FEED ITEM 				*/
+ 
 	// MIDDLE
 	// TODO:  buildNameLabel
 	var dog_name_label 			= Ti.UI.createLabel({text: "None so far ...", top: 0});
@@ -132,8 +92,11 @@ function displayPlaceEstimates(activity, place_ID) {
 	middle.add ( dog_name_label );				// add most recent update info to middle and right views
 	middle.add ( time_elapsed_label );
 	middle.add ( dogs_amount_label );
-	middle.add ( dogs_amount_suffix );
- 	
+	middle.add ( dogs_amount_suffix );	
+ 	//================== END BLANK TEMPLATE FOR MOST RECENT ESTIMATE======================
+	
+	
+	
 	/* ensure that there is more than 1 estimate for this park */
 	if( activity.length > 1) {
 		var more_btn = myUiFactory.buildSmallButton("more_btn", "more >"); 
@@ -191,9 +154,7 @@ function buildActivityList(data, parentObject) {
 		  	
 		 	var dog_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data[i].photo;
 		  var dog_thumb = myUiFactory.buildImageView("dog_thumb_"+i, dog_image, border);
-		 	// careful with assignment order, classes below have PRESET image placeholder
-		  //$.addClass( dog_thumb, "thumbnail");  
-  
+		
 		  parentObject.add(dog_thumb);
 		  if (i>7)
 		  	break;
@@ -328,8 +289,10 @@ $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi a
 //----------------------------------------------------------------------------------------------------------
 var whos_here_section_header = myUiFactory.buildSectionHeader("whos_here", "WHO'S HERE");
 $.scrollView.add(whos_here_section_header);
+
 // the thumbs of dogs have to display inline-block (and wrap) 
-var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal");	
+var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
+var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", whos_here_height);	
 $.scrollView.add(whos_here_list);
 
 /* 	get feed of checkins, including your current checkin status; 
@@ -338,7 +301,12 @@ Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
 getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID, whos_here_list);	
 
 var large_dog_section_header = myUiFactory.buildSectionHeader("large_dog", "LARGE DOG AREA");
-//$.scrollView.add(large_dog_section_header);
+$.scrollView.add(large_dog_section_header);
+
+// TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
+
+
+
 
 
 //----------------------------------------------------------------------------------------------------------

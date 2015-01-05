@@ -23,9 +23,7 @@
 				<View id="headerContainer" class="layout_vert">
 					<View id="headerTop" class="layout_horz">
 						<View class="width_50"/>
-						<View class="fill_width">
-							<View id="checkboxHeader" class="float_right" /> 
-						</View>
+						<View class="fill_width"/>
 					</View>
 					<View id="headerBottom" class="layout_vert">
 						<Label id="place_name_label" 		text="" class="white feed_label_left_lg text_large_light"/>
@@ -54,8 +52,8 @@
   		  </View> -->
  		   		  
   		 
-  		  <View id="container_last_estimate" class="feed_item_lg border">
-					<!-- 
+  		  <!--<View id="container_last_estimate" class="feed_item_lg border">
+					 
 					<View id="last_update_container" class="feed_item_lg">
 						<ImageView id="last_update_thumb" class="thumbnail"/>
 						
@@ -66,8 +64,8 @@
 						<View class="right_view" id="last_update_right">
 								// add most recent update labels here programmatically
 						</View>	
-					-->
-				</View>
+				
+				</View>	-->
 							
 								
 			</ScrollView>
