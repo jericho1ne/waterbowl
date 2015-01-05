@@ -722,7 +722,7 @@ var new_args = {
 };
 setTimeout(function() {
 	createWindowController('placeoverview',new_args,'slide_left');
-}, 1000);
+}, 1200);
 
 //====================================================================================
 // 		Geolocation Change Event Listener

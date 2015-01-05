@@ -50,12 +50,12 @@
 				// +===================================+				
 				<View id="activityContainer" class="container">
   			  <Label id="activityTitle" text="WHO'S HERE" class="section_header bg_dk_gray text_medium_medium white" />
-  			  <View id="activityList" contentHeight="auto" width="100%" class="thumbnail_sm_container layout_horz border bg_lt_blue"/> 
+  			  <View id="activityList" contentHeight="auto" width="100%" class="thumbnail_sm_container layout_horz bg_lt_blue"/> 
   		  </View>
  		   		  
   		 
-  		  <View id="latest_estimate_container" class="feed_item_lg">
-					<!--
+  		  <View id="latest_estimate_container" class="feed_item_lg border">
+					<!-- 
 					<View id="last_update_container" class="feed_item_lg">
 						<ImageView id="last_update_thumb" class="thumbnail"/>
 						

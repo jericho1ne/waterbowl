@@ -330,6 +330,8 @@ $.mini_place_name_label.text 	= poiInfo.name;
 $.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
 $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi away)";
 
+var large_dog_section_header = myFactory.buildSectionHeader("", "LARGE DOG AREA");
+$.scrollView.add(large_dog_section_header);
 //----------------------------------------------------------------------------------------------------------
 //
 //		(3)		Who else is here?

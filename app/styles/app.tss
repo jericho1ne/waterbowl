@@ -221,7 +221,7 @@
 ".thumbnail_lg" : { image: 'images/missing/WB-PetProfilePic-Placeholder.png', height: 120, width: 120, borderRadius: 60, left: 4, top: 4 }
 
 ".feed_item" 				: { layout: 'horizontal', height: 74, width: "100%", left: 0, top: 1, backgroundColor: '#DCF1FC' }
-".feed_item_lg" 			: { layout: 'horizontal', height: 74, width: "100%", left: 0, top: 0, backgroundColor: '#58c6d5' }
+".feed_item_lg" 			: { layout: 'horizontal', height: 104, width: "100%", left: 0, top: 0, backgroundColor: '#DCF1FC' }
 
 ".feed_label_left" 	  : { width: Ti.UI.SIZE, height: "auto", left: 6 }
 ".feed_label_center" 	: { width: Ti.UI.SIZE, height: "auto", }
