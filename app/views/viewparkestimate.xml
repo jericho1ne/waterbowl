@@ -1,9 +1,8 @@
 <Alloy>
 	<Window id="viewparkestimate" class="absolute">	
-		<View class="container">
+		<View class="window_container">
 			
-			<ScrollView id="scrollView" class="fill_height" top="-92" opacity="1">
-				<Label id="park_estimates_label" class="section_header bg_dk_gray text_medium_medium white">RECENT ESTIMATES</Label>
+			<ScrollView id="scrollView" class="fill_height" top="0" opacity="1">
 				// +============== feedContainer ===============================+
 				// |  +----------- feed_item (#1) ---------------------------+  |
 				// |  | +-photo-+ +------------------+  +------------------+ |  |                
@@ -17,7 +16,8 @@
 				// |  |                                      |                  |
 				// |  ^                                      ^                  |
 				// +============================================================+
-				<View id="feedContainer"/>
+				<!-- <View id="feedContainer" class="border" /> -->
+				
 			</ScrollView>
 		</View>
 	</Window>

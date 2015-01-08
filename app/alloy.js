@@ -8,7 +8,6 @@
 // 		
 //=================================================================================
 
-
 //
 // 						CLASS OBJECTS
 //
@@ -36,7 +35,7 @@ var geoUtil = function () {
     return formattedDistance;		
   }
   
-	 //=============================================================================
+	//=============================================================================
   //	Name:			deg2rad ( deg )
   //=============================================================================
   function deg2rad(deg) {
@@ -537,3 +536,4 @@ var longPress;
 
 // instantiate UI factory
 var UiFactoryModule = require('lib/UiFactoryClass');
+var myUiFactory = new UiFactoryModule.UiFactory();

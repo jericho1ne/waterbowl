@@ -716,6 +716,7 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 /*
    HACK :: To skip to a specific window, uncomment block below and change which window name to jump to		
 */
+
 var new_args = {
 			_index		: 0,
 			_place_ID : 601000001	// pass in array index and placeID 
@@ -731,4 +732,4 @@ setTimeout(function() {
 //		2) 	Refresh nearby places table
 //		2)  Save latest user location into MYSESSION.geo.lat, MYSESSION.geo.lon
 //====================================================================================
-setInterval(refreshGeo, 20000);			// LOOP every 20 seconds
+setInterval(refreshGeo, 60000);			// LOOP every 20 seconds
