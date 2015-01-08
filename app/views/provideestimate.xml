@@ -2,7 +2,7 @@
 	<Window id="provideestimate" class="absolute">	
 		<View id="content" class="window_container">
 			
-			<ScrollView class="fill_height">
+			<ScrollView id="estimate_scrollView" top="0" class="layout_vert fill_height">
 				<!-- Create s liders and readouts -->
 				<Label id="place_checkin" class="bg_white text_large_bold"></Label>	
 				<Label id="question" class="form_label">How many dogs are playing here?</Label>	

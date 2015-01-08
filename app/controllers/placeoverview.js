@@ -46,7 +46,7 @@ function displayPlaceEstimates(activity, place_ID) {
 	// +=========================================+
 	
 	if( activity.length > 0) {	
-		var large_dog_section_header = myUiFactory.buildSectionHeader("large_dog", "Large Dog Area", 1);
+		var large_dog_section_header = myUiFactory.buildSectionHeader("large_dog", "Large Dog Area", 0);
 		$.scrollView.add(large_dog_section_header);
 		// var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
 		var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +activity[0].dog_photo;		
@@ -54,7 +54,7 @@ function displayPlaceEstimates(activity, place_ID) {
 		var last_estimate_large = myUiFactory.buildTableRowHeader("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount, activity[0].amount_suffix);
 		$.scrollView.add(last_estimate_large);
 		
-		var small_dog_section_header = myUiFactory.buildSectionHeader("small_dog", "Small Dog Area", 1);
+		var small_dog_section_header = myUiFactory.buildSectionHeader("small_dog", "Small Dog Area", 0);
 		$.scrollView.add(small_dog_section_header);
 		// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
 		var last_estimate_small = myUiFactory.buildTableRowHeader("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount, activity[0].amount_suffix);
@@ -78,7 +78,7 @@ function displayPlaceEstimates(activity, place_ID) {
 		} 	
 	}
 	else {
-		var nothing_here = myUiFactory.buildLabel( "no estimates provided", "100%", this._text_label_large );	
+		var nothing_here = myUiFactory.buildLabel( "no estimates provided", "100%", this._height_one_row+10, this._text_label_large );	
 		$.scrollView.add(nothing_here);
 		Ti.API.info(" * no estimates provided... * ");
 	}
@@ -259,7 +259,7 @@ $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi a
 //		(3)		Add the rest of the view containers
 //
 //----------------------------------------------------------------------------------------------------------
-var whos_here_section_header = myUiFactory.buildSectionHeader("whos_here", "WHO'S HERE", 0);
+var whos_here_section_header = myUiFactory.buildSectionHeader("whos_here", "WHO'S HERE", 1);
 $.scrollView.add(whos_here_section_header);
 
 // the thumbs of dogs have to display inline-block (and wrap) 

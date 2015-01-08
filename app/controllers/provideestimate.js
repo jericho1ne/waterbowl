@@ -118,7 +118,15 @@ function updateEstimates (place_ID, estimate) {
 //-----------------------------------------------------------------------
 var args = arguments[0] || {};
 // var place_index = getArrayIndexById( MYSESSION.nearbyPlaces, args._place_ID );
-$.place_checkin.text = MYSESSION.allPlaces[args._place_index].name;
+// $.place_checkin.text = MYSESSION.allPlaces[args._place_index].name;
+var park_name = "Oberrieder Park";
+
+var section_header = myUiFactory.buildSectionHeader("park_name", park_name, 2)
+var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", this._height_one_row+10, this._text_label_medium );		
+
+$.estimate_scrollView.add(section_header);
+$.estimate_scrollView.add(call_to_action);	
+	
 
 // initial value set
 $.slider_label.text = ""; 		
