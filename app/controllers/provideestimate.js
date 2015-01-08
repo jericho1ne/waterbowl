@@ -116,15 +116,9 @@ function updateEstimates (place_ID, estimate) {
 //		(0)		Add window to global stack, display menubar
 //
 //-----------------------------------------------------------------------
-addToAppWindowStack( $.checkin, "checkin" );
-addMenubar( $.menubar );
-
-var args 	= arguments[0] || {};
-Ti.API.info("* checkin.js #" + args._place_ID );
-Ti.API.info( "placeIDinGeofence: "+ JSON.stringify( MYSESSION.nearbyPlaces )  );
-		
-//Ti.API.info (' *** ' + MYSESSION.allPlaces[args._place_ID].name  + " } * ");	
-$.place_checkin.text = MYSESSION.allPlaces[args._place_ID].name;
+var args = arguments[0] || {};
+// var place_index = getArrayIndexById( MYSESSION.nearbyPlaces, args._place_ID );
+$.place_checkin.text = MYSESSION.allPlaces[args._place_index].name;
 
 // initial value set
 $.slider_label.text = ""; 		

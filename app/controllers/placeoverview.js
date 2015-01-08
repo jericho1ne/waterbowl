@@ -23,7 +23,7 @@ function getPlaceEstimates( place_ID, callbackFunction ) {
 		var jsonResponse = this.responseText;
 		var activityData = new Array();												// create empty object container
 									
-		if (jsonResponse != "" && jsonResponse !="[]") {
+		if (jsonResponse != "" ) {
 			var activity = JSON.parse( jsonResponse );
 			
 			callbackFunction(activity, place_ID);	
@@ -36,53 +36,66 @@ function getPlaceEstimates( place_ID, callbackFunction ) {
 //		Purpose:	add place estimate modules to Window and fill them in w/ data
 //================================================================================
 function displayPlaceEstimates(activity, place_ID) {
-	//================== BLANK TEMPLATE FOR MOST RECENT ESTIMATE======================
-	//					CREATE LATEST FEED ITEM 						
-  //
-	// +=== last_estimate_view (in XML) ==============+
-	// |  +-thumb-+ +-- middle --+ +-- right-------+  |
-	// |  |       | |            | |   rightLabelT |  |
-	// |  |       | |            | |               |  |
-	// |  |       | |            | |   rightLabelT |  |		
-	// |  +-------+ +------------+ +---------------+  |		
-	// +==============================================+
+	Ti.API.debug( ">>>>>>>>>>> activity.length : " + activity.length);
+	// +=== last_estimate_view (in XML) =========+
+	// |  +-thumb-+ +-- middle --+ +-- right--+  |
+	// |  |       | |            | |          |  |
+	// |  |       | |            | |          |  |
+	// |  |       | |            | |          |  |		
+	// |  +-------+ +------------+ +----------+  |		
+	// +=========================================+
 	
-	var large_dog_section_header = myUiFactory.buildSectionHeader("large_dog", "Large Dog Area", 1);
-	$.scrollView.add(large_dog_section_header);
-
-	// var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
-	var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +activity[0].dog_photo;		
-	
-	// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
-	var last_estimate = myUiFactory.buildTableRow("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount);
-	$.scrollView.add(last_estimate);
-	
-	var small_dog_section_header = myUiFactory.buildSectionHeader("small_dog", "Small Dog Area", 1);
-	$.scrollView.add(small_dog_section_header);
-	
-	if( activity.length > 1) {				// if there are multiple estimates to be seen at this park
-		var more_btn = myUiFactory.buildFullRowButton("more_btn", "more >"); 
-		more_btn.addEventListener('click', function(){
- 			Ti.API.info("...[+] Estimate History button clicked");
-			// TODO:  Create gray "see more >" button 
-			// 				package estimate info in args._estimates, open if clicked
-			var necessary_args = {
-				_place_ID  : place_ID,
-				_estimates : activity
-			};
-			// createWindowController( "marks", "", "slide_left" );
-			createWindowController( "viewparkestimate", necessary_args, "slide_left" );
-		});
-		//right.add(more_btn);
-		$.scrollView.add(more_btn);
-	} 
-	else {
-			$.latest_update_static.text = "";
-			$.last_update_middle.add ( dog_name_label );	
-			$.last_update_middle.add ( time_elapsed_label );
-			Ti.API.info(" * no estimates provided... * ");
+	if( activity.length > 0) {	
+		var large_dog_section_header = myUiFactory.buildSectionHeader("large_dog", "Large Dog Area", 1);
+		$.scrollView.add(large_dog_section_header);
+		// var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
+		var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +activity[0].dog_photo;		
+		// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
+		var last_estimate_large = myUiFactory.buildTableRowHeader("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount, activity[0].amount_suffix);
+		$.scrollView.add(last_estimate_large);
+		
+		var small_dog_section_header = myUiFactory.buildSectionHeader("small_dog", "Small Dog Area", 1);
+		$.scrollView.add(small_dog_section_header);
+		// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
+		var last_estimate_small = myUiFactory.buildTableRowHeader("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount, activity[0].amount_suffix);
+		$.scrollView.add(last_estimate_small);
+		
+		if( activity.length > 1) {				// if there are multiple estimates to be seen at this park
+			var more_btn = myUiFactory.buildFullRowButton("more_btn", "more >"); 
+			more_btn.addEventListener('click', function(){
+	 			Ti.API.info("...[+] Estimate History button clicked");
+				// TODO:  Create gray "see more >" button 
+				// 				package estimate info in args._estimates, open if clicked
+				var necessary_args = {
+					_place_ID  : place_ID,
+					_estimates : activity
+				};
+				// createWindowController( "marks", "", "slide_left" );
+				createWindowController( "viewparkestimate", necessary_args, "slide_left" );
+			});
+			//right.add(more_btn);
+			$.scrollView.add(more_btn);
+		} 	
 	}
-	
+	else {
+		var nothing_here = myUiFactory.buildLabel( "no estimates provided", "100%", this._text_label_large );	
+		$.scrollView.add(nothing_here);
+		Ti.API.info(" * no estimates provided... * ");
+	}
+	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update >"); 
+	estimate_btn.addEventListener('click', function(){
+			Ti.API.info("...[+] Estimate Update button clicked");
+		// TODO:  Create gray "see more >" button 
+		// 				package estimate info in args._estimates, open if clicked
+		var necessary_args = {
+			_place_ID    : place_ID,
+			_place_index : place_index
+		};
+		// createWindowController( "marks", "", "slide_left" );
+		createWindowController( "provideestimate", necessary_args, "slide_left" );
+	});
+	//right.add(more_btn);
+	$.scrollView.add(estimate_btn);
 }
 
 //====================================================================================================
@@ -197,10 +210,11 @@ var mini_header_display = 0;
 //
 //--------------------------------------------------------------------------------
 var args = arguments[0] || {};
-var poiInfo = MYSESSION.allPlaces[args._index];
+var place_index = args._index;
+
+var poiInfo = MYSESSION.allPlaces[place_index];
 var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, poiInfo.lat, poiInfo.lon );
 //alert( how_close + " miles");
-//Ti.API.debug ("args._index :" + args._index );
 //Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
 
 //----------------------------------------------------------------------------
@@ -250,7 +264,7 @@ $.scrollView.add(whos_here_section_header);
 
 // the thumbs of dogs have to display inline-block (and wrap) 
 var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
-var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", whos_here_height);	
+var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", "100%", whos_here_height, 0);	
 $.scrollView.add(whos_here_list);
 
 /* 	get feed of checkins, including your current checkin status; 
@@ -266,7 +280,7 @@ getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID, whos_here_list);
 //  
 //----------------------------------------------------------------------------------------------------------
 
-if (poiInfo.category==601) {
+if (poiInfo.category==600 || poiInfo.category==601) {
 	// TODO:  redo this using class methods
 	getPlaceEstimates( args._place_ID, displayPlaceEstimates );
 	

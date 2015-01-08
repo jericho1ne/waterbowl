@@ -130,7 +130,7 @@ function createWindowController ( win_name, args, animation ) {
 	MYSESSION.previousWindow = MYSESSION.currentWindow;
 	MYSESSION.currentWindow = win_name;
 	
-	Ti.API.debug(" ::::: createWindowController ::::: ["+win_name+"]" + JSON.stringify(args));
+	Ti.API.debug(" ::::: createWindowController ::::: ["+win_name+"]" + "["+JSON.stringify(args) +"]");
 
 	var winObject = Alloy.createController(win_name, args).getView();
 	addToAppWindowStack( winObject, win_name );
