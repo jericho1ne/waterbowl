@@ -33,19 +33,8 @@
 					</View>
 				</View>
 
-        // 						WHO'S HERE
-				// +===== activityContainer ===========+
-				// |  +------activityTitle-----------+ |
-				// |  |         WHO'S HERE           | |
-				// |	+------------------------------+ |
-				// |  +------activityList------------+ |
-				// |	| +----+ +----+ +----+ +----+  | |
-				// |  | |    | |    | |    | |    |  | |
-				// |  | +----+ +----+ +----+ +----+  | |
-				// |  | ^  fit up to 8            ^  | |
-				// |  |    thumbnails total          | |
-				// |  +------------------------------+ |		
-				// +===================================+									
+        <View id="activity" class="layout_vert"/>
+        <View id="marks" class="layout_vert"/>						
 								
 			</ScrollView>
 		</View>

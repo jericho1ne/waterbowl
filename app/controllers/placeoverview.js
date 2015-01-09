@@ -47,18 +47,18 @@ function displayPlaceEstimates(activity, place_ID) {
 	
 	if( activity.length > 0) {	
 		var large_dog_section_header = myUiFactory.buildSectionHeader("large_dog", "Large Dog Area", 0);
-		$.scrollView.add(large_dog_section_header);
+		$.activity.add(large_dog_section_header);
 		// var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
 		var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +activity[0].dog_photo;		
 		// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
 		var last_estimate_large = myUiFactory.buildTableRowHeader("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount, activity[0].amount_suffix);
-		$.scrollView.add(last_estimate_large);
+		$.activity.add(last_estimate_large);
 		
 		var small_dog_section_header = myUiFactory.buildSectionHeader("small_dog", "Small Dog Area", 0);
-		$.scrollView.add(small_dog_section_header);
+		$.activity.add(small_dog_section_header);
 		// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
 		var last_estimate_small = myUiFactory.buildTableRowHeader("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount, activity[0].amount_suffix);
-		$.scrollView.add(last_estimate_small);
+		$.activity.add(last_estimate_small);
 		
 		if( activity.length > 1) {				// if there are multiple estimates to be seen at this park
 			var more_btn = myUiFactory.buildFullRowButton("more_btn", "more >"); 
@@ -74,12 +74,12 @@ function displayPlaceEstimates(activity, place_ID) {
 				createWindowController( "viewparkestimate", necessary_args, "slide_left" );
 			});
 			//right.add(more_btn);
-			$.scrollView.add(more_btn);
+			$.activity.add(more_btn);
 		} 	
 	}
 	else {
 		var nothing_here = myUiFactory.buildLabel( "no estimates provided", "100%", this._height_one_row+10, this._text_label_large );	
-		$.scrollView.add(nothing_here);
+		$.activity.add(nothing_here);
 		Ti.API.info(" * no estimates provided... * ");
 	}
 	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update >"); 
@@ -95,7 +95,7 @@ function displayPlaceEstimates(activity, place_ID) {
 		createWindowController( "provideestimate", necessary_args, "slide_left" );
 	});
 	//right.add(more_btn);
-	$.scrollView.add(estimate_btn);
+	$.activity.add(estimate_btn);
 }
 
 //====================================================================================================
@@ -198,7 +198,7 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 // 				LOGIC FLOW
 //-----------------------------------------------------------------------
 //
-//		(0)		Add window to global stack, display menubar
+//		(_0_)		Add window to global stack, display menubar
 //
 //-----------------------------------------------------------------------
 //var myUiFactory = new UiFactoryModule.UiFactory();
@@ -206,7 +206,7 @@ var mini_header_display = 0;
 
 //--------------------------------------------------------------------------------
 //
-//		(1)		Grab incoming variables, set header image and title, build miniheader
+//		(_1_)		Grab incoming variables, set header image and title, build miniheader
 //
 //--------------------------------------------------------------------------------
 var args = arguments[0] || {};
@@ -219,7 +219,7 @@ var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, poiInfo.lat, 
 
 //----------------------------------------------------------------------------
 //
-//		(2)		Populate place header
+//		(_2_)		Populate place header
 //
 //----------------------------------------------------------------------------
 var bg_image = "images/missing/place-header.png";
@@ -255,17 +255,15 @@ $.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
 $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi away)";
 
 //----------------------------------------------------------------------------------------------------------
-//
-//		(3)		Add the rest of the view containers
-//
+//		(_3_)		CHECKINS
 //----------------------------------------------------------------------------------------------------------
 var whos_here_section_header = myUiFactory.buildSectionHeader("whos_here", "WHO'S HERE", 1);
-$.scrollView.add(whos_here_section_header);
+$.activity.add(whos_here_section_header);
 
 // the thumbs of dogs have to display inline-block (and wrap) 
 var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
 var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", "100%", whos_here_height, 0);	
-$.scrollView.add(whos_here_list);
+$.activity.add(whos_here_list);
 
 /* 	get feed of checkins, including your current checkin status; 
 		add the list to the view we've just created 												*/
@@ -276,29 +274,52 @@ getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID, whos_here_list);
 // TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
 
 //----------------------------------------------------------------------------------------------------------
-//    (4)	  If dog park (601, 	Most recent estimates
-//  
+//    (_4_)	  ESTIMATES (only if dog park)  
 //----------------------------------------------------------------------------------------------------------
-
 if (poiInfo.category==600 || poiInfo.category==601) {
 	// TODO:  redo this using class methods
-	getPlaceEstimates( args._place_ID, displayPlaceEstimates );
-	
-	/* get feed of estimates */
-	//var estimates_section_header = createSectionHeader( "estimates", "park_estimates_label", "PARK ESTIMATES" );
-	
-	/*
-	var park_estimates_label = Ti.UI.createLabel( {id: "park_estimates_label", text: "PARK ESTIMATES"} );
-	$.addClass(park_estimates_label, "section_header bg_dk_gray text_medium_medium white");
-	$.estimates.add(park_estimates_label);
-	
-	//estimates_section_header.add(estimates_section_header);
-	*/
+	getPlaceEstimates( args._place_ID, displayPlaceEstimates );	
 }
 
 //----------------------------------------------------------------------------
+//		(_6_)	  MARKS
+//----------------------------------------------------------------------------
+var marks_header = myUiFactory.buildSectionHeader("marks", "MARKS", 1);
+$.marks.add(marks_header);
+
+//----------------------------------------------------------------------------
+//		(_6_)	 ScrollView listener (+ attach sticky mini-header bar)
+//----------------------------------------------------------------------------
+$.scrollView.addEventListener('scroll', function(e) {
+  if (e.y!=null) {
+    var offsetY = e.y;
+    var threshold = 173;
+   
+    if  ( offsetY >= threshold && offsetY != null && mini_header_display==0 ) {
+    	miniHeader = attachMiniHeader();			// show the mini header
+   		//Titanium.API.info(' * scrollView Y offset: ' + offsetY);
+ 			mini_header_display = 1;
+ 			Titanium.API.info( ' * miniHeader attached * ' +  mini_header_display );
+    }
+    else if ( offsetY < threshold && offsetY != null && mini_header_display==1) {
+    	//Ti.API.info (" MINIHEADER CONTENTS: "+ miniHeader);
+    	miniHeader = hideMiniHeader();			// hide the mini header
+     	
+    	//Titanium.API.info(' * scrollView Y offset: ' + offsetY);
+   		mini_header_display = 0;
+ 			Titanium.API.info( ' * miniHeader removed * ' + mini_header_display );
+ 		}
+    	
+  } else {
+    Titanium.API.info(' * scrollView Y offset is null');
+  }
+});
+
+
+
+//----------------------------------------------------------------------------
 //
-//		(3)		Checkin/Checkout button attach + related button listeners
+//		(X)		Checkin/Checkout button attach + related button listeners
 //
 //----------------------------------------------------------------------------
 /* if (typeof MYSESSION.nearbyPlaces != 'undefined') {
@@ -336,34 +357,3 @@ if ( how_close < MYSESSION.proximity )  {
 		});
 	});
 } */
-
-///----------------------------------------------------------------------------
-//
-//		(4)	 ScrollView listener (+ attach sticky mini-header bar)
-//
-//----------------------------------------------------------------------------
-$.scrollView.addEventListener('scroll', function(e) {
-  if (e.y!=null) {
-    var offsetY = e.y;
-    var threshold = 173;
-   
-    if  ( offsetY >= threshold && offsetY != null && mini_header_display==0 ) {
-    	miniHeader = attachMiniHeader();			// show the mini header
-   		//Titanium.API.info(' * scrollView Y offset: ' + offsetY);
- 			mini_header_display = 1;
- 			Titanium.API.info( ' * miniHeader attached * ' +  mini_header_display );
-    }
-    else if ( offsetY < threshold && offsetY != null && mini_header_display==1) {
-    	//Ti.API.info (" MINIHEADER CONTENTS: "+ miniHeader);
-    	miniHeader = hideMiniHeader();			// hide the mini header
-     	
-    	//Titanium.API.info(' * scrollView Y offset: ' + offsetY);
-   		mini_header_display = 0;
- 			Titanium.API.info( ' * miniHeader removed * ' + mini_header_display );
- 		}
-    	
-  } else {
-    Titanium.API.info(' * scrollView Y offset is null');
-  }
-});
-

@@ -167,7 +167,10 @@ function createWindowController ( win_name, args, animation ) {
 	}	
 	// attach menubar to each new Window controller
 	addMenubar(winObject);
-	winObject.open(animStyle);
+	if (OS_ANDROID) 
+    winObject.getView().open();
+	else
+	  winObject.open(animStyle);
 	// status checks
 	Ti.API.info( " >>> User Array: "+ JSON.stringify( MYSESSION.user ) );
 	Ti.API.info( " >>> Dog Array: "+ JSON.stringify( MYSESSION.dog ) );

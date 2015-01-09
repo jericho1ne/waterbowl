@@ -138,4 +138,4 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-// createWindowController("provideestimate","","slide_left");
+//createWindowController("provideestimate","","slide_left");
