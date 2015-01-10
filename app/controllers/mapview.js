@@ -717,7 +717,6 @@ Titanium.Geolocation.getCurrentPosition(function(e){
    HACK :: To skip to a specific window, uncomment block below and change which window name to jump to		
 */
 
-/*
 var new_args = {
 			_index		: 0,
 			_place_ID : 601000001	// pass in array index and placeID 
@@ -725,7 +724,7 @@ var new_args = {
 setTimeout(function() {
 	createWindowController('placeoverview',new_args,'slide_left');
 }, 1200);
-*/
+
 //====================================================================================
 // 		Geolocation Change Event Listener
 //		Purpose:  

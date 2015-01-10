@@ -11,20 +11,11 @@
 //================================================================================
 function getRecentEstimates( place_ID, enclosure_count, callbackFunction ) {
 	Ti.API.info("* getRecentEstimates() called *");
-	var query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID	: place_ID, 
 		enclosure_count : enclosure_count
 	};
-	query.open("POST", "http://waterbowl.net/mobile/get-recent-estimates.php");	
-	query.send( params );
-	query.onload = function() {
-		var jsonResponse = this.responseText;
-		if (jsonResponse != "" ) {
-			var data = JSON.parse( jsonResponse );			
-			callbackFunction(data, place_ID);	
-		}
-	};
+	myUiFactory.loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", callbackFunction);
 }
 
 //================================================================================
@@ -33,16 +24,7 @@ function getRecentEstimates( place_ID, enclosure_count, callbackFunction ) {
 //================================================================================
 function getMarks( params, callbackFunction ) {
 	Ti.API.info("* getRecentEstimates() called *");
-	var query = Ti.Network.createHTTPClient();
-	query.open("POST", "http://waterbowl.net/mobile/get-place-posts.php");	
-	query.send( params );
-	query.onload = function() {
-		var jsonResponse = this.responseText;
-		if (jsonResponse != "" ) {
-			var data = JSON.parse( jsonResponse );			
-			callbackFunction(data);	
-		}
-	};
+	myUiFactory.loadJson(params, "http://waterbowl.net/mobile/get-place-posts.php", callbackFunction);
 }
 
 //================================================================================
@@ -53,12 +35,9 @@ function displayMarks(data) {
   if( data.length>0) {	
     for (var i=0, len=data.length; i<len; i++) {
       var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data[i].dog_photo;		
-		  var mark = myUiFactory.buildTableRow( "", 
-                                    		    photo, 
-                                    		    data[i].marking_dog_name, 
-                                    		    data[i].time_elapsed, 
-                                    		    data[i].post_text, 
-                                    		    ""  );
+		  var mark = myUiFactory.buildTableRow( 
+		    "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text, ""
+		  );
 		  $.marks.add(mark);
     }
   }
@@ -75,7 +54,6 @@ function displayMarks(data) {
 //		Purpose:	add place estimate modules to Window and fill them in w/ data
 //================================================================================
 function displayRecentEstimates(data, place_ID) {
-	// Ti.API.debug( ">>>>>>>>>>> data.payload.length: " + data.payload.length);
 	// +=== last_estimate_view (in XML) =========+
 	// |  +-thumb-+ +-- middle --+ +-- right--+  |
 	// |  |       | |            | |          |  |
@@ -104,7 +82,7 @@ function displayRecentEstimates(data, place_ID) {
 	estimate_btn.addEventListener('click', function(){
     Ti.API.info("...[+] Estimate Update button clicked");
 		var necessary_args = {
-			_place_ID    : place_ID,
+			_place_ID    : args._place_ID,
 			_place_index : place_index
 		};
 		createWindowController( "provideestimate", necessary_args, "slide_left" );
@@ -116,7 +94,7 @@ function displayRecentEstimates(data, place_ID) {
 		// TODO:  Create gray "see more >" button 
 		// 				package estimate info in args._estimates, open if clicked
 		var necessary_args = {
-			_place_ID  : place_ID
+			_place_ID  : args._place_ID
 		};
 		createWindowController( "viewparkestimate", necessary_args, "slide_left" );
 	});
@@ -126,41 +104,45 @@ function displayRecentEstimates(data, place_ID) {
 }
 
 //====================================================================================================
-//		Name:				buildCheckinsList(dataArray, parentObject)
+//		Name:				displayPlaceCheckins(dataArray, parentObject)
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
-function buildCheckinsList(data, parentObject) {
+function displayPlaceCheckins(data, parentObject) {
+	//Ti.API.debug(".... [~] displayPlaceCheckins:: found ["+ JSON.stringify(data) +"] dog(s) ");
+ 	if ( data.you_are_here==1 ) {
+    MYSESSION.dog.current_place_ID = place_ID;
+  }
  	/* got stuff to show!  */
-  if( data.length > 0) {
-  	//Ti.API.debug(".... [~] buildActivityList:: found ["+ data.length +"] dog(s) ");
-  	var how_many_bar = myUiFactory.buildInfoBar( "", "Currently here",  data.length );;
+  if( data.checkins.length > 0) {
+  	var how_many_bar = myUiFactory.buildInfoBar( "", "Currently here",  data.checkins.length );;
     parentObject.add(how_many_bar);
     
     var thumb_height = myUiFactory.getDefaultThumbSize();
     var row_height   = myUiFactory.getDefaultRowHeight();
 
-  	if( data.length > 4) {
+  	if( data.checkins.length > 4) {
   		// size up parent container so that we can fit two rows, up to 8 thumbnails
   		parentObject.height = (thumb_height * 2) + row_height + 12;  	
   	}
-  	else
+  	else {
       parentObject.height = thumb_height + row_height + 8;
-      
-    for (var i=0, len=data.length; i<len; i++) {		// only calculate array size once
+    }
+     
+    for (var i=0, len=data.checkins.length; i<len; i++) {		// only calculate array size once
 		  var border = 0; 			// this is nobody we know by default (0=other, 1=me, 2=friends)
-		  
-		  if(data[i].dog_ID == MYSESSION.dog.dog_ID)
+		   
+		  if(data.checkins[i].dog_ID == MYSESSION.dog.dog_ID)
 		  	border = 1;
 		  	
-		 	var dog_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data[i].photo;
+		 	var dog_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data.checkins[i].photo;
 		  var dog_thumb = myUiFactory.buildImageThumb("dog_thumb_"+i, dog_image, border);
 		
 		  parentObject.add(dog_thumb);
 		  if (i>7)
 		  	break;
 		}
-		if(data.length > 7) {
-			var how_many_more_text = data.length - 7;
+		if(data.checkins.length > 7) {
+			var how_many_more_text = data.checkins.length - 7;
 			var how_many_more =  Ti.UI.createLabel( {text:"and "+how_many_more_text+" more", color: "#ec3c95" } );
 			$.addClass(how_many_more, "thumbnail");
 			how_many_more.image = "";
@@ -213,13 +195,9 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 		var placeJSON = this.responseText;	
 	 
 	 	if (placeJSON != "" && placeJSON !="[]") {
-	    var place = JSON.parse( placeJSON );
-	
-			if ( place.here==1 ) {
-				MYSESSION.dog.current_place_ID = place_ID;
-			}
+      var place = JSON.parse( placeJSON );
 			/*  use the current checkins to build the activityList  */
-      buildCheckinsList(place.checkins, parent_view);
+      displayPlaceCheckins(place, parent_view);
 		}
 	};
   return "";	
