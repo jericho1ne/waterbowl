@@ -5,64 +5,77 @@
 //	Created by Mihai Peteu Oct 2014
 //	(c) 2014 waterbowl
 //
-
 //================================================================================
-//		Name:			getMarks( place_ID, callbackFunction )
-//		Purpose:		get latest user-provided marks
-//================================================================================
-function getMarks( place_ID, callbackFunction ) {
-	Ti.API.info("* getMarks() called *");
-	var query = Ti.Network.createHTTPClient();
-	var params = {
-		place_ID	: place_ID
-	};
-	/*
-	query.open("POST", "http://waterbowl.net/mobile/marks-mapshow.php");	
-	query.send( params );
-	query.onload = function() {
-		var jsonResponse = this.responseText;
-		var activityData = new Array();												// create empty object container
-									
-		if (jsonResponse != "" ) {
-			var activity = JSON.parse( jsonResponse );
-			callbackFunction(activity, place_ID);	
-		}
-	};
-	*/
-}
-
-//================================================================================
-//		Name:			getRecentEstimates( place_ID, callbackFunction )
+//		Name:			getRecentEstimates( place_ID, enclosure_count, callbackFunction )
 //		Purpose:		get latest user-provided estimates
 //================================================================================
-function getRecentEstimates( place_ID, callbackFunction ) {
+function getRecentEstimates( place_ID, enclosure_count, callbackFunction ) {
 	Ti.API.info("* getRecentEstimates() called *");
 	var query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID	: place_ID, 
-		enclosure_count : 2
+		enclosure_count : enclosure_count
 	};
-	
 	query.open("POST", "http://waterbowl.net/mobile/get-recent-estimates.php");	
 	query.send( params );
 	query.onload = function() {
 		var jsonResponse = this.responseText;
-		var activityData = new Array();												// create empty object container
-									
 		if (jsonResponse != "" ) {
-			var activity = JSON.parse( jsonResponse );
-			
-			callbackFunction(activity, place_ID);	
+			var data = JSON.parse( jsonResponse );			
+			callbackFunction(data, place_ID);	
 		}
 	};
+}
+
+//================================================================================
+//		Name:			getMarks( params, callbackFunction )
+//		Purpose:		( 1, args._place_ID, MYSESSION.dog.dog_ID, displayMarks);
+//================================================================================
+function getMarks( params, callbackFunction ) {
+	Ti.API.info("* getRecentEstimates() called *");
+	var query = Ti.Network.createHTTPClient();
+	query.open("POST", "http://waterbowl.net/mobile/get-place-posts.php");	
+	query.send( params );
+	query.onload = function() {
+		var jsonResponse = this.responseText;
+		if (jsonResponse != "" ) {
+			var data = JSON.parse( jsonResponse );			
+			callbackFunction(data);	
+		}
+	};
+}
+
+//================================================================================
+//		Name:			displayMarks( data )
+//		Purpose:	
+//================================================================================
+function displayMarks(data) {
+  if( data.length>0) {	
+    for (var i=0, len=data.length; i<len; i++) {
+      var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data[i].dog_photo;		
+		  var mark = myUiFactory.buildTableRow( "", 
+                                    		    photo, 
+                                    		    data[i].marking_dog_name, 
+                                    		    data[i].time_elapsed, 
+                                    		    data[i].post_text, 
+                                    		    ""  );
+		  $.marks.add(mark);
+    }
+  }
+  else {
+	  var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
+		var no_marks_label = myUiFactory.buildLabel( "No marks have been made", "100%", this._height_one_row+10, myUiFactory._text_label_medium );	
+		no_marks_container.add(no_marks_label);
+		$.marks.add(no_marks_container);
+	}
 }
 
 //================================================================================
 //		Name:			displayRecentEstimates( data )
 //		Purpose:	add place estimate modules to Window and fill them in w/ data
 //================================================================================
-function displayRecentEstimates(activity, place_ID) {
-	Ti.API.debug( ">>>>>>>>>>> activity.payload.length : " + activity.payload.length);
+function displayRecentEstimates(data, place_ID) {
+	// Ti.API.debug( ">>>>>>>>>>> data.payload.length: " + data.payload.length);
 	// +=== last_estimate_view (in XML) =========+
 	// |  +-thumb-+ +-- middle --+ +-- right--+  |
 	// |  |       | |            | |          |  |
@@ -71,40 +84,21 @@ function displayRecentEstimates(activity, place_ID) {
 	// |  +-------+ +------------+ +----------+  |		
 	// +=========================================+
 	
-	if( activity.payload.length > 0) {	
-		var large_dog_section_header = myUiFactory.buildSectionHeader("large_dog", "Large Dog Area", 0);
-		$.activity.add(large_dog_section_header);
-		// var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
-		var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +activity[0].dog_photo;		
-		// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
-		var last_estimate_large = myUiFactory.buildTableRowHeader("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount, activity[0].amount_suffix);
-		$.activity.add(last_estimate_large);
-		
-		var small_dog_section_header = myUiFactory.buildSectionHeader("small_dog", "Small Dog Area", 0);
-		$.activity.add(small_dog_section_header);
-		// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
-		var last_estimate_small = myUiFactory.buildTableRowHeader("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount, activity[0].amount_suffix);
-		$.activity.add(last_estimate_small);
-		
-		if( activity.payload.length > 1) {				// if there are multiple estimates to be seen at this park
-			var more_btn = myUiFactory.buildFullRowButton("more_btn", "more >"); 
-			more_btn.addEventListener('click', function(){
-	 			Ti.API.info("...[+] Estimate History button clicked");
-				// TODO:  Create gray "see more >" button 
-				// 				package estimate info in args._estimates, open if clicked
-				var necessary_args = {
-					_place_ID  : place_ID
-				};
-				// createWindowController( "marks", "", "slide_left" );
-				createWindowController( "viewparkestimate", necessary_args, "slide_left" );
-			});
-			$.activity.add(more_btn);
-		} 	
+	if( data.payload.length>0) {	
+	  for (var i=0, len=data.payload.length; i<len; i++) {	
+	    var dog_size_section_header = myUiFactory.buildSectionHeader("", data.payload[i].size+" Dog Area", 0);
+		  $.activity.add(dog_size_section_header);
+		  // var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
+		  var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data.payload[i].dog_photo;		
+		  var latest_estimate = myUiFactory.buildTableRowHeader("", photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, data.payload[i].dog_suffix);
+		  $.activity.add(latest_estimate);
+	  }
 	}
 	else {
-		var nothing_here = myUiFactory.buildLabel( "No recent estimates provided", "100%", this._height_one_row+10, myUiFactory._text_label_large );	
-		$.activity.add(nothing_here);
-		Ti.API.info(" * no estimates provided... * ");
+	  var nothing_here_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
+		var nothing_here = myUiFactory.buildLabel( data.response, "100%", this._height_one_row+10, myUiFactory._text_label_medium );	
+		nothing_here_container.add(nothing_here);
+		$.activity.add(nothing_here_container);
 	}
 	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update >"); 
 	estimate_btn.addEventListener('click', function(){
@@ -113,10 +107,22 @@ function displayRecentEstimates(activity, place_ID) {
 			_place_ID    : place_ID,
 			_place_index : place_index
 		};
-		// createWindowController( "marks", "", "slide_left" );
 		createWindowController( "provideestimate", necessary_args, "slide_left" );
 	});
+	// if there are multiple estimates to be seen at this park
+	var more_btn = myUiFactory.buildFullRowButton("more_btn", "more >"); 
+	more_btn.addEventListener('click', function(){
+			Ti.API.info("...[+] Estimate History button clicked");
+		// TODO:  Create gray "see more >" button 
+		// 				package estimate info in args._estimates, open if clicked
+		var necessary_args = {
+			_place_ID  : place_ID
+		};
+		createWindowController( "viewparkestimate", necessary_args, "slide_left" );
+	});
+	
 	$.activity.add(estimate_btn);
+	$.activity.add(more_btn);
 }
 
 //====================================================================================================
@@ -124,10 +130,9 @@ function displayRecentEstimates(activity, place_ID) {
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
 function buildCheckinsList(data, parentObject) {
-	// Ti.API.debug(".... [~] buildActivityList ["+JSON.stringify(data) +"]");
  	/* got stuff to show!  */
   if( data.length > 0) {
-  	Ti.API.debug(".... [~] buildActivityList:: found ["+ data.length +"] dog(s) ");
+  	//Ti.API.debug(".... [~] buildActivityList:: found ["+ data.length +"] dog(s) ");
   	var how_many_bar = myUiFactory.buildInfoBar( "", "Currently here",  data.length );;
     parentObject.add(how_many_bar);
     
@@ -212,9 +217,6 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 	
 			if ( place.here==1 ) {
 				MYSESSION.dog.current_place_ID = place_ID;
-		    // TODO:  checkout button should be globally available
-				// populate checkout button + listener
-				// drawCheckoutButton();
 			}
 			/*  use the current checkins to build the activityList  */
       buildCheckinsList(place.checkins, parent_view);
@@ -308,7 +310,7 @@ getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID, whos_here_list);
 //----------------------------------------------------------------------------------------------------------
 if (poiInfo.category==600 || poiInfo.category==601) {
 	// TODO:  redo this using class methods
-	getRecentEstimates( args._place_ID, displayRecentEstimates );	
+	getRecentEstimates( args._place_ID, poiInfo.enclosure_count, displayRecentEstimates );	
 }
 
 //----------------------------------------------------------------------------
@@ -316,6 +318,13 @@ if (poiInfo.category==600 || poiInfo.category==601) {
 //----------------------------------------------------------------------------
 var marks_header = myUiFactory.buildSectionHeader("marks", "MARKS", 1);
 $.marks.add(marks_header);
+
+var params = {
+	place_type : 1, 
+	place_ID   : args._place_ID,
+	dog_id     : MYSESSION.dog.dog_ID
+};
+getMarks(params, displayMarks);
 
 //----------------------------------------------------------------------------
 //		(_6_)	 ScrollView listener (+ attach sticky mini-header bar)

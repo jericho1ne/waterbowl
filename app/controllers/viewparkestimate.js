@@ -8,16 +8,12 @@ function getAllEstimates( place_ID, callbackFunction ) {
 	var params = {
 		place_ID	: place_ID
 	};
-	
 	query.open("POST", "http://waterbowl.net/mobile/get-estimates.php");	
 	query.send( params );
 	query.onload = function() {
 		var jsonResponse = this.responseText;
-		var activityData = new Array();												// create empty object container
-									
 		if (jsonResponse != "" ) {
 			var activity = JSON.parse( jsonResponse );
-			
 			callbackFunction(activity);	
 		}
 	};
@@ -31,8 +27,6 @@ function displayAllEstimates(data) {
   // generate table rows for each item in activity array 
   var estimate_list = myUiFactory.buildViewContainer("estimate_list", "vertical", "100%", Ti.UI.SIZE, 0);	
   for (var i=0, len=data.length; i<len; i++) {			// optimize loop to only calculate array size once
-  	//Ti.API.info("data["+i+"]:" + JSON.stringify(data[i]) ); 
-  	// var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +data[i].dog_photo;
   	var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data[i].dog_photo;		
   
   	// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
@@ -44,18 +38,15 @@ function displayAllEstimates(data) {
   	var separator = myUiFactory.buildSeparator();
   	estimate_list.add(separator);
   }	
-  return estimate_list;
+  $.scrollView.add( estimate_list );
 }
 
 var args = arguments[0] || {};
 // var estimates = args._estimates;
 
-
-// Ti.API.debug( args._estimates )
 // TODO:  Add park name at top of page, text only, super large
 var section_header = myUiFactory.buildSectionHeader("recent_estimates", "Recent Estimates", 0);
 $.scrollView.add(section_header);
 
-var estimates = getAllEstimates(args._place_ID, displayAllEstimates);
-$.scrollView.add(estimates);
+getAllEstimates(args._place_ID, displayAllEstimates);
 
