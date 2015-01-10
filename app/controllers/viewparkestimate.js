@@ -13,7 +13,9 @@ for (var i=0, len=estimates.length; i<len; i++) {			// optimize loop to only cal
 	var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +estimates[i].dog_photo;		
 
 	// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
-	var est_view = myUiFactory.buildTableRow("estimate_"+i, photo_url, estimates[i].dog_name, estimates[i].time_elapsed, estimates[i].amount, estimates[i].amount_suffix);
+	var suffix = estimates[i].enclosure_type+" dog area"; //estimates[i].amount_suffix;
+	
+	var est_view = myUiFactory.buildTableRow("estimate_"+i, photo_url, estimates[i].dog_name, estimates[i].time_elapsed, estimates[i].amount, suffix);
 	$.scrollView.add(est_view);
 	
 	var separator = myUiFactory.buildSeparator();

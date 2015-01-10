@@ -7,6 +7,31 @@
 //
 
 //================================================================================
+//		Name:			getMarks( place_ID, callbackFunction )
+//		Purpose:		get latest user-provided marks
+//================================================================================
+function getMarks( place_ID, callbackFunction ) {
+	Ti.API.info("* getMarks() called *");
+	var query = Ti.Network.createHTTPClient();
+	var params = {
+		place_ID	: place_ID
+	};
+	/*
+	query.open("POST", "http://waterbowl.net/mobile/marks-mapshow.php");	
+	query.send( params );
+	query.onload = function() {
+		var jsonResponse = this.responseText;
+		var activityData = new Array();												// create empty object container
+									
+		if (jsonResponse != "" ) {
+			var activity = JSON.parse( jsonResponse );
+			callbackFunction(activity, place_ID);	
+		}
+	};
+	*/
+}
+
+//================================================================================
 //		Name:			getPlaceEstimates( place_ID, callbackFunction )
 //		Purpose:		get latest user-provided estimates
 //================================================================================
@@ -17,7 +42,7 @@ function getPlaceEstimates( place_ID, callbackFunction ) {
 		place_ID	: place_ID
 	};
 	
-	query.open("POST", "http://waterbowl.net/mobile/get-place-activity.php");	
+	query.open("POST", "http://waterbowl.net/mobile/get-estimates.php");	
 	query.send( params );
 	query.onload = function() {
 		var jsonResponse = this.responseText;
