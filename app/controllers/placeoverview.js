@@ -32,17 +32,18 @@ function getMarks( place_ID, callbackFunction ) {
 }
 
 //================================================================================
-//		Name:			getPlaceEstimates( place_ID, callbackFunction )
+//		Name:			getRecentEstimates( place_ID, callbackFunction )
 //		Purpose:		get latest user-provided estimates
 //================================================================================
-function getPlaceEstimates( place_ID, callbackFunction ) {
-	Ti.API.info("* getPlaceEstimates() called *");
+function getRecentEstimates( place_ID, callbackFunction ) {
+	Ti.API.info("* getRecentEstimates() called *");
 	var query = Ti.Network.createHTTPClient();
 	var params = {
-		place_ID	: place_ID
+		place_ID	: place_ID, 
+		enclosure_count : 2
 	};
 	
-	query.open("POST", "http://waterbowl.net/mobile/get-estimates.php");	
+	query.open("POST", "http://waterbowl.net/mobile/get-recent-estimates.php");	
 	query.send( params );
 	query.onload = function() {
 		var jsonResponse = this.responseText;
@@ -57,11 +58,11 @@ function getPlaceEstimates( place_ID, callbackFunction ) {
 }
 
 //================================================================================
-//		Name:			displayPlaceEstimates( data )
+//		Name:			displayRecentEstimates( data )
 //		Purpose:	add place estimate modules to Window and fill them in w/ data
 //================================================================================
-function displayPlaceEstimates(activity, place_ID) {
-	Ti.API.debug( ">>>>>>>>>>> activity.length : " + activity.length);
+function displayRecentEstimates(activity, place_ID) {
+	Ti.API.debug( ">>>>>>>>>>> activity.payload.length : " + activity.payload.length);
 	// +=== last_estimate_view (in XML) =========+
 	// |  +-thumb-+ +-- middle --+ +-- right--+  |
 	// |  |       | |            | |          |  |
@@ -70,7 +71,7 @@ function displayPlaceEstimates(activity, place_ID) {
 	// |  +-------+ +------------+ +----------+  |		
 	// +=========================================+
 	
-	if( activity.length > 0) {	
+	if( activity.payload.length > 0) {	
 		var large_dog_section_header = myUiFactory.buildSectionHeader("large_dog", "Large Dog Area", 0);
 		$.activity.add(large_dog_section_header);
 		// var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +activity[0].dog_photo;
@@ -85,33 +86,29 @@ function displayPlaceEstimates(activity, place_ID) {
 		var last_estimate_small = myUiFactory.buildTableRowHeader("most_recent_update", photo_url, activity[0].dog_name, activity[0].time_elapsed, activity[0].amount, activity[0].amount_suffix);
 		$.activity.add(last_estimate_small);
 		
-		if( activity.length > 1) {				// if there are multiple estimates to be seen at this park
+		if( activity.payload.length > 1) {				// if there are multiple estimates to be seen at this park
 			var more_btn = myUiFactory.buildFullRowButton("more_btn", "more >"); 
 			more_btn.addEventListener('click', function(){
 	 			Ti.API.info("...[+] Estimate History button clicked");
 				// TODO:  Create gray "see more >" button 
 				// 				package estimate info in args._estimates, open if clicked
 				var necessary_args = {
-					_place_ID  : place_ID,
-					_estimates : activity
+					_place_ID  : place_ID
 				};
 				// createWindowController( "marks", "", "slide_left" );
 				createWindowController( "viewparkestimate", necessary_args, "slide_left" );
 			});
-			//right.add(more_btn);
 			$.activity.add(more_btn);
 		} 	
 	}
 	else {
-		var nothing_here = myUiFactory.buildLabel( "no estimates provided", "100%", this._height_one_row+10, this._text_label_large );	
+		var nothing_here = myUiFactory.buildLabel( "No recent estimates provided", "100%", this._height_one_row+10, myUiFactory._text_label_large );	
 		$.activity.add(nothing_here);
 		Ti.API.info(" * no estimates provided... * ");
 	}
 	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update >"); 
 	estimate_btn.addEventListener('click', function(){
-			Ti.API.info("...[+] Estimate Update button clicked");
-		// TODO:  Create gray "see more >" button 
-		// 				package estimate info in args._estimates, open if clicked
+    Ti.API.info("...[+] Estimate Update button clicked");
 		var necessary_args = {
 			_place_ID    : place_ID,
 			_place_index : place_index
@@ -119,29 +116,31 @@ function displayPlaceEstimates(activity, place_ID) {
 		// createWindowController( "marks", "", "slide_left" );
 		createWindowController( "provideestimate", necessary_args, "slide_left" );
 	});
-	//right.add(more_btn);
 	$.activity.add(estimate_btn);
 }
 
 //====================================================================================================
-//		Name:				buildActivityList(dataArray, parentObject)
+//		Name:				buildCheckinsList(dataArray, parentObject)
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
-function buildActivityList(data, parentObject) {
+function buildCheckinsList(data, parentObject) {
 	// Ti.API.debug(".... [~] buildActivityList ["+JSON.stringify(data) +"]");
-  // WHO'S HERE LIST
-  // TODO:  need two labels inside dog_count_container View
-  // eg:  CURRECT CHECKINGS (Raleway regular):  6 (Raleway bold)
-  /*var dog_count_banner =  Ti.UI.createLabel( {text:"and "+data.length+" more", color: "#ec3c95" } );
-	$.addClass(dog_count_banner, "");
-	parentObject.add(dog_count_banner);
-	*/
+ 	/* got stuff to show!  */
   if( data.length > 0) {
   	Ti.API.debug(".... [~] buildActivityList:: found ["+ data.length +"] dog(s) ");
+  	var how_many_bar = myUiFactory.buildInfoBar( "", "Currently here",  data.length );;
+    parentObject.add(how_many_bar);
+    
+    var thumb_height = myUiFactory.getDefaultThumbSize();
+    var row_height   = myUiFactory.getDefaultRowHeight();
+
   	if( data.length > 4) {
   		// size up parent container so that we can fit two rows, up to 8 thumbnails
-  		parentObject.height = parentObject.height * 2;  	
+  		parentObject.height = (thumb_height * 2) + row_height + 12;  	
   	}
+  	else
+      parentObject.height = thumb_height + row_height + 8;
+      
     for (var i=0, len=data.length; i<len; i++) {		// only calculate array size once
 		  var border = 0; 			// this is nobody we know by default (0=other, 1=me, 2=friends)
 		  
@@ -149,7 +148,7 @@ function buildActivityList(data, parentObject) {
 		  	border = 1;
 		  	
 		 	var dog_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data[i].photo;
-		  var dog_thumb = myUiFactory.buildImageView("dog_thumb_"+i, dog_image, border);
+		  var dog_thumb = myUiFactory.buildImageThumb("dog_thumb_"+i, dog_image, border);
 		
 		  parentObject.add(dog_thumb);
 		  if (i>7)
@@ -163,6 +162,12 @@ function buildActivityList(data, parentObject) {
 			parentObject.add(how_many_more);
 		}				
   }
+  /*  got nathin' */
+  else {
+    var how_many_bar = myUiFactory.buildInfoBar( "", "Nobody currently here", "" );;
+    parentObject.add(how_many_bar);  
+  }
+    
 }
 
 //=================================================================================
@@ -212,7 +217,7 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 				// drawCheckoutButton();
 			}
 			/*  use the current checkins to build the activityList  */
-      buildActivityList(place.checkins, parent_view);
+      buildCheckinsList(place.checkins, parent_view);
 		}
 	};
   return "";	
@@ -282,7 +287,7 @@ $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi a
 //----------------------------------------------------------------------------------------------------------
 //		(_3_)		CHECKINS
 //----------------------------------------------------------------------------------------------------------
-var whos_here_section_header = myUiFactory.buildSectionHeader("whos_here", "WHO'S HERE", 1);
+var whos_here_section_header = myUiFactory.buildSectionHeader("whos_here", "ACTIVITY", 1);
 $.activity.add(whos_here_section_header);
 
 // the thumbs of dogs have to display inline-block (and wrap) 
@@ -303,7 +308,7 @@ getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID, whos_here_list);
 //----------------------------------------------------------------------------------------------------------
 if (poiInfo.category==600 || poiInfo.category==601) {
 	// TODO:  redo this using class methods
-	getPlaceEstimates( args._place_ID, displayPlaceEstimates );	
+	getRecentEstimates( args._place_ID, displayRecentEstimates );	
 }
 
 //----------------------------------------------------------------------------
@@ -341,44 +346,3 @@ $.scrollView.addEventListener('scroll', function(e) {
 });
 
 
-
-//----------------------------------------------------------------------------
-//
-//		(X)		Checkin/Checkout button attach + related button listeners
-//
-//----------------------------------------------------------------------------
-/* if (typeof MYSESSION.nearbyPlaces != 'undefined') {
-	for (var j=0; j < MYSESSION.nearbyPlaces.length; j++) {
-		nearbyPlaceIDs.push( MYSESSION.nearbyPlaces[j].id );
-	}
-}*/
-
-/*  if we are nearby this place, show manual checkin button   */
-/*
-if ( how_close < MYSESSION.proximity )  {   
-	//	originally we checked for current place IDs presence in nearbyPlaceIDs array
-	//	>> nearbyPlaceIDs.indexOf( args._place_ID ) != -1
-	//alert("this is nearby!");
-	
-	var checkinBtn = Ti.UI.createButton ( { 
-		id: "checkinBtn", width: 48, height: 48, top: 10, title: "j", backgroundColor: '#58c6d5', borderRadius: 10,
-		font:{ fontFamily: 'Sosa-Regular', fontSize: 32 }, color: "#ffffff", 		// 
-		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
-	} );
-	
-	$.checkboxHeader.add( checkinBtn );
-	MYSESSION.checkinInProgress = true;
-	// checkin now officially in progress  <-- TODO: move to checkin.js
-	
-	checkinBtn.addEventListener('click', function(e) {
-		var checkinPage = Alloy.createController("checkin", {
-			_place_ID : args._place_ID			// pass in place ID!
-		}).getView();
-			
-		MYSESSION.previousWindow = "placeoverview";
-		MYSESSION.currentWindow = "checkin";
-		checkinPage.open({
-			transition : Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT
-		});
-	});
-} */
