@@ -4,7 +4,7 @@
   | |    		appTitle         | |
   |	+------------------------+ |
   | +----loginStuff----------+ |
- 	|	|				appTitle				 | |
+  | |                        | |
 	|	|				email						 | | 	
 	|	|				password				 | | 
 	|	|				loginBtn				 | | 			 
@@ -22,14 +22,12 @@
 		<View class="container">
 			<Label id="appTitle" class="top_80">waterbowl</Label>
 			
-			<View id="loginStuff" class="top_80">
-				<TextField class="text_field_large opacity_high" id="email"/>
-				<TextField class="text_field_large top_10 opacity_high" id="password"/>
-				<Button class="btn_large top_10 opacity_high" id="loginBtn"    onClick="goToLogin"/>
-				<Button class="btn_large top_20 opacity_high" id="registerBtn" onClick="goToRegister"/>		
+			<View id="loginStuff" class="top_80">		
+				<!-- <Button class="btn_large top_10 opacity_high" id="loginBtn" onClick="goToLogin"/> -->
+				<!-- <Button class="btn_large top_20 opacity_high" id="registerBtn" onClick="goToRegister"/>-->	
 			</View>
 			
-			<View id="footerContainer" class="top_40">
+			<View id="footerContainer" class="top_80">
 				<ImageView id="footer"/>
 				<View class="fill_height bg_dk_blue"/>
 			</View>

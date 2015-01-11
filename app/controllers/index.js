@@ -7,15 +7,15 @@ function goToLogin(e) {
 	'use strict';
 	
 	// temporarily blur the login fields while awaiting response
-	$.email.blur();
-	$.password.blur();
+	email.blur();
+	password.blur();
 			
-	if ($.email.value != '' && $.password.value != '') {
+	if (email.value != '' && password.value != '') {
 		var loginRequest = Titanium.Network.createHTTPClient();
 		loginRequest.open("POST", "http://www.waterbowl.net/mobile/login.php");
 		var params = {
-			email : $.email.value,
-			pass  : $.password.value
+			email : email.value,
+			pass  : password.value
 		};
 		loginRequest.send(params);
 		Ti.API.info ( "SENDING: "+JSON.stringify(params) );
@@ -25,8 +25,8 @@ function goToLogin(e) {
 			Ti.API.debug( "Login Response: " + JSON.stringify(response) );
 			if (response.status == 1) {
 				// save credentials locally in MYSESSION global arrays
-				MYSESSION.user.email 		= $.email.value;
-				MYSESSION.user.password = $.password.value;
+				MYSESSION.user.email 		= email.value;
+				MYSESSION.user.password = password.value;
 				MYSESSION.user.owner_ID = response.human.owner_ID;
 				
 				MYSESSION.dog.dog_ID 		              = response.dog.dog_ID;
@@ -43,8 +43,8 @@ function goToLogin(e) {
 				MYSESSION.dog.name	 	= response.dog.dog_name;
 				MYSESSION.dog.photo	= response.dog.dog_photo;
 			
-				Ti.App.Properties.setString('user', $.email.value);
-				Ti.App.Properties.setString('pass', $.password.value);
+				Ti.App.Properties.setString('user', email.value);
+				Ti.App.Properties.setString('pass', password.value);
 		
 				// TODO: dog info
 				Ti.API.log( "*** Saved Creds: "+MYSESSION.user.owner_ID+ "/" +MYSESSION.user.email+ "/" + MYSESSION.user.password);
@@ -62,8 +62,8 @@ function goToLogin(e) {
 	else {
 		createSimpleDialog('Login Error', 'Please fill in both fields.');
 			
-		$.email.focus();
-		$.password.focus();
+		email.focus();
+		password.focus();
 	}    
 }
 
@@ -79,24 +79,20 @@ function goToRegister (e) {
 //========================== Create and Open top level UI components ======================================= 
 $.index.open();	
 addToAppWindowStack( $.index, "index" );
+//                                          id,        type,      hint,   is_pwd
+var email    = myUiFactory.buildTextField("email",   "regular", "email",  "");
+var password = myUiFactory.buildTextField("password", "regular", "password", true);
+$.loginStuff.add(email);
+$.loginStuff.add(password);
 
-/*
-// CLASS TESTS
-var myFactory = new UiFactoryModule.UiFactory();
-//myFactory.getName();
-var section_header = myFactory.buildSectionHeader("temp_view_id", "WELCOME TO WATERBOWL");
-var style = $.createStyle({
-  classes: ['section_header', 'bg_dk_gray', 'text_medium_medium', 'white'	]
-});
-section_header.applyProperties(style);
-//section_header.children[0].applyProperties(style);
 
-var test_btn = myFactory.buildSmallButton( "test_btn", "Login" );
-test_btn.addEventListener('click', goToLogin);
-section_header.add(test_btn);
-Ti.API.debug(">> SECTION HEADER CONTENTS: >>"+JSON.stringify( section_header.children) );
-$.loginStuff.add(section_header);
-*/
+var loginBtn = myUiFactory.buildButton("loginBtn", "login", "header");
+loginBtn.addEventListener('click', function(){ goToLogin(); });
+$.loginStuff.add(loginBtn);
+
+var regBtn = myUiFactory.buildButton("regBtn", "register", "large");
+regBtn.addEventListener('click', function(){ goToRegister(); });
+$.loginStuff.add(regBtn);
 
 // check network connection 
 if(Titanium.Network.networkType == Titanium.Network.NETWORK_NONE) {
@@ -126,16 +122,16 @@ Titanium.API.info ('...[~]Available memory: ' + Titanium.Platform.availableMemor
 
 // if credentials are already saved in MYSESSION
 if( MYSESSION.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
-	$.email.value = MYSESSION.user.email;
-	$.email.value = Ti.App.Properties.getString('user');
+  email.value = MYSESSION.user.email;
+	email.value = Ti.App.Properties.getString('user');
 }
 if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
-	$.password.value = MYSESSION.user.password;
-	$.password.value = Ti.App.Properties.getString('pass');
+	password.value = MYSESSION.user.password;
+	password.value = Ti.App.Properties.getString('pass');
 }	
 
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
-setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
+// setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 //createWindowController("provideestimate","","slide_left");

@@ -70,9 +70,9 @@
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, scrollable: true, showVerticalScrollIndicator: true, 
 	scrollIndicatorStyle: Ti.UI.iPhone.ScrollIndicatorStyle.BLACK	}
 
-//************************************************************************************************************/
-// 									Predefined Ti Selectors																		  														 
-//***********************************************************************************************************
+/****************************************************************************************************
+ 									Predefined Ti Selectors																		  														 
+****************************************************************************************************/
 "#menubar"			: { height: 36, width: "100%" }		// the rest is defined post-page load in Alloy.js
 										
 ".menuLeft"			: { width: "20%", height: 36 }
@@ -90,19 +90,18 @@
 ".wbLogoMenubar" 	: { width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: 48,
 											color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18 } }
 
-//***********************************************************************************************************
-// 									Layouts and ScrollViews																				  												 
-//***********************************************************************************************************
-"#scrollView" 			: { backgroundColor: "" }
+/*********************************************************************************************************
+									Layouts and ScrollViews																				  												 
+****************************************************************************************************/"#scrollView" 			: { backgroundColor: "" }
 "#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
 
 
-// SINGLE USE -- height should equal top value of .container!
+/* SINGLE USE -- height should equal top value of .container!  */
 ".window_container" : { top: 32, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", exitOnClose: true }  // top: 32
 
-//*********************************************************************************************************
-// 						ALL OUTER DIVS -- div in each XML view is a .container * Forewarned. *
-//*********************************************************************************************************
+/********************************************************************************************************
+ 						ALL OUTER DIVS -- div in each XML view is a .container * Forewarned. *
+*********************************************************************************************************/
 // OVERLAYS ALLOWED
 ".absolute" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "absolute", width: "100%", backgroundColor: "#cccccc", exitOnClose: true }
 
