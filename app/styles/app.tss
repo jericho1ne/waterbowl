@@ -44,7 +44,7 @@
 "View" : { layout: 'vertical', height: Ti.UI.SIZE }
 
 "ScrollView": {
-	layout: 'vertical', contentHeight: 'auto',
+  layout: 'vertical', contentHeight: 'auto',
 	showVerticalScrollIndicator: "true",
 	showHorizontalScrollIndicator: "true"
 }
@@ -67,8 +67,9 @@
 
 "TableView": { 
 	color: "#efefef", backgroundColor: '#ffffff', zIndex: 2, opacity: 0.96,
-	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, scrollable: true, showVerticalScrollIndicator: true, 
-	scrollIndicatorStyle: Ti.UI.iPhone.ScrollIndicatorStyle.BLACK	}
+	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, scrollable: true, showVerticalScrollIndicator: true
+/*	scrollIndicatorStyle: Ti.UI.iPhone.ScrollIndicatorStyle.BLACK	 */
+}
 
 /****************************************************************************************************
  									Predefined Ti Selectors																		  														 
@@ -95,16 +96,14 @@
 ****************************************************************************************************/"#scrollView" 			: { backgroundColor: "" }
 "#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
 
-
 /* SINGLE USE -- height should equal top value of .container!  */
-".window_container" : { top: 32, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", width: "100%", exitOnClose: true }  // top: 32
+".window_container" : { top: 32, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", backgroundColor: '#DCF1FC', width: "100%", exitOnClose: true }  // top: 32
 
 /********************************************************************************************************
  						ALL OUTER DIVS -- div in each XML view is a .container * Forewarned. *
 *********************************************************************************************************/
 // OVERLAYS ALLOWED
-".absolute" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "absolute", width: "100%", backgroundColor: "#cccccc", exitOnClose: true }
-
+".absolute" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "absolute", width: "100%", exitOnClose: true }
 // VERTICAL STACKING -- also try >>  height: Ti.UI.FILL
 ".container" : { top: 0, layout: 'vertical', contentHeight: 'auto', width: "100%"  }  
 

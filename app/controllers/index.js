@@ -39,7 +39,6 @@ function goToLogin(e) {
 				  MYSESSION.dog.current_place_geofence_radius = response.place.geofence_radius;
         }
 				MYSESSION.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
-
 				MYSESSION.dog.name	 	= response.dog.dog_name;
 				MYSESSION.dog.photo	= response.dog.dog_photo;
 			
@@ -57,11 +56,9 @@ function goToLogin(e) {
 				createSimpleDialog('Login Error', response.message);
 			}
 		};
-
 	} 
 	else {
-		createSimpleDialog('Login Error', 'Please fill in both fields.');
-			
+		createSimpleDialog('Login Error', 'Please fill in both fields.');	
 		email.focus();
 		password.focus();
 	}    
@@ -116,10 +113,6 @@ else {
 
 Titanium.API.info ('...[~]Available memory: ' + Titanium.Platform.availableMemory);
 
-/*  	LOGIN HACK  */
-// Ti.App.Properties.setString('user', '');
-// Ti.App.Properties.setString('pass', '');
-
 // if credentials are already saved in MYSESSION
 if( MYSESSION.user.email!=null || Ti.App.Properties.getString('user')!="" ) {
   email.value = MYSESSION.user.email;
@@ -131,7 +124,15 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 }	
 
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
-// setTimeout ( function() { $.loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
+// Ti.App.Properties.setString('user', '');
+// Ti.App.Properties.setString('pass', '');
+// setTimeout ( function() { loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-//createWindowController("provideestimate","","slide_left");
+var necessary_args = {
+  _place_ID    : 601000001,
+	_place_index : 0,
+	_place_name  : "Oberieder Park!",
+	_enclosure_count : 2
+};
+createWindowController("provideestimate",necessary_args,"slide_left");

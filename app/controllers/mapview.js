@@ -50,7 +50,6 @@ function drawDefaultMap(lat, lon, delta) {
 	return wbMapView;
 }
 
-
 //=================================================================================
 // 	Name:  		initializeMap ()
 // 	Purpose:	draw default Apple map
@@ -311,13 +310,14 @@ function buildRecenterButton( mapObject ) {
   recenterBtn.addEventListener('click', function() {			// REFRESH button
     Ti.API.info("...[+] Recenter button clicked on map");
 		Ti.Geolocation.getCurrentPosition(function(e) {
-      if (e.error && Titanium.Platform.model!="Simulator") {			// sim always return SF coords
-        // Only display error if running in simulator
+      if (e.error) {			
+        // check if running in simulator  if (Titanium.Platform.model != "Simulator")
+
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
         createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
-        centerMapOnLocation(mapObject, MYSESSION.geo.lat, MYSESSION.geo.lon, 0.01);
+        // centerMapOnLocation(mapObject, MYSESSION.geo.lat, MYSESSION.geo.lon, 0.01);
       } 
-      else {
+      else {  // if no errors, and we're not running in Simulator
         centerMapOnLocation(mapObject, e.coords.latitude, e.coords.longitude, 0.01);
 	    }
     });  

@@ -22,12 +22,9 @@
 		<View class="container">
 			<Label id="appTitle" class="top_80">waterbowl</Label>
 			
-			<View id="loginStuff" class="top_80">		
-				<!-- <Button class="btn_large top_10 opacity_high" id="loginBtn" onClick="goToLogin"/> -->
-				<!-- <Button class="btn_large top_20 opacity_high" id="registerBtn" onClick="goToRegister"/>-->	
-			</View>
+			<View id="loginStuff" top="120" />
 			
-			<View id="footerContainer" class="top_80">
+			<View id="footerContainer" top="70">
 				<ImageView id="footer"/>
 				<View class="fill_height bg_dk_blue"/>
 			</View>

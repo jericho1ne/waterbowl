@@ -1,14 +1,4 @@
 //
-// 	alloy.js gets executed before index.js or any other view controllers
-// 	You have access to all functionality on the `Alloy` namespace.
-//
-//	Things made accessible globally by attaching them to the Alloy.Globals object
-//
-// 	Initializion / Global Variable + Function creation
-// 		
-//=================================================================================
-
-//
 // 						CLASS OBJECTS
 //
 //================================================================================
@@ -48,22 +38,7 @@ var geoUtil = function () {
 // Ti.API.debug( "myGeo.deg2rad(90): " + myGeo.deg2rad(90) ); 
 
 
-//*************************************************************************************************
-
-//===========================================================================================
-//	Name:		createAlloyObject( )
-//	Purp:		alloy object factory
-//===========================================================================================
-function createAlloyObject (container_id, label_id, title) {
-	var section_label = Ti.UI.createLabel( {id: label_id, text: title} );
-	$.addClass(section_label, "section_header bg_dk_gray text_medium_medium white"); 
-	
-	var view_container = Ti.UI.createView( {id: container_id, height: 45, backgroundColor: "#ffffff", borderRadius: 2} );
-	$.addClass(view_container, "section_header bg_dk_gray text_medium_medium white"); 
-	view_container.add(section_label);
-
-	return view_container;
-}
+//**********************************************************************************
 
 //===============================================
 //	Name:    isset ( value )
@@ -98,29 +73,6 @@ function createColorBlock (block_bg_color) {
 		width : 8, height : 25, top:2, left : 6, zIndex : 20, backgroundColor : block_bg_color, borderRadius: 2
 	});
 }
-
-//===========================================================================================
-//	Name:		 	createSectionHeader (container_id, label_id, title)
-//	Purpose:		standardize section header
-//===========================================================================================
-function createSectionHeader (container_id, label_id, title) {
-	var section_label = Ti.UI.createLabel( {id: label_id, text: title} );
-	$.addClass(section_label, "section_header bg_dk_gray text_medium_medium white"); 
-	
-	var view_container = Ti.UI.createView( {id: container_id, height: 45, backgroundColor: "#ffffff", borderRadius: 2} );
-	$.addClass(view_container, "section_header bg_dk_gray text_medium_medium white"); 
-	view_container.add(section_label);
-
-	return view_container;
-}
-
-/*
-	<View id="activityContainer" class="container">
-  			  <Label id="activityTitle" text="WHO'S HERE" class="section_header bg_dk_gray text_medium_medium white" /> 
-  			  <View id="activityList" contentHeight="auto" width="100%" class="thumbnail_sm_container layout_horz border bg_lt_blue"/>
-  		  </View>
-
-*/
 
 //===========================================================================================
 //	Name:		 	createWindowController ( win_name, args, animation[optional])
@@ -203,7 +155,6 @@ function deg2rad(deg) {
   return deg * (Math.PI/180);
 }
 
-
 //======================================================================
 //	Name:			getArrayIndexById( array, value )
 //	Purpose:	figure out array item's number index via associative key
@@ -212,7 +163,7 @@ function getArrayIndexById( array, value ) {
   for (var i=0; i<array.length; i++) {
     if (array[i].id == value) {
       return i;
-	 }
+	  }
   }
   return -1;
 }
