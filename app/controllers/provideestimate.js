@@ -7,14 +7,14 @@
 //
 
 //===========================================================
-//	name:			updateLabel(e)
+//	name:			updateLabel(e, slider_label, slider_value)
 //	purpose:	display slider estimate ranges
 //===========================================================
-function updateLabel(e){
+function updateLabel(e, slider_label, slider_value){
 	Ti.API.log( " *** Slider: "+ e.value + " * " );
   // slider_label.text = String.format("%3f", e.value);
   var text_estimate = "";
-  var int_estimate = "";
+  var int_estimate  = "";
   
   var slider_val = Math.round(e.value);
   
@@ -46,8 +46,8 @@ function updateLabel(e){
    		text_estimate = 'It\'s full of dogs!';
    		int_estimate = '16+';
 		}
-		slider_label.text 	= text_estimate;
-		slider_int_val.text = int_estimate;
+		slider_label.text = text_estimate;
+		slider_value.text = int_estimate;
 }
 
 //========================================================================
@@ -55,11 +55,15 @@ function updateLabel(e){
 //	Purpose:	check into a place - user_estimates table
 //	TODO:			Allow selection between multiple dogs
 //========================================================================
-function updateEstimates (place_ID, estimate) {
+function updateEstimates (place_ID, value_1, value_2) {
+	Ti.API.debug(".... [~] updateEstimates: "+value_1+" "+value_2);
+	
+	alert("estimate_scale values:  large dog "+value_1+" / small dog "+value_2 );
+	/*
 	var grabPlaces = Ti.Network.createHTTPClient();
 	grabPlaces.open("POST", "http://waterbowl.net/mobile/set-place-estimate.php");
 	
-	Ti.API.log( "* Check In @ place ID " + place_ID + 
+	Ti.API.log( "* Saving estimate  @ place_ID " + place_ID + 
 		" | owner_ID: " + MYSESSION.user.owner_ID + 
 		" | estimate: " + estimate + 
 		" | @ ["+ MYSESSION.geo.lat +', '+ MYSESSION.geo.lon+ "]" );
@@ -86,7 +90,7 @@ function updateEstimates (place_ID, estimate) {
 				$.provideestimate.close();
 				$.provideestimate = null;
 				
-				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
+				//		 save Place ID, checkin state, and timestamp in MYSESSION  	
 				MYSESSION.checkedIn = true;									// checkin now officially complete
 				var timestamp = new Date().getTime();
 				MYSESSION.lastCheckIn 			= timestamp;
@@ -106,6 +110,7 @@ function updateEstimates (place_ID, estimate) {
 				alert("No data received from server"); 
 	};
 	return response;
+	*/
 }
 
 
@@ -117,46 +122,68 @@ function updateEstimates (place_ID, estimate) {
 //
 //-----------------------------------------------------------------------
 var args = arguments[0] || {};
-// var place_index = getArrayIndexById( MYSESSION.nearbyPlaces, args._place_ID );
-// $.place_checkin.text = MYSESSION.allPlaces[args._place_index].name;
-var park_name = args._place_name;
-
+Ti.API.debug( " >>> Provide Estimate (@top) >>> "+JSON.stringify(args));
+	
+var park_name       = args._place_name;
+var enclosure_count = args._enclosure_count;
 var section_header = myUiFactory.buildSectionHeader("park_name", park_name, 2)
-var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", 80,  myUiFactory._text_label_medium );		
-//	var name_label  = myUiFactory.buildLabel( name, "55%", "100%", myUiFactory._text_label_small );
+var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", 50,  myUiFactory._text_label_medium );		
 
-  
-var slider1 = Ti.UI.createSlider( { 
-  id:"slider", width:"90%", height: "auto", top: 10,  
-  backgroundColor: "", borderRadius: 12, width:"90%", 
-  min: "1", max:"7", value: "4"
-});
-var slider_int_val = myUiFactory.buildLabel( "slider_int_val", "100%", "auto", myUiFactory._text_label_banner );
-var slider_label   = myUiFactory.buildLabel( "slider_label", "100%", "auto", myUiFactory._text_label_medium );
-var save_est_btn   = myUiFactory.buildButton( "save_est_btn", "save", "medium" );
- 
+// backend script doesn't care if there are one or two sliders on the page
+// only needs to know if place_estimate.enclosure_type is mixed, large, or small
+
+/*   both large and small dog areas       */
 var scroll_view = myUiFactory.buildScrollView('scroll_view');
-
 scroll_view.add(section_header);
-scroll_view.add(call_to_action);	
+scroll_view.add(call_to_action);
+
+/*   Mixed area, if this be the only slider  
+     If a second one follows, it becomes the Large Dogs slider        */
+var slider1 = myUiFactory.buildSlider("slider1", 1, 7, '');
+var slider1_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_label_medium );
+var slider1_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_label_banner );   
+
+if (enclosure_count==1)  
+  scroll_view.add( myUiFactory.buildSectionHeader("", "Mixed Dog Area", 1) );	
+else if (enclosure_count==2)  
+  scroll_view.add( myUiFactory.buildSectionHeader("", "Large Dog Area", 1) );	
+  
 scroll_view.add(slider1);	
-scroll_view.add( myUiFactory.buildSpacer(50, "") );      // pass in size, color
-scroll_view.add(slider_int_val);	
-scroll_view.add(slider_label);
-scroll_view.add( myUiFactory.buildSpacer(50, "") );      // pass in size, color
+scroll_view.add(slider1_label);	
+scroll_view.add(slider1_value);
+scroll_view.add( myUiFactory.buildSpacer(20, "") );      // pass in size, color
+
+/* And the following slider will be for Small Dogs  */
+if (enclosure_count==2) {   // 
+  scroll_view.add( myUiFactory.buildSeparator() );	
+  scroll_view.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
+  
+  var slider2 = myUiFactory.buildSlider("slider2", 1, 7, '');
+  var slider2_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_label_medium );
+  var slider2_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_label_banner ); 
+
+  scroll_view.add(slider2);	
+  scroll_view.add(slider2_label);	
+  scroll_view.add(slider2_value);
+  scroll_view.add( myUiFactory.buildSpacer(20, "") );      // pass in size, color
+}    
+/*   SLIDE EVENT LISTENERS      */
+slider1.addEventListener('change', function(e){
+  updateLabel(e, slider1_label, slider1_value);
+});
+if (enclosure_count==2) {
+  slider2.addEventListener('change', function(e){
+    updateLabel(e, slider2_label, slider2_value);
+  });
+}
+  
+//  add save estimate button
+var save_est_btn   = myUiFactory.buildButton( "save_est_btn", "save estimate", "medium" );
 scroll_view.add(save_est_btn);
 $.content.add( scroll_view );
 
-slider1.addEventListener('change', function(e){
-  updateLabel(e);
-});
-
-// initial value set
-//slider_label.text = ""; 		
-//slider_int_val.text = "";
-
 save_est_btn.addEventListener('click', function(e) {
-	var estimate = Math.round( slider.value );
-	updateEstimates(args._place_ID, estimate);
+	// var estimate = ;
+	updateEstimates(args._place_ID, Math.round(slider1.value), Math.round(slider2.value) );
 });
 

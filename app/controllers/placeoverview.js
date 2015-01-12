@@ -5,18 +5,7 @@
 //	Created by Mihai Peteu Oct 2014
 //	(c) 2014 waterbowl
 //
-//================================================================================
-//		Name:			getRecentEstimates( place_ID, enclosure_count, callbackFunction )
-//		Purpose:		get latest user-provided estimates
-//================================================================================
-function getRecentEstimates( place_ID, enclosure_count, callbackFunction ) {
-	Ti.API.info("* getRecentEstimates() called *");
-	var params = {
-		place_ID	: place_ID, 
-		enclosure_count : enclosure_count
-	};
-	myUiFactory.loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", callbackFunction);
-}
+
 
 //================================================================================
 //		Name:			getMarks( params, callbackFunction )
@@ -50,6 +39,19 @@ function displayMarks(data) {
 }
 
 //================================================================================
+//		Name:			getRecentEstimates( place_ID, enclosure_count, callbackFunction )
+//		Purpose:		get latest user-provided estimates
+//================================================================================
+function getRecentEstimates( place_ID, enclosure_count, callbackFunction ) {
+	Ti.API.info("* getRecentEstimates() called *");
+	var params = {
+		place_ID	: place_ID, 
+		enclosure_count : enclosure_count
+	};
+	myUiFactory.loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", callbackFunction);
+}
+
+//================================================================================
 //		Name:			displayRecentEstimates( data )
 //		Purpose:	add place estimate modules to Window and fill them in w/ data
 //================================================================================
@@ -61,7 +63,6 @@ function displayRecentEstimates(data, place_ID) {
 	// |  |       | |            | |          |  |		
 	// |  +-------+ +------------+ +----------+  |		
 	// +=========================================+
-	
 	if( data.payload.length>0) {	
 	  for (var i=0, len=data.payload.length; i<len; i++) {	
 	    var dog_size_section_header = myUiFactory.buildSectionHeader("", data.payload[i].size+" Dog Area", 0);
@@ -78,13 +79,20 @@ function displayRecentEstimates(data, place_ID) {
 		nothing_here_container.add(nothing_here);
 		$.activity.add(nothing_here_container);
 	}
+	addEstimatesButtons();
+}
+
+
+function addEstimatesButtons() {
 	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update >"); 
 	estimate_btn.addEventListener('click', function(){
     Ti.API.info("...[+] Estimate Update button clicked");
-		var necessary_args = {
-			_place_ID    : args._place_ID,
-			_place_index : place_index
-		};
+    var necessary_args = {
+		  _place_ID    : args._place_ID,     // 601000001
+	    _place_index : place_index,
+      _place_name  : poiInfo.name,
+      _enclosure_count : poiInfo.enclosure_count
+    };
 		createWindowController( "provideestimate", necessary_args, "slide_left" );
 	});
 	// if there are multiple estimates to be seen at this park
@@ -102,7 +110,6 @@ function displayRecentEstimates(data, place_ID) {
 	$.activity.add(estimate_btn);
 	$.activity.add(more_btn);
 }
-
 //====================================================================================================
 //		Name:				displayPlaceCheckins(dataArray, parentObject)
 //		Purpose:		replace full size header w/ smaller version upon downward scroll

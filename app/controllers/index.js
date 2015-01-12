@@ -129,6 +129,7 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 // setTimeout ( function() { loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
+/*
 var necessary_args = {
   _place_ID    : 601000001,
 	_place_index : 0,
@@ -136,3 +137,4 @@ var necessary_args = {
 	_enclosure_count : 2
 };
 createWindowController("provideestimate",necessary_args,"slide_left");
+*/
