@@ -18,36 +18,41 @@ function updateLabel(e, slider_label, slider_value){
   
   var slider_val = Math.round(e.value);
   
-  if (slider_val == 1)	{
-    	text_estimate = 'No dogs :(';
-    	int_estimate = '0';
-    }
-    else if (slider_val == 2) {
-    	text_estimate = "One lonely dog…";
-			int_estimate = '1';
-		}
-		else if (slider_val == 3) {
-    	text_estimate = "A few pups";
-    	int_estimate = '2-3';
-		}
-    else if (slider_val == 4)	{
-    	text_estimate = "Some dogs";
-    	int_estimate = '4-6';
-		}
-    else if (slider_val == 5)	{
-    	text_estimate	= "Many dogs";
-    	int_estimate = '7-10';
-		}
-		else if (slider_val == 6) {
-			text_estimate = "A lot of dogs";
-			int_estimate = '11-15';
-		}
-   	else if (slider_val == 7)	{
-   		text_estimate = 'It\'s full of dogs!';
-   		int_estimate = '16+';
-		}
-		slider_label.text = text_estimate;
-		slider_value.text = int_estimate;
+  if (slider_val == 0)	{
+		text_estimate = 'No estimate provided';
+    int_estimate = '--';
+  }
+    
+	else if (slider_val == 1)	{
+  	text_estimate = 'No dogs :(';
+  	int_estimate = '0';
+  }
+  else if (slider_val == 2) {
+  	text_estimate = "One lonely dog…";
+		int_estimate = '1';
+	}
+	else if (slider_val == 3) {
+  	text_estimate = "A few pups";
+  	int_estimate = '2-3';
+	}
+  else if (slider_val == 4)	{
+  	text_estimate = "Some dogs";
+  	int_estimate = '4-6';
+	}
+  else if (slider_val == 5)	{
+  	text_estimate	= "Many dogs";
+  	int_estimate = '7-10';
+	}
+	else if (slider_val == 6) {
+		text_estimate = "A lot of dogs";
+		int_estimate = '11-15';
+	}
+ 	else if (slider_val == 7)	{
+ 		text_estimate = 'It\'s full of dogs!';
+ 		int_estimate = '16+';
+	}
+	slider_label.text = text_estimate;
+	slider_value.text = int_estimate;
 }
 
 //========================================================================
@@ -139,12 +144,12 @@ scroll_view.add(call_to_action);
 
 /*   Mixed area, if this be the only slider  
      If a second one follows, it becomes the Large Dogs slider        */
-var slider1 = myUiFactory.buildSlider("slider1", 1, 7, '');
+var slider1 			= myUiFactory.buildSlider("slider1", 0, 7, '');
 var slider1_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_label_medium );
 var slider1_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_label_banner );   
 
 if (enclosure_count==1)  
-  scroll_view.add( myUiFactory.buildSectionHeader("", "Mixed Dog Area", 1) );	
+  scroll_view.add( myUiFactory.buildSectionHeader("", "Entire Area", 1) );	
 else if (enclosure_count==2)  
   scroll_view.add( myUiFactory.buildSectionHeader("", "Large Dog Area", 1) );	
   
@@ -158,13 +163,13 @@ if (enclosure_count==2) {   //
   scroll_view.add( myUiFactory.buildSeparator() );	
   scroll_view.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
   
-  var slider2 = myUiFactory.buildSlider("slider2", 1, 7, '');
+  var slider2 			= myUiFactory.buildSlider("slider2", 0, 7, '');
   var slider2_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_label_medium );
   var slider2_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_label_banner ); 
 
-  scroll_view.add(slider2);	
   scroll_view.add(slider2_label);	
   scroll_view.add(slider2_value);
+  scroll_view.add(slider2);	
   scroll_view.add( myUiFactory.buildSpacer(20, "") );      // pass in size, color
 }    
 /*   SLIDE EVENT LISTENERS      */

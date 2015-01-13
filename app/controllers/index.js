@@ -91,6 +91,9 @@ var regBtn = myUiFactory.buildButton("regBtn", "register", "large");
 regBtn.addEventListener('click', function(){ goToRegister(); });
 $.loginStuff.add(regBtn);
 
+//var more_btn = myUiFactory.buildFullRowButton("more_btn", "more >"); 
+//$.loginStuff.add(more_btn);
+
 // check network connection 
 if(Titanium.Network.networkType == Titanium.Network.NETWORK_NONE) {
 	createSimpleDialog('Uh oh', 'No network connection detected');
@@ -126,7 +129,7 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
 // Ti.App.Properties.setString('user', '');
 // Ti.App.Properties.setString('pass', '');
-// setTimeout ( function() { loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
+setTimeout ( function() { loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 /*

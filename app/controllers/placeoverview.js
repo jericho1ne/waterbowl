@@ -5,8 +5,8 @@
 //	Created by Mihai Peteu Oct 2014
 //	(c) 2014 waterbowl
 //
-
-
+//		Last update Jan 12 2014
+//
 //================================================================================
 //		Name:			getMarks( params, callbackFunction )
 //		Purpose:		( 1, args._place_ID, MYSESSION.dog.dog_ID, displayMarks);
@@ -27,7 +27,10 @@ function displayMarks(data) {
 		  var mark = myUiFactory.buildTableRow( 
 		    "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text, ""
 		  );
+		 
 		  $.marks.add(mark);
+		  if ( i < (len-1) )
+		   $.marks.add( myUiFactory.buildSeparator() );
     }
   }
   else {
@@ -65,7 +68,11 @@ function displayRecentEstimates(data, place_ID) {
 	// +=========================================+
 	if( data.payload.length>0) {	
 	  for (var i=0, len=data.payload.length; i<len; i++) {	
-	    var dog_size_section_header = myUiFactory.buildSectionHeader("", data.payload[i].size+" Dog Area", 0);
+	  	var area_type = "Entire";
+	  	if (data.payload[i].size=="Large" || data.payload[i].size=="Small") {
+	  		area_type = data.payload[i].size+ " Dog";
+	    }
+	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", 0);
 		  $.activity.add(dog_size_section_header);
 		  // var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data.payload[i].dog_photo;		
@@ -115,7 +122,7 @@ function addEstimatesButtons() {
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
 function displayPlaceCheckins(data, parentObject) {
-	//Ti.API.debug(".... [~] displayPlaceCheckins:: found ["+ JSON.stringify(data) +"] dog(s) ");
+	Ti.API.debug(".... [~] displayPlaceCheckins:: ["+ JSON.stringify(data) +"] ");
  	if ( data.you_are_here==1 ) {
     MYSESSION.dog.current_place_ID = place_ID;
   }
@@ -149,6 +156,8 @@ function displayPlaceCheckins(data, parentObject) {
 		  	break;
 		}
 		if(data.checkins.length > 7) {
+			Ti.API.debug(".... [~] displayPlaceCheckins:: found ["+ JSON.stringify(data.checkins.length) +"] dog(s) ");
+ 	
 			var how_many_more_text = data.checkins.length - 7;
 			var how_many_more =  Ti.UI.createLabel( {text:"and "+how_many_more_text+" more", color: "#ec3c95" } );
 			$.addClass(how_many_more, "thumbnail");

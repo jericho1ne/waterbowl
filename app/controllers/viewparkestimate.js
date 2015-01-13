@@ -35,17 +35,19 @@ function displayAllEstimates(data) {
   	var est_view = myUiFactory.buildTableRow("estimate_"+i, photo_url, data[i].dog_name, data[i].time_elapsed, data[i].amount, suffix);
   	estimate_list.add(est_view);
   	
-  	var separator = myUiFactory.buildSeparator();
-  	estimate_list.add(separator);
+  	if ( i < (len-1) )
+		   estimate_list.add( myUiFactory.buildSeparator() );
   }	
   $.scrollView.add( estimate_list );
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var args = arguments[0] || {};
 // var estimates = args._estimates;
 
 // TODO:  Add park name at top of page, text only, super large
-var section_header = myUiFactory.buildSectionHeader("recent_estimates", "Recent Estimates", 0);
+var section_header = myUiFactory.buildSectionHeader("recent_estimates", "Recent Estimates", 1);
 $.scrollView.add(section_header);
 
 getAllEstimates(args._place_ID, displayAllEstimates);
