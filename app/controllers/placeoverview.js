@@ -140,7 +140,7 @@ function displayPlaceCheckins(data, parentObject) {
   
  	/* got stuff to show!  */
   if( data.checkins.length > 0) {
-  	var how_many_bar = myUiFactory.buildInfoBar( "images/icons/icon-dog-social-dogsmet@2x.png", "Currently here",  data.checkins.length );;
+  	var how_many_bar = myUiFactory.buildInfoBar( "images/icons/icon-poi-activity-dogscurrentlyhere@2x.png", "Currently here",  data.checkins.length );;
     parentObject.add(how_many_bar);
    
 	 	if( data.checkins.length > 4) {
