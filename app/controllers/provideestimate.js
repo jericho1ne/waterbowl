@@ -63,24 +63,23 @@ function updateLabel(e, slider_label, slider_value){
 function updateEstimates (place_ID, value_1, value_2) {
 	Ti.API.debug(".... [~] updateEstimates: "+value_1+" "+value_2);
 	
-	alert("estimate_scale values:  large dog "+value_1+" / small dog "+value_2 );
-	/*
+	// alert("estimate_scale values:  large dog "+value_1+" / small dog "+value_2 );
+	
 	var grabPlaces = Ti.Network.createHTTPClient();
 	grabPlaces.open("POST", "http://waterbowl.net/mobile/set-place-estimate.php");
 	
-	Ti.API.log( "* Saving estimate  @ place_ID " + place_ID + 
-		" | owner_ID: " + MYSESSION.user.owner_ID + 
-		" | estimate: " + estimate + 
-		" | @ ["+ MYSESSION.geo.lat +', '+ MYSESSION.geo.lon+ "]" );
 	
 	var params = {
 		place_ID : place_ID,
 		owner_ID : MYSESSION.user.owner_ID,
-		estimate: estimate,
+		dog_ID 	 : MYSESSION.dog.dog_ID,
+		value_1  : value_1,
+		value_2  : value_2,
 		lat:	MYSESSION.geo.lat,
 		lon:	MYSESSION.geo.lon
 	};
-	
+		Ti.API.log( "* Sending info to PHP " + JSON.stringify(params) );
+
 	var response = 0;
 	grabPlaces.send(params);
 	grabPlaces.onload = function() {
@@ -92,30 +91,15 @@ function updateEstimates (place_ID, value_1, value_2) {
 				Ti.API.log("  [>]  Estimate added successfully ");
 	
 				// close current window and bounce user to Place Overview
-				$.provideestimate.close();
-				$.provideestimate = null;
-				
-				//		 save Place ID, checkin state, and timestamp in MYSESSION  	
-				MYSESSION.checkedIn = true;									// checkin now officially complete
-				var timestamp = new Date().getTime();
-				MYSESSION.lastCheckIn 			= timestamp;
-				MYSESSION.checkinInProgress = false;				// remove "in progress" state
-				
-				// if placeoverview is already open, then don't do anything
-				// otherwise, the Map window sent us here, so we have to open placeoverview window
-				if  (MYSESSION.previousWindow != "placeoverview" ) {
-					var placeoverview = Alloy.createController("placeoverview", { _place_ID: place_ID }).getView();	
-					placeoverview.open();
-				}
+				closeWindowController();
 			}
 			else
-				alert("Unable to save estimate"); 
+				createSimpleDialog( "Problems Houston", response.message); 
 		}
 		else
-				alert("No data received from server"); 
+			createSimpleDialog( "Server timeout", "No data received"); 
 	};
 	return response;
-	*/
 }
 
 
@@ -129,52 +113,61 @@ function updateEstimates (place_ID, value_1, value_2) {
 var args = arguments[0] || {};
 Ti.API.debug( " >>> Provide Estimate (@top) >>> "+JSON.stringify(args));
 	
-var park_name       = args._place_name;
-var enclosure_count = args._enclosure_count;
-var section_header = myUiFactory.buildSectionHeader("park_name", park_name, 2)
-var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", "auto",  myUiFactory._text_medium );		
+var park_name       = args._poiInfo.name;
+var enclosure_count = args._poiInfo.enclosure_count;
+
+$.miniHeaderContainer.backgroundColor = args._poiInfo.icon_color;
+$.mini_place_name_label.text		= park_name;
+$.mini_place_second_label.text	=	args._poiInfo.city;  // + ' ('+ poiInfo.dist + " mi away)";
+
+//var miniheader = myUiFactory.buildMiniHeader(park_name, , ); 
+//$.sliders.add(miniheader);
+
+//var section_header = myUiFactory.buildSectionHeader("park_name", park_name, 2)
+//$.sliders.add(section_header);
+var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", 40, myUiFactory._text_medium,"center" );		
 
 // backend script doesn't care if there are one or two sliders on the page
 // only needs to know if place_estimate.enclosure_type is mixed, large, or small
 
-/*   both large and small dog areas       */
-var scroll_view = myUiFactory.buildScrollView('scroll_view');
-scroll_view.add(section_header);
-scroll_view.add(call_to_action);
+$.sliders.add(call_to_action);
 
 /*   Mixed area, if this be the only slider  
      If a second one follows, it becomes the Large Dogs slider        */
-var slider1 			= myUiFactory.buildSlider("slider1", 0, 7, '');
+
 
 																			//  	title, width, height, font_style, text_align 
 var slider1_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "" );
 var slider1_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "" );   
+var slider1 			= myUiFactory.buildSlider("slider1", 0, 7, '');
 
 if (enclosure_count==1)  
-  scroll_view.add( myUiFactory.buildSectionHeader("", "Entire Area", 1) );	
+  $.sliders.add( myUiFactory.buildSectionHeader("", "Entire Area", 1) );	
 else if (enclosure_count==2)  
-  scroll_view.add( myUiFactory.buildSectionHeader("", "Large Dog Area", 1) );	
-  
-scroll_view.add(slider1);	
-scroll_view.add(slider1_label);	
-scroll_view.add(slider1_value);
-scroll_view.add( myUiFactory.buildSpacer(20, "") );      // pass in size, color
+  $.sliders.add( myUiFactory.buildSectionHeader("", "Large Dog Area", 1) );	
 
-/* And the following slider will be for Small Dogs  */
+$.sliders.add( myUiFactory.buildSpacer("horz", 10) );      // pass in vert/horz, and dp size 
+$.sliders.add(slider1_label);	
+$.sliders.add(slider1_value);
+$.sliders.add(slider1);	
+$.sliders.add( myUiFactory.buildSpacer("horz", 20) );      // pass in vert/horz, and dp size
+
+
+// And the following slider will be for Small Dogs 
 if (enclosure_count==2) {   // 
-  scroll_view.add( myUiFactory.buildSeparator() );	
-  scroll_view.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
+  $.sliders.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
   
   var slider2 			= myUiFactory.buildSlider("slider2", 0, 7, '');
   var slider2_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "" );
   var slider2_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "" ); 
 
-  scroll_view.add(slider2_label);	
-  scroll_view.add(slider2_value);
-  scroll_view.add(slider2);	
-  scroll_view.add( myUiFactory.buildSpacer(20, "") );      // pass in size, color
+	$.sliders.add( myUiFactory.buildSpacer("horz", 10) );      // pass in vert/horz, and dp size
+  $.sliders.add(slider2_label);	
+  $.sliders.add(slider2_value);
+  $.sliders.add(slider2);	
+  $.sliders.add(myUiFactory.buildSpacer("horz", 20));     // pass in vert/horz, and dp size
 }    
-/*   SLIDE EVENT LISTENERS      */
+//  SLIDE EVENT LISTENERS     
 slider1.addEventListener('change', function(e){
   updateLabel(e, slider1_label, slider1_value);
 });
@@ -186,11 +179,13 @@ if (enclosure_count==2) {
   
 //  add save estimate button
 var save_est_btn   = myUiFactory.buildButton( "save_est_btn", "save estimate", "medium" );
-scroll_view.add(save_est_btn);
-$.content.add( scroll_view );
+$.sliders.add(save_est_btn);
+//$.content.add( $.sliders );
 
 save_est_btn.addEventListener('click', function(e) {
 	// var estimate = ;
-	updateEstimates(args._place_ID, Math.round(slider1.value), Math.round(slider2.value) );
+	if (enclosure_count==1)
+		updateEstimates(args._place_ID, Math.round(slider1.value), -1);
+	else if (enclosure_count==2)
+		updateEstimates(args._place_ID, Math.round(slider1.value), Math.round(slider2.value) );
 });
-

@@ -716,12 +716,12 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 /*
    HACK :: To skip to a specific window, uncomment block below and change which window name to jump to		
 */
-
+/*
 setTimeout(function() { createWindowController('placeoverview',{ 
 	_index : 0, 
 	_place_ID :601000001 
 },'slide_left'); }, 1200);
-
+*/
 //====================================================================================
 // 		Geolocation Change Event Listener
 //		Purpose:  

@@ -138,7 +138,7 @@
 ".fit_height"  : { height: Ti.UI.SIZE, width: "auto" }
 ".fit_width"   : { width: Ti.UI.SIZE, height: "auto" }
 
-".fill_height"  : { height: Ti.UI.FILL }
+".fill_height"  : { height: Ti.UI.FILL, width: "100%" }
 ".fill_width"   : { width: Ti.UI.FILL }
 
 /* --------------- END ALL THE SPACING STUFF  -------------------------- */
@@ -162,12 +162,12 @@
 ".text_small_bold"	  : { font:{ fontFamily: 'Raleway-Bold', fontSize: 13 } }
 
 ".text_medium_light"		: { font:{ fontFamily: 'Raleway-Light', fontSize: 14 } }
-".text_medium_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 15 } }
-".text_medium_bold"	: { font:{ fontFamily: 'Raleway-Bold', fontSize: 16 } }
+".text_medium_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 14 } }
+".text_medium_bold"	: { font:{ fontFamily: 'Raleway-Bold', fontSize: 14 } }
 
-".text_large_light"		: { font:{ fontFamily: 'Raleway-Light', fontSize: 24 } }
-".text_large_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 25 } }
-".text_large_bold"		: { font:{ fontFamily: 'Raleway-Bold', fontSize: 26 } }
+".text_large_light"		: { font:{ fontFamily: 'Raleway-Light', fontSize: 18 } }
+".text_large_medium"	: { font:{ fontFamily: 'Raleway-Medium', fontSize: 18 } }
+".text_large_bold"		: { font:{ fontFamily: 'Raleway-Bold', fontSize: 18 } }
 
 ".text_number"	: { font:{ fontFamily: 'Futura-Medium', fontSize: 24 } }
 

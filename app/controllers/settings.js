@@ -9,7 +9,7 @@ if ( isset(MYSESSION.dog.photo) )
 if ( isset(MYSESSION.user.email) )
   $.user_email.text = MYSESSION.user.email;
 
-
+// 
 
 /*
 setInterval (function(){
@@ -17,3 +17,17 @@ setInterval (function(){
 }, 2000);
 
 */
+
+
+
+//------------------------------------------------------------------------------------------------------
+//  This scrollView contains the following top level elements, all dynamically filled in by controller
+//	  (0)		headerContainer / miniHeaderContainer
+//	  (1)		activityContainer
+//					|
+//					+-- checkinContainer
+//					|
+//					+-- estimateContainer
+//		(2)		marksContainer
+//		(3)		poiDetailContainer
+//------------------------------------------------------------------------------------------------------

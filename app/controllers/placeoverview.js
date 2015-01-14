@@ -76,7 +76,7 @@ function displayRecentEstimates(data, place_ID) {
 		  
 		  // var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  if(data.payload[i].amount==-1) {
-		  	var activity_icon = MYSESSION.local_icon_path+'/'+"icon-dog-intro@2x.png";
+		  	var activity_icon = MYSESSION.local_icon_path+'/'+"POI-activity-dogscurrentlyhere.png";
 		  	var latest_estimate = myUiFactory.buildInfoBar( activity_icon, "No recent estimate", "");
 		  }
 		  else {
@@ -107,8 +107,7 @@ function addEstimatesButtons() {
     var necessary_args = {
 		  _place_ID    : args._place_ID,     // 601000001
 	    _place_index : place_index,
-      _place_name  : poiInfo.name,
-      _enclosure_count : poiInfo.enclosure_count
+	    _poiInfo		: poiInfo
     };
 		createWindowController( "provideestimate", necessary_args, "slide_left" );
 	});
@@ -140,8 +139,9 @@ function displayPlaceCheckins(data, parentObject) {
   
  	/* got stuff to show!  */
   if( data.checkins.length > 0) {
-  	var how_many_bar = myUiFactory.buildInfoBar( "images/icons/icon-poi-activity-dogscurrentlyhere@2x.png", "Currently here",  data.checkins.length );;
+  	var how_many_bar = myUiFactory.buildInfoBar( "images/icons/POI-activity-dogscurrentlyhere.png", "Currently here",  data.checkins.length );;
     parentObject.add(how_many_bar);
+    parentObject.add(myUiFactory.buildSpacer("horz", 6));
    
 	 	if( data.checkins.length > 4) {
   		// size up parent container so that we can fit two rows, up to 8 thumbnails
@@ -238,6 +238,16 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 //================================================================================
 function displayBasicInfo(poiInfo, parent) {
 	Ti.API.debug("....[~] displayBasicInfo("+poiInfo.place_ID+") called ");
+	//alert(poiInfo.rating_wb+" "+poiInfo.rating_dogfriendly+" "+poiInfo.type+" "+poiInfo.icon_basic);
+	
+	var category_icon = MYSESSION.local_icon_path+'/'+poiInfo.icon_basic;
+	var rating_df = MYSESSION.local_icon_path+'/'+"POI-basic-dogfriendliness.png";
+	var rating_wb = MYSESSION.local_icon_path+'/'+"POI-basic-ratingwb.png";
+	parent.add(  myUiFactory.buildInfoBar(category_icon, poiInfo.type, "") );
+	parent.add( myUiFactory.buildSeparator() );
+	parent.add(  myUiFactory.buildInfoBar(rating_df, "Dogfriendliness", poiInfo.rating_dogfriendly+"/5") );
+	parent.add( myUiFactory.buildSeparator() );
+	parent.add(  myUiFactory.buildInfoBar(rating_wb, "Rating", poiInfo.rating_dogfriendly+"/5") );
 }
 
 //================================================================================
@@ -247,39 +257,38 @@ function displayBasicInfo(poiInfo, parent) {
 function displayFeatures(poiInfo, parent) {
 	Ti.API.debug("....[~] displayFeatures("+poiInfo.place_ID+") called ");
 
-	var basics = { 
+	var features = { 	
+		enclosures: poiInfo.enclosures,
 		size 			: poiInfo.size, 
 		terrain 	: poiInfo.terrain,
 		grade   	: poiInfo.grade,
-		water			: poiInfo.water,
-		shade			: poiInfo.shade,
-		waste			: poiInfo.waste,
 		offleash	: poiInfo.offleash,
-		enclosures: poiInfo.enclosures,
-		benches		: poiInfo.benches,
-		fenced 		: poiInfo.fenced
+		fenced 		: poiInfo.fenced,
+		water			: poiInfo.water,
+		waste			: poiInfo.waste,
+		shade			: poiInfo.shade,	
+		benches		: poiInfo.benches
 	};
 	
-	Ti.API.debug("....[~] displayBasicInfo :: basics " + JSON.stringify(basics) );
-	var basics_list = myUiFactory.buildViewContainer("basics_list", "vertical", "100%", Ti.UI.SIZE, 0);
-	var icon_url = MYSESSION.local_icon_path+'/'+"icon-poi-basic-dogfriendliness@2x.png";
+	//Ti.API.debug("....[~] displayFeatures :: features " + JSON.stringify(features) );
+	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
+	var icon_url = MYSESSION.local_icon_path+'/'+"POI-basic-dogfriendliness.png";
 	
 	var count = 0;
-	var length = basics.length;
-  for (var k in basics){
-    if(basics[k]!="" && basics[k]!="NULL") {
-    	//basics.splice(k, 1);
+	var length = features.length;
+  for (var k in features){
+    if(features[k]!="" && features[k]!="NULL") {
   		// call buildInfoBar w/ ( image_url, name, value ) 
 			if (k=="enclosures")
-				basics_list.add(  myUiFactory.buildInfoBar(icon_url, "", basics[k]) );
+				features_list.add(  myUiFactory.buildInfoBar(icon_url, "", features[k]) );
 			else
-				basics_list.add(  myUiFactory.buildInfoBar(icon_url, k, basics[k]) );
+				features_list.add(  myUiFactory.buildInfoBar(icon_url, k, features[k]) );
 			//if ( count < (length-1) )
-			basics_list.add( myUiFactory.buildSeparator() );
+			features_list.add( myUiFactory.buildSeparator() );
     }
     count ++;
 	}
-	parent.add( basics_list );  	
+	parent.add( features_list );  	
 }
 
 //===========================================================================================
@@ -345,8 +354,8 @@ $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi a
 //			BASIC INFO
 //-----------------------
 var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1);
-$.basic_info.add(basics_header);
-displayBasicInfo(poiInfo, $.basic_info);
+$.basics.add(basics_header);
+displayBasicInfo(poiInfo, $.basics);
 
 
 //----------------------------------------------------------------------------------------------------------

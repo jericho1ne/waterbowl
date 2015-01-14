@@ -135,24 +135,36 @@ function addMenubar( parent_object ) {
 	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
 	var menubar = Ti.UI.createView( {
 	  id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 32, 
-    backgroundColor: "#ffffff", opacity: 1, zIndex: 99 });  // bg color #58c6d5
+    backgroundColor: "#58c6d5", opacity: 1, zIndex: 99 });  // bg color #58c6d5
 											
 	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: 44, borderWidth: 0, borderColor: "red" });
 	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "75%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
 	var menuRight 	= Ti.UI.createView( {id: "menuRight", width: 44, right: 0, layout: "horizontal", width: Ti.UI.SIZE });
 	
-	var backBtn 		= Ti.UI.createButton( {id: "backBtn",	 color: '#58c6d5', backgroundColor: '', zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 0, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
+	var backBtn 		= Ti.UI.createButton( {
+		id: "backBtn",	 
+		backgroundColor: '#58c6d5', 
+		backgroundImage : MYSESSION.local_icon_path+"/"+'icon-mainnav-back.png',
+		zIndex: 10, height: 20, width: 20
+	} );
 	
-	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#58c6d5', backgroundColor: '',	zIndex: 10,
+	/*
+	var backBtn 		= Ti.UI.createButton( {
+		id: "backBtn",	 
+		color: '#58c6d5', 
+		backgroundColor: '', 
+		zIndex: 10,
+		font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 0, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
+	*/
+	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 0, opacity: 1, height: 34, width: 34, borderRadius: 12 });
 	
-	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#58c6d5', backgroundColor: '',zIndex: 10,
+	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '',zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "Y", right: 4, width: Ti.UI.SIZE, top: 0, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: "auto", 
-			color: "#58c6d5", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
+			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
 	
 	//menuLeft.add(backBtn);
 	menuCenter.add(wbLogoMenubar);	
@@ -405,10 +417,10 @@ var MYSESSION = {
 		bucket_uitext		: "wb-ui-text"
 	},
 	WBnet: {
-		url_base 			: "http://www.waterbowl.net/mobile",
-		bucket_banner	: "images/wb-banner",
+		url_base 				: "http://www.waterbowl.net/mobile",
+		bucket_banner		: "images/wb-banner",
 		bucket_profile	: "images/wb-profile",
-		bucket_uitext	: "images/wb-ui-text"
+		bucket_uitext		: "images/wb-ui-text"
 	}
 };
 
