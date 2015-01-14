@@ -12,7 +12,6 @@
 //		Purpose:		( 1, args._place_ID, MYSESSION.dog.dog_ID, displayMarks);
 //================================================================================
 function getMarks( params, callbackFunction ) {
-	Ti.API.info("* getRecentEstimates() called *");
 	myUiFactory.loadJson(params, "http://waterbowl.net/mobile/get-place-posts.php", callbackFunction);
 }
 
@@ -35,7 +34,7 @@ function displayMarks(data) {
   }
   else {
 	  var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-		var no_marks_label = myUiFactory.buildLabel( "No marks have been made", "100%", this._height_one_row+10, myUiFactory._text_label_medium );	
+		var no_marks_label = myUiFactory.buildLabel( "No marks have been made", "100%", this._height_row+10, myUiFactory._text_medium );	
 		no_marks_container.add(no_marks_label);
 		$.marks.add(no_marks_container);
 	}
@@ -82,14 +81,17 @@ function displayRecentEstimates(data, place_ID) {
 	}
 	else {
 	  var nothing_here_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-		var nothing_here = myUiFactory.buildLabel( data.response, "100%", this._height_one_row+10, myUiFactory._text_label_medium );	
+		var nothing_here = myUiFactory.buildLabel( data.response, "100%", this.__height_row+10, myUiFactory._text_medium );	
 		nothing_here_container.add(nothing_here);
 		$.activity.add(nothing_here_container);
 	}
 	addEstimatesButtons();
 }
 
-
+//================================================================================
+//		Name:			addEstimatesButtons( data )
+//		Purpose:	LIKE THE TITLE SEZ.  I'M DOING STUFF HERE.
+//================================================================================
 function addEstimatesButtons() {
 	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update >"); 
 	estimate_btn.addEventListener('click', function(){
@@ -117,12 +119,13 @@ function addEstimatesButtons() {
 	$.activity.add(estimate_btn);
 	$.activity.add(more_btn);
 }
+
 //====================================================================================================
 //		Name:				displayPlaceCheckins(dataArray, parentObject)
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
 function displayPlaceCheckins(data, parentObject) {
-	Ti.API.debug(".... [~] displayPlaceCheckins:: ["+ JSON.stringify(data) +"] ");
+	//Ti.API.debug(".... [~] displayPlaceCheckins:: ["+ JSON.stringify(data) +"] ");
  	if ( data.you_are_here==1 ) {
     MYSESSION.dog.current_place_ID = place_ID;
   }
@@ -131,15 +134,14 @@ function displayPlaceCheckins(data, parentObject) {
   	var how_many_bar = myUiFactory.buildInfoBar( "", "Currently here",  data.checkins.length );;
     parentObject.add(how_many_bar);
     
-    var thumb_height = myUiFactory.getDefaultThumbSize();
     var row_height   = myUiFactory.getDefaultRowHeight();
 
   	if( data.checkins.length > 4) {
   		// size up parent container so that we can fit two rows, up to 8 thumbnails
-  		parentObject.height = (thumb_height * 2) + row_height + 12;  	
+  		parentObject.height = (myUiFactory._row_height * 2) + 12;  	
   	}
   	else {
-      parentObject.height = thumb_height + row_height + 8;
+      parentObject.height = myUiFactory._icon_medium + myUiFactory._icon_medium + 8;
     }
      
     for (var i=0, len=data.checkins.length; i<len; i++) {		// only calculate array size once
@@ -149,14 +151,14 @@ function displayPlaceCheckins(data, parentObject) {
 		  	border = 1;
 		  	
 		 	var dog_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data.checkins[i].photo;
-		  var dog_thumb = myUiFactory.buildImageThumb("dog_thumb_"+i, dog_image, border);
+		  var dog_thumb = myUiFactory.buildIcon("dog_thumb_"+i, dog_image, border, "large");
 		
 		  parentObject.add(dog_thumb);
 		  if (i>7)
 		  	break;
 		}
 		if(data.checkins.length > 7) {
-			Ti.API.debug(".... [~] displayPlaceCheckins:: found ["+ JSON.stringify(data.checkins.length) +"] dog(s) ");
+			// Ti.API.debug(".... [~] displayPlaceCheckins:: found ["+ JSON.stringify(data.checkins.length) +"] dog(s) ");
  	
 			var how_many_more_text = data.checkins.length - 7;
 			var how_many_more =  Ti.UI.createLabel( {text:"and "+how_many_more_text+" more", color: "#ec3c95" } );
@@ -198,7 +200,7 @@ function hideMiniHeader () {
 //		Purpose:		
 //================================================================================
 function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
-	Ti.API.info(".... .... getPlaceCheckins [place_ID, dog_ID] ["+ place_ID+", "+dog_ID+"] ");
+	// Ti.API.info(".... .... getPlaceCheckins [place_ID, dog_ID] ["+ place_ID+", "+dog_ID+"] ");
 	var http_query = Ti.Network.createHTTPClient();
 	var params = {
 		place_ID: place_ID,
@@ -219,6 +221,55 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
   return "";	
 }
 
+//================================================================================
+//		Name:			displayBasicInfo( poiInfo, parent_view )
+//		Purpose:	
+//================================================================================
+function displayBasicInfo(poiInfo, parent) {
+	Ti.API.debug("....[~] displayBasicInfo("+poiInfo.place_ID+") called ");
+}
+
+//================================================================================
+//		Name:			displayFeatures( poiInfo, parent_view)
+//		Purpose:	
+//================================================================================
+function displayFeatures(poiInfo, parent) {
+	Ti.API.debug("....[~] displayFeatures("+poiInfo.place_ID+") called ");
+
+	var basics = { 
+		size 			: poiInfo.size, 
+		terrain 	: poiInfo.terrain,
+		grade   	: poiInfo.grade,
+		water			: poiInfo.water,
+		shade			: poiInfo.shade,
+		waste			: poiInfo.waste,
+		offleash	: poiInfo.offleash,
+		enclosures: poiInfo.enclosures,
+		benches		: poiInfo.benches,
+		fenced 		: poiInfo.fenced
+	};
+	
+	Ti.API.debug("....[~] displayBasicInfo :: basics " + JSON.stringify(basics) );
+	var basics_list = myUiFactory.buildViewContainer("basics_list", "vertical", "100%", Ti.UI.SIZE, 0);
+	var icon_url = MYSESSION.local_icon_path+'/'+"WB-WB-Pink.png";
+	
+	var count = 0;
+	var length = basics.length;
+  for (var k in basics){
+    if(basics[k]!="" || basics[k]!="NULL") {
+    	//basics.splice(k, 1);
+  		// call buildInfoBar w/ ( image_url, name, value ) 
+			if (k=="enclosures")
+				basics_list.add(  myUiFactory.buildInfoBar(icon_url, "", basics[k]) );
+			else
+				basics_list.add(  myUiFactory.buildInfoBar(icon_url, k, basics[k]) );
+			if ( count < (length-1) )
+				basics_list.add( myUiFactory.buildSeparator() );
+    }
+    count ++;
+	}
+	parent.add( basics_list );  	
+}
 
 //===========================================================================================
 // 				LOGIC FLOW
@@ -265,7 +316,7 @@ if ( poiInfo.banner != "" ) {
 	};
 	c.open('GET', bg_image);
 	c.send();
-	Ti.API.info ( "...(i) banner image [ "+ bg_image +" ]");
+	// Ti.API.info ( "...(i) banner image [ "+ bg_image +" ]");
 }
 
 
@@ -279,12 +330,19 @@ $.place_city_label.text	  		=	poiInfo.city + ' ' + poiInfo.zip;
 $.mini_place_name_label.text 	= poiInfo.name;
 $.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
 $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi away)";
+//-----------------------
+//			BASIC INFO
+//-----------------------
+var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1);
+$.basic_info.add(basics_header);
+displayBasicInfo(poiInfo, $.basic_info);
+
 
 //----------------------------------------------------------------------------------------------------------
-//		(_3_)		CHECKINS
+//		 CHECKINS
 //----------------------------------------------------------------------------------------------------------
-var whos_here_section_header = myUiFactory.buildSectionHeader("whos_here", "ACTIVITY", 1);
-$.activity.add(whos_here_section_header);
+var activity_header = myUiFactory.buildSectionHeader("activity_header", "ACTIVITY", 1);
+$.activity.add(activity_header);
 
 // the thumbs of dogs have to display inline-block (and wrap) 
 var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
@@ -293,14 +351,14 @@ $.activity.add(whos_here_list);
 
 /* 	get feed of checkins, including your current checkin status; 
 		add the list to the view we've just created 												*/
-Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
+// Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
 getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID, whos_here_list);	
 
 
 // TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
 
 //----------------------------------------------------------------------------------------------------------
-//    (_4_)	  ESTIMATES (only if dog park)  
+//       ESTIMATES (only if dog park)  
 //----------------------------------------------------------------------------------------------------------
 if (poiInfo.category==600 || poiInfo.category==601) {
 	// TODO:  redo this using class methods
@@ -308,20 +366,28 @@ if (poiInfo.category==600 || poiInfo.category==601) {
 }
 
 //----------------------------------------------------------------------------
-//		(_6_)	  MARKS
+//		   MARKS
 //----------------------------------------------------------------------------
+/*
 var marks_header = myUiFactory.buildSectionHeader("marks", "MARKS", 1);
 $.marks.add(marks_header);
-
 var params = {
 	place_type : 1, 
 	place_ID   : args._place_ID,
 	dog_id     : MYSESSION.dog.dog_ID
 };
 getMarks(params, displayMarks);
+*/
 
 //----------------------------------------------------------------------------
-//		(_6_)	 ScrollView listener (+ attach sticky mini-header bar)
+//				FEATURES
+//----------------------------------------------------------------------------
+var features_header = myUiFactory.buildSectionHeader("features_header", "FEATURES", 1);
+$.features.add(features_header);
+displayFeatures(poiInfo, $.features);
+
+//----------------------------------------------------------------------------
+//		 	 ScrollView listener (+ attach sticky mini-header bar)
 //----------------------------------------------------------------------------
 $.scrollView.addEventListener('scroll', function(e) {
   if (e.y!=null) {

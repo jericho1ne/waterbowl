@@ -82,12 +82,11 @@ var password = myUiFactory.buildTextField("password", "regular", "password", tru
 $.loginStuff.add(email);
 $.loginStuff.add(password);
 
-
-var loginBtn = myUiFactory.buildButton("loginBtn", "login", "header");
+var loginBtn = myUiFactory.buildButton("loginBtn", "login", "medium");
 loginBtn.addEventListener('click', function(){ goToLogin(); });
 $.loginStuff.add(loginBtn);
 
-var regBtn = myUiFactory.buildButton("regBtn", "register", "large");
+var regBtn = myUiFactory.buildButton("regBtn", "register", "medium");
 regBtn.addEventListener('click', function(){ goToRegister(); });
 $.loginStuff.add(regBtn);
 
@@ -129,7 +128,7 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
 // Ti.App.Properties.setString('user', '');
 // Ti.App.Properties.setString('pass', '');
-setTimeout ( function() { loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
+// setTimeout ( function() { loginBtn.fireEvent('click'); }, 200 );  // wait for the login fields to get populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 /*

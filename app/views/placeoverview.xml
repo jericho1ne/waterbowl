@@ -32,9 +32,11 @@
 						<Label id="place_dist_label" 		text="" class="white feed_label_left text_small_light" />			
 					</View>
 				</View>
-
+				
+				<View id="basic_info" class="layout_vert"/>
         <View id="activity" class="layout_vert"/>
-        <View id="marks" class="layout_vert"/>						
+        <View id="marks" class="layout_vert"/>
+        <View id="features" class="layout_vert"/>						
 								
 			</ScrollView>
 		</View>
