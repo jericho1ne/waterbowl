@@ -30,6 +30,9 @@ function displayAllEstimates(data) {
   	var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data[i].dog_photo;		
   
   	// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
+  	var dogs_here_suffix = " dogs here in "+data[i].enclosure_type+" dog area";
+  	if(data[i].amount == 1) 
+	  	dogs_here_suffix = " dog here in "+data[i].enclosure_type+" dog area";
   	var enclosure = data[i].enclosure_type+" dogs"; //data[i].amount_suffix;
   	
   	var est_view = myUiFactory.buildTableRow("estimate_"+i, photo_url, data[i].dog_name, data[i].time_elapsed, data[i].amount, enclosure);
@@ -47,7 +50,7 @@ var args = arguments[0] || {};
 // var estimates = args._estimates;
 
 // TODO:  Add park name at top of page, text only, super large
-var section_header = myUiFactory.buildSectionHeader("recent_estimates", "Recent Estimates", 1);
+var section_header = myUiFactory.buildSectionHeader("recent_estimates", "Recent Activity", 1);
 $.scrollView.add(section_header);
 
 getAllEstimates(args._place_ID, displayAllEstimates);

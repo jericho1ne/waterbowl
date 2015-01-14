@@ -19,7 +19,7 @@ function updateLabel(e, slider_label, slider_value){
   var slider_val = Math.round(e.value);
   
   if (slider_val == 0)	{
-		text_estimate = 'No estimate provided';
+		text_estimate = 'Move slider to provide estimate';
     int_estimate = '--';
   }
     
@@ -139,7 +139,7 @@ $.sliders.add(call_to_action);
 																			//  	title, width, height, font_style, text_align 
 var slider1_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "" );
 var slider1_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "" );   
-var slider1 			= myUiFactory.buildSlider("slider1", 0, 7, '');
+var slider1 			= myUiFactory.buildSlider("slider1", 0, 7, 0);
 
 if (enclosure_count==1)  
   $.sliders.add( myUiFactory.buildSectionHeader("", "Entire Area", 1) );	
@@ -157,7 +157,7 @@ $.sliders.add( myUiFactory.buildSpacer("horz", 20) );      // pass in vert/horz,
 if (enclosure_count==2) {   // 
   $.sliders.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
   
-  var slider2 			= myUiFactory.buildSlider("slider2", 0, 7, '');
+  var slider2 			= myUiFactory.buildSlider("slider2", 0, 7, 0);
   var slider2_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "" );
   var slider2_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "" ); 
 
