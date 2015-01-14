@@ -73,15 +73,23 @@ function displayRecentEstimates(data, place_ID) {
 	    }
 	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", 0);
 		  $.activity.add(dog_size_section_header);
+		  
 		  // var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
-		  var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data.payload[i].dog_photo;		
-		  var latest_estimate = myUiFactory.buildTableRowHeader("", photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, data.payload[i].dog_suffix);
+		  if(data.payload[i].amount==-1) {
+		  	var activity_icon = MYSESSION.local_icon_path+'/'+"icon-dog-intro@2x.png";
+		  	var latest_estimate = myUiFactory.buildInfoBar( activity_icon, "No recent estimate", "");
+		  }
+		  else {
+		  	var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data.payload[i].dog_photo;		
+		  	var latest_estimate = myUiFactory.buildTableRowHeader("", photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, data.payload[i].dog_suffix);
+		  }
 		  $.activity.add(latest_estimate);
+	  
 	  }
 	}
 	else {
 	  var nothing_here_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-		var nothing_here = myUiFactory.buildLabel( data.response, "100%", this.__height_row+10, myUiFactory._text_medium );	
+		var nothing_here = myUiFactory.buildLabel( data.response, "100%", this._height_row+10, myUiFactory._text_medium );	
 		nothing_here_container.add(nothing_here);
 		$.activity.add(nothing_here_container);
 	}
@@ -125,39 +133,41 @@ function addEstimatesButtons() {
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
 function displayPlaceCheckins(data, parentObject) {
-	//Ti.API.debug(".... [~] displayPlaceCheckins:: ["+ JSON.stringify(data) +"] ");
+	Ti.API.debug(".... [~] displayPlaceCheckins:: ["+ data.checkins.length +"] ");
  	if ( data.you_are_here==1 ) {
     MYSESSION.dog.current_place_ID = place_ID;
   }
+  
  	/* got stuff to show!  */
   if( data.checkins.length > 0) {
-  	var how_many_bar = myUiFactory.buildInfoBar( "", "Currently here",  data.checkins.length );;
+  	var how_many_bar = myUiFactory.buildInfoBar( "images/icons/icon-dog-social-dogsmet@2x.png", "Currently here",  data.checkins.length );;
     parentObject.add(how_many_bar);
-    
-    var row_height   = myUiFactory.getDefaultRowHeight();
-
-  	if( data.checkins.length > 4) {
+   
+	 	if( data.checkins.length > 4) {
   		// size up parent container so that we can fit two rows, up to 8 thumbnails
-  		parentObject.height = (myUiFactory._row_height * 2) + 12;  	
+  		parentObject.height = myUiFactory._height_row * 3.6;  	
   	}
-  	else {
-      parentObject.height = myUiFactory._icon_medium + myUiFactory._icon_medium + 8;
+  	else if (data.checkins.length <= 4 ) {
+      parentObject.height = myUiFactory._height_row * 2.3;
     }
-     
+  	
     for (var i=0, len=data.checkins.length; i<len; i++) {		// only calculate array size once
 		  var border = 0; 			// this is nobody we know by default (0=other, 1=me, 2=friends)
-		   
+		  
+		  /* only show first 7 elements (0 through 6), leave space for "+ {__} more" cell */
+			if (i>6 && data.checkins.length!=8)		
+				break;
+		  /*  this is my pup, his is checked in at this POI!  Give'im a border!   */
 		  if(data.checkins[i].dog_ID == MYSESSION.dog.dog_ID)
 		  	border = 1;
 		  	
 		 	var dog_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data.checkins[i].photo;
-		  var dog_thumb = myUiFactory.buildIcon("dog_thumb_"+i, dog_image, border, "large");
+		  var dog_thumb = myUiFactory.buildProfileThumb("dog_thumb_"+i, dog_image, border, "large");
 		
 		  parentObject.add(dog_thumb);
-		  if (i>7)
-		  	break;
 		}
-		if(data.checkins.length > 7) {
+		/*  only if more than 8 checkins here */
+		if(data.checkins.length > 8 ) {
 			// Ti.API.debug(".... [~] displayPlaceCheckins:: found ["+ JSON.stringify(data.checkins.length) +"] dog(s) ");
  	
 			var how_many_more_text = data.checkins.length - 7;
@@ -169,6 +179,7 @@ function displayPlaceCheckins(data, parentObject) {
   }
   /*  got nathin' */
   else {
+  	parentObject.height = myUiFactory._height_row * 0.9;
     var how_many_bar = myUiFactory.buildInfoBar( "", "Nobody currently here", "" );;
     parentObject.add(how_many_bar);  
   }
@@ -251,20 +262,20 @@ function displayFeatures(poiInfo, parent) {
 	
 	Ti.API.debug("....[~] displayBasicInfo :: basics " + JSON.stringify(basics) );
 	var basics_list = myUiFactory.buildViewContainer("basics_list", "vertical", "100%", Ti.UI.SIZE, 0);
-	var icon_url = MYSESSION.local_icon_path+'/'+"WB-WB-Pink.png";
+	var icon_url = MYSESSION.local_icon_path+'/'+"icon-poi-basic-dogfriendliness@2x.png";
 	
 	var count = 0;
 	var length = basics.length;
   for (var k in basics){
-    if(basics[k]!="" || basics[k]!="NULL") {
+    if(basics[k]!="" && basics[k]!="NULL") {
     	//basics.splice(k, 1);
   		// call buildInfoBar w/ ( image_url, name, value ) 
 			if (k=="enclosures")
 				basics_list.add(  myUiFactory.buildInfoBar(icon_url, "", basics[k]) );
 			else
 				basics_list.add(  myUiFactory.buildInfoBar(icon_url, k, basics[k]) );
-			if ( count < (length-1) )
-				basics_list.add( myUiFactory.buildSeparator() );
+			//if ( count < (length-1) )
+			basics_list.add( myUiFactory.buildSeparator() );
     }
     count ++;
 	}

@@ -132,7 +132,7 @@ Ti.API.debug( " >>> Provide Estimate (@top) >>> "+JSON.stringify(args));
 var park_name       = args._place_name;
 var enclosure_count = args._enclosure_count;
 var section_header = myUiFactory.buildSectionHeader("park_name", park_name, 2)
-var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", 50,  myUiFactory._text_label_medium );		
+var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", "auto",  myUiFactory._text_medium );		
 
 // backend script doesn't care if there are one or two sliders on the page
 // only needs to know if place_estimate.enclosure_type is mixed, large, or small
@@ -145,8 +145,10 @@ scroll_view.add(call_to_action);
 /*   Mixed area, if this be the only slider  
      If a second one follows, it becomes the Large Dogs slider        */
 var slider1 			= myUiFactory.buildSlider("slider1", 0, 7, '');
-var slider1_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_label_medium );
-var slider1_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_label_banner );   
+
+																			//  	title, width, height, font_style, text_align 
+var slider1_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "" );
+var slider1_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "" );   
 
 if (enclosure_count==1)  
   scroll_view.add( myUiFactory.buildSectionHeader("", "Entire Area", 1) );	
@@ -164,8 +166,8 @@ if (enclosure_count==2) {   //
   scroll_view.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
   
   var slider2 			= myUiFactory.buildSlider("slider2", 0, 7, '');
-  var slider2_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_label_medium );
-  var slider2_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_label_banner ); 
+  var slider2_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "" );
+  var slider2_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "" ); 
 
   scroll_view.add(slider2_label);	
   scroll_view.add(slider2_value);

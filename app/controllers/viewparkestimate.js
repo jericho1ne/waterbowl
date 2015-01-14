@@ -30,9 +30,9 @@ function displayAllEstimates(data) {
   	var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data[i].dog_photo;		
   
   	// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
-  	var suffix = data[i].enclosure_type+" dog area"; //data[i].amount_suffix;
+  	var enclosure = data[i].enclosure_type+" dogs"; //data[i].amount_suffix;
   	
-  	var est_view = myUiFactory.buildTableRow("estimate_"+i, photo_url, data[i].dog_name, data[i].time_elapsed, data[i].amount, suffix);
+  	var est_view = myUiFactory.buildTableRow("estimate_"+i, photo_url, data[i].dog_name, data[i].time_elapsed, data[i].amount, enclosure);
   	estimate_list.add(est_view);
   	
   	if ( i < (len-1) )
