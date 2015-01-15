@@ -70,7 +70,7 @@ function displayRecentEstimates(data, place_ID) {
 	  	if (data.payload[i].size=="Large" || data.payload[i].size=="Small") {
 	  		area_type = data.payload[i].size+ " Dog";
 	    }
-	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", 0);
+	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", "");
 		  $.activity.add(dog_size_section_header);
 		  
 		  // var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
@@ -100,7 +100,7 @@ function displayRecentEstimates(data, place_ID) {
 //		Purpose:	LIKE THE TITLE SEZ.  I'M DOING STUFF HERE.
 //================================================================================
 function addEstimatesButtons() {
-	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update >"); 
+	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update estimate >"); 
 	estimate_btn.addEventListener('click', function(){
     Ti.API.info("...[+] Estimate Update button clicked");
     var necessary_args = {
@@ -111,7 +111,7 @@ function addEstimatesButtons() {
 		createWindowController( "provideestimate", necessary_args, "slide_left" );
 	});
 	// if there are multiple estimates to be seen at this park
-	var more_btn = myUiFactory.buildFullRowButton("more_btn", "more >"); 
+	var more_btn = myUiFactory.buildFullRowButton("more_btn", "see history >"); 
 	more_btn.addEventListener('click', function(){
 			Ti.API.info("...[+] Estimate History button clicked");
 		// TODO:  Create gray "see more >" button 
@@ -257,16 +257,16 @@ function displayFeatures(poiInfo, parent) {
 	Ti.API.debug("....[~] displayFeatures("+poiInfo.place_ID+") called ");
 
 	var features = { 	
-		enclosures: poiInfo.enclosures,
-		size 			: poiInfo.size, 
-		terrain 	: poiInfo.terrain,
-		grade   	: poiInfo.grade,
-		offleash	: poiInfo.offleash,
-		fenced 		: poiInfo.fenced,
-		water			: poiInfo.water,
-		waste			: poiInfo.waste,
-		shade			: poiInfo.shade,	
-		benches		: poiInfo.benches
+		"Enclosures"		: poiInfo.enclosures,
+		"Size" 					: poiInfo.size, 
+		"Terrain" 			: poiInfo.terrain,
+		"Grade"  				: poiInfo.grade,
+		"Offleash"			: poiInfo.offleash,
+		"Fenced" 				: poiInfo.fenced,
+		"Water"					: poiInfo.water,
+		"Waste Disposal": poiInfo.waste,
+		"Shade"					: poiInfo.shade,	
+		"Benches"				: poiInfo.benches
 	};
 	
 	//Ti.API.debug("....[~] displayFeatures :: features " + JSON.stringify(features) );
@@ -278,10 +278,10 @@ function displayFeatures(poiInfo, parent) {
   for (var k in features){
     if(features[k]!="" && features[k]!="NULL") {
   		// call buildInfoBar w/ ( image_url, name, value ) 
-			if (k=="enclosures")
+			if (k=="Enclosures")
 				features_list.add(  myUiFactory.buildInfoBar(icon_url, "", features[k]) );
 			else
-				features_list.add(  myUiFactory.buildInfoBar(icon_url, k, features[k]) );
+				features_list.add(  myUiFactory.buildInfoBar(icon_url, k+":", features[k]) );
 			//if ( count < (length-1) )
 			features_list.add( myUiFactory.buildSeparator() );
     }
@@ -349,9 +349,9 @@ $.place_city_label.text	  		=	poiInfo.city + ' ' + poiInfo.zip;
 $.mini_place_name_label.text 	= poiInfo.name;
 $.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
 $.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi away)";
-//-----------------------
+//-----------------------------------------------------------------------------------------------------------
 //			BASIC INFO
-//-----------------------
+//-----------------------------------------------------------------------------------------------------------
 var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1);
 $.basics.add(basics_header);
 displayBasicInfo(poiInfo, $.basics);
@@ -387,15 +387,36 @@ if (poiInfo.category==600 || poiInfo.category==601) {
 //----------------------------------------------------------------------------
 //		   MARKS
 //----------------------------------------------------------------------------
+var marks_header = myUiFactory.buildSectionHeader("marks", "REMARKS", 1);
+$.marks.add(marks_header); 
+var markBtn = myUiFactory.buildButton( "markBtn", "add remark", "large" );
+$.marks.add(markBtn);
 
-var marks_header = myUiFactory.buildSectionHeader("marks", "MARKS", 1);
-$.marks.add(marks_header);
 var params = {
 	place_type : 1, 
 	place_ID   : args._place_ID,
 	dog_id     : MYSESSION.dog.dog_ID
 };
 getMarks(params, displayMarks);
+
+/*  TODO: send everything except post_text (added by user on next window)   
+$place_type 		= $_POST['place_type'];
+$place_ID 			= $_POST['place_ID'];
+$owner_ID 			= $_POST['owner_ID'];
+$owner_name 		= $_POST['owner_name'];
+$dog_ID  				= $_POST['dog_ID'];
+$dog_name  			= $_POST['dog_name'];
+$post_text 			= $_POST['post_text'];
+*/
+var necessary_args = {   // 
+	_place_ID    : args._place_ID,
+	_place_name	 : poiInfo.name,
+	_place_city	 : poiInfo.city,
+	_place_type  : 1
+};
+markBtn.addEventListener('click', function(e) {
+	createWindowController( "addpost", necessary_args, "slide_left" );
+});
 
 
 //----------------------------------------------------------------------------

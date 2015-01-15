@@ -28,7 +28,7 @@ function goToLogin(e) {
 				MYSESSION.user.email 		= email.value;
 				MYSESSION.user.password = password.value;
 				MYSESSION.user.owner_ID = response.human.owner_ID;
-				
+				MYSESSION.user.name 		= response.human.owner_name;
 				MYSESSION.dog.dog_ID 		              = response.dog.dog_ID;
 				
 				MYSESSION.dog.current_place_ID        = response.dog.current_place_ID;
@@ -40,7 +40,6 @@ function goToLogin(e) {
         }
 				MYSESSION.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
 				MYSESSION.dog.name	 	= response.dog.dog_name;
-				MYSESSION.dog.photo	= response.dog.dog_photo;
 			
 				Ti.App.Properties.setString('user', email.value);
 				Ti.App.Properties.setString('pass', password.value);
@@ -140,3 +139,5 @@ var necessary_args = {
 };
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
+
+//createWindowController("createmark","","slide_left");

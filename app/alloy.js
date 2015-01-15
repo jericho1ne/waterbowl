@@ -365,10 +365,17 @@ var MYSESSION = {
 	device : { 
 		screenwidth : Ti.Platform.displayCaps.platformWidth
 	},
+	stringMaxes : {
+		poiRemarkMaxLength  : 1600,
+		markTitleMaxLength	: 30,
+		markRemarkMaxLength : 256,
+		dogNameMax					: 30
+	},
 	user : {
-		owner_ID: 	null,
-		email:		 	null,
-		password: 	null
+		owner_ID 	: null,
+		name     	: null,
+		email			:	null,
+		password	: null
 	},
 	dog : {
 		dog_ID : 	null,
@@ -376,7 +383,6 @@ var MYSESSION = {
 		sex: 			null,
 		age:			null,
 		weight:		null,
-		photo:		null,
 		current_place_ID  : null,
 		current_place_name : null,
 		current_place_geo_radius : null,
@@ -390,6 +396,7 @@ var MYSESSION = {
 	local_icon_path		:	"images/icons",
 	local_banner_path : "images/places",
 	allPlaces		      : [],				// top N places that are near user's location (n=20, 30, etc)
+	nearbyMarks		    : [],
 	nearbyPlaces      : [], 				// contains up to N places that are within the geofence
 	placeAnnotations  : [],
 	geo: {

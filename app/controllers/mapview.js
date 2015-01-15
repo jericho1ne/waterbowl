@@ -201,7 +201,6 @@ function refreshAnnotations(mapObject) {
 	/* attach all POI marker annotations to map */
 	mapObject.addAnnotations( annotationArray );
 	MYSESSION.placeAnnotations = annotationArray; 
-
 }
 
 //=============================================================
@@ -239,6 +238,65 @@ function createMapAnnotation( place_data, index ) {
 	return annotation;
 }
 
+//=============================================================================================
+//
+// 					m 			a				r				k				s
+//
+//=========================================================================
+//	Name:			refreshMarkAnnotations( map )
+//	Purpose:	
+//=========================================================================
+function refreshMarkAnnotations(mapObject) {
+	/* clear all map markers and annotations */
+	// mapObject.removeAllAnnotations();
+	var marksArray = [];
+	// ALL PLACES ARRAY
+	for (var i=0; i<MYSESSION.nearbyMarks.length; i++) {
+		/* make sure to pass current array index, anything other than array index is useless */
+		marksArray.push ( createMarkAnnotation(MYSESSION.nearbyMarks[i], i) );	  
+	}
+	/* attach all POI marker annotations to map */
+	mapObject.addAnnotations( marksArray );
+}
+//
+// 					m 			a				r				k				s
+//
+//=============================================================
+//	Name:			createMarkAnnotation( place_data, index )
+//	Purpose:	build Apple Maps place marker from incoming array
+//	Return:		annotation object
+//=============================================================
+function createMarkAnnotation( mark, index ) {
+	// Ti.API.info(" annotation marker place_data:" + JSON.stringify(place_data));
+	var temp_button = Ti.UI.createButton({ 
+		id : mark.ID,
+		font:{ fontFamily: 'Sosa-Regular', fontSize: 30 }, title: "p",
+		height : '40', width : '40', borderRadius: 6, 
+		color : '#ffffff', backgroundColor : "#ec3c95"
+	});
+ 	temp_button.addEventListener('click', function(e){
+ 		Ti.API.info ( "...[+] Clicked on >>>" + JSON.stringify(e.source.name) );
+ 		/*  prep all the required data to placeoverview.js */
+ 		var necessary_args = {
+			_index		: index, 
+			_place_ID : mark.ID		// pass in array index and placeID so we can hit the backend for more details
+		};
+		createWindowController( "markoverview", necessary_args, 'slide_left' );
+ 	});
+	var annotation = Alloy.Globals.Map.createAnnotation({
+    id        : mark.ID, 
+		latitude  : mark.mark_lat, 
+		longitude : mark.mark_lon,
+		title     : mark.mark_name,
+		subtitle  :	mark.marking_dog_name,
+		animate   : false,
+		image     : MYSESSION.local_icon_path+'/'+'Mark-MapMarker-3-small@2x.png', 		// or pull icon from AWS: MYSESSION.AWS.base_icon_url
+		//image     : MYSESSION.local_icon_path+'/'+'POI-activity-dogscurrentlyhere.png',
+		rightView : temp_button
+	});
+	return annotation;
+}
+
 //==================================================================
 //	Name:			buildMarkButton
 //	Purpose:	allow user to create a mark at their current location
@@ -257,12 +315,11 @@ function buildMarkButton( mapObject ) {
 		// - dog_ID, dog_current_place_ID, dog_friend_list,
 		//   figure out most recent 
 		//
-		/*
 		var necessary_args = {
-				_place_ID  : place_ID,
-				_estimates : activity
-		}; */
-		createWindowController( "marks", "", "slide_left" );
+			place_ID  	: 601000001,
+			place_type 	: 2
+		};
+		createWindowController( "createmark", necessary_args, "slide_left" );
 		// call stuff		
 	});
 	
@@ -672,6 +729,46 @@ function refreshGeo() {
 	}
 }
 
+//=============================================================================
+//	Name:			getMarks 
+//
+//=============================================================================
+function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, marks_shown ) {
+  var params = {
+		lat       		: user_lat,
+		lon       		: user_lon, 
+		sniff_type 		: sniff_type,
+		sniff_radius  : sniff_radius,
+		number_marks_shown : marks_shown
+	};
+  // TODO: write a generic function to queryBackend
+  // eg:  getJsonData("http://waterbowl.net/mobile/get-places-map.php", params);
+  
+	/* create an HTTP client object  */
+	var place_query = Ti.Network.createHTTPClient();
+	/* open the HTTP client object  (locally at http://127.0.0.1/___ )  */
+	place_query.open("POST", "http://waterbowl.net/mobile/marks-mapshow.php");
+	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
+	place_query.send(params);
+	/* response data is available */
+	place_query.onload = function() {
+		var jsonResponse = this.responseText;
+		Ti.API.info( "jsonResponse: " + jsonResponse );
+		/* create object container, grab places JSON */
+		var jsonPlaces = [];
+		if (jsonResponse != "") {
+			var jsonPlaces = JSON.parse(jsonResponse);	
+		  Ti.API.info( ".... .... .... .... total marks: " + jsonPlaces.length );	
+			// save incoming JSON array into global storage
+			MYSESSION.nearbyMarks = jsonPlaces;
+			refreshMarkAnnotations(mapObject);
+		}
+		else {
+			createSimpleDialog('Loading marks','No data received');
+		}
+	};
+}
+
 //====================================================================================================================
 //
 //    Things to initialize upon Window load
@@ -711,17 +808,20 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   // Get Map and PlaceList data
   refreshMapData();
   refreshPlaceListData();
+  
+  getMarks( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 1, 0.5, 20 );
+
 });
   
 /*
    HACK :: To skip to a specific window, uncomment block below and change which window name to jump to		
 */
-
+/*
 setTimeout(function() { createWindowController('placeoverview',{ 
 	_index : 0, 
 	_place_ID :601000001 
 },'slide_left'); }, 1200);
-
+*/
 //====================================================================================
 // 		Geolocation Change Event Listener
 //		Purpose:  

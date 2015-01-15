@@ -221,13 +221,13 @@
 ".feed_item" 				: { layout: 'horizontal', height: 74, width: "100%", left: 0, top: 1, backgroundColor: '#DCF1FC' }
 ".feed_item_lg" 			: { layout: 'horizontal', height: 104, width: "100%", left: 0, top: 0, backgroundColor: '#DCF1FC' }
 
-".feed_label_left" 	  : { width: Ti.UI.SIZE, height: "auto", left: 6 }
+".feed_label_left" 	  : { width: Ti.UI.SIZE, height: "auto", left: 7.5 }
 ".feed_label_center" 	: { width: Ti.UI.SIZE, height: "auto", }
 ".feed_label_right"		: {	width: Ti.UI.SIZE, height: "auto", right: 2 }
 
 ".feed_label_left_md"	: { height: "auto", width:"auto", left : 6 }
 
-".feed_label_left_lg"	  : { width: Ti.UI.SIZE, height: "30", left : 6 }
+".feed_label_left_lg"	  : { width: Ti.UI.SIZE, height: "30", left : 7.5 }
 ".feed_label_center_lg" : { width: Ti.UI.SIZE, height: "30", top: 6 }
 ".feed_label_right_lg"	: { width: Ti.UI.SIZE, height: "30", right: 6 }
 
