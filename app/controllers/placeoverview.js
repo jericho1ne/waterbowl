@@ -22,10 +22,9 @@ function getMarks( params, callbackFunction ) {
 function displayMarks(data) {
   if( data.length>0) {	
     for (var i=0, len=data.length; i<len; i++) {
-      var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data[i].dog_photo;		
-		  var mark = myUiFactory.buildTableRow( 
-		    "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text, ""
-		  );
+      var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
+      																				// (id, photo_url, photo_caption, time_stamp, description)
+		  var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 		 
 		  $.marks.add(mark);
 		  if ( i < (len-1) )
@@ -80,8 +79,8 @@ function displayRecentEstimates(data, place_ID) {
 		  	var latest_estimate = myUiFactory.buildInfoBar( activity_icon, "No recent estimate", "");
 		  }
 		  else {
-		  	var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data.payload[i].dog_photo;		
-		  	var latest_estimate = myUiFactory.buildTableRowHeader("", photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, data.payload[i].dog_suffix);
+		  	var photo_url =MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
+		  	var latest_estimate = myUiFactory.buildTableRowHeader("", photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, "");
 		  }
 		  $.activity.add(latest_estimate);
 	  
@@ -127,6 +126,32 @@ function addEstimatesButtons() {
 	$.activity.add(more_btn);
 }
 
+//================================================================================
+//		Name:				getPlaceCheckins(place_ID, dog_ID)
+//		Purpose:		
+//================================================================================
+function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
+	// Ti.API.info(".... .... getPlaceCheckins [place_ID, dog_ID] ["+ place_ID+", "+dog_ID+"] ");
+	var http_query = Ti.Network.createHTTPClient();
+	var params = {
+		place_ID: place_ID,
+		dog_ID	: dog_ID	
+	};
+	
+	http_query.open("POST", "http://waterbowl.net/mobile/get-place-checkins.php");	
+	http_query.send( params );
+	http_query.onload = function() {
+		var placeJSON = this.responseText;	
+	 
+	 	if (placeJSON != "" && placeJSON !="[]") {
+      var place = JSON.parse( placeJSON );
+			/*  use the current checkins to build the activityList  */
+      displayPlaceCheckins(place, parent_view);
+		}
+	};
+  return "";	
+}
+
 //====================================================================================================
 //		Name:				displayPlaceCheckins(dataArray, parentObject)
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
@@ -145,7 +170,7 @@ function displayPlaceCheckins(data, parentObject) {
    
 	 	if( data.checkins.length > 4) {
   		// size up parent container so that we can fit two rows, up to 8 thumbnails
-  		parentObject.height = myUiFactory._height_row * 3.6;  	
+  		parentObject.height = myUiFactory._height_row * 4.6;  	
   	}
   	else if (data.checkins.length <= 4 ) {
       parentObject.height = myUiFactory._height_row * 2.3;
@@ -206,31 +231,6 @@ function hideMiniHeader () {
   $.miniHeaderContainer.animate(a);
 }
 
-//================================================================================
-//		Name:				getPlaceCheckins(place_ID, dog_ID)
-//		Purpose:		
-//================================================================================
-function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
-	// Ti.API.info(".... .... getPlaceCheckins [place_ID, dog_ID] ["+ place_ID+", "+dog_ID+"] ");
-	var http_query = Ti.Network.createHTTPClient();
-	var params = {
-		place_ID: place_ID,
-		dog_ID	: dog_ID	
-	};
-	
-	http_query.open("POST", "http://waterbowl.net/mobile/get-place-checkins.php");	
-	http_query.send( params );
-	http_query.onload = function() {
-		var placeJSON = this.responseText;	
-	 
-	 	if (placeJSON != "" && placeJSON !="[]") {
-      var place = JSON.parse( placeJSON );
-			/*  use the current checkins to build the activityList  */
-      displayPlaceCheckins(place, parent_view);
-		}
-	};
-  return "";	
-}
 
 //================================================================================
 //		Name:			displayBasicInfo( poiInfo, parent_view )
@@ -238,14 +238,13 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 //================================================================================
 function displayBasicInfo(poiInfo, parent) {
 	Ti.API.debug("....[~] displayBasicInfo("+poiInfo.place_ID+") called ");
-	//alert(poiInfo.rating_wb+" "+poiInfo.rating_dogfriendly+" "+poiInfo.type+" "+poiInfo.icon_basic);
 	
 	var category_icon = MYSESSION.local_icon_path+'/'+poiInfo.icon_basic;
 	var rating_df = MYSESSION.local_icon_path+'/'+"POI-basic-dogfriendliness.png";
 	var rating_wb = MYSESSION.local_icon_path+'/'+"POI-basic-ratingwb.png";
 	parent.add(  myUiFactory.buildInfoBar(category_icon, poiInfo.type, "") );
 	parent.add( myUiFactory.buildSeparator() );
-	parent.add(  myUiFactory.buildInfoBar(rating_df, "Dogfriendliness", poiInfo.rating_dogfriendly+"/5") );
+	parent.add(  myUiFactory.buildInfoBar(rating_df, "Dog friendliness", poiInfo.rating_dogfriendly+"/5") );
 	parent.add( myUiFactory.buildSeparator() );
 	parent.add(  myUiFactory.buildInfoBar(rating_wb, "Rating", poiInfo.rating_dogfriendly+"/5") );
 }
@@ -388,7 +387,7 @@ if (poiInfo.category==600 || poiInfo.category==601) {
 //----------------------------------------------------------------------------
 //		   MARKS
 //----------------------------------------------------------------------------
-/*
+
 var marks_header = myUiFactory.buildSectionHeader("marks", "MARKS", 1);
 $.marks.add(marks_header);
 var params = {
@@ -397,7 +396,7 @@ var params = {
 	dog_id     : MYSESSION.dog.dog_ID
 };
 getMarks(params, displayMarks);
-*/
+
 
 //----------------------------------------------------------------------------
 //				FEATURES

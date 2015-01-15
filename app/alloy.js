@@ -342,10 +342,12 @@ function zeroPad( number, width )  {
 
 //============================================================================================
 
-Ti.API.info('Ti.Platform.displayCaps.density: ' + Ti.Platform.displayCaps.density);
-Ti.API.info('Ti.Platform.displayCaps.dpi: ' + Ti.Platform.displayCaps.dpi);
-Ti.API.info('Ti.Platform.displayCaps.platformHeight: ' + Ti.Platform.displayCaps.platformHeight);
-Ti.API.info('Ti.Platform.displayCaps.platformWidth: ' + Ti.Platform.displayCaps.platformWidth);
+//Ti.API.info('Ti.Platform.displayCaps.density: ' + Ti.Platform.displayCaps.density);
+//Ti.API.info('Ti.Platform.displayCaps.dpi: ' + Ti.Platform.displayCaps.dpi);
+//Ti.API.info('Ti.Platform.displayCaps.platformHeight: ' + Ti.Platform.displayCaps.platformHeight);
+//Ti.API.info('Ti.Platform.displayCaps.platformWidth: ' + Ti.Platform.displayCaps.platformWidth);
+// alert('Ti.Platform.displayCaps.platformWidth: ' + Ti.Platform.displayCaps.platformWidth);
+
 /*
 if(Ti.Platform.osname === 'android'){
   Ti.API.info('Ti.Platform.displayCaps.xdpi: ' + Ti.Platform.displayCaps.xdpi);
@@ -360,6 +362,9 @@ if(Ti.Platform.osname === 'android'){
 // NextSpace Culver City  34.024 / -118.394
 // Oberrieder 		33.971995 / -118.420496
 var MYSESSION = {
+	device : { 
+		screenwidth : Ti.Platform.displayCaps.platformWidth
+	},
 	user : {
 		owner_ID: 	null,
 		email:		 	null,

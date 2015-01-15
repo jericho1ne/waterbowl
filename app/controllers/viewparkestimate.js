@@ -27,12 +27,12 @@ function displayAllEstimates(data) {
   // generate table rows for each item in activity array 
   var estimate_list = myUiFactory.buildViewContainer("estimate_list", "vertical", "100%", Ti.UI.SIZE, 0);	
   for (var i=0, len=data.length; i<len; i++) {			// optimize loop to only calculate array size once
-  	var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile + '/' +data[i].dog_photo;		
-  
+  	var photo_url = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[i].dog_ID+'-iconmed.jpg';	
   	// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
   	var dogs_here_suffix = " dogs here in "+data[i].enclosure_type+" dog area";
   	if(data[i].amount == 1) 
 	  	dogs_here_suffix = " dog here in "+data[i].enclosure_type+" dog area";
+	  	
   	var enclosure = data[i].enclosure_type+" dogs"; //data[i].amount_suffix;
   	
   	var est_view = myUiFactory.buildTableRow("estimate_"+i, photo_url, data[i].dog_name, data[i].time_elapsed, data[i].amount, enclosure);
