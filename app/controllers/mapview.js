@@ -216,7 +216,6 @@ function createMapAnnotation( place_data, index ) {
 	var temp_button = Ti.UI.createButton({ 
 		id 							: place_data.id,	 
 		backgroundImage : MYSESSION.local_icon_path+"/"+'button-forward.png',
-		backgroundColor : '#ffffff',
 		zIndex					: 100, 
 		height					: 30, 
 		width						: 30
@@ -274,17 +273,19 @@ function refreshMarkAnnotations(mapObject) {
 function createMarkAnnotation( mark, index ) {
 	// Ti.API.info(" annotation marker place_data:" + JSON.stringify(place_data));
 	var temp_button = Ti.UI.createButton({ 
-		id : mark.ID,
-		font:{ fontFamily: 'Sosa-Regular', fontSize: 30 }, title: "p",
-		height : '40', width : '40', borderRadius: 6, 
-		color : '#ffffff', backgroundColor : "#ec3c95"
+		id 							: place_data.id,	 
+		backgroundImage : MYSESSION.local_icon_path+"/"+'button-forward.png',
+		zIndex					: 100, 
+		height					: 30, 
+		width						: 30
 	});
+	
  	temp_button.addEventListener('click', function(e){
  		Ti.API.info ( "...[+] Clicked on >>>" + JSON.stringify(e.source.name) );
  		/*  prep all the required data to placeoverview.js */
  		var necessary_args = {
-			_index		: index, 
-			_place_ID : mark.ID		// pass in array index and placeID so we can hit the backend for more details
+			_index	 : index, 
+			_mark_ID : mark.ID		// pass in array index and placeID so we can hit the backend for more details
 		};
 		createWindowController( "markoverview", necessary_args, 'slide_left' );
  	});
@@ -299,32 +300,6 @@ function createMarkAnnotation( mark, index ) {
 		rightView : temp_button
 	});
 	return annotation;
-}
-
-//==================================================================
-//	Name:			buildMarkButton
-//	Purpose:	allow user to create a mark at their current location
-//	Return:		Button object
-//==================================================================
-function buildMarkButton( mapObject ) {
-  /*var	markBtn	= Ti.UI.createButton( {			
-		id: "markBtn", color: '#ffffff', backgroundColor: '#ec3c95',	zIndex: 22,
-		font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "a", 
-		width: Ti.UI.SIZE, , opacity: 1,  height: 48, width: 44, borderRadius: 6 });
-		*/	
-			
-		
-	return markBtn;
-}
-
-//=============================================================
-//	Name:			drawMapMarkers
-//	Purpose:	to reload map places near the new map center
-//	Return:		Button object
-//=============================================================
-function drawMapMarkers( mapObject ) {
-
-	return mapMarkBtn;
 }
 
 //=============================================================
@@ -379,17 +354,7 @@ function buildMapMenubar( mapObject ) {
 		bottom					: menubar_pad_bottom, 
 		right						: 20
 	});
-	////////////////////////////////////////////////// MARK BUTTON ////////////////////////
-  var markBtn = Ti.UI.createButton({ 
-		id 							: "markBtn",	 
-		backgroundImage : MYSESSION.local_icon_path+"/"+'button-mark.png',
-		opacity 				: 1,
-		zIndex					: 100, 
-		height					: main_btn_size, 
-		width						: main_btn_size,
-		bottom					: menubar_pad_bottom, 
-		right						: 90
-	});
+	
 	////////////////////////////////////////////////// SNIFF BUTTON ///////////////////////
   var sniffBtn = Ti.UI.createButton({ 
 		id 							: "sniffBtn",	 
@@ -399,13 +364,25 @@ function buildMapMenubar( mapObject ) {
 		height					: main_btn_size, 
 		width						: main_btn_size,
 		bottom					: menubar_pad_bottom, 
+		right						: 90
+	});
+	
+	////////////////////////////////////////////////// MARK BUTTON ////////////////////////
+  var markBtn = Ti.UI.createButton({ 
+		id 							: "markBtn",	 
+		backgroundImage : MYSESSION.local_icon_path+"/"+'button-mark.png',
+		opacity 				: 1,
+		zIndex					: 100, 
+		height					: main_btn_size, 
+		width						: main_btn_size,
+		bottom					: menubar_pad_bottom, 
 		right						: 160
 	});
 	/////////////////////////////////////// ADD BUTTONS TO MAPVIEW ////////////////////////
 	mapObject.add(recenterBtn);
-	mapObject.add(markBtn);
 	mapObject.add(getPoiBtn);
 	mapObject.add(sniffBtn);
+	mapObject.add(markBtn);
 	
 	//====== RECENTER listener ================================================
 	recenterBtn.addEventListener('click', function() {			// REFRESH button
@@ -419,7 +396,7 @@ function buildMapMenubar( mapObject ) {
         // centerMapOnLocation(mapObject, MYSESSION.geo.lat, MYSESSION.geo.lon, 0.01);
       } 
       else {  // if no errors, and we're not running in Simulator
-        centerMapOnLocation(mapObject, e.coords.latitude, e.coords.longitude, 0.01);
+        centerMapOnLocation(mapObject, e.coords.latitude, e.coords.longitude, 0.02);
 	    }
     });  
   });
@@ -446,11 +423,23 @@ function buildMapMenubar( mapObject ) {
 	//====== SNIFF listener ================================================
 	sniffBtn.addEventListener('click', function() {		
     Ti.API.info("...[+] SNIFF button clicked on map");
- 	  var necessary_args = {
-			place_ID  	: 601000001,	// TODO: DO NOT HARDCODE
-			place_type 	: 2
-		};
-		//createWindowController( "createmark", necessary_args, "slide_left" );
+    // WORKFLOW: 
+    //	(0) get current user location
+    //	(1) center map on current location, zooming further than recenter btn
+    //	(2) remove all map markers
+    //	(3) draw Marks
+    Ti.Geolocation.getCurrentPosition(function(e) {
+      if (e.error) {			
+        // check if running in simulator  if (Titanium.Platform.model != "Simulator")
+        Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
+        createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
+      } 
+      else {  // if no errors, and we're not running in Simulator
+        centerMapOnLocation(mapObject, e.coords.latitude, e.coords.longitude, 0.008);
+        mapObject.removeAllAnnotations();
+        getMarks( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 1, 0.5, 20 );
+	    }
+    });  
 	});
 	// return menubarContainer;
 }
@@ -880,9 +869,6 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   // Get Map and PlaceList data
   refreshMapData();
   refreshPlaceListData();
-  
-  getMarks( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 1, 0.5, 20 );
-
 });
   
 /*

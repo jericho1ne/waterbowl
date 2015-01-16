@@ -127,7 +127,7 @@ if( MYSESSION.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
 // Ti.App.Properties.setString('user', '');
 // Ti.App.Properties.setString('pass', '');
-setTimeout ( function() { loginBtn.fireEvent('click'); }, 300 );  // wait for login fields to populate
+// setTimeout ( function() { loginBtn.fireEvent('click'); }, 300 );  // wait for login fields to populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 /*
@@ -140,4 +140,4 @@ var necessary_args = {
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
 
-//createWindowController("createmark","","slide_left");
+createWindowController("markoverview","","slide_left");

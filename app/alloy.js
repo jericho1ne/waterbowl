@@ -145,8 +145,8 @@ function addMenubar( parent_object ) {
 		id: "backBtn",	 
 		backgroundImage : MYSESSION.local_icon_path+"/"+'icon-mainnav-back.png',
 		zIndex	: 100, 
-		height	: 30, 
-		width		: 30
+		height	: 20, 
+		width		: 20
 	} );
 	
 	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	zIndex: 10,
