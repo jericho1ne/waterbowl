@@ -4,11 +4,11 @@
   	<View id="content" class="window_container">
   	
   		<View id="outerMapContainer" class="absolute" height="100%" contentHeight="auto" width="100%">
-  			<View id="mapHUD" backgroundColor='#333333' width="70%" top=4 zIndex=25 opacity=0.65 contentHeight='auto'  borderRadius=3>
+  			<View id="mapHUD" backgroundColor='#333333' width="40%" top=4 zIndex=25 opacity=0.00 contentHeight='auto'  borderRadius=3>
   				<Label id="geo_trigger" color='#ffffff'  text="Geo Trigger" class="text_small_light"/>
   				<Label id="geo_success" color='#ffffff'  text="Geo rec'd" class="text_small_light"/>
   				<Label id="geo_latlng" color='#ffffff'  text="lat/lng" class="text_small_light"/>
-  				<Label id="current_place_ID" color='#ffffff'  text="Current Place ID" class="text_small_light"/>
+  				<Label id="current_place_ID" color='#ffffff'  text="curr placeID" class="text_small_light"/>
   			</View>
   			<View id="mapContainer" class="fill_height absolute" top="0" contentHeight="auto" width="100%" />
   		</View>

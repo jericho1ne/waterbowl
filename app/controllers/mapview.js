@@ -58,9 +58,11 @@ function initializeMap(lat, lon) {
 	// DRAW MAP
 	var wbMapView = drawDefaultMap( MYSESSION.geo.lat, MYSESSION.geo.lon, 0.07  );     // 0.05 
 	$.mapContainer.add( wbMapView );
-	$.mapContainer.add( buildMarkButton(wbMapView) );
-	$.mapContainer.add( buildRefreshButton(wbMapView) );
-  $.mapContainer.add( buildRecenterButton(wbMapView) );
+	buildMapMenubar(wbMapView);
+	//$.mapContainer.add( buildMapMenubar(wbMapView) );
+	
+	//$.mapContainer.add( drawMapMarkers(wbMapView) );
+  //$.mapContainer.add( buildRecenterButton(wbMapView) );
 }
 
 function refreshMapData() {
@@ -210,11 +212,14 @@ function refreshAnnotations(mapObject) {
 //=============================================================
 function createMapAnnotation( place_data, index ) {
 	// Ti.API.info(" annotation marker place_data:" + JSON.stringify(place_data));
+	/* */
 	var temp_button = Ti.UI.createButton({ 
-		id : place_data.id,
-		font:{ fontFamily: 'Sosa-Regular', fontSize: 30 }, title: "p",
-		height : '40', width : '40', borderRadius: 6, 
-		color : '#ffffff', backgroundColor : "#ec3c95"
+		id 							: place_data.id,	 
+		backgroundImage : MYSESSION.local_icon_path+"/"+'button-forward.png',
+		backgroundColor : '#ffffff',
+		zIndex					: 100, 
+		height					: 30, 
+		width						: 30
 	});
  	temp_button.addEventListener('click', function(e){
  		Ti.API.info ( "...[+] Clicked on >>>" + JSON.stringify(e.source.name) );
@@ -290,8 +295,7 @@ function createMarkAnnotation( mark, index ) {
 		title     : mark.mark_name,
 		subtitle  :	mark.marking_dog_name,
 		animate   : false,
-		image     : MYSESSION.local_icon_path+'/'+'Mark-MapMarker-3-small@2x.png', 		// or pull icon from AWS: MYSESSION.AWS.base_icon_url
-		//image     : MYSESSION.local_icon_path+'/'+'POI-activity-dogscurrentlyhere.png',
+		image     : MYSESSION.local_icon_path+'/'+'Mark-MapMarker-4-small.png', 
 		rightView : temp_button
 	});
 	return annotation;
@@ -303,69 +307,109 @@ function createMarkAnnotation( mark, index ) {
 //	Return:		Button object
 //==================================================================
 function buildMarkButton( mapObject ) {
-  var	markBtn	= Ti.UI.createButton( {			
+  /*var	markBtn	= Ti.UI.createButton( {			
 		id: "markBtn", color: '#ffffff', backgroundColor: '#ec3c95',	zIndex: 22,
 		font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "a", 
-		width: Ti.UI.SIZE, bottom: 20, right: 20, opacity: 1,  height: 48, width: 44, borderRadius: 6 });
+		width: Ti.UI.SIZE, , opacity: 1,  height: 48, width: 44, borderRadius: 6 });
+		*/	
 			
-	markBtn.addEventListener('click', function() {			// REFRESH button
-		Ti.API.info("...[+] Mark button clicked on map");
-		/* will take user to the createmark form */
-		// TODO: openWindowController passing in 
-		// - dog_ID, dog_current_place_ID, dog_friend_list,
-		//   figure out most recent 
-		//
-		var necessary_args = {
-			place_ID  	: 601000001,
-			place_type 	: 2
-		};
-		createWindowController( "createmark", necessary_args, "slide_left" );
-		// call stuff		
-	});
-	
+		
 	return markBtn;
 }
 
 //=============================================================
-//	Name:			buildRefreshButton
+//	Name:			drawMapMarkers
 //	Purpose:	to reload map places near the new map center
 //	Return:		Button object
 //=============================================================
-function buildRefreshButton( mapObject ) {
-	var	refreshBtn	= Ti.UI.createButton( {			
-		id: "refreshBtn", color: '#ffffff', backgroundColor: '#ec3c95',	zIndex: 22,
-		font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "y", 
-		width: Ti.UI.SIZE, bottom: 76, right: 20, opacity: 0.85,  height: 44, width: 44, borderRadius: 22 });
-	
-	refreshBtn.addEventListener('click', function() {			// REFRESH button
-		Ti.API.info("...[+] Refresh button clicked on map");
-		/* will refresh all map elements + rebuild nearbyPlaces table rows */
-		
-		// Only refresh MAP markers + annotations
-		getPlacesMap(
-		  mapObject, 
-		  MYSESSION.geo.lat, MYSESSION.geo.lon, 
-		  MYSESSION.geo.view_lat, MYSESSION.geo.view_lon
-		);
-		
-	});
-	
-	return refreshBtn;
+function drawMapMarkers( mapObject ) {
+
+	return mapMarkBtn;
 }
 
 //=============================================================
-//	Name:			buildRecenterButton
-//	Purpose:	to recenter map on current user position
-//	Return:		Button object
+//	Name:			buildMapMenubar
+//	Purpose:	
+//	Return:		
 //=============================================================
-function buildRecenterButton( mapObject ) {
-	var	recenterBtn	= Ti.UI.createButton( {			
-		id: "refreshBtn", color: '#ffffff', backgroundColor: '#ec3c95',	zIndex: 22,
-		font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "o", 
-		width: Ti.UI.SIZE, bottom: 124, right: 20, opacity: 0.85,  height: 44, width: 44, borderRadius: 22 });
-
-  recenterBtn.addEventListener('click', function() {			// REFRESH button
-    Ti.API.info("...[+] Recenter button clicked on map");
+function buildMapMenubar( mapObject ) {
+	/*	var menubarContainer = Ti.UI.createView( { 
+		id							: "menubarContainer", 
+		layout					: "horizontal",
+		backgroundColor : this._color_ltblue, 
+		borderColor     : this._color_ltpink, 	
+		borderWidth			: this._debug,
+		top					: 50,
+		right						: 10,
+		width						: "100%",
+		height 					: 60
+	});
+	*/
+	
+	// MYSESSION.device.screenwidth
+	var menubar_pad_right  = 20;
+	var	menubar_pad_bottom = 20;
+	var btn_spacing 			 = 10;
+	var main_btn_size 		 = 60; 
+	var secondary_btn_size = 40;
+	var secondary_pad_right = ( (main_btn_size-secondary_btn_size)/2 )+menubar_pad_right;
+	var	secondary_pad_bottom = main_btn_size + menubar_pad_bottom + btn_spacing + ( (main_btn_size-secondary_btn_size)/2 ); 
+	
+	////////////////////////////////////////////////// RECENTER BUTTON ///////////////////
+	var recenterBtn = Ti.UI.createButton( {
+		id			: "recenterBtn",	
+		backgroundImage : MYSESSION.local_icon_path+"/"+'button-center.png',
+		// backgroundColor: '#ffffff', 
+		opacity : 1,
+		height	: secondary_btn_size, 
+		width		: secondary_btn_size,
+		bottom	: secondary_pad_bottom,
+		right		: secondary_pad_right,
+		zIndex  : 100
+	} );
+	
+	////////////////////////////////////////////////// GET POI BUTTON //////////////////////
+	var getPoiBtn = Ti.UI.createButton({ 
+		id 							: "getPoiBtn",	 
+		backgroundImage : MYSESSION.local_icon_path+"/"+'button-waterbowl.png',
+		opacity 				: 1,
+		zIndex					: 100, 
+		height					: main_btn_size, 
+		width						: main_btn_size,
+		bottom					: menubar_pad_bottom, 
+		right						: 20
+	});
+	////////////////////////////////////////////////// MARK BUTTON ////////////////////////
+  var markBtn = Ti.UI.createButton({ 
+		id 							: "markBtn",	 
+		backgroundImage : MYSESSION.local_icon_path+"/"+'button-mark.png',
+		opacity 				: 1,
+		zIndex					: 100, 
+		height					: main_btn_size, 
+		width						: main_btn_size,
+		bottom					: menubar_pad_bottom, 
+		right						: 90
+	});
+	////////////////////////////////////////////////// SNIFF BUTTON ///////////////////////
+  var sniffBtn = Ti.UI.createButton({ 
+		id 							: "sniffBtn",	 
+		backgroundImage : MYSESSION.local_icon_path+"/"+'button-sniff.png',
+		opacity 				: 1,
+		zIndex					: 100, 
+		height					: main_btn_size, 
+		width						: main_btn_size,
+		bottom					: menubar_pad_bottom, 
+		right						: 160
+	});
+	/////////////////////////////////////// ADD BUTTONS TO MAPVIEW ////////////////////////
+	mapObject.add(recenterBtn);
+	mapObject.add(markBtn);
+	mapObject.add(getPoiBtn);
+	mapObject.add(sniffBtn);
+	
+	//====== RECENTER listener ================================================
+	recenterBtn.addEventListener('click', function() {			// REFRESH button
+    Ti.API.info("...[+] RECENTER button clicked on map");
 		Ti.Geolocation.getCurrentPosition(function(e) {
       if (e.error) {			
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
@@ -379,7 +423,36 @@ function buildRecenterButton( mapObject ) {
 	    }
     });  
   });
-	return recenterBtn;
+  //====== GET POI listener ================================================
+  getPoiBtn.addEventListener('click', function() {			
+  	Ti.API.info("...[+] GET POI button clicked on map");
+		/* will refresh all map elements + rebuild nearbyPlaces table rows */
+		// Only refresh MAP markers + annotations
+		getPlacesMap(
+		  mapObject, 
+		  MYSESSION.geo.lat, MYSESSION.geo.lon, 
+		  MYSESSION.geo.view_lat, MYSESSION.geo.view_lon
+		);
+	});
+	//====== MARK listener ================================================
+	markBtn.addEventListener('click', function() {			
+		Ti.API.info("...[+] Mark button clicked on map");
+		var necessary_args = {
+			place_ID  	: 601000001,   // TODO: DO NOT HARDCODE
+			place_type 	: 2
+		};
+		createWindowController( "createmark", necessary_args, "slide_left" );
+	});
+	//====== SNIFF listener ================================================
+	sniffBtn.addEventListener('click', function() {		
+    Ti.API.info("...[+] SNIFF button clicked on map");
+ 	  var necessary_args = {
+			place_ID  	: 601000001,	// TODO: DO NOT HARDCODE
+			place_type 	: 2
+		};
+		//createWindowController( "createmark", necessary_args, "slide_left" );
+	});
+	// return menubarContainer;
 }
 
 //=================================================================================
@@ -435,7 +508,7 @@ function displayNearbyPlaces( tableViewObject ) {
 			distance		: nearby[i].dist,
 			hasChild		: false
 		});
-		Ti.API.info ("... displayNearbyPlaces >> [" + nearby[i].id + "] - "+nearby[i].name );
+		//Ti.API.info ("... displayNearbyPlaces >> [" + nearby[i].id + "] - "+nearby[i].name );
 		
 		/* leftmost color sliver */
 		var block_bg_color		 = nearby[i].icon_color;
@@ -530,7 +603,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				MYSESSION.dog.current_place_geo_radius = MYSESSION.nearbyPlaces[place_index].geo_radius;
 				MYSESSION.dog.last_checkin_timestamp= new Date().getTime();
 				
-				Ti.API.info ( "... MYSESSION.dog: " + JSON.stringify(MYSESSION.dog) );
+				// Ti.API.info ( "... MYSESSION.dog: " + JSON.stringify(MYSESSION.dog) );
 				// POPULATE NEARBY PLACE TABLE
   		  setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 200);
   		  // ADD PLACE LIST CLICK EVENT LISTENER
@@ -673,8 +746,8 @@ function presentUserCheckinOptions( place ) {;
 //	Purpose:	listen for clicks on nearby place list  
 //=================================================================================
 function placeListListener(e) {
-	Ti.API.info("...[o] POI list click [ " + JSON.stringify(e.row) + " ]");
-	Ti.API.info("...[o] event index [ " + e.index + " ]");
+	//Ti.API.info("...[o] POI list click [ " + JSON.stringify(e.row) + " ]");
+	//Ti.API.info("...[o] event index [ " + e.index + " ]");
 	
 	centerMapOnLocation(wbMapView, e.row.lat, e.row.lon, 0.03);
 
@@ -753,7 +826,6 @@ function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, mark
 	/* response data is available */
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
-		Ti.API.info( "jsonResponse: " + jsonResponse );
 		/* create object container, grab places JSON */
 		var jsonPlaces = [];
 		if (jsonResponse != "") {

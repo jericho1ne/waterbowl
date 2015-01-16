@@ -143,19 +143,12 @@ function addMenubar( parent_object ) {
 	
 	var backBtn 		= Ti.UI.createButton( {
 		id: "backBtn",	 
-		backgroundColor: '#58c6d5', 
 		backgroundImage : MYSESSION.local_icon_path+"/"+'icon-mainnav-back.png',
-		zIndex: 10, height: 20, width: 20
+		zIndex	: 100, 
+		height	: 30, 
+		width		: 30
 	} );
 	
-	/*
-	var backBtn 		= Ti.UI.createButton( {
-		id: "backBtn",	 
-		color: '#58c6d5', 
-		backgroundColor: '', 
-		zIndex: 10,
-		font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'T', left: 4, width: Ti.UI.SIZE, top: 0, opacity: 1,  height: 34, width: 34, borderRadius: 12 } );
-	*/
 	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	zIndex: 10,
 	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 0, opacity: 1, height: 34, width: 34, borderRadius: 12 });
 	
