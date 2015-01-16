@@ -1,3 +1,5 @@
 .DS_Store
 Resources/*
+app/assets/images/*
+app/assets/android/*
 

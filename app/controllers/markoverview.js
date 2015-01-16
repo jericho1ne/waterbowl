@@ -37,15 +37,16 @@ function displayMark(data, original_mark) {
 	// Ti.API.debug( "*displayRemarks ["+JSON.stringify(data)+"]" );
   // alert(JSON.stringify(original_mark));
 	if( data.length>0) {	
-  	// (1)	sort POIs based on proximity
+		var last_one = data.length-1;
+  	// (1)	Need to sort POIs based on proximity
 		data.sort(function(a, b) {		// sort by proximity (closest first)
-			return (a.ID - b.ID);
+			return (b.ID - a.ID);
 		});
 		
 		// (2) add original mark section header + first mark
 		$.scrollView.add( myUiFactory.buildSectionHeader("mark_header", "ORIGINAL MARK", 1) );
-		var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[0].marking_dog_ID+'-iconmed.jpg';		
- 		var mark = myUiFactory.buildRowMarkSummary( "", photo, data[0].marking_dog_name, data[0].time_elapsed, data[0].post_text  );
+		var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[last_one].marking_dog_ID+'-iconmed.jpg';		
+ 		var mark = myUiFactory.buildRowMarkSummary( "", photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text  );
 		$.scrollView.add(mark);
 				
 		// (3) add the remarks section header to the parent view
@@ -76,12 +77,12 @@ function displayMark(data, original_mark) {
 		}
 		// (6) if more than just the parent mark, display all child remarks next
 	  else {
-			for (var i=1, len=data.length; i<len; i++) {
+			for (var i=0, len=data.length; i<(len-1); i++) {
 	      var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
 	      																				// (id, photo_url, photo_caption, time_stamp, description)
 			  var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 			  $.scrollView.add(mark);
-			  if ( i < (len-1) )
+			  if ( i < (len-2) )
 			    $.scrollView.add( myUiFactory.buildSeparator() );
 	    }
  		}

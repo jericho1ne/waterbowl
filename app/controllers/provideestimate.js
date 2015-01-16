@@ -89,7 +89,7 @@ function updateEstimates (place_ID, value_1, value_2) {
 			var response = JSON.parse(json);
 			if (response.status == 1) { 		// success
 				Ti.API.log("  [>]  Estimate added successfully ");
-				createSimpleDialog("Result", message);
+				createSimpleDialog("Result", response.message);
 				// close current window and bounce user to Place Overview
 				closeWindowController();
 			}

@@ -20,7 +20,12 @@ function getRemarks( params, callbackFunction ) {
 //		Purpose:	
 //================================================================================
 function displayRemarks(data) {
-  if( data.length>0) {	
+  if( data.length>0) {
+  	// (1)	Need to sort POIs based on proximity
+		data.sort(function(a, b) {		// sort by proximity (closest first)
+			return (b.ID - a.ID);
+		});
+		// (2)	Print a list of all the remarks at this POI
     for (var i=0, len=data.length; i<len; i++) {
       var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
