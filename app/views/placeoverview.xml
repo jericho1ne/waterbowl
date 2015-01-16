@@ -34,7 +34,7 @@
 				
 				<View id="basics" class="layout_vert"/>
         <View id="activity" class="layout_vert"/>
-        <View id="marks" class="layout_vert"/>
+        <View id="remarks" class="layout_vert"/>
         <View id="features" class="layout_vert"/>						
 								
 			</ScrollView>

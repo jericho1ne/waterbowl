@@ -8,34 +8,34 @@
 //		Last update Jan 12 2014
 //
 //================================================================================
-//		Name:			getMarks( params, callbackFunction )
-//		Purpose:		( 1, args._place_ID, MYSESSION.dog.dog_ID, displayMarks);
+//		Name:			getRemarks( params, callbackFunction )
+//		Purpose:		( 1, args._place_ID, MYSESSION.dog.dog_ID, displayRemarks);
 //================================================================================
-function getMarks( params, callbackFunction ) {
+function getRemarks( params, callbackFunction ) {
 	myUiFactory.loadJson(params, "http://waterbowl.net/mobile/get-place-posts.php", callbackFunction);
 }
 
 //================================================================================
-//		Name:			displayMarks( data )
+//		Name:			displayRemarks( data )
 //		Purpose:	
 //================================================================================
-function displayMarks(data) {
+function displayRemarks(data) {
   if( data.length>0) {	
     for (var i=0, len=data.length; i<len; i++) {
       var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
 		  var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 		 
-		  $.marks.add(mark);
+		  $.remarks.add(mark);
 		  if ( i < (len-1) )
-		   $.marks.add( myUiFactory.buildSeparator() );
+		   $.remarks.add( myUiFactory.buildSeparator() );
     }
   }
   else {
 	  var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-		var no_marks_label = myUiFactory.buildLabel( "No marks have been made", "100%", this._height_row+10, myUiFactory._text_medium );	
+		var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", this._height_row+10, myUiFactory._text_medium );	
 		no_marks_container.add(no_marks_label);
-		$.marks.add(no_marks_container);
+		$.remarks.add(no_marks_container);
 	}
 }
 
@@ -385,19 +385,19 @@ if (poiInfo.category==600 || poiInfo.category==601) {
 }
 
 //----------------------------------------------------------------------------
-//		   MARKS
+//		   REMARKS
 //----------------------------------------------------------------------------
 var marks_header = myUiFactory.buildSectionHeader("marks", "REMARKS", 1);
-$.marks.add(marks_header); 
+$.remarks.add(marks_header); 
 var markBtn = myUiFactory.buildButton( "markBtn", "add remark", "large" );
-$.marks.add(markBtn);
+$.remarks.add(markBtn);
 
 var params = {
 	place_type : 1, 
 	place_ID   : args._place_ID,
 	dog_id     : MYSESSION.dog.dog_ID
 };
-getMarks(params, displayMarks);
+getRemarks(params, displayRemarks);
 
 /*  TODO: send everything except post_text (added by user on next window)   
 $place_type 		= $_POST['place_type'];

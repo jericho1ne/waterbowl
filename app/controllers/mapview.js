@@ -266,28 +266,33 @@ function refreshMarkAnnotations(mapObject) {
 // 					m 			a				r				k				s
 //
 //=============================================================
-//	Name:			createMarkAnnotation( place_data, index )
+//	Name:			createMarkAnnotation( mark, index )
 //	Purpose:	build Apple Maps place marker from incoming array
 //	Return:		annotation object
 //=============================================================
 function createMarkAnnotation( mark, index ) {
-	// Ti.API.info(" annotation marker place_data:" + JSON.stringify(place_data));
+	// Ti.API.info(" annotation marker for MARK:" + JSON.stringify(mark));
 	var temp_button = Ti.UI.createButton({ 
-		id 							: place_data.id,	 
+		id 							: mark.ID,	 
 		backgroundImage : MYSESSION.local_icon_path+"/"+'button-forward.png',
 		zIndex					: 100, 
 		height					: 30, 
 		width						: 30
 	});
-	
- 	temp_button.addEventListener('click', function(e){
- 		Ti.API.info ( "...[+] Clicked on >>>" + JSON.stringify(e.source.name) );
- 		/*  prep all the required data to placeoverview.js */
- 		var necessary_args = {
-			_index	 : index, 
-			_mark_ID : mark.ID		// pass in array index and placeID so we can hit the backend for more details
-		};
-		createWindowController( "markoverview", necessary_args, 'slide_left' );
+	temp_button.addEventListener('click', function(e){
+	 	Ti.API.debug ( "...[+] createMarkAnnotation >>>" + JSON.stringify(e.source.name) );
+	 	/*  prep all the required data to placeoverview.js */
+	 /*var necessary_args = {
+			_index	 					: index, 
+			_marking_dog_ID 	: mark.marking_dog_ID,
+			_marking_dog_name : mark.marking_dog_name,
+			_mark_ID 					: mark.ID,
+			_mark_name 				: mark.mark_name,
+			_mark_city 				: mark.mark_city,
+			_mark_zip	 				: mark.mark_zip,
+			_mark_name 				: mark.mark_name,
+		};*/
+		createWindowController( "markoverview", mark, 'slide_left' );
  	});
 	var annotation = Alloy.Globals.Map.createAnnotation({
     id        : mark.ID, 
@@ -432,12 +437,15 @@ function buildMapMenubar( mapObject ) {
       if (e.error) {			
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
-        createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
+        // createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
+      	getMarks( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 1, 0.5, 20 );
       } 
       else {  // if no errors, and we're not running in Simulator
         centerMapOnLocation(mapObject, e.coords.latitude, e.coords.longitude, 0.008);
+        MYSESSION.geo.lon = e.coords.longitude;
+        MYSESSION.geo.lat = e.coords.latitude;
         mapObject.removeAllAnnotations();
-        getMarks( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 1, 0.5, 20 );
+        getMarks( wbMapView, e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
 	    }
     });  
 	});
@@ -869,6 +877,7 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   // Get Map and PlaceList data
   refreshMapData();
   refreshPlaceListData();
+  getMarks( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 1, 1.5, 20 );
 });
   
 /*
