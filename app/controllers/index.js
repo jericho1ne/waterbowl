@@ -88,9 +88,9 @@ function goToRegister (e) {
 //======================== Create and Open top level UI components ==================================== 
 $.index.open();	
 addToAppWindowStack( $.index, "index" );
-//                                          id,        type,      hint,   is_pwd
-var email    = myUiFactory.buildTextField("email",   "regular", "email",  "");
-var password = myUiFactory.buildTextField("password", "regular", "password", true);
+//                                         id,       width,  hint,       is_pwd
+var email    = myUiFactory.buildTextField("email",   "99%",  "email",    "");
+var password = myUiFactory.buildTextField("password", "99%", "password", true);
 $.loginStuff.add(email);
 $.loginStuff.add(password);
 
@@ -140,7 +140,7 @@ if( mySesh.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
 // Ti.App.Properties.setString('user', '');
 // Ti.App.Properties.setString('pass', '');
-setTimeout ( function() { loginBtn.fireEvent('click'); }, 300 );  // wait for login fields to populate
+//setTimeout ( function() { loginBtn.fireEvent('click'); }, 300 );  // wait for login fields to populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 /*
@@ -153,4 +153,4 @@ var necessary_args = {
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
 
-// createWindowController("markoverview","","slide_left");
+createWindowController("createmark","","slide_left");

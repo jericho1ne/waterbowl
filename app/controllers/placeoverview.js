@@ -237,7 +237,6 @@ function hideMiniHeader () {
   $.miniHeaderContainer.animate(a);
 }
 
-
 //================================================================================
 //		Name:			displayBasicInfo( poiInfo, parent_view )
 //		Purpose:	
@@ -245,7 +244,7 @@ function hideMiniHeader () {
 function displayBasicInfo(poiInfo, parent) {
 	Ti.API.debug("....[~] displayBasicInfo("+poiInfo.place_ID+") called ");
 	
-	var category_icon = mySesh.local_icon_path+'/'+poiInfo.icon_basic;
+	var category_icon = ICON_PATH + poiInfo.icon_basic;
 	var rating_df = ICON_PATH + "POI-basic-dogfriendliness.png";
 	var rating_wb = ICON_PATH + "POI-basic-ratingwb.png";
 	parent.add(  myUiFactory.buildInfoBar(category_icon, poiInfo.type, "") );

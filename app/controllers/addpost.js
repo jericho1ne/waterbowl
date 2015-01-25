@@ -68,7 +68,7 @@ $.mini_place_second_label.text		= args._place_city;
 var create_marks_header = myUiFactory.buildSectionHeader("create_marks_header", "ADD REMARK TO THIS SPOT", 1);
 
 // TODO:  ALIGN LEFT
-var action_call =  myUiFactory.buildLabel( mySesh.dog.name+" says", "100%", this._height_row, myUiFactory._text_medium_bold );	
+var action_call =  myUiFactory.buildLabel( mySesh.dog.name+" says", "100%", myUiFactory._height_row, myUiFactory._text_medium_bold );	
 // TODO:  display today's date and live character count
 var textArea = Ti.UI.createTextArea({
   borderWidth: 2,
@@ -87,7 +87,7 @@ var textArea = Ti.UI.createTextArea({
 $.scrollView.add(create_marks_header); 
 $.scrollView.add(action_call); 
 $.scrollView.add(textArea);
-var character_count =  myUiFactory.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, "100%", this._height_row, myUiFactory._text_tiny );
+var character_count =  myUiFactory.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, "100%", myUiFactory._height_row, myUiFactory._text_tiny );
 $.scrollView.add(character_count);
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "add remark", "large" );
 $.scrollView.add(addMarkBtn);

@@ -602,18 +602,18 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 };
 
 /************************************************************
-*		Name:  		buildTextField ( id, type, hint, is_pwd )
+*		Name:  		buildTextField ( id, width, hint, is_pwd )
 *		Purpose:  create small test button
 ************************************************************/
-UiFactory.prototype.buildTextField = function(id, type, hint, is_pwd) {
+UiFactory.prototype.buildTextField = function(id, width, hint, is_pwd) {
   var text_field = Ti.UI.createTextField( {
   	id              : id,
   	backgroundColor : '#ffffff', 
     color           : this._color_dkgray, 
-    width           : this._form_width, 
+    width           : width, 
     height          : 34, 
     top             : 1, 
-    opacity         : 0.88,
+    opacity         : 0.92,
   	font            : this._text_medium,
   	keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
   	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,
