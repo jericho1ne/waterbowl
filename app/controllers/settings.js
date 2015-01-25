@@ -1,13 +1,13 @@
-Ti.API.debug( " >>> Dog Array (in Settings):  "+ JSON.stringify( MYSESSION.dog ) );
+Ti.API.debug( " >>> Dog Array (in Settings):  "+ JSON.stringify( mySesh.dog ) );
 
-if ( isset(MYSESSION.dog.name) )
-  $.dog_name.text   = MYSESSION.dog.dog_ID;
+if ( isset(mySesh.dog.name) )
+  $.dog_name.text   = mySesh.dog.dog_ID;
 
-if ( isset(MYSESSION.dog.photo) ) 
-  $.dog_photo.text  = MYSESSION.dog.photo;
+if ( isset(mySesh.dog.photo) ) 
+  $.dog_photo.text  = mySesh.dog.photo;
 
-if ( isset(MYSESSION.user.email) )
-  $.user_email.text = MYSESSION.user.email;
+if ( isset(mySesh.user.email) )
+  $.user_email.text = mySesh.user.email;
 
 // 
 

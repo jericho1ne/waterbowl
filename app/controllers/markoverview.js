@@ -8,7 +8,7 @@ function getMarkOverview( original_mark) {
 	var params = {
 		place_type : 2,
 		place_ID 	 : original_mark.ID,
-		dog_ID  	 : MYSESSION.dog.dog_ID
+		dog_ID  	 : mySesh.dog.dog_ID
 	};
 	//myUiFactory.loadJson(	params, "http://waterbowl.net/mobile/get-place-posts.php",  displayMark );
 	// alert( data.marking_dog_name );
@@ -38,22 +38,23 @@ function displayMark(data, original_mark) {
   // alert(JSON.stringify(original_mark));
 	if( data.length>0) {	
 		var last_one = data.length-1;
-  	// (1)	Need to sort POIs based on proximity
+		
+  	// (1)  Need to sort POIs based on proximity
 		data.sort(function(a, b) {		// sort by proximity (closest first)
 			return (b.ID - a.ID);
 		});
 		
-		// (2) add original mark section header + first mark
+		// (2)  Add original mark section header + first mark
 		$.scrollView.add( myUiFactory.buildSectionHeader("mark_header", "ORIGINAL MARK", 1) );
-		var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[last_one].marking_dog_ID+'-iconmed.jpg';		
+		var photo = PROFILE_PATH + 'dog-'+data[last_one].marking_dog_ID+'-iconmed.jpg';		
  		var mark = myUiFactory.buildRowMarkSummary( "", photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text  );
 		$.scrollView.add(mark);
-				
-		// (3) add the remarks section header to the parent view
+		
+		// (3)  Add the remarks section header to the parent view
 		var overview_header = myUiFactory.buildSectionHeader("overview_header", "REMARKS", 1);
 		$.scrollView.add(overview_header);
-    
-    // (4) add remark button and link it to addpost.js
+
+    // (4)  Add remark button and link it to addpost.js
 		var addRemarkBtn = myUiFactory.buildButton( "addRemarkBtn", "add remark", "large" );
 		$.scrollView.add(addRemarkBtn);
 		var necessary_args = {   // 
@@ -78,7 +79,7 @@ function displayMark(data, original_mark) {
 		// (6) if more than just the parent mark, display all child remarks next
 	  else {
 			for (var i=0, len=data.length; i<(len-1); i++) {
-	      var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
+	      var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
 	      																				// (id, photo_url, photo_caption, time_stamp, description)
 			  var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 			  $.scrollView.add(mark);
@@ -104,7 +105,7 @@ var mark_subtext = "";							// mark.
 	mark_text		 = args.mark_city;
 	mark_subtext = args.dist+" miles away";
 
-	var header_size = MYSESSION.device.screenwidth;
+	var header_size = mySesh.device.screenwidth;
 	
 	// if(marks.length > 0)
 	
@@ -128,7 +129,7 @@ var mark_subtext = "";							// mark.
 	
 	$.scrollView.add(headerContainer);
 	
-	var bg_image = "images/missing/mark-0-banner.jpg";
+	var bg_image = MISSING_PATH + "mark-0-banner.jpg";
 	headerContainer.backgroundImage = bg_image;
 	
 	getMarkOverview(args);

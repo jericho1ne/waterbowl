@@ -9,7 +9,7 @@
 //
 //================================================================================
 //		Name:			getRemarks( params, callbackFunction )
-//		Purpose:		( 1, args._place_ID, MYSESSION.dog.dog_ID, displayRemarks);
+//		Purpose:		( 1, args._place_ID, mySesh.dog.dog_ID, displayRemarks);
 //================================================================================
 function getRemarks( params, callbackFunction ) {
 	myUiFactory.loadJson(params, "http://waterbowl.net/mobile/get-place-posts.php", callbackFunction);
@@ -27,7 +27,7 @@ function displayRemarks(data) {
 		});
 		// (2)	Print a list of all the remarks at this POI
     for (var i=0, len=data.length; i<len; i++) {
-      var photo = MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
+      var photo = PROFILE_PATH +'/'+ 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
 		  var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 		 
@@ -78,13 +78,14 @@ function displayRecentEstimates(data, place_ID) {
 	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", "");
 		  $.activity.add(dog_size_section_header);
 		  
-		  // var photo_url = MYSESSION.AWS.url_base+ '/' +MYSESSION.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
+		  // var photo_url = mySesh.AWS.url_base+ '/' +mySesh.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  if(data.payload[i].amount==-1) {
-		  	var activity_icon = MYSESSION.local_icon_path+'/'+"POI-activity-dogscurrentlyhere.png";
+		  	var activity_icon = ICON_PATH + "POI-activity-dogscurrentlyhere.png";
 		  	var latest_estimate = myUiFactory.buildInfoBar( activity_icon, "No recent estimate", "");
 		  }
 		  else {
-		  	var photo_url =MYSESSION.WBnet.url_base+ '/' +MYSESSION.WBnet.bucket_profile +'/'+ 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
+		  	var photo_url = PROFILE_PATH + 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
+		  	Ti.API.debug (" >>>> photo_url: " + photo_url);
 		  	var latest_estimate = myUiFactory.buildTableRowHeader("", photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, "");
 		  }
 		  $.activity.add(latest_estimate);
@@ -164,12 +165,12 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 function displayPlaceCheckins(data, parentObject) {
 	Ti.API.debug(".... [~] displayPlaceCheckins:: ["+ data.checkins.length +"] ");
  	if ( data.you_are_here==1 ) {
-    MYSESSION.dog.current_place_ID = place_ID;
+    mySesh.dog.current_place_ID = place_ID;
   }
   
  	/* got stuff to show!  */
   if( data.checkins.length > 0) {
-  	var how_many_bar = myUiFactory.buildInfoBar( "images/icons/POI-activity-dogscurrentlyhere.png", "Currently here",  data.checkins.length );;
+  	var how_many_bar = myUiFactory.buildInfoBar( ICON_PATH + "POI-activity-dogscurrentlyhere.png", "Currently here",  data.checkins.length );;
     parentObject.add(how_many_bar);
     parentObject.add(myUiFactory.buildSpacer("horz", 6));
    
@@ -188,10 +189,10 @@ function displayPlaceCheckins(data, parentObject) {
 			if (i>6 && data.checkins.length!=8)		
 				break;
 		  /*  this is my pup, his is checked in at this POI!  Give'im a border!   */
-		  if(data.checkins[i].dog_ID == MYSESSION.dog.dog_ID)
+		  if(data.checkins[i].dog_ID == mySesh.dog.dog_ID)
 		  	border = 1;
 		  	
-		 	var dog_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_profile + '/' + data.checkins[i].photo;
+		 	var dog_image = PROFILE_PATH + data.checkins[i].photo;
 		  var dog_thumb = myUiFactory.buildProfileThumb("dog_thumb_"+i, dog_image, border, "large");
 		
 		  parentObject.add(dog_thumb);
@@ -244,9 +245,9 @@ function hideMiniHeader () {
 function displayBasicInfo(poiInfo, parent) {
 	Ti.API.debug("....[~] displayBasicInfo("+poiInfo.place_ID+") called ");
 	
-	var category_icon = MYSESSION.local_icon_path+'/'+poiInfo.icon_basic;
-	var rating_df = MYSESSION.local_icon_path+'/'+"POI-basic-dogfriendliness.png";
-	var rating_wb = MYSESSION.local_icon_path+'/'+"POI-basic-ratingwb.png";
+	var category_icon = mySesh.local_icon_path+'/'+poiInfo.icon_basic;
+	var rating_df = ICON_PATH + "POI-basic-dogfriendliness.png";
+	var rating_wb = ICON_PATH + "POI-basic-ratingwb.png";
 	parent.add(  myUiFactory.buildInfoBar(category_icon, poiInfo.type, "") );
 	parent.add( myUiFactory.buildSeparator() );
 	parent.add(  myUiFactory.buildInfoBar(rating_df, "Dog friendliness", poiInfo.rating_dogfriendly+"/5") );
@@ -276,7 +277,7 @@ function displayFeatures(poiInfo, parent) {
 	
 	//Ti.API.debug("....[~] displayFeatures :: features " + JSON.stringify(features) );
 	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
-	var icon_url = MYSESSION.local_icon_path+'/'+"POI-basic-dogfriendliness.png";
+	var icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
 	
 	var count = 0;
 	var length = features.length;
@@ -313,8 +314,8 @@ var mini_header_display = 0;
 var args = arguments[0] || {};
 var place_index = args._index;
 
-var poiInfo = MYSESSION.allPlaces[place_index];
-var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, poiInfo.lat, poiInfo.lon );
+var poiInfo = mySesh.allPlaces[place_index];
+var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );
 //alert( how_close + " miles");
 //Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
 
@@ -323,12 +324,12 @@ var how_close = getDistance( MYSESSION.geo.lat, MYSESSION.geo.lon, poiInfo.lat, 
 //		(_2_)		Populate place header
 //
 //----------------------------------------------------------------------------
-var bg_image = "images/missing/place-header.png";
+var bg_image = MISSING_PATH + "place-header.png";
 $.headerContainer.backgroundImage = bg_image;
 
 if ( poiInfo.banner != "" ) {
-	//bg_image = MYSESSION.AWS.url_base+'/'+MYSESSION.AWS.bucket_place+'/'+poiInfo.banner;
-	bg_image = MYSESSION.WBnet.url_base + '/' + MYSESSION.WBnet.bucket_banner + '/' + poiInfo.banner;
+	//bg_image = mySesh.AWS.url_base+'/'+mySesh.AWS.bucket_place+'/'+poiInfo.banner;
+	bg_image = BANNER_PATH + poiInfo.banner;
 		 
 	/*  image preloader of sorts  */
 	var c = Titanium.Network.createHTTPClient();
@@ -376,7 +377,7 @@ $.activity.add(whos_here_list);
 /* 	get feed of checkins, including your current checkin status; 
 		add the list to the view we've just created 												*/
 // Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
-getPlaceCheckins( args._place_ID, MYSESSION.dog.dog_ID, whos_here_list);	
+getPlaceCheckins( args._place_ID, mySesh.dog.dog_ID, whos_here_list);	
 
 
 // TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
@@ -400,7 +401,7 @@ $.remarks.add(markBtn);
 var params = {
 	place_type : 1, 
 	place_ID   : args._place_ID,
-	dog_id     : MYSESSION.dog.dog_ID
+	dog_id     : mySesh.dog.dog_ID
 };
 getRemarks(params, displayRemarks);
 

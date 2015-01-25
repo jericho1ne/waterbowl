@@ -41,8 +41,8 @@ function checkUserDetails( ) {
 				var params = {
 					pwd 	: $.password1.value,
 					email : $.email.value,
-					lat		: MYSESSION.geo.lat,
-					lon		: MYSESSION.geo.lon
+					lat		: mySesh.geo.lat,
+					lon		: mySesh.geo.lon
 				};
 				createAccountRequest.send(params);
 				*/

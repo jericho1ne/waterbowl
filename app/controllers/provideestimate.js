@@ -71,12 +71,12 @@ function updateEstimates (place_ID, value_1, value_2) {
 	
 	var params = {
 		place_ID : place_ID,
-		owner_ID : MYSESSION.user.owner_ID,
-		dog_ID 	 : MYSESSION.dog.dog_ID,
+		owner_ID : mySesh.user.owner_ID,
+		dog_ID 	 : mySesh.dog.dog_ID,
 		value_1  : value_1,
 		value_2  : value_2,
-		lat:	MYSESSION.geo.lat,
-		lon:	MYSESSION.geo.lon
+		lat:	mySesh.geo.lat,
+		lon:	mySesh.geo.lon
 	};
 		Ti.API.log( "* Sending info to PHP " + JSON.stringify(params) );
 

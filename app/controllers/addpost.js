@@ -1,25 +1,24 @@
 function countCharacters(text_content) {
 	Ti.API.debug(text_content.length);
 	
-	character_count.text = text_content.length+" / "+MYSESSION.stringMaxes.poiRemarkMaxLength;
+	character_count.text = text_content.length+" / "+mySesh.stringMaxes.poiRemarkMaxLength;
 }
 
 //========================================================================
 //	Name:			saveRemark ()
 //========================================================================
 function saveRemark(place_ID, place_type, text_content) {
-	if (text_content.length>0 && text_content.length<=MYSESSION.stringMaxes.poiRemarkMaxLength) {
+	if (text_content.length>0 && text_content.length<=mySesh.stringMaxes.poiRemarkMaxLength) {
 		addMarkBtn.removeEventListener('click', function(e){ saveRemark(textArea.value); });
 		var query = Ti.Network.createHTTPClient();
-		query.open("POST", "http://waterbowl.net/mobile/add-response-post.php");
-		
+		query.open("POST", SERVER_URL+"add-response-post.php");
 		var params = {
 			place_ID  	: place_ID,
 			place_type 	: place_type,
-			owner_ID 		: MYSESSION.user.owner_ID,
-			owner_name	: MYSESSION.user.name,
-			dog_ID 	 		: MYSESSION.dog.dog_ID,		// MYSESSION.dog.dog_ID,
-			dog_name 		: MYSESSION.dog.name, 
+			owner_ID 		: mySesh.user.owner_ID,
+			owner_name	: mySesh.user.name,
+			dog_ID 	 		: mySesh.dog.dog_ID,		// mySesh.dog.dog_ID,
+			dog_name 		: mySesh.dog.name, 
 			post_text		: text_content
 		};
 		Ti.API.log( "* Sending info to PHP " + JSON.stringify(params) );
@@ -51,9 +50,9 @@ function saveRemark(place_ID, place_type, text_content) {
 			
 		};
 	}
-	else if (text_content.length>MYSESSION.stringMaxes.poiRemarkMaxLength){ 
+	else if (text_content.length>mySesh.stringMaxes.poiRemarkMaxLength){ 
 		createSimpleDialog( "Uh oh", "You've exceeded the maximum character length ("+
-													MYSESSION.stringMaxes.poiRemarkMaxLength+")."); 
+													mySesh.stringMaxes.poiRemarkMaxLength+")."); 
 	}
 	else {
 		createSimpleDialog( "Uh oh", "Please type a message before submitting."); 
@@ -69,7 +68,7 @@ $.mini_place_second_label.text		= args._place_city;
 var create_marks_header = myUiFactory.buildSectionHeader("create_marks_header", "ADD REMARK TO THIS SPOT", 1);
 
 // TODO:  ALIGN LEFT
-var action_call =  myUiFactory.buildLabel( MYSESSION.dog.name+" says", "100%", this._height_row, myUiFactory._text_medium_bold );	
+var action_call =  myUiFactory.buildLabel( mySesh.dog.name+" says", "100%", this._height_row, myUiFactory._text_medium_bold );	
 // TODO:  display today's date and live character count
 var textArea = Ti.UI.createTextArea({
   borderWidth: 2,
@@ -80,7 +79,7 @@ var textArea = Ti.UI.createTextArea({
   keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
  	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,
   textAlign: 'left',
-  value: 'What does '+ MYSESSION.dog.name +' want to say about this place?',
+  value: 'What does '+ mySesh.dog.name +' want to say about this place?',
   top: 8,
   width: "100%", height : 110
 });
@@ -88,7 +87,7 @@ var textArea = Ti.UI.createTextArea({
 $.scrollView.add(create_marks_header); 
 $.scrollView.add(action_call); 
 $.scrollView.add(textArea);
-var character_count =  myUiFactory.buildLabel( "0 / "+MYSESSION.stringMaxes.poiRemarkMaxLength, "100%", this._height_row, myUiFactory._text_tiny );
+var character_count =  myUiFactory.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, "100%", this._height_row, myUiFactory._text_tiny );
 $.scrollView.add(character_count);
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "add remark", "large" );
 $.scrollView.add(addMarkBtn);

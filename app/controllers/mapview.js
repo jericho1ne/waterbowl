@@ -43,8 +43,8 @@ function drawDefaultMap(lat, lon, delta) {
 	wbMapView.addEventListener('regionChanged',function(evt) {
 		// Ti.API.log( JSON.stringify (evt.source.region) );
 		// Ti.API.log( 'regionChanged:'+evt.source.region.latitude+"/"+evt.source.region.longitude );
-		MYSESSION.geo.view_lat = evt.source.region.latitude;
-		MYSESSION.geo.view_lon = evt.source.region.longitude;
+		mySesh.geo.view_lat = evt.source.region.latitude;
+		mySesh.geo.view_lon = evt.source.region.longitude;
 	});
 	Ti.API.log("...[~] Map object built ");
 	return wbMapView;
@@ -56,7 +56,7 @@ function drawDefaultMap(lat, lon, delta) {
 //=================================================================================
 function initializeMap(lat, lon) {
 	// DRAW MAP
-	var wbMapView = drawDefaultMap( MYSESSION.geo.lat, MYSESSION.geo.lon, 0.07  );     // 0.05 
+	var wbMapView = drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.07  );     // 0.05 
 	$.mapContainer.add( wbMapView );
 	buildMapMenubar(wbMapView);
 	//$.mapContainer.add( buildMapMenubar(wbMapView) );
@@ -67,12 +67,12 @@ function initializeMap(lat, lon) {
 
 function refreshMapData() {
   // ADD MARKERS + ANNOTATIONS TO MAP
-	getPlacesMap( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 0, 0);		// will affect map
+	getPlacesMap( wbMapView, mySesh.geo.lat, mySesh.geo.lon, 0, 0);		// will affect map
 }
 
 function refreshPlaceListData() {
   Ti.API.debug(".... [~] refreshPlaceListData called ....");
-  getPlacesNearby( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon );   // will affect place list
+  getPlacesNearby( wbMapView, mySesh.geo.lat, mySesh.geo.lon );   // will affect place list
 	// POPULATE NEARBY PLACE TABLE
 	setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 600);
 	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
@@ -110,7 +110,7 @@ function getPlacesMap( mapObject, user_lat, user_lon, view_lat, view_lon ) {
 		lon       : user_lon, 
 		view_lat  : view_lat,
 		view_lon  : view_lon,
-		owner_ID  : MYSESSION.user.owner_ID
+		owner_ID  : mySesh.user.owner_ID
 	};
   // TODO: write a generic function to queryBackend
   // eg:  getJsonData("http://waterbowl.net/mobile/get-places-map.php", params);
@@ -131,9 +131,9 @@ function getPlacesMap( mapObject, user_lat, user_lon, view_lat, view_lon ) {
 			var jsonPlaces = JSON.parse(jsonResponse);	
 		  Ti.API.info( ".... .... .... .... total map places: " + jsonPlaces.length );	
 			// save incoming JSON array into global storage
-			MYSESSION.allPlaces = jsonPlaces;
+			mySesh.allPlaces = jsonPlaces;
 			refreshAnnotations(mapObject);
-			// Ti.API.debug( " ****** MYSESSION.allPlaces ************: " + JSON.stringify( MYSESSION.allPlaces ) );
+			// Ti.API.debug( " ****** mySesh.allPlaces ************: " + JSON.stringify( mySesh.allPlaces ) );
 		}
 		else {
 			createSimpleDialog('Loading place list','No data received');
@@ -150,7 +150,7 @@ function getPlacesNearby( mapObject, user_lat, user_lon ) {
   var params = {
 		lat       : user_lat,
 		lon       : user_lon,
-		owner_ID	  : MYSESSION.user.owner_ID
+		owner_ID	  : mySesh.user.owner_ID
 	};
   // TODO: write a generic function to queryBackend
   // eg:  getJsonData("http://waterbowl.net/mobile/get-places-nearby.php", params);
@@ -171,15 +171,15 @@ function getPlacesNearby( mapObject, user_lat, user_lon ) {
 		if (jsonResponse != "") {
 			var jsonPlaces = JSON.parse(jsonResponse);	
 		  Ti.API.info( ".... .... .... .... total nearby places: " + jsonPlaces.length );	
-			MYSESSION.nearbyPlaces = jsonPlaces;
+			mySesh.nearbyPlaces = jsonPlaces;
 			
 		  // CHECK #1 - Have we left previous place's geofence?  Only check this if current_place_ID is not null
-      if (MYSESSION.dog.current_place_ID>0 && getArrayIndexById(MYSESSION.nearbyPlaces, MYSESSION.dog.current_place_ID)==-1 ) {
-    	  checkoutFromPlace(MYSESSION.dog.current_place_ID);
-   		  createSimpleDialog( "Seems you've left", "Automatically checked you out from " + MYSESSION.dog.current_place_name);
+      if (mySesh.dog.current_place_ID>0 && getArrayIndexById(mySesh.nearbyPlaces, mySesh.dog.current_place_ID)==-1 ) {
+    	  checkoutFromPlace(mySesh.dog.current_place_ID);
+   		  createSimpleDialog( "Seems you've left", "Automatically checked you out from " + mySesh.dog.current_place_name);
     	}
     	// CHECK #2 - If there a Checkin modal currently up, then check if situation is still valid 
-    	//    eg: is the currently displayed place name still part of MYSESSION.nearbyPlaces
+    	//    eg: is the currently displayed place name still part of mySesh.nearbyPlaces
 		}
 		else {
 			createSimpleDialog('Loading place list','No data received');
@@ -196,13 +196,13 @@ function refreshAnnotations(mapObject) {
 	mapObject.removeAllAnnotations();
 	var annotationArray = [];
 	// ALL PLACES ARRAY
-	for (var i=0; i<MYSESSION.allPlaces.length; i++) {
+	for (var i=0; i<mySesh.allPlaces.length; i++) {
 		/* make sure to pass current array index, anything other than array index is useless */
-		annotationArray.push ( createMapAnnotation(MYSESSION.allPlaces[i], i) );	  
+		annotationArray.push ( createMapAnnotation(mySesh.allPlaces[i], i) );	  
 	}
 	/* attach all POI marker annotations to map */
 	mapObject.addAnnotations( annotationArray );
-	MYSESSION.placeAnnotations = annotationArray; 
+	mySesh.placeAnnotations = annotationArray; 
 }
 
 //=============================================================
@@ -211,11 +211,11 @@ function refreshAnnotations(mapObject) {
 //	Return:		annotation object
 //=============================================================
 function createMapAnnotation( place_data, index ) {
-	// Ti.API.info(" annotation marker place_data:" + JSON.stringify(place_data));
+	Ti.API.info(" >>> ICON_PATH:" + ICON_PATH );
 	/* */
 	var temp_button = Ti.UI.createButton({ 
 		id 							: place_data.id,	 
-		backgroundImage : MYSESSION.local_icon_path+"/"+'button-forward.png',
+		backgroundImage : ICON_PATH + 'button-forward.png',
 		zIndex					: 100, 
 		height					: 30, 
 		width						: 30
@@ -236,7 +236,7 @@ function createMapAnnotation( place_data, index ) {
 		title     : place_data.name,
 		subtitle  : place_data.city + " (" + place_data.dist + " mi)",
 		animate   : false,
-		image     : MYSESSION.local_icon_path+'/'+place_data.icon, 		// or pull icon from AWS: MYSESSION.AWS.base_icon_url
+		image     : ICON_PATH + place_data.icon, 		// or pull icon from AWS: mySesh.AWS.base_icon_url
 		rightView : temp_button
 	});
 	return annotation;
@@ -255,9 +255,9 @@ function refreshMarkAnnotations(mapObject) {
 	// mapObject.removeAllAnnotations();
 	var marksArray = [];
 	// ALL PLACES ARRAY
-	for (var i=0; i<MYSESSION.nearbyMarks.length; i++) {
+	for (var i=0; i<mySesh.nearbyMarks.length; i++) {
 		/* make sure to pass current array index, anything other than array index is useless */
-		marksArray.push ( createMarkAnnotation(MYSESSION.nearbyMarks[i], i) );	  
+		marksArray.push ( createMarkAnnotation(mySesh.nearbyMarks[i], i) );	  
 	}
 	/* attach all POI marker annotations to map */
 	mapObject.addAnnotations( marksArray );
@@ -274,9 +274,9 @@ function createMarkAnnotation( mark, index ) {
 	// Ti.API.info(" annotation marker for MARK:" + JSON.stringify(mark));
 	var temp_button = Ti.UI.createButton({ 
 		id 							: mark.ID,	 
-		backgroundImage : MYSESSION.local_icon_path+"/"+'button-forward.png',
-		zIndex					: 100, 
-		height					: 30, 
+		backgroundImage : ICON_PATH + 'button-forward.png',
+		zIndex						: 100, 
+		height						: 30, 
 		width						: 30
 	});
 	temp_button.addEventListener('click', function(e){
@@ -301,7 +301,7 @@ function createMarkAnnotation( mark, index ) {
 		title     : mark.mark_name,
 		subtitle  :	mark.marking_dog_name,
 		animate   : false,
-		image     : MYSESSION.local_icon_path+'/'+'Mark-MapMarker-4-small.png', 
+		image     : ICON_PATH + 'Mark-MapMarker-4-small.png', 
 		rightView : temp_button
 	});
 	return annotation;
@@ -326,7 +326,7 @@ function buildMapMenubar( mapObject ) {
 	});
 	*/
 	
-	// MYSESSION.device.screenwidth
+	// mySesh.device.screenwidth
 	var menubar_pad_right  = 20;
 	var	menubar_pad_bottom = 20;
 	var btn_spacing 			 = 10;
@@ -338,7 +338,7 @@ function buildMapMenubar( mapObject ) {
 	////////////////////////////////////////////////// RECENTER BUTTON ///////////////////
 	var recenterBtn = Ti.UI.createButton( {
 		id			: "recenterBtn",	
-		backgroundImage : MYSESSION.local_icon_path+"/"+'button-center.png',
+		backgroundImage : ICON_PATH + 'button-center.png',
 		// backgroundColor: '#ffffff', 
 		opacity : 1,
 		height	: secondary_btn_size, 
@@ -351,7 +351,7 @@ function buildMapMenubar( mapObject ) {
 	////////////////////////////////////////////////// GET POI BUTTON //////////////////////
 	var getPoiBtn = Ti.UI.createButton({ 
 		id 							: "getPoiBtn",	 
-		backgroundImage : MYSESSION.local_icon_path+"/"+'button-waterbowl.png',
+		backgroundImage : ICON_PATH + 'button-waterbowl.png',
 		opacity 				: 1,
 		zIndex					: 100, 
 		height					: main_btn_size, 
@@ -363,7 +363,7 @@ function buildMapMenubar( mapObject ) {
 	////////////////////////////////////////////////// SNIFF BUTTON ///////////////////////
   var sniffBtn = Ti.UI.createButton({ 
 		id 							: "sniffBtn",	 
-		backgroundImage : MYSESSION.local_icon_path+"/"+'button-sniff.png',
+		backgroundImage : ICON_PATH + 'button-sniff.png',
 		opacity 				: 1,
 		zIndex					: 100, 
 		height					: main_btn_size, 
@@ -375,7 +375,7 @@ function buildMapMenubar( mapObject ) {
 	////////////////////////////////////////////////// MARK BUTTON ////////////////////////
   var markBtn = Ti.UI.createButton({ 
 		id 							: "markBtn",	 
-		backgroundImage : MYSESSION.local_icon_path+"/"+'button-mark.png',
+		backgroundImage : ICON_PATH + 'button-mark.png',
 		opacity 				: 1,
 		zIndex					: 100, 
 		height					: main_btn_size, 
@@ -398,7 +398,7 @@ function buildMapMenubar( mapObject ) {
 
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
         createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
-        // centerMapOnLocation(mapObject, MYSESSION.geo.lat, MYSESSION.geo.lon, 0.01);
+        // centerMapOnLocation(mapObject, mySesh.geo.lat, mySesh.geo.lon, 0.01);
       } 
       else {  // if no errors, and we're not running in Simulator
         centerMapOnLocation(mapObject, e.coords.latitude, e.coords.longitude, 0.02);
@@ -412,8 +412,8 @@ function buildMapMenubar( mapObject ) {
 		// Only refresh MAP markers + annotations
 		getPlacesMap(
 		  mapObject, 
-		  MYSESSION.geo.lat, MYSESSION.geo.lon, 
-		  MYSESSION.geo.view_lat, MYSESSION.geo.view_lon
+		  mySesh.geo.lat, mySesh.geo.lon, 
+		  mySesh.geo.view_lat, mySesh.geo.view_lon
 		);
 	});
 	//====== MARK listener ================================================
@@ -438,12 +438,12 @@ function buildMapMenubar( mapObject ) {
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
         // createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
-      	getMarks( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 1, 0.5, 20 );
+      	getMarks( wbMapView, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
       } 
       else {  // if no errors, and we're not running in Simulator
         centerMapOnLocation(mapObject, e.coords.latitude, e.coords.longitude, 0.008);
-        MYSESSION.geo.lon = e.coords.longitude;
-        MYSESSION.geo.lat = e.coords.latitude;
+        mySesh.geo.lon = e.coords.longitude;
+        mySesh.geo.lat = e.coords.latitude;
         mapObject.removeAllAnnotations();
         getMarks( wbMapView, e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
 	    }
@@ -461,13 +461,13 @@ function displayNearbyPlaces( tableViewObject ) {
 	/* clear existing place scrolling list */
 	tableViewObject.data = null;
 	//tableViewObject = null;
-	// Ti.API.info("... nearbyPlaces >>"+JSON.stringify( MYSESSION.nearbyPlaces ));
+	// Ti.API.info("... nearbyPlaces >>"+JSON.stringify( mySesh.nearbyPlaces ));
 		
 	// (0)  create table view data array
 	var placeData = new Array();
 	
 	// (1)	sort POIs based on proximity
-	var nearby = MYSESSION.nearbyPlaces;
+	var nearby = mySesh.nearbyPlaces;
 	nearby.sort(function(a, b) {		// sort by proximity (closest first)
 		return parseFloat(a.dist) - parseFloat(b.dist);
 	});
@@ -475,7 +475,7 @@ function displayNearbyPlaces( tableViewObject ) {
 	// (2)  find out if currently checked in at any of these places, and if so, re-order data
 	var checked_in_index 	= ""; 
 	for (var i = 0; i < nearby.length; i++) {
-		if ( MYSESSION.dog.current_place_ID == nearby[i].id ) {
+		if ( mySesh.dog.current_place_ID == nearby[i].id ) {
 			checked_in_index = i;
 			break;
 		}
@@ -522,7 +522,7 @@ function displayNearbyPlaces( tableViewObject ) {
     // TODO:  createTableView row should be wrapped in a TableRow member function
     var row_bg_color = "#ffffff";
     
-		if ( MYSESSION.dog.current_place_ID == nearby[i].id ) {
+		if ( mySesh.dog.current_place_ID == nearby[i].id ) {
   		row_bg_color="#ec3c95";
       var placeLabel = Ti.UI.createLabel({
   			text : nearby[i].name +" -- (currently here)",  height : Ti.UI.SIZE, width : Ti.UI.FILL,
@@ -566,10 +566,10 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 	
 	var params = {
 		place_ID	: place_ID,
-		owner_ID	: MYSESSION.user.owner_ID,
-		dog_ID		: MYSESSION.dog.dog_ID,
-		lat				:	MYSESSION.geo.lat,
-		lon				:	MYSESSION.geo.lon
+		owner_ID	: mySesh.user.owner_ID,
+		dog_ID		: mySesh.dog.dog_ID,
+		lat				:	mySesh.geo.lat,
+		lon				:	mySesh.geo.lon
 	};
 	
 	Ti.API.info ( "... sending stuff to place-checkin.php " + JSON.stringify(params) );
@@ -588,19 +588,19 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				Ti.API.log("  [>]  Checkin added successfully ");
 	
 				// in case we want to look up more info on this specific place in the global place array
-			  var place_index = getArrayIndexById( MYSESSION.nearbyPlaces, place_ID );
-				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
+			  var place_index = getArrayIndexById( mySesh.nearbyPlaces, place_ID );
+				/*		 save Place ID, checkin state, and timestamp in mySesh  	*/
 				// checkin now officially complete
-				MYSESSION.dog.current_place_ID 	= place_ID;
+				mySesh.dog.current_place_ID 	= place_ID;
 				
 				// grab place lat
-				MYSESSION.dog.current_place_lat     = place_lat;
-				MYSESSION.dog.current_place_lon     = place_lon;
-				MYSESSION.dog.current_place_name    = place_name;
-				MYSESSION.dog.current_place_geo_radius = MYSESSION.nearbyPlaces[place_index].geo_radius;
-				MYSESSION.dog.last_checkin_timestamp= new Date().getTime();
+				mySesh.dog.current_place_lat     = place_lat;
+				mySesh.dog.current_place_lon     = place_lon;
+				mySesh.dog.current_place_name    = place_name;
+				mySesh.dog.current_place_geo_radius = mySesh.nearbyPlaces[place_index].geo_radius;
+				mySesh.dog.last_checkin_timestamp= new Date().getTime();
 				
-				// Ti.API.info ( "... MYSESSION.dog: " + JSON.stringify(MYSESSION.dog) );
+				// Ti.API.info ( "... mySesh.dog: " + JSON.stringify(mySesh.dog) );
 				// POPULATE NEARBY PLACE TABLE
   		  setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 200);
   		  // ADD PLACE LIST CLICK EVENT LISTENER
@@ -637,8 +637,8 @@ function checkoutFromPlace (place_ID) {
 	
 	var params = {
 		place_ID	: place_ID,
-		owner_ID	: MYSESSION.user.owner_ID,
-		dog_ID		: MYSESSION.dog.dog_ID,
+		owner_ID	: mySesh.user.owner_ID,
+		dog_ID		: mySesh.dog.dog_ID,
 	};
 	var response = 0;
 	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
@@ -652,13 +652,13 @@ function checkoutFromPlace (place_ID) {
 			if (response.status == 1) { 		// success
 				Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
 	
-				/*		 save Place ID, checkin state, and timestamp in MYSESSION  	*/
-				MYSESSION.dog.current_place_ID 	= null;
+				/*		 save Place ID, checkin state, and timestamp in mySesh  	*/
+				mySesh.dog.current_place_ID 	= null;
 				// POPULATE NEARBY PLACE TABLE
 				displayNearbyPlaces($.placeListTable);
 				// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
     		updatePlaceListLabel($.placeListTitle);
-				// createSimpleDialog( "Checked out from", MYSESSION.dog.current_place_name);
+				// createSimpleDialog( "Checked out from", mySesh.dog.current_place_name);
       } else {
 			 createSimpleDialog( "Uh oh", response.message ); 
 		  }
@@ -675,7 +675,7 @@ function checkoutFromPlace (place_ID) {
 //	Purpose:	use global data array to populate a table view
 //=================================================================================
 function updatePlaceListLabel(textLabel) {
-	var array_size = MYSESSION.nearbyPlaces.length;
+	var array_size = mySesh.nearbyPlaces.length;
 	if (array_size == 0) {
     textLabel.text = "no nearby places";
 	  $.outerMapContainer.height = '100%';
@@ -686,7 +686,7 @@ function updatePlaceListLabel(textLabel) {
 	}
 	else if (array_size==1) {
 		textLabel.text = "found " + array_size + " place nearby ";
-		if (MYSESSION.nearbyPlaces[0].id != MYSESSION.dog.current_place_ID )
+		if (mySesh.nearbyPlaces[0].id != mySesh.dog.current_place_ID )
 		  textLabel.text += "- tap to mark it.";
     $.outerMapContainer.height = '88%';
   }
@@ -711,7 +711,7 @@ function addPlaceListClickListeners( placeListObject ) {
 //=================================================================================
 function presentUserCheckinOptions( place ) {;
   var modal_title = 'Mark your presence at';
-  if (MYSESSION.dog.current_place_ID == place.id) {
+  if (mySesh.dog.current_place_ID == place.id) {
     var modal_title = 'Are you leaving';
   }
   // modal popup 
@@ -729,7 +729,7 @@ function presentUserCheckinOptions( place ) {;
 	// TODO:  
 	checkin_dialog.addEventListener('click', function(e_dialog) {
 		if (e_dialog.index == 0) {  // user clicked OK
-	    if (MYSESSION.dog.current_place_ID == place.id)	{
+	    if (mySesh.dog.current_place_ID == place.id)	{
 			  checkoutFromPlace (place.id);
 		  } else {
 		    checkIntoPlace(place.id, place.lat, place.lon, place.name);
@@ -749,8 +749,8 @@ function placeListListener(e) {
 	centerMapOnLocation(wbMapView, e.row.lat, e.row.lon, 0.03);
 
   // figure out which annotation index to trigger
-  var anno_index = getArrayIndexById( MYSESSION.placeAnnotations, e.row.id );
-	wbMapView.selectAnnotation( MYSESSION.placeAnnotations[anno_index] );		
+  var anno_index = getArrayIndexById( mySesh.placeAnnotations, e.row.id );
+	wbMapView.selectAnnotation( mySesh.placeAnnotations[anno_index] );		
 	
 	// pop up a check in or check out dialog box based on current checkin status
 	presentUserCheckinOptions( e.row );
@@ -758,19 +758,19 @@ function placeListListener(e) {
 
 
 //=================================================================================
-//	Name:			refreshGeolocation()
+//	Name:			refreshGeo()
 //	Purpose:	  
 //=================================================================================
 function refreshGeo() {
 	Ti.API.debug("[[[[[[[[[[[ refreshGeo called ]]]]]]]]]] ");
   
   if(Ti.Network.online ) {
-	  var mins_elapsed = Math.round( Date.now() / (1000*60) ) - MYSESSION.geo.last_acquired;
-	  MYSESSION.geo.geo_trigger_count++;
-	  $.geo_trigger.text = "Geo trigger #"+MYSESSION.geo.geo_trigger_count;
-	  MYSESSION.geo.last_acquired = Math.round( Date.now() / (1000*60) );    
+	  var mins_elapsed = Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired;
+	  mySesh.geo.geo_trigger_count++;
+	  $.geo_trigger.text = "Geo trigger #"+mySesh.geo.geo_trigger_count;
+	  mySesh.geo.last_acquired = Math.round( Date.now() / (1000*60) );    
 	     
-	  //if (mins_elapsed > MYSESSION.geo.refresh_interval) {   // only if 2 mins have passed since last geo update
+	  //if (mins_elapsed > mySesh.geo.refresh_interval) {   // only if 2 mins have passed since last geo update
 	  // set time last acquired (minutes since start of Unix Epoch)
 	      
 	  Titanium.Geolocation.getCurrentPosition(function(e) {
@@ -778,15 +778,15 @@ function refreshGeo() {
 	  		Ti.API.debug( "  X X X  Problems with Geolocation...  "+e.error);
 	  	}
 	  	else {   
-	    	Ti.API.debug(".... NEW GEO CHECK #[" + MYSESSION.geo.geo_trigger_count + "] "+e.coords.latitude+", "+e.coords.longitude);     	    
-				MYSESSION.geo.geo_trigger_success ++;
-				$.geo_success.text = "lat/lng rec'd #" + MYSESSION.geo.geo_trigger_success;
+	    	Ti.API.debug(".... NEW GEO CHECK #[" + mySesh.geo.geo_trigger_count + "] "+e.coords.latitude+", "+e.coords.longitude);     	    
+				mySesh.geo.geo_trigger_success ++;
+				$.geo_success.text = "lat/lng rec'd #" + mySesh.geo.geo_trigger_success;
 				$.geo_latlng.text = e.coords.latitude+"/" +e.coords.longitude;
-	      $.current_place_ID.text = "Checked in at : "+MYSESSION.dog.current_place_ID;
+	      $.current_place_ID.text = "Checked in at : "+mySesh.dog.current_place_ID;
 	      
 	      /* save newly acquired coordinates */
-	    	MYSESSION.geo.lat = e.coords.latitude;
-	  	  MYSESSION.geo.lon = e.coords.longitude;
+	    	mySesh.geo.lat = e.coords.latitude;
+	  	  mySesh.geo.lon = e.coords.longitude;
 	      // see if user is still checked in somewhere 
 	      // and if so, have they left the geofence
 	      // refreshMapData();
@@ -829,7 +829,7 @@ function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, mark
 			var jsonPlaces = JSON.parse(jsonResponse);	
 		  Ti.API.info( ".... .... .... .... total marks: " + jsonPlaces.length );	
 			// save incoming JSON array into global storage
-			MYSESSION.nearbyMarks = jsonPlaces;
+			mySesh.nearbyMarks = jsonPlaces;
 			refreshMarkAnnotations(mapObject);
 		}
 		else {
@@ -846,8 +846,8 @@ function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, mark
 Titanium.Geolocation.getCurrentPosition(function(e){
 	Ti.API.debug("[ [ [ [ getCurrentPosition called ] ] ] ] ");
 	// use default Playa Del Rey coordinates
-  MYSESSION.geo.lat = 33.970;
-  MYSESSION.geo.lon = -118.4201;
+  mySesh.geo.lat = 33.970;
+  mySesh.geo.lon = -118.4201;
 	// error occurred
 	if (!e.success || e.error) {
 	  if (Titanium.Platform.model!="Simulator") {
@@ -861,13 +861,13 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   	// overwrite hardcoded coordinates with device geolocation */
   	if (Titanium.Platform.model!="Simulator") {		
   		// Alternatively, check for Math.round(lat)!=38 && Math.round(lat)!=122 (SF Apple Store)
-  		MYSESSION.geo.lat = e.coords.latitude;
-  		MYSESSION.geo.lon = e.coords.longitude;
+  		mySesh.geo.lat = e.coords.latitude;
+  		mySesh.geo.lon = e.coords.longitude;
    	 // set time last acquired (minutes since start of Unix Epoch)
-	 	 MYSESSION.geo.last_acquired = Math.round( Date.now() / (1000*60) );
+	 	 mySesh.geo.last_acquired = Math.round( Date.now() / (1000*60) );
   	}
   }
-  Ti.API.log("............... lat: " + MYSESSION.geo.lat  + " / lon: " + MYSESSION.geo.lon);
+  Ti.API.log("............... lat: " + mySesh.geo.lat  + " / lon: " + mySesh.geo.lon);
   
   // Go through these steps regardless of whether we receiving an actual lat/lon
   
@@ -877,7 +877,7 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   // Get Map and PlaceList data
   refreshMapData();
   refreshPlaceListData();
-  getMarks( wbMapView, MYSESSION.geo.lat, MYSESSION.geo.lon, 1, 1.5, 20 );
+  getMarks( wbMapView, mySesh.geo.lat, mySesh.geo.lon, 1, 1.5, 20 );
 });
   
 /*
@@ -894,6 +894,6 @@ setTimeout(function() { createWindowController('placeoverview',{
 //		Purpose:  
 //		1) 	Check for stale checkings
 //		2) 	Refresh nearby places table
-//		2)  Save latest user location into MYSESSION.geo.lat, MYSESSION.geo.lon
+//		2)  Save latest user location into mySesh.geo.lat, mySesh.geo.lon
 //====================================================================================
 setInterval(refreshGeo, 60000);			// LOOP every 20 seconds

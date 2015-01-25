@@ -13,6 +13,7 @@ function isset( value ) {
 //=====================================================
 //	Name:		 	createSimpleDialog ( title, msg )
 //	Purpose:	nice clean way to do alert modals
+//	TODO:			move to UiFactory??
 //=====================================================
 function createSimpleDialog (title, msg) {
 	var simple_dialog = Titanium.UI.createAlertDialog({
@@ -37,8 +38,8 @@ function createColorBlock (block_bg_color) {
 //	Purpose:	to be the bestest window manager ever
 //===========================================================================================
 function createWindowController ( win_name, args, animation ) {
-	MYSESSION.previousWindow = MYSESSION.currentWindow;
-	MYSESSION.currentWindow = win_name;
+	mySesh.previousWindow = mySesh.currentWindow;
+	mySesh.currentWindow = win_name;
 	
 	Ti.API.debug(" ::::: createWindowController ::::: ["+win_name+"]" + "["+JSON.stringify(args) +"]");
 
@@ -82,9 +83,9 @@ function createWindowController ( win_name, args, animation ) {
 	else
 	  winObject.open(animStyle);
 	// status checks
-	Ti.API.info( " >>> User Array: "+ JSON.stringify( MYSESSION.user ) );
-	Ti.API.info( " >>> Dog Array: "+ JSON.stringify( MYSESSION.dog ) );
-	Ti.API.info( " >>> Checkin Place ID : "+ MYSESSION.dog.current_place_ID );
+	Ti.API.info( " >>> User Array: "+ JSON.stringify( mySesh.user ) );
+	Ti.API.info( " >>> Dog Array: "+ JSON.stringify( mySesh.dog ) );
+	Ti.API.info( " >>> Checkin Place ID : "+ mySesh.dog.current_place_ID );
 }
 
 
@@ -143,7 +144,7 @@ function addMenubar( parent_object ) {
 	
 	var backBtn 		= Ti.UI.createButton( {
 		id: "backBtn",	 
-		backgroundImage : MYSESSION.local_icon_path+"/"+'icon-mainnav-back.png',
+		backgroundImage : "images/icons/" +'icon-mainnav-back.png',
 		zIndex	: 100, 
 		height	: 20, 
 		width		: 20
@@ -251,7 +252,7 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 	/* 	move file from photo gallery to Ti app data directory first */
 	var filename 		= Ti.Platform.createUUID()+".jpg";
 	/* 	save recently uploaded photo as current profile photo; update profile photo ImageView image=... */
-	MYSESSION.dog.photo = filename;
+	mySesh.dog.photo = filename;
 	//photoPlaceholder.image = filehandle;
 	
 	/* Returns a File object representing the file identified by the path arguments  */
@@ -281,11 +282,11 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 // 	Purpose:	keep breadcrumb of user navigation + close windows in correct order
 //=================================================================================
 function addToAppWindowStack( winObject, win_name )  {
-	MYSESSION.windowStack.push( winObject );
+	mySesh.windowStack.push( winObject );
 	Ti.App.Properties.current_window = win_name;
 	
-	//Ti.API.info ( "windowStack:"+ JSON.stringify( MYSESSION.windowStack ) + " || array size: " + ( MYSESSION.windowStack.length ) );
-	Ti.API.debug ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( MYSESSION.windowStack.length ) +" =========//" );
+	//Ti.API.info ( "windowStack:"+ JSON.stringify( mySesh.windowStack ) + " || array size: " + ( mySesh.windowStack.length ) );
+	Ti.API.debug ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( mySesh.windowStack.length ) +" =========//" );
 }
 
 //=================================================================================
@@ -293,7 +294,7 @@ function addToAppWindowStack( winObject, win_name )  {
 // 	Purpose:	generic cleanup function usually attached to Back Button
 //=================================================================================
 function closeWindowController() {
-	var currentWindow = MYSESSION.windowStack.pop();
+	var currentWindow = mySesh.windowStack.pop();
 	Ti.API.info( "[x] closing window ["+ Ti.App.Properties.current_window +"]");
 	// default close window animation is SLIDE RIGHT
 	currentWindow.close( { 
@@ -349,85 +350,44 @@ if(Ti.Platform.osname === 'android'){
 };
 */
 
+
+/*----------------------------------------------------------------------
+ *  	LOADING MAP MODULE
+ *-----------------------------------------------------------------------*/
+if (Ti.Platform.osname === "iphone")	
+ 	Alloy.Globals.Map = require('ti.map');
+else if (Ti.Platform.osname == "android")
+	Alloy.Globals.Map = Ti.Map;
+
+
+/*----------------------------------------------------------------------
+ *  	Instantiate UI factory
+ *-----------------------------------------------------------------------*/
+var UiFactory = require('lib/UiFactoryClass');
+var myUiFactory = new UiFactory.UiFactory();
+
+
+/*----------------------------------------------------------------------
+ *  	Instantiate Session class (contains all the app globals)
+ *-----------------------------------------------------------------------*/
+// include session class library
+var SessionClass 	= require('lib/SessionClass');
+var mySesh = new SessionClass.Session();
+
+/*	
+			DEV vs LIVE vs LOCAL
+			options: dev, live, local 			 	 
+																					*/
+var SERVER_URL 		= mySesh.getUrl("live");
+var ICON_PATH 	 	= "images/icons/";
+var MISSING_PATH	= "images/missing/";
+var PROFILE_PATH 	= SERVER_URL + mySesh.server.wb_path.bucket_profile;
+var BANNER_PATH 	= SERVER_URL + mySesh.server.wb_path.bucket_banner;
 /*----------------------------------------------------------------------
  *  	GLOBAL VARIABLES
  *-----------------------------------------------------------------------*/
 // NextSpace Culver City  34.024 / -118.394
 // Oberrieder 		33.971995 / -118.420496
-var MYSESSION = {
-	device : { 
-		screenwidth : Ti.Platform.displayCaps.platformWidth
-	},
-	stringMaxes : {
-		poiRemarkMaxLength  : 1600,
-		markTitleMaxLength	: 30,
-		markRemarkMaxLength : 256,
-		dogNameMax					: 30
-	},
-	user : {
-		owner_ID 	: null,
-		name     	: null,
-		email			:	null,
-		password	: null
-	},
-	dog : {
-		dog_ID : 	null,
-		name:		 	null,
-		sex: 			null,
-		age:			null,
-		weight:		null,
-		current_place_ID  : null,
-		current_place_name : null,
-		current_place_geo_radius : null,
-		current_place_lat : null,
-		current_place_lon : null,
-		last_checkin_timestamp : null
-	},
-	windowStack		: [],
-	currentWindow			: "index", 
-	previousWindow		: null,
-	local_icon_path		:	"images/icons",
-	local_banner_path : "images/places",
-	allPlaces		      : [],				// top N places that are near user's location (n=20, 30, etc)
-	nearbyMarks		    : [],
-	nearbyPlaces      : [], 				// contains up to N places that are within the geofence
-	placeAnnotations  : [],
-	geo: {
-		lat						: null, 
-		lon						: null,
-		view_lat      : null,
-		view_lon      : null,
-		geo_trigger_count : 0,
-		geo_trigger_success: 0,
-		refresh_interval 	: 1,
-		last_acquired	: 0           // minutes since start of UNIX epoch
-	}, 
-	currentPlace: { 
-		ID				: null,
-		name			: null,
-		mobile_bg	: null,
-		address		: null,
-		city			: null,
-		zip 			: null,
-		distance  : null
-	},
-	checkinInProgress	: null,
-	AWS: {
-		access_key_id		: "AKIAILLMVRRDGDBDZ5XQ",
-		secret_access		: "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",
-		url_base 				: "http://s3.amazonaws.com",
-		// bucket_icon			: "wb-icon",
-		bucket_place		: "wb-place",
-		bucket_profile	: "wb-profile",
-		bucket_uitext		: "wb-ui-text"
-	},
-	WBnet: {
-		url_base 				: "http://www.waterbowl.net/mobile",
-		bucket_banner		: "images/wb-banner",
-		bucket_profile	: "images/wb-profile",
-		bucket_uitext		: "images/wb-ui-text"
-	}
-};
 
 // TODO: get rid of this and see what happens; should no longer be in use 
 var winStack = [];			// create window stack array to keep track of what's open
@@ -435,8 +395,8 @@ Ti.App.Properties.windowStack = winStack;
 Ti.App.Properties.current_window = null;
 
 /*  include amazon AWS module + authorize w/ credentials   */
-Alloy.Globals.AWS = require('ti.aws');						
-Alloy.Globals.AWS.authorize( MYSESSION.AWS.access_key_id, MYSESSION.AWS.secret_access );
+// Alloy.Globals.AWS = require('ti.aws');						
+// Alloy.Globals.AWS.authorize( mySesh.AWS.access_key_id, mySesh.AWS.secret_access );
 
 Alloy.Globals.placeList_clicks 	= 0;
 Alloy.Globals.placeList_ID 			= null;
@@ -451,19 +411,7 @@ Ti.Geolocation.accuracy 			= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACC
 Ti.Geolocation.purpose 				= "Receive User Location";
 Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
 
-/*----------------------------------------------------------------------
- *  	LOADING MAP MODULE
- *-----------------------------------------------------------------------*/
-if (Ti.Platform.osname === "iphone")	
- 	Alloy.Globals.Map = require('ti.map');
-else if (Ti.Platform.osname == "android")
-	Alloy.Globals.Map = Ti.Map;
-
-
+// TODO: is this still used by mapview.js??
 Alloy.Globals.annotations = [];
 
-var longPress;
-
-// instantiate UI factory
-var UiFactoryModule = require('lib/UiFactoryClass');
-var myUiFactory = new UiFactoryModule.UiFactory();
+// var longPress;

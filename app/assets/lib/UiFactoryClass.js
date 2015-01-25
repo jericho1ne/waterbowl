@@ -73,7 +73,7 @@ UiFactory.prototype.loadJson = function( params, url, callbackFunction ) {
 		
 		if (jsonResponse != "" ) {
 			var data = JSON.parse( jsonResponse );
-			Ti.API.debug("....[~] UiFactory.loadJson ["+JSON.stringify(data)+"]");
+			// Ti.API.debug("....[~] UiFactory.loadJson ["+JSON.stringify(data)+"]");
 			if (callbackFunction!="")			
 				callbackFunction(data);
 			return data;	
@@ -309,7 +309,7 @@ UiFactory.prototype.buildTableRow = function(id, photo_url, photo_caption, time_
 
 	var column_3_width = this._pad_right;
   var column_1_width = this._icon_large+(2*this._pad_left);
-	var column_2_width = MYSESSION.device.screenwidth - column_3_width - column_1_width;
+	var column_2_width = mySesh.device.screenwidth - column_3_width - column_1_width;
   
 	var column_1 = this.buildViewContainer ( "col_1", "", 				column_1_width, div_height, 0 ); 
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", column_2_width, div_height, 0 );
@@ -409,7 +409,7 @@ UiFactory.prototype.buildRowMarkSummary = function(id, photo_url, photo_caption,
 
 	var column_3_width = this._pad_right;
   var column_1_width = this._icon_large+(2*this._pad_left);
-	var column_2_width = MYSESSION.device.screenwidth - column_3_width - column_1_width;
+	var column_2_width = mySesh.device.screenwidth - column_3_width - column_1_width;
   
 	var column_1 = this.buildViewContainer ( "col_1", "", 				column_1_width, div_height, 0 ); 
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", column_2_width, div_height, 0 );

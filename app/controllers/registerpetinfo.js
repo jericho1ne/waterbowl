@@ -31,10 +31,10 @@ function gender_female() {
 $.gender_button_bar.addEventListener('click', function(e) {
 	//alert( JSON.stringify(e) );
 	if (e.index == 0) {  
-		MYSESSION.dog.sex = "F";
+		mySesh.dog.sex = "F";
 	}
 	else if (e.index == 1) {
-		MYSESSION.dog.sex = "M";
+		mySesh.dog.sex = "M";
 	}
 });	
 
