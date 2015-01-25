@@ -4,7 +4,7 @@
 		
 			<ScrollView id="scrollView" class="fill_height" top="0" opacity="1">
 				<View id="miniHeaderContainer" width="100%" height="60" top="0" class="layout_vert" backgroundColor="#CCCCCC" zIndex="97" opacity="1">	
-					<Label id="mini_place_name_label" text="..." class="feed_label_left_lg white text_medium_bold"/>
+					<Label id="mini_place_name_label" text="[ Map Header Goes Here ]" class="feed_label_left_lg white text_medium_bold"/>
 					<Label id="mini_place_second_label" text="..." class="feed_label_left white text_medium_medium" />
 				</View>
 				

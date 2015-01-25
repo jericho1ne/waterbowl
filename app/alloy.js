@@ -10,6 +10,9 @@ function isset( value ) {
 		return null;
 }
 
+function clearTextAreaContents(object_name) {
+	object_name.value = ""; 
+}
 //=====================================================
 //	Name:		 	createSimpleDialog ( title, msg )
 //	Purpose:	nice clean way to do alert modals

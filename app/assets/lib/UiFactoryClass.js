@@ -633,7 +633,7 @@ UiFactory.prototype.buildTextField = function(id, width, hint, is_pwd) {
 UiFactory.prototype.buildButton = function(id, title, type) {
   // defaults (small button)
   var view_height 	= this._icon_medium+10;
-  var btn_height 		= this._icon_medium;
+  var btn_height 		= 34; // this._icon_medium;
   var borderRadius  = btn_height/2;
   
   var font   				= this._text_small;

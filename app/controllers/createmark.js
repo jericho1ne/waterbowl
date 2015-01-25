@@ -1,8 +1,8 @@
 //========================================================================
 //	Name:			saveRemark ()
 //========================================================================
-function saveRemark(place_ID, place_type, text_content) {
-	alert("save remark clicked!");
+function saveRemark(place_ID, title, text_content) {
+	createSimpleDialog(title, text_content);
 }
 //===========================================================================================================
 var args = arguments[0] || {};		// returns empty array instead of undefined thanks to the ||
@@ -40,7 +40,10 @@ $.scrollView.add(title_input);
 $.scrollView.add(textarea_label);
 $.scrollView.add(textArea);
 $.scrollView.add(addMarkBtn);
-addMarkBtn.addEventListener('click', function(e){ saveRemark(args._place_ID, args._place_type, textArea.value); });
+addMarkBtn.addEventListener('click', function(e){ saveRemark("", title_input.value, textArea.value); });
+
+textArea.addEventListener('focus', function(e){ clearTextAreaContents(textArea); });
+
 
 
 /* TODO:  

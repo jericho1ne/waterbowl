@@ -87,6 +87,9 @@ var textArea = Ti.UI.createTextArea({
 $.scrollView.add(create_marks_header); 
 $.scrollView.add(action_call); 
 $.scrollView.add(textArea);
+textArea.addEventListener('focus', function(e){ clearTextAreaContents(textArea); });
+
+
 var character_count =  myUiFactory.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, "100%", myUiFactory._height_row, myUiFactory._text_tiny );
 $.scrollView.add(character_count);
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "add remark", "large" );
