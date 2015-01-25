@@ -1,9 +1,15 @@
+//========================================================================
+//	Name:			saveRemark ()
+//========================================================================
+function saveRemark(place_ID, place_type, text_content) {
+	alert("save remark clicked!");
+}
 //===========================================================================================================
 var args = arguments[0] || {};		// returns empty array instead of undefined thanks to the ||
 // var data = [].slice.call(arguments);
 // Ti.API.debug(JSON.stringify(data));
 
-//Ti.API.debug(JSON.stringify(args));
+Ti.API.debug(" >>> args on CreateMark: "+JSON.stringify(args));
 
 // (2)  Add original mark section header + first mark
 $.scrollView.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
@@ -11,7 +17,7 @@ $.scrollView.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SP
 
 var title_label = myUiFactory.buildLabel( "Mark Title", "100%", myUiFactory._height_row+10, myUiFactory._text_medium );	
 //                                         	  id,          type,      hint,   is_pwd
-var title_input = myUiFactory.buildTextField("mark_title", "regular", "password", false);
+var title_input = myUiFactory.buildTextField("mark_title", "100%", " Add a memorable title", false);
 var textarea_label = myUiFactory.buildLabel( "Mark Text", "100%", myUiFactory._height_row+10, myUiFactory._text_medium );	
 var textArea = Ti.UI.createTextArea({
   borderWidth: 2,
@@ -27,10 +33,15 @@ var textArea = Ti.UI.createTextArea({
   width: "100%", height : 110
 });
 
+var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "mark", "large" );
+
 $.scrollView.add(title_label);
 $.scrollView.add(title_input);
 $.scrollView.add(textarea_label);
 $.scrollView.add(textArea);
+$.scrollView.add(addMarkBtn);
+addMarkBtn.addEventListener('click', function(e){ saveRemark(args._place_ID, args._place_type, textArea.value); });
+
 
 /* TODO:  
 
