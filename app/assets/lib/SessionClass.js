@@ -1,12 +1,13 @@
 function Session(){
 	this.device = { 
-		screenwidth : Ti.Platform.displayCaps.platformWidth
+		screenwidth  : Ti.Platform.displayCaps.platformWidth,
+		screenheight : Ti.Platform.displayCaps.platformHeight
 	};
 	this.stringMaxes = {
 		poiRemarkMaxLength  : 1600,
-		markTitleMaxLength		: 30,
+		markTitleMaxLength	: 30,
 		markRemarkMaxLength : 256,
-		dogNameMax						: 30
+		dogNameMax					: 30
 	};
 	this.user = {
 		owner_ID 	: null,
@@ -84,7 +85,7 @@ function Session(){
 
 //================================================================================
 //		Name:				getUrl
-//		Purpose:			pick between remote-live, remote-dev, and local 	standardize HTTP requests
+//		Purpose:		pick between remote-live, remote-dev, and local 	standardize HTTP requests
 //================================================================================
 Session.prototype.getUrl = function(server_type) {
 	if 			(server_type=="dev")

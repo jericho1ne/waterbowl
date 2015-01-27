@@ -10,7 +10,7 @@
 
 function UiFactory(){
   /*		DEBUG MODE!		(Adds borders to stuff)		*/
-  this._debug = 0;
+  this._debug = 1;
    
   /*		SPACING & PADDING				*/
   this._spacer_size = 4;
@@ -31,7 +31,7 @@ function UiFactory(){
   /*   TEXT																												*/
   this._base_font = 14;			// medium(28pt), large(36pt)
 
-  this._text_banner			 	= { fontFamily: 'Raleway', 				fontSize: 3.000 * this._base_font };	// large banners
+  this._text_banner			 	= { fontFamily: 'Raleway', 				fontSize: 3.000 * this._base_font, color: "#ffffff" };	// large banners
   this._text_large				= { fontFamily: 'Raleway-Bold', 	fontSize: 1.285 * this._base_font };	// 36 pt
   this._text_medium				= { fontFamily: 'Raleway-Medium',	fontSize: this._base_font }; 	// 28 pt
   this._text_medium_bold	= { fontFamily: 'Raleway-Bold',		fontSize: this._base_font }; 	// 28 pt
@@ -101,20 +101,20 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 };
 
 /*************************************************************************************************
-*		Name:  		buildLabel ( title, width, height, font_style, text_align )  
+*		Name:  		buildLabel ( title, width, height, font_style, font_color, text_align )  
 *											     eg: value, width, font_style, text_or_number (affects font used)
 *		Purpose:  create a label given 
 **************************************************************************************************/
-UiFactory.prototype.buildLabel = function(title, width, height, font_style, text_align) {
+UiFactory.prototype.buildLabel = function(title, width, height, font_style, font_color, text_align) {
 	var left_pad = 0;
+	var align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
+	
 	if (text_align=="left") {
-		text_align =  Ti.UI.TEXT_ALIGNMENT_LEFT;
+		align =  Ti.UI.TEXT_ALIGNMENT_LEFT;
 		left_pad = this._pad_left;
 	}
 	else if (text_align=="right")
-		text_align =  Ti.UI.TEXT_ALIGNMENT_RIGHT;
-	else
-		text_align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
+		align =  Ti.UI.TEXT_ALIGNMENT_RIGHT;
 		
 	var label = Ti.UI.createLabel( {	
 		//id	: something+"_label", 
@@ -123,10 +123,10 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, text
 		width	: width,
 		height: height,
 		left  : left_pad,
-		color	: this._color_black,
+		color	: font_color,
 		borderColor : this._color_dkblue,
 		borderWidth : this._debug,
-		textAlign		: text_align
+		textAlign		: align
 		//top   : 0
 	});
 	return label;
@@ -244,8 +244,8 @@ UiFactory.prototype.buildMiniHeader = function(place_name, city, bg_color) {
 		});
 	
 	column_right.add( this.buildSpacer("horz", "10%") );
-	column_right.add( this.buildLabel(place_name, "100%", "40%", myUiFactory._text_large, "left") );
-	column_right.add( this.buildLabel(city, "100%", "50%", myUiFactory._text_medium, "left") );
+	column_right.add( this.buildLabel(place_name, "100%", "40%", this._text_large, "left") );
+	column_right.add( this.buildLabel(city, "100%", "50%", this._text_medium, "left") );
 	
 	view_container.add(column_right);
 	
@@ -269,16 +269,16 @@ UiFactory.prototype.buildInfoBar = function(image_url, name, value) {
 		column_1.add(image);
   }
   var column_2 = this.buildViewContainer ( "column_2", "horizontal", Ti.UI.FILL, div_height, 0 );
-  column_2.add( myUiFactory.buildSpacer( "vert", 10 ) );
+  column_2.add( this.buildSpacer( "vert", 10 ) );
 	
 	if (name!="") {
-		var name_label  = myUiFactory.buildLabel( name, Ti.UI.SIZE, "100%", myUiFactory._text_medium );
+		var name_label  = this.buildLabel( name, Ti.UI.SIZE, "100%", this._text_medium );
 	}
-  var value_label = myUiFactory.buildLabel( value, Ti.UI.SIZE, "100%", myUiFactory._text_medium_bold );
+  var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold );
 	
 	if (name!="") {
 		column_2.add(name_label);
-		column_2.add( myUiFactory.buildSpacer( "vert", 2 ) );
+		column_2.add( this.buildSpacer( "vert", 2 ) );
 	}
 	
 	column_2.add(value_label);
@@ -610,7 +610,7 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 *		Purpose:  create small test button
 ************************************************************/
 UiFactory.prototype.buildTextField = function(id, width, hint, is_pwd) {
-	var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
+	var form_width = mySesh.device.screenwidth - this._pad_right - this._pad_left;
 	if (width=="")
 		width = form_width;
 		

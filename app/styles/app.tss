@@ -75,17 +75,6 @@
 /****************************************************************************************************
  									Predefined Ti Selectors																		  														 
 ****************************************************************************************************/
-									
-".menuLeft"			: { width: "20%", height: 36 }
-".menuCenter"		: { width: "60%" }
-".menuRight"		: { width: Ti.UI.FILL }
-
-".menubar_button" : {	
-	color: '#fff', backgroundColor: '#ec3c95',	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, zIndex: 10,
-	font:{ fontFamily: 'Raleway-Bold', fontSize: 13 } }
-
-".wbLogoMenubar" 	: { width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: 48,
-											color: "#ffffff", font:{ fontFamily: 'Raleway-Light', fontSize: 18 } }
 
 /*********************************************************************************************************
 									Layouts and ScrollViews																				  												 

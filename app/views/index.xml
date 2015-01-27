@@ -19,15 +19,15 @@
 
 <Alloy>
 	<Window id="index" class="absolute login_bg">
-		<View class="container">
-			<Label id="appTitle" class="top_80">waterbowl</Label>
-			
-			<View id="loginStuff" top="120" />
-			
+		<View id="content" class="container" >
+		
+		
+			<!-- 
 			<View id="footerContainer" top="70">
 				<ImageView id="footer"/>
 				<View class="fill_height bg_dk_blue"/>
 			</View>
+			-->
 		</View>	
 	</Window>
 </Alloy>

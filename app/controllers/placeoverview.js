@@ -27,7 +27,7 @@ function displayRemarks(data) {
 		});
 		// (2)	Print a list of all the remarks at this POI
     for (var i=0, len=data.length; i<len; i++) {
-      var photo = PROFILE_PATH +'/'+ 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
+      var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
 		  var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 		 
@@ -176,31 +176,30 @@ function displayPlaceCheckins(data, parentObject) {
    
 	 	if( data.checkins.length > 4) {
   		// size up parent container so that we can fit two rows, up to 8 thumbnails
-  		parentObject.height = myUiFactory._height_row * 4.6;  	
+  		parentObject.height = (2*myUiFactory._icon_large) + (4*myUiFactory._pad_top) + myUiFactory._icon_medium;  	
   	}
   	else if (data.checkins.length <= 4 ) {
-      parentObject.height = myUiFactory._height_row * 2.3;
+      parentObject.height = (1*myUiFactory._icon_large) + (3*myUiFactory._pad_top) + myUiFactory._icon_medium;
     }
   	
     for (var i=0, len=data.checkins.length; i<len; i++) {		// only calculate array size once
-		  var border = 0; 			// this is nobody we know by default (0=other, 1=me, 2=friends)
-		  
-		  /* only show first 7 elements (0 through 6), leave space for "+ {__} more" cell */
-			if (i>6 && data.checkins.length!=8)		
+		 	/* only show first 7 elements, leave space for "+ {__} more" cell */
+			if (i>=7 && data.checkins.length>8)		
 				break;
+		  
 		  /*  this is my pup, his is checked in at this POI!  Give'im a border!   */
+		  var border = 0; 			// this is nobody we know by default (0=other, 1=me, 2=friends)
 		  if(data.checkins[i].dog_ID == mySesh.dog.dog_ID)
 		  	border = 1;
 		  	
-		 	var dog_image = PROFILE_PATH + data.checkins[i].photo;
+		  var dog_image = PROFILE_PATH + 'dog-'+data.checkins[i].dog_ID+'-iconmed.jpg';
+		  // Ti.API.debug( "> > > " + dog_image);		 
 		  var dog_thumb = myUiFactory.buildProfileThumb("dog_thumb_"+i, dog_image, border, "large");
-		
 		  parentObject.add(dog_thumb);
 		}
 		/*  only if more than 8 checkins here */
 		if(data.checkins.length > 8 ) {
 			// Ti.API.debug(".... [~] displayPlaceCheckins:: found ["+ JSON.stringify(data.checkins.length) +"] dog(s) ");
- 	
 			var how_many_more_text = data.checkins.length - 7;
 			var how_many_more =  Ti.UI.createLabel( {text:"and "+how_many_more_text+" more", color: "#ec3c95" } );
 			$.addClass(how_many_more, "thumbnail");
