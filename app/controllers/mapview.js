@@ -1,4 +1,4 @@
-var map = {
+/* var map = {
     top						: 0,
     bottom				: 0,
     latitude			: 0,
@@ -6,12 +6,7 @@ var map = {
     latitudeDelta	: 0.1,
     longitudeDelta: 0.1,
     display				: "map"
-};
-
-/*----------------------------------------------------------------------
- *  	LOADING MAP MODULE
- *-----------------------------------------------------------------------*/
-Map = require('ti.map');
+};  */
 
 //======================================================================================
 
@@ -21,7 +16,7 @@ Map = require('ti.map');
 //=================================================================================
 function drawDefaultMap(lat, lon, delta) {
   Ti.API.log(".... .... .... drawDefaultMap lat/lon/delta: ["+lat+"/"+lon+"/"+delta+"]");
-	wbMapView = Map.createView({
+	wbMapView = myMap.createView({
 		mapType : Map.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
 		region : {
 			latitude 			: lat,
@@ -56,7 +51,7 @@ function drawDefaultMap(lat, lon, delta) {
 //=================================================================================
 function initializeMap(lat, lon) {
 	// DRAW MAP
-	var wbMapView = drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.07  );     // 0.05 
+	var wbMapView = drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.07 );     // 0.05 
 	$.mapContainer.add( wbMapView );
 	buildMapMenubar(wbMapView);
 	//$.mapContainer.add( buildMapMenubar(wbMapView) );
@@ -229,7 +224,7 @@ function createMapAnnotation( place_data, index ) {
 		};
 		createWindowController( "placeoverview", necessary_args, 'slide_left' );
  	});
-	var annotation = Alloy.Globals.Map.createAnnotation({
+	var annotation = myMap.createAnnotation({
     id        : place_data.id, 
 		latitude  : place_data.lat, 
 		longitude : place_data.lon,
@@ -294,7 +289,7 @@ function createMarkAnnotation( mark, index ) {
 		};*/
 		createWindowController( "markoverview", mark, 'slide_left' );
  	});
-	var annotation = Alloy.Globals.Map.createAnnotation({
+	var annotation = myMap.createAnnotation({
     id        : mark.ID, 
 		latitude  : mark.mark_lat, 
 		longitude : mark.mark_lon,

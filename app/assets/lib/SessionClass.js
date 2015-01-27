@@ -77,7 +77,7 @@ function Session(){
 			// LOCAL PATHS BELOW
 			// TODO: Figure out why these aren't working. Hardcoded in alloy.js for now...
 			// icon						: "images/icons/",
-			// missing					: "images/missing/"
+			// missing				: "images/missing/"
 		}
 	};
 };
@@ -94,6 +94,5 @@ Session.prototype.getUrl = function(server_type) {
 	else
 		return this.server.wb_path.url_live;
 }
-
 
 exports.Session = Session;

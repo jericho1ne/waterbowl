@@ -1,26 +1,71 @@
 //========================================================================
 //	Name:			saveRemark ()
 //========================================================================
-function saveRemark(place_ID, title, text_content) {
-	createSimpleDialog(title, text_content);
+function saveRemark(place_ID, title, text_content, textarea_hint) {
+	if ( title!='' && text_content!='' && text_content!=textarea_hint ) {
+		createSimpleDialog("Saving: "+title, text_content);
+		// TODO: save to db
+		
+		closeWindowController();
+	} else {
+		createSimpleDialog("Error", "Please fill in both Title and Mark");
+	}
+	
 }
+
+//=================================================================================
+// 	Name:  		drawDefaultMap (lat, lon)
+// 	Purpose:	draw default Apple map
+//=================================================================================
+function drawDefaultMap(lat, lon, delta) {
+  Ti.API.log(".... .... .... drawDefaultMap lat/lon/delta: ["+lat+"/"+lon+"/"+delta+"]");
+	markMapView = myMap.createView({
+		mapType : Map.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
+		region : {
+			latitude 			: lat,
+			longitude 		: lon,
+			latitudeDelta : delta,
+			longitudeDelta: delta
+		},
+		id : "markMapView",
+		top 					: 0,
+		opacity				: 1,
+		zIndex				: 20,
+		animate 			: false,
+		maxZoom				: 1,
+		minZoom				: 2,
+		regionFit	 		: true,
+		userLocation 	: true,
+		enableZoomControls : true
+	});
+	Ti.API.log("...[~] Map object built ");
+	return markMapView;
+}
+
 //===========================================================================================================
 var args = arguments[0] || {};		// returns empty array instead of undefined thanks to the ||
 // var data = [].slice.call(arguments);
 // Ti.API.debug(JSON.stringify(data));
-
 Ti.API.debug(" >>> args on CreateMark: "+JSON.stringify(args));
 
+// (1)  Create + Add map to the appropriate parent view; center on user's current location
+var markMapView = drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.07 );     // 0.05 
+$.mapContainer.add( markMapView );
+
 // (2)  Add original mark section header + first mark
-$.scrollView.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
+$.markForm.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
 
-
-var title_label = myUiFactory.buildLabel( "Mark Title", "100%", myUiFactory._height_row+10, myUiFactory._text_medium );	
+var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
+var title_label = myUiFactory.buildLabel( "Mark Title", form_width, myUiFactory._height_header, myUiFactory._text_medium, "left" );	
 //                                         	  id,          type,      hint,   is_pwd
-var title_input = myUiFactory.buildTextField("mark_title", "100%", " Add a memorable title", false);
-var textarea_label = myUiFactory.buildLabel( "Mark Text", "100%", myUiFactory._height_row+10, myUiFactory._text_medium );	
+var title_input = myUiFactory.buildTextField("mark_title", form_width, " Add a memorable title", false);
+var textarea_label = myUiFactory.buildLabel( "Mark Text", form_width, myUiFactory._height_header, myUiFactory._text_medium, "left" );	
+
+// used later to ensure the user has actually filled in the Mark textarea
+var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
+
 var textArea = Ti.UI.createTextArea({
-  borderWidth: 2,
+  borderWidth: 0,
   borderColor: '#bbb',
   borderRadius: 5,
   color: '#888',
@@ -28,19 +73,20 @@ var textArea = Ti.UI.createTextArea({
   keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
  	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,
   textAlign: 'left',
-  value: 'What does '+ mySesh.dog.name +' want to say about this place?',
-  top: 8,
-  width: "100%", height : 110
+  value: textarea_hint,
+  top: 1,
+  width: form_width, 
+  height : 90
 });
 
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "mark", "large" );
 
-$.scrollView.add(title_label);
-$.scrollView.add(title_input);
-$.scrollView.add(textarea_label);
-$.scrollView.add(textArea);
-$.scrollView.add(addMarkBtn);
-addMarkBtn.addEventListener('click', function(e){ saveRemark("", title_input.value, textArea.value); });
+$.markForm.add(title_label);
+$.markForm.add(title_input);
+$.markForm.add(textarea_label);
+$.markForm.add(textArea);
+$.markForm.add(addMarkBtn);
+addMarkBtn.addEventListener('click', function(e){ saveRemark("", title_input.value, textArea.value, textarea_hint); });
 
 textArea.addEventListener('focus', function(e){ clearTextAreaContents(textArea); });
 

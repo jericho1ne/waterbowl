@@ -49,7 +49,7 @@ function UiFactory(){
 	this._height_row   	= 45;				// 90	// 60px/pt? (medium), 90px/pt? (large)
 	this._height_header = 0.66667 * this._height_row ;			// 30px/pt? (small)
 	
-	this._form_width  	= "60%";
+	this._form_width  	= "70%";
 	this._button_width  = 200;
 	
 	/*  IMAGES AND ICONS      */
@@ -106,8 +106,11 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 *		Purpose:  create a label given 
 **************************************************************************************************/
 UiFactory.prototype.buildLabel = function(title, width, height, font_style, text_align) {
-	if (text_align=="left")
+	var left_pad = 0;
+	if (text_align=="left") {
 		text_align =  Ti.UI.TEXT_ALIGNMENT_LEFT;
+		left_pad = this._pad_left;
+	}
 	else if (text_align=="right")
 		text_align =  Ti.UI.TEXT_ALIGNMENT_RIGHT;
 	else
@@ -119,6 +122,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, text
 		font	:	font_style,
 		width	: width,
 		height: height,
+		left  : left_pad,
 		color	: this._color_black,
 		borderColor : this._color_dkblue,
 		borderWidth : this._debug,
@@ -606,14 +610,18 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 *		Purpose:  create small test button
 ************************************************************/
 UiFactory.prototype.buildTextField = function(id, width, hint, is_pwd) {
+	var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
+	if (width=="")
+		width = form_width;
+		
   var text_field = Ti.UI.createTextField( {
   	id              : id,
   	backgroundColor : '#ffffff', 
     color           : this._color_dkgray, 
-    width           : width, 
+    width           : form_width, 
     height          : 34, 
     top             : 1, 
-    opacity         : 0.92,
+    opacity         : 1,
   	font            : this._text_medium,
   	keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
   	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,

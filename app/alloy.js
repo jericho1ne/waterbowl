@@ -10,9 +10,14 @@ function isset( value ) {
 		return null;
 }
 
-function clearTextAreaContents(object_name) {
-	object_name.value = ""; 
+//=====================================================
+//	Name:    clearTextAreaContents ( textarea_object )
+//	Desc:	   clear hint text on focus / click inside
+//=====================================================
+function clearTextAreaContents(textarea_object) {
+	textarea_object.value = ""; 
 }
+
 //=====================================================
 //	Name:		 	createSimpleDialog ( title, msg )
 //	Purpose:	nice clean way to do alert modals
@@ -357,11 +362,10 @@ if(Ti.Platform.osname === 'android'){
 /*----------------------------------------------------------------------
  *  	LOADING MAP MODULE
  *-----------------------------------------------------------------------*/
-if (Ti.Platform.osname === "iphone")	
- 	Alloy.Globals.Map = require('ti.map');
+if (Ti.Platform.osname === "iphone")
+	myMap = require('ti.map');  // 	Alloy.Globals.Map = require('ti.map');
 else if (Ti.Platform.osname == "android")
-	Alloy.Globals.Map = Ti.Map;
-
+	myMap = Ti.Map;
 
 /*----------------------------------------------------------------------
  *  	Instantiate UI factory
