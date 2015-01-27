@@ -141,35 +141,67 @@ function getArrayIndexById( array, value ) {
 //						which is already positioned in the parent Window
 //=============================================================================
 function addMenubar( parent_object ) {
+	var middle_width = mySesh.device.screenwidth - (3 * (myUiFactory._pad_left + myUiFactory._icon_small)) - myUiFactory._pad_right;
 	/*  menubar	 - make sure height is exactly the same as #menubar in app.tss	*/
 	var menubar = Ti.UI.createView( {
-	  id: "menubar", width: "100%", layout: "horizontal", top: 0, height: 32, 
-    backgroundColor: "#58c6d5", opacity: 1, zIndex: 99 });  // bg color #58c6d5
+	  id: "menubar", width: "100%", layout: "horizontal", 
+	  top: 0, 
+	  height: 40, 
+   	// backgroundColor: "#58c6d5", 
+    opacity: 1, zIndex: 99 });  // bg color #58c6d5
 											
-	var menuLeft 		= Ti.UI.createView( {id: "menuLeft", width: 44, borderWidth: 0, borderColor: "red" });
-	var menuCenter 	= Ti.UI.createView( {id: "wbLogoMenubar", width: "75%", borderWidth: 0, borderColor: "gray", textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER });
-	var menuRight 	= Ti.UI.createView( {id: "menuRight", width: 44, right: 0, layout: "horizontal", width: Ti.UI.SIZE });
+	var menuLeft = Ti.UI.createView( {
+		id: "menuLeft", 
+		width: myUiFactory._icon_small + myUiFactory._pad_left,
+		left: 0, 
+		borderWidth: 1, 
+		borderColor: "red" 
+	});
+		
+	var menuCenter 	= Ti.UI.createView( {
+		id: "wbLogoMenubar", 
+		width: middle_width, 
+		borderWidth: 1, borderColor: "gray", 
+		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER 
+	});
+	
+	var menuRight 	= Ti.UI.createView( {
+		id: "menuRight", 
+		width: Ti.UI.FILL, 
+		borderWidth: 1, borderColor: "blue", 
+		layout: "horizontal", width: Ti.UI.FILL
+	});
 	
 	var backBtn 		= Ti.UI.createButton( {
 		id: "backBtn",	 
 		backgroundImage : "images/icons/" +'icon-mainnav-back.png',
+		left:  myUiFactory._pad_left, 
 		zIndex	: 100, 
-		height	: 20, 
-		width		: 20
+		height	: 30, 
+		width		: 30
 	} );
 	
-	var	infoBtn 		= Ti.UI.createButton( {id: "infoBtn",  color: '#ffffff', backgroundColor: '',	zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: 'i', right: 2, width: Ti.UI.SIZE, top: 0, opacity: 1, height: 34, width: 34, borderRadius: 12 });
+	var	infoBtn 		= Ti.UI.createButton( {
+		id: "infoBtn",
+		backgroundImage : "images/icons/" +'button-info-small.png',  
+		zIndex: 100,
+		height	: 30, 
+		width		: 30
+	});
 	
-	var	settingsBtn	= Ti.UI.createButton( {id: "settingsBtn", color: '#ffffff', backgroundColor: '',zIndex: 10,
-	font:{ fontFamily: 'Sosa-Regular', fontSize: 27 }, title: "Y", right: 4, width: Ti.UI.SIZE, top: 0, opacity: 1,  height: 34, width: 34, borderRadius: 12 });
+	var	settingsBtn	= Ti.UI.createButton( {
+		id: "settingsBtn", 
+		zIndex: 100,
+		backgroundImage : "images/icons/" +'mainnav-settings.png',
+		top: 0, opacity: 1, 
+		height: 30, width: 30
+	});
 	
 	var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: "auto", 
 			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
 	
-	//menuLeft.add(backBtn);
-	menuCenter.add(wbLogoMenubar);	
+	//menuCenter.add(wbLogoMenubar);	
 	
 	/*  don't want users going back to login screen once authenticated */
 	if (Ti.App.Properties.current_window != "mapview") {	
@@ -185,10 +217,9 @@ function addMenubar( parent_object ) {
 			//TODO:  add the other register windows
 			// OR:  	 only show settings btn on map, place, and mark
 		menuRight.add(settingsBtn);
+		menuRight.add(infoBtn);
 		settingsBtn.addEventListener('click', showSettings);
 	}
-
-	// menuRight.add(infoBtn);
 
 	/* Add items to container divs, then add menubar to Window object */
 	menubar.add(menuLeft);	

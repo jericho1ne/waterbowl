@@ -206,8 +206,6 @@ function refreshAnnotations(mapObject) {
 //	Return:		annotation object
 //=============================================================
 function createMapAnnotation( place_data, index ) {
-	Ti.API.info(" >>> ICON_PATH:" + ICON_PATH );
-	/* */
 	var temp_button = Ti.UI.createButton({ 
 		id 							: place_data.id,	 
 		backgroundImage : ICON_PATH + 'button-forward.png',

@@ -49,6 +49,7 @@ function goToLogin(e) {
 						Ti.API.log( "*** CURRENT CHECKINS: " + mySesh.dog.current_place_ID );
 						
 						// take user to the post-login window
+						closeWindowController();
 						createWindowController( "mapview", "", "slide_left" ); 
 					} else {
 						// pass on error message from backend 
@@ -139,7 +140,7 @@ if( mySesh.user.password!=null || Ti.App.Properties.getString('pass')!="" ) {
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
 // Ti.App.Properties.setString('user', '');
 // Ti.App.Properties.setString('pass', '');
- setTimeout ( function() { loginBtn.fireEvent('click'); }, 300 );  // wait for login fields to populate
+setTimeout ( function() { loginBtn.fireEvent('click'); }, 300 );  // wait for login fields to populate
 
 /*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
 /*

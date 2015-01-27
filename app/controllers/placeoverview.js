@@ -227,6 +227,7 @@ function attachMiniHeader () {
     opacity: 1, duration : 340
   });
   $.miniHeaderContainer.animate(a);
+  // TODO:  change transparent menubar backgroundColor to be same as miniHeader backgroundColor
 }
 
 function hideMiniHeader () {
@@ -235,6 +236,8 @@ function hideMiniHeader () {
     opacity: 0, duration : 220
   });
   $.miniHeaderContainer.animate(a);
+  // menubar.backgroundColor = "";
+  // TODO:  change menubar backgroundColor to be blank (transparent) again
 }
 
 //================================================================================

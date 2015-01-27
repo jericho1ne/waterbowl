@@ -54,9 +54,9 @@ function UiFactory(){
 	
 	/*  IMAGES AND ICONS      */
 	this._base_icon_size = 30;
-	this._icon_small  = 0.667 * this._base_icon_size;		//  40x40 px equivalent
-	this._icon_medium = 1.00 * this._base_icon_size;		//  60x60 px equivalent, base size
-	this._icon_large  = 2.33 * this._base_icon_size;		//  140x140 px equivalent
+	this._icon_small  = 1.000 * this._base_icon_size;		//  30x30 px equivalent
+	this._icon_medium = 1.333 * this._base_icon_size;		//  40x40 px equivalent, base size
+	this._icon_large  = 2.333 * this._base_icon_size;		//  70x70 px equivalent
 };
 
 //================================================================================
@@ -319,7 +319,7 @@ UiFactory.prototype.buildTableRow = function(id, photo_url, photo_caption, time_
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", column_2_width, div_height, 0 );
 	var column_3 = this.buildViewContainer ( "col_3", "", 				column_3_width, "100%", 		0 );
 		
-	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, "large");
+	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, "medium");
 	column_1.add(dog_photo);
 	view_container.add(column_1);
 	
