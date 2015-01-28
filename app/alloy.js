@@ -144,7 +144,7 @@ function addMenubar( parent_object ) {
 	var left_width = myUiFactory._icon_small + (2 * myUiFactory._pad_left);
 	var right_width_1 = myUiFactory._icon_small + myUiFactory._pad_left;
 	var right_width_2 = myUiFactory._icon_small + myUiFactory._pad_left + myUiFactory._pad_right;
-	var middle_width = mySesh.device.screenwidth - left_width - right_width_1 - right_width_2;
+	var middle_width = mySesh.device.screenwidth - left_width - (2*right_width_1) - right_width_2;
 	
 	// PARENT OBJECT ----------------------------------------->	
 	var menubar = Ti.UI.createView( {
@@ -152,29 +152,31 @@ function addMenubar( parent_object ) {
 	  top: 0, 
 	  height: myUiFactory._icon_small + (2 * myUiFactory._pad_top),
    	// backgroundColor: "#58c6d5", 
-    opacity: 1, zIndex: 99 
+    opacity: 0.88, zIndex: 99 
    }); 
 				
 	// CONTAINER VIEWS --------------------------------------->					
 	var menuLeft = Ti.UI.createView( {
 		width: left_width,
-		borderWidth: 1, borderColor: "red" 
+		borderWidth: 0, borderColor: "red" 
 	});
 	var menuCenter 	= Ti.UI.createView( {
 		width: middle_width, 
 		layout: "horizontal",
-		borderWidth: 1, borderColor: "gray", 
+		borderWidth: 0, borderColor: "gray", 
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER 
 	});
+	var menuRight0 	= Ti.UI.createView( {
+		//borderWidth:1, borderColor: "black",
+		width	: right_width_1
+	});
 	var menuRight1 	= Ti.UI.createView( {
-		width: right_width_1,
-		layout: "",
-		borderWidth: 1, borderColor: "green"
+		//borderWidth: 1, borderColor: "black",
+		width: right_width_1
 	});
 	var menuRight2 	= Ti.UI.createView( {
-		width: right_width_2,
-		layout: "",
-		borderWidth: 1, borderColor: "blue"
+		//borderWidth: 1, borderColor: "blue",
+		width: right_width_2	
 	});
 	
 	// BUTTONS ---------------------------------------------->
@@ -195,6 +197,20 @@ function addMenubar( parent_object ) {
 		zIndex	: 100
 	} );
 	
+	var profileBtn 		= Ti.UI.createButton( {
+		id			: "profileBtn",	 
+		left		: myUiFactory._pad_left,
+		top			: myUiFactory._pad_top,
+		width		: myUiFactory._icon_small,
+		height	: myUiFactory._icon_small,
+		backgroundImage : PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg',
+		borderWidth		: 2,
+		borderColor		: myUiFactory._color_dkpink,
+		borderRadius 	: myUiFactory._icon_small/2,
+		zIndex	: 100
+	} );
+	
+	//Ti.API.debug( JSON.stringify(mySesh));
 	var	infoBtn 		= Ti.UI.createButton( {
 		id: "infoBtn",
 		left: myUiFactory._pad_left,
@@ -225,22 +241,21 @@ function addMenubar( parent_object ) {
 	// DEBUG
 	Ti.API.debug(" ....[i] Ti.App.Properties.current_window :"+ Ti.App.Properties.current_window);
 		
-	// ADD BUTTONS ON A CASE BY CASE BASIS
-	if (Ti.App.Properties.current_window == "mapview") {	
-		menuRight1.add(settingsBtn);
-		settingsBtn.addEventListener('click', showSettings);
-		menuRight2.add(infoBtn);
-		infoBtn.addEventListener('click', showInfo);
-	}
-	else if (Ti.App.Properties.current_window == "settings" ) {	
+	// ADD BACK BUTTON ONLY IF NOT ON MAPVIEW
+	if (Ti.App.Properties.current_window != "mapview") {
 		menuLeft.add(backBtn);
 		backBtn.addEventListener('click', closeWindowController);
+	}
+	// SELECTIVELY ADD THE REST OF THE RIGHT SIDE BUTTONS
+	if (Ti.App.Properties.current_window == "settings" ) {
+		menuRight0.add(profileBtn);
+		profileBtn.addEventListener('click', showProfile);	
 		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}
 	else {
-		menuLeft.add(backBtn);
-		backBtn.addEventListener('click', closeWindowController);
+		menuRight0.add(profileBtn);
+		profileBtn.addEventListener('click', showProfile);
 		menuRight1.add(settingsBtn);
 		settingsBtn.addEventListener('click', showSettings);
 		menuRight2.add(infoBtn);
@@ -261,6 +276,7 @@ function addMenubar( parent_object ) {
 	/* Add items to container divs, then add menubar to Window object */
 	menubar.add(menuLeft);	
 	menubar.add(menuCenter); 
+	menubar.add(menuRight0);
 	menubar.add(menuRight1);
 	menubar.add(menuRight2);
 	parent_object.add( menubar );
@@ -381,21 +397,28 @@ function closeWindowController() {
 	currentWindow = null;
 }
 
-//=================================================================================
+//=============================================================
 // 	Name:  		showInfo()
-// 	Purpose:	generic help function attached to Info Button
-//=================================================================================
+// 	Purpose:	content-specific help function 
+//=============================================================
 function showInfo() {
 	Ti.API.info( "[+] info button clicked");
 }
-
-//=================================================================================
+//======================================================================
 // 	Name:  		showSettings()
 // 	Purpose:	generic settings for user / app
-//=================================================================================
+//======================================================================
 function showSettings() {
 	Ti.API.info( "[+] settings button clicked");
 	createWindowController('settings','','slide_left');
+}
+//=================================================================================
+// 	Name:  		showProfile()
+// 	Purpose:	dog profile view/edit window
+//=================================================================================
+function showProfile() {
+	Ti.API.info( "[+] Profile button clicked");
+	createWindowController('profile','','slide_left');
 }
 
 //==========================================================================================

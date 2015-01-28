@@ -10,7 +10,7 @@
 
 function UiFactory(){
   /*		DEBUG MODE!		(Adds borders to stuff)		*/
-  this._debug = 1;
+  this._debug = 0;
    
   /*		SPACING & PADDING				*/
   this._spacer_size = 4;
