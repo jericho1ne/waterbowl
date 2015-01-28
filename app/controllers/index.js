@@ -26,6 +26,7 @@ function goToLogin() {
 //	Purpose: check credentials against backend
 //================================================================================
 function wbLogin(email, password) {
+	//alert(email+"/"+password);
 	// >> XHR REQUEST
 	var loginRequest = Ti.Network.createHTTPClient( {
 		// SUCCESS:  On data load
@@ -108,10 +109,9 @@ var midView_height = .5 * content_height;
 
 // FIRST THINGS FIRST - IF CREDS ARE SAVED, AUTOLOGIN!
 var saved_user = Ti.App.Properties.getString('user');
-var saved_pwd = Ti.App.Properties.getString('pass');
+var saved_pwd  = Ti.App.Properties.getString('pass');
 
 if ( saved_user!=null && saved_pwd!=null ) {
-	alert( "This: "+ saved_user + "/" + saved_pwd );
 	wbLogin(saved_user, saved_pwd);
 } else {
 	// Build 3 vertically stacked View Containers

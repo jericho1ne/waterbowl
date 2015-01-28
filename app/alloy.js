@@ -141,12 +141,10 @@ function getArrayIndexById( array, value ) {
 //						which is already positioned in the parent Window
 //=============================================================================
 function addMenubar( parent_object ) {
-	var left_width = myUiFactory._icon_small + (1 * myUiFactory._pad_left);
-	var right_width = 
-			(2 * myUiFactory._icon_small) + 
-			(2 * myUiFactory._pad_left ) + 
-			(2 *myUiFactory._pad_right);
-	var middle_width = mySesh.device.screenwidth - left_width - right_width;
+	var left_width = myUiFactory._icon_small + (2 * myUiFactory._pad_left);
+	var right_width_1 = myUiFactory._icon_small + myUiFactory._pad_left;
+	var right_width_2 = myUiFactory._icon_small + myUiFactory._pad_left + myUiFactory._pad_right;
+	var middle_width = mySesh.device.screenwidth - left_width - right_width_1 - right_width_2;
 	
 	// PARENT OBJECT ----------------------------------------->	
 	var menubar = Ti.UI.createView( {
@@ -162,17 +160,20 @@ function addMenubar( parent_object ) {
 		width: left_width,
 		borderWidth: 1, borderColor: "red" 
 	});
-		
 	var menuCenter 	= Ti.UI.createView( {
 		width: middle_width, 
 		layout: "horizontal",
 		borderWidth: 1, borderColor: "gray", 
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER 
 	});
-	
-	var menuRight 	= Ti.UI.createView( {
-		width: right_width,
-		layout: "horizontal",
+	var menuRight1 	= Ti.UI.createView( {
+		width: right_width_1,
+		layout: "",
+		borderWidth: 1, borderColor: "green"
+	});
+	var menuRight2 	= Ti.UI.createView( {
+		width: right_width_2,
+		layout: "",
 		borderWidth: 1, borderColor: "blue"
 	});
 	
@@ -226,24 +227,23 @@ function addMenubar( parent_object ) {
 		
 	// ADD BUTTONS ON A CASE BY CASE BASIS
 	if (Ti.App.Properties.current_window == "mapview") {	
-		menuRight.add(settingsBtn);
+		menuRight1.add(settingsBtn);
 		settingsBtn.addEventListener('click', showSettings);
-		menuRight.add(infoBtn);
+		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}
 	else if (Ti.App.Properties.current_window == "settings" ) {	
 		menuLeft.add(backBtn);
 		backBtn.addEventListener('click', closeWindowController);
-		menuRight.add(blankBtn);
-		menuRight.add(infoBtn);
+		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}
 	else {
 		menuLeft.add(backBtn);
 		backBtn.addEventListener('click', closeWindowController);
-		menuRight.add(settingsBtn);
+		menuRight1.add(settingsBtn);
 		settingsBtn.addEventListener('click', showSettings);
-		menuRight.add(infoBtn);
+		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}
 	
@@ -253,15 +253,16 @@ function addMenubar( parent_object ) {
 			Ti.App.Properties.current_window!="markview") {	
 			//TODO:  add the other register windows
 			// OR:  	 only show settings btn on map, place, and mark
-		menuRight.add(infoBtn);
+		menuRight1.add(blankBtn);	
+		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}
-
 
 	/* Add items to container divs, then add menubar to Window object */
 	menubar.add(menuLeft);	
 	menubar.add(menuCenter); 
-	menubar.add(menuRight);
+	menubar.add(menuRight1);
+	menubar.add(menuRight2);
 	parent_object.add( menubar );
 }
 
