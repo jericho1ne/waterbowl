@@ -1,9 +1,3 @@
-function countCharacters(text_content) {
-	Ti.API.debug(text_content.length);
-	
-	character_count.text = text_content.length+" / "+mySesh.stringMaxes.poiRemarkMaxLength;
-}
-
 //========================================================================
 //	Name:			saveRemark ()
 //========================================================================
@@ -23,7 +17,6 @@ function saveRemark(place_ID, place_type, text_content) {
 		};
 		Ti.API.log( "* Sending info to PHP " + JSON.stringify(params) );
 	
-		var response = 0;
 		query.send(params);
 		query.onload = function() {
 			var json = this.responseText;
@@ -57,44 +50,27 @@ function saveRemark(place_ID, place_type, text_content) {
 	else {
 		createSimpleDialog( "Uh oh", "Please type a message before submitting."); 
 	}
-	//return response;
 }
 
-//===========================================================================================================
+//======================================================================================================
 var args = arguments[0] || {};
-$.mini_place_name_label.text = args._place_name;
-$.mini_place_second_label.text		= args._place_city;
 
+var miniHeader = myUiFactory.buildMiniHeader(args._place_name, args._place_city, args._place_bgcolor);		// send place name, subtitle, and bg color
 var create_marks_header = myUiFactory.buildSectionHeader("create_marks_header", "ADD REMARK TO THIS SPOT", 1);
 
-// TODO:  ALIGN LEFT
-var action_call =  myUiFactory.buildLabel( mySesh.dog.name+" says", "100%", myUiFactory._height_row, myUiFactory._text_medium_bold );	
-// TODO:  display today's date and live character count
-var textArea = Ti.UI.createTextArea({
-  borderWidth: 2,
-  borderColor: '#bbb',
-  borderRadius: 5,
-  color: '#888',
-  font: { fontFamily: 'Raleway-Medium', fontSize: 14 },
-  keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
- 	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,
-  textAlign: 'left',
-  value: 'What does '+ mySesh.dog.name +' want to say about this place?',
-  top: 8,
-  width: "100%", height : 110
-});
-
-$.scrollView.add(create_marks_header); 
-$.scrollView.add(action_call); 
-$.scrollView.add(textArea);
-textArea.addEventListener('focus', function(e){ clearTextAreaContents(textArea); });
-
-
-var character_count =  myUiFactory.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, "100%", myUiFactory._height_row, myUiFactory._text_tiny );
-$.scrollView.add(character_count);
+// TODO:  display today's date 
+var title 	 = myUiFactory.buildLabel( 'Mark Text', Ti.UI.SIZE, myUiFactory._height_row, myUiFactory._text_medium_bold, "#000000", "left" );	
+var textArea = myUiFactory.buildTextArea( 'What does '+ mySesh.dog.name +' want to say about this place?' );
+var character_count =  myUiFactory.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, "100%", myUiFactory._height_row, myUiFactory._text_tiny, "#000000", "" );
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "add remark", "large" );
+
+$.scrollView.add(miniHeader);
+$.scrollView.add(create_marks_header);
+$.scrollView.add(title); 
+$.scrollView.add(textArea);
+$.scrollView.add(character_count);
 $.scrollView.add(addMarkBtn);
 
+textArea.addEventListener('focus',  function(e){ clearTextAreaContents(textArea); });
+textArea.addEventListener('change', function(e){ countCharacters(textArea, character_count); });
 addMarkBtn.addEventListener('click', function(e){ saveRemark(args._place_ID, args._place_type, textArea.value); });
-
-textArea.addEventListener('change', function(e){ countCharacters(textArea.value); });

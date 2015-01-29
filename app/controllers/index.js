@@ -41,6 +41,9 @@ function wbLogin(email, password) {
 				mySesh.user.owner_ID = response.human.owner_ID;
 				mySesh.user.name 		 = response.human.owner_name;
 				mySesh.dog.dog_ID  	 = response.dog.dog_ID;
+				mySesh.dog.marks_made = parseInt(response.dog.marks_made);
+				
+				// TODO:  grab all dog info (SELECT *)
 				
 				mySesh.dog.current_place_ID        = response.dog.current_place_ID;
 				if (response.place!=null) {

@@ -16,17 +16,18 @@ function Session(){
 		password		: null
 	};
 	this.dog = {
-		dog_ID 	: 	null,
-		name		:	null,
-		sex			: 	null,
-		age			:	null,
-		weight		:null,
+		dog_ID 			: null,
+		name				:	null,
+		sex					: null,
+		age					:	null,
+		weight			: null,
+		marks_made	: null,
 		current_place_ID  				: null,
-		current_place_name 			: null,
-		current_place_geo_radius: null,
+		current_place_name 				: null,
+		current_place_geo_radius	: null,
 		current_place_lat 				: null,
 		current_place_lon 				: null,
-		last_checkin_timestamp 	: null
+		last_checkin_timestamp 		: null
 	};
 	this.geo = {
 		lat						: null, 

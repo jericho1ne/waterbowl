@@ -37,7 +37,7 @@ function UiFactory(){
   this._text_medium_bold	= { fontFamily: 'Raleway-Bold',		fontSize: this._base_font }; 	// 28 pt
   
 	this._text_small  			= { fontFamily: 'Raleway', 				fontSize: 0.900 * this._base_font };
-	this._text_tiny   			= { fontFamily: 'Raleway', 				fontSize: 0.750 * this._base_font };		// timestamps and small labels
+	this._text_tiny   			= { fontFamily: 'Raleway', 				fontSize: 0.650 * this._base_font };		// timestamps and small labels
 	
 	/* 	Numbers											*/
 	this._number_large 			= { fontFamily: 'Futura-Medium', fontSize: 1.500 * this._base_font };
@@ -164,7 +164,6 @@ UiFactory.prototype.buildProfileThumb = function(id, image, border, size){
 		width					  : icon_size,
 		backgroundColor : this._color_ltgray,
 		left						: this._pad_left,
-		right						: 2,
 		top							: this._pad_left,
 		borderColor			: borderColor,
 		borderRadius		: icon_size/2,
@@ -225,10 +224,10 @@ UiFactory.prototype.buildSlider = function(id, min_value, max_value, start_value
 }
 
 /***********************************************************************************
-*		Name:  		buildMiniHeader ( place_name, city, bg_color )  
-*		Purpose:  
+*		Name:  		buildHeader ( place_name, city, bg_color )  
+*		Purpose:  TODO: finish this mon!
 ************************************************************************************/
-UiFactory.prototype.buildMiniHeader = function(place_name, city, bg_color) {
+UiFactory.prototype.buildHeader = function(place_name, city, bg_color) {
 	var view_container = this.buildViewContainer ( "", "horizontal", "100%", 60, 0 ); 
 	
 	view_container.add( this.buildSpacer("vert", this._pad_left) );
@@ -244,12 +243,53 @@ UiFactory.prototype.buildMiniHeader = function(place_name, city, bg_color) {
 		});
 	
 	column_right.add( this.buildSpacer("horz", "10%") );
-	column_right.add( this.buildLabel(place_name, "100%", "40%", this._text_large, "left") );
-	column_right.add( this.buildLabel(city, "100%", "50%", this._text_medium, "left") );
+	column_right.add( this.buildLabel(place_name, "100%", "40%", this._text_large, "#000000", "left") );
+	column_right.add( this.buildLabel(city, "100%", "50%", this._text_medium, "#000000", "left") );
 	
 	view_container.add(column_right);
 	
 	return view_container;
+}
+
+/***********************************************************************************
+*		Name:  		buildMiniHeader ( place_name, city, bg_color )  
+*		Purpose:  
+************************************************************************************/
+UiFactory.prototype.buildMiniHeader = function(place_name, subtitle, bg_color) {
+	var miniHeader = this.buildViewContainer("", "vertical", "100%", this._icon_small+(2*this._pad_top), 0);	
+	miniHeader.backgroundColor = bg_color;
+	var name_label			= this.buildLabel( place_name, "100%", this._height_header, this._text_large, "#ffffff", "" );
+	var subtitle_label	= this.buildLabel( subtitle, "100%", this._height_header, this._text_medium, "#ffffff", "" );	
+	name_label.top = 0;
+	subtitle_label.top = -14;
+	miniHeader.add(name_label);
+	miniHeader.add(subtitle_label);
+	return miniHeader;
+}
+
+/***********************************************************************************
+*		Name:  		buildTextArea ( title, hint_text )  
+*		Purpose:  
+************************************************************************************/
+UiFactory.prototype.buildTextArea = function( hint_text ) {
+	//var textAreaView = this.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
+	var text_area_width = mySesh.device.screenwidth-(2*this._pad_left);
+	var textArea = Ti.UI.createTextArea({
+		id						: "actual_text_area",
+	  borderWidth		: 1,
+	  borderColor		: '#bbb',
+	  borderRadius	: 5,
+	  color					: '#888',
+	  textAlign			: 'left',
+	  value					: hint_text,
+	  left					: this._pad_left,
+	  width					: text_area_width, 
+	  height 				: 90,
+	  font: { fontFamily: 'Raleway-Medium', fontSize: 14 },
+	  keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
+	 	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT
+	});
+	return textArea;
 }
 
 
@@ -258,23 +298,23 @@ UiFactory.prototype.buildMiniHeader = function(place_name, city, bg_color) {
 *		Purpose:  generic single row bar with photo or icon / thing name  / thing value
 ************************************************************************************/
 UiFactory.prototype.buildInfoBar = function(image_url, name, value) {
-  var div_height = this._height_row; // this._height_row-10;
+  var div_height = this._icon_small + (2* this._pad_top); // this._height_row-10;
 	// var padding = this._height_row - this._icon_medium;
 	var view_container = this.buildViewContainer ( "", "horizontal", "100%", div_height, 0 ); 
   
   var column_1 = this.buildViewContainer ( "column_1", "", this._icon_medium+this._pad_left, div_height, 0 ); 
   if (image_url!="") {
   	//image_url = 'images/missing/WB-PetProfilePic-Placeholder.png';
-		var image = this.buildIcon("", image_url, "medium"); 
+		var image = this.buildIcon("", image_url, "small"); 
 		column_1.add(image);
   }
   var column_2 = this.buildViewContainer ( "column_2", "horizontal", Ti.UI.FILL, div_height, 0 );
   column_2.add( this.buildSpacer( "vert", 10 ) );
 	
 	if (name!="") {
-		var name_label  = this.buildLabel( name, Ti.UI.SIZE, "100%", this._text_medium );
+		var name_label  = this.buildLabel( name, Ti.UI.SIZE, "100%", this._text_medium, "#000000", "left");
 	}
-  var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold );
+  var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold, "#000000", "left" );
 	
 	if (name!="") {
 		column_2.add(name_label);
@@ -303,16 +343,15 @@ UiFactory.prototype.buildInfoBar = function(image_url, name, value) {
 *   Used by:  Marks display, etc
 ***************************************************••••••••••••••••••••••*********/
 UiFactory.prototype.buildTableRow = function(id, photo_url, photo_caption, time_stamp, amount, amount_desc) {
-  var div_height = this._height_row+(this._pad_left*2);
-  
+  var div_height = this._icon_medium+(2*this._pad_top);
+  Ti.API.debug( ">>>>> time_stamp:"+ time_stamp);
   if (amount_desc=="") 
     div_height += 30;
     
 	var view_container = this.buildViewContainer ( id, "horizontal", "100%", div_height, 0 ); 
   // view_container.add( this.buildSeparator() );
-
 	var column_3_width = this._pad_right;
-  var column_1_width = this._icon_large+(2*this._pad_left);
+  var column_1_width = this._icon_medium+(2*this._pad_left);
 	var column_2_width = mySesh.device.screenwidth - column_3_width - column_1_width;
   
 	var column_1 = this.buildViewContainer ( "col_1", "", 				column_1_width, div_height, 0 ); 
@@ -321,35 +360,39 @@ UiFactory.prototype.buildTableRow = function(id, photo_url, photo_caption, time_
 		
 	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, "medium");
 	column_1.add(dog_photo);
-	view_container.add(column_1);
-	
+		
 	// all labels below will be 100% of the parent view (column_2)
+	var col_2_row_1 = this.buildViewContainer ( "", "horizontal", "100%", "50%", 0 ); 
+	var col_2_row_2 = this.buildViewContainer ( "", "horizontal", "100%", "50%", 0 );
 	
-	var col_2_row_1 = this.buildViewContainer ( "", "horizontal", "100%", "30%", 0 ); 
-	var dog_name_label  	= this.buildLabel( photo_caption, "50%", "100%", this._text_medium_bold, "left" );		
-	var time_stamp_label	= this.buildLabel( time_stamp,  "50%", "100%", this._text_tiny, "right");
+	var dog_name_label  	= this.buildLabel( photo_caption, "50%", "100%", this._text_medium_bold, "#000000", "left" );		
+	var time_stamp_label	= this.buildLabel( time_stamp, "50%", "100%", this._text_tiny, "#000000", "left");
+	var amount_label      = this.buildLabel( amount_desc, "100%", "100%", this._text_medium, "#000000", "left" );
+	
 	col_2_row_1.add(dog_name_label);
 	col_2_row_1.add(time_stamp_label);
-	
-	var col_2_row_2 = this.buildViewContainer ( "row_two", "horizontal", "100%", "70%", 0 );
+	col_2_row_2.add(amount_label);
+	/*
 	if (amount_desc=="") {  // blank label, where is this used?
-    var textarea = this.buildLabel( amount, "100%", "100%", this._text_medium, "left" );
-    // var textarea = this.buildButton( "", "100%", "100%", this._text_medium, "left" );
+    var textarea = this.buildLabel( amount, "100%", "100%", this._text_medium, "#000000", "left" );
+    // var textarea = this.buildButton( "", "100%", "100%", this._text_medium, "#000000", "left" );
 	  col_2_row_2.add(textarea);
 	}
+	
 	else {																	// title, 			width, height, font_style, text_align)
-    var hybrid_label = this.buildLabel( amount +" "+amount_desc, "100%", "100%", this._text_medium, "left" );
-  	//var amount_label 		 	= this.buildLabel( amount, 		 	Ti.UI.FILL, "100%", this._number_medium, "" );  
+    var hybrid_label = this.buildLabel( amount +" "+amount_desc, "100%", "100%", this._text_medium, "#000000", "left" );
+  	//var amount_label 		 	= this.buildLabel( amount, 		 	Ti.UI.FILL, "100%", this._number_medium, "#000000", "" );  
   	col_2_row_2.add(hybrid_label);
     //col_2_row_2.add(amount_label);
 	}
+*/
 	
-	col_2_row_2.add(this.buildSpacer("horz", this._pad_right));
+ // col_2_row_2.add(this.buildSpacer("horz", this._pad_right));
   column_2.add(col_2_row_1);
 	column_2.add(col_2_row_2);
 	
+	view_container.add(column_1);
 	view_container.add(column_2);
-	
 	view_container.add(column_3);
 	return view_container;
 };
@@ -361,26 +404,29 @@ UiFactory.prototype.buildTableRow = function(id, photo_url, photo_caption, time_
 	// |  |       | |           | |           |  |		
 	// |  +-------+ +-----------+ +-----------+  |		
 	// +=========================================+
-/***********************************************************************************************
-*		Name:  		buildTableRowHeader ( id, left, middle, right )  
+/*********************************************************************************************************************
+*		Name:  		buildTableRowHeader ( id, photo_url, photo_caption, time_stamp, amount, amount_suffix )  
 *             eg: photo_url, dog name, timestamp, amount, amount suffix
 *		Purpose:  
-**************************************************************************************************/
+*********************************************************************************************************************/
 UiFactory.prototype.buildTableRowHeader = function(id, photo_url, photo_caption, time_stamp, amount, amount_suffix) {
-  var div_height = 76;
+  var div_height 		= this._icon_large + (2*this._pad_top);
+  var photo_width 	= this._icon_large + (2*this._pad_left);
+  var middle_width 	= 0.5 * (mySesh.device.screenwidth - photo_width);
+  var right_width 	= 0.5 * (mySesh.device.screenwidth - photo_width);
+	
 	var view_container = this.buildViewContainer ( id, "horizontal", "100%", div_height, 0 ); 
    
 	// all labels below will be 100% of the parent view
-  var column_1 = this.buildViewContainer ( "column_one", "vertical", this._icon_large+20, div_height, 0 ); 
+  var column_1 = this.buildViewContainer ( "", "vertical", photo_width, div_height, 0 ); 
 	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, "large");
 	column_1.add(dog_photo);
 	
-	var column_2 = this.buildViewContainer ( "column_one", "vertical", "45%", div_height, 0 ); 
+	var column_2 = this.buildViewContainer ( "", "vertical", middle_width, div_height, 0 ); 
 	//var column_2_row_1 = this.buildViewContainer ( "", "vertical", "100%", div_height, 0 ); 
 
-	
-	var dog_name_label   		= this.buildLabel( photo_caption,  	"100%", "49%", this._text_medium_bold, "left" );		
-	var time_stamp_label 		= this.buildLabel( time_stamp,  	"100%", "49%", this._text_tiny, "left");
+	var dog_name_label   		= this.buildLabel( photo_caption,  	"100%", "49%", this._text_medium_bold, "#000000", "left" );		
+	var time_stamp_label 		= this.buildLabel( time_stamp,  	"100%", "49%", this._text_tiny, "#000000", "left");
 	//
 	column_2.add(dog_name_label);
 	column_2.add(time_stamp_label);
@@ -388,9 +434,9 @@ UiFactory.prototype.buildTableRowHeader = function(id, photo_url, photo_caption,
 	column_2.add( this.buildSpacer("vert", this._pad_left) );
 	//column_2.add(column_2_row_1);
 	
-	var column_3 = this.buildViewContainer ( "column_two", "vertical", "30%", div_height, 0 ); 
-  var amount_label 		 		= this.buildLabel( amount, 		  	"100%", "49%", this._number_large, "" );   // number!
-	var amount_suffix_label = this.buildLabel( amount_suffix, "100%", "49%", this._text_medium, "" );
+	var column_3 = this.buildViewContainer ( "", "vertical", right_width, div_height, 0 ); 
+  var amount_label 		 		= this.buildLabel( amount, 		  	"100%", "49%", this._number_large, "#000000", "" );   // number!
+	var amount_suffix_label = this.buildLabel( amount_suffix, "100%", "49%", this._text_medium, "#000000", "" );
 	column_3.add(amount_label);
 	column_3.add(amount_suffix_label);
 	
@@ -425,14 +471,14 @@ UiFactory.prototype.buildRowMarkSummary = function(id, photo_url, photo_caption,
 	
 	// all labels below will be 100% of the parent view (column_2)
 	
-	var col_2_row_1 = this.buildViewContainer ( "", "horizontal", "100%", "30%", 0 ); 
-	var dog_name_label  	= this.buildLabel( photo_caption, "50%", "100%", this._text_medium_bold, "left" );		
-	var time_stamp_label	= this.buildLabel( time_stamp,  "50%", "100%", this._text_tiny, "right");
+	var col_2_row_1 			= this.buildViewContainer ( "", "horizontal", "100%", "30%", 0 ); 
+	var dog_name_label  	= this.buildLabel( photo_caption, "50%", "100%", this._text_medium_bold, "#000000", "left" );		
+	var time_stamp_label	= this.buildLabel( time_stamp,  "50%", "100%", this._text_tiny, "#000000", "right");
 	col_2_row_1.add(dog_name_label);
 	col_2_row_1.add(time_stamp_label);
 	
 	var col_2_row_2 = this.buildViewContainer ( "row_two", "horizontal", "100%", "70%", 0 );
-	var textarea = this.buildLabel( description, "100%", "100%", this._text_medium, "left" );
+	var textarea 		= this.buildLabel( description, "100%", "100%", this._text_medium, "#000000", "left" );
 	col_2_row_2.add(textarea);
 	col_2_row_2.add(this.buildSpacer("horz", this._pad_right));
   column_2.add(col_2_row_1);
@@ -688,10 +734,10 @@ UiFactory.prototype.buildButton = function(id, title, type) {
 *		Purpose:  create small test button
 ************************************************************/
 UiFactory.prototype.buildFullRowButton = function(id, title) {
-  var view_container = this.buildViewContainer ( "", "horizontal", "99%", this._height_header, 0 ); 
+  var view_container = this.buildViewContainer ( "", "horizontal", "99%", this._height_header+(2*this._pad_top), 0 ); 
   view_container.add( this.buildSeparator() );
-  var column_1 = this.buildViewContainer ( "", "horizontal", "49%", this._height_header, 0 ); 
-  var column_2 = this.buildViewContainer ( "", "horizontal", "50%", this._height_header, 0 );
+  var column_1 = this.buildViewContainer ( "", "", "49%", this._height_header, 0 ); 
+  var column_2 = this.buildViewContainer ( "", "", "50%", this._height_header, 0 );
 	
 	var button 		= Ti.UI.createButton( {
 		id							: id,	 
@@ -700,9 +746,10 @@ UiFactory.prototype.buildFullRowButton = function(id, title) {
 		backgroundColor : this._color_ltblue, 
 		font						: this._text_medium_bold, 
 		textAlign       : "right",
-		top       			: 4,
-		width						: "98%", 
+		width						: "100%", 
 		height					: "100%",
+		top     				: this._pad_top,
+		right						: this._pad_right,				
 		borderColor     : this._color_black, 
 		borderWidth     : this._debug
 	} );

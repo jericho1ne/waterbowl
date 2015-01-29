@@ -18,6 +18,17 @@ function clearTextAreaContents(textarea_object) {
 	textarea_object.value = ""; 
 }
 
+//========================================================================
+//	Name:			countCharacters (textAreaObject, charCountLabel)
+//========================================================================
+function countCharacters(textAreaObject, charCountLabel) {
+	Ti.API.debug(textAreaObject.value.length);
+	charCountLabel.text = textAreaObject.value.length+" / "+mySesh.stringMaxes.poiRemarkMaxLength;
+	if( textAreaObject.value.length > mySesh.stringMaxes.poiRemarkMaxLength ) {
+  	textAreaObject.value = textAreaObject.value.substr(0, mySesh.stringMaxes.poiRemarkMaxLength);
+  }
+}
+
 //=====================================================
 //	Name:		 	createSimpleDialog ( title, msg )
 //	Purpose:	nice clean way to do alert modals
@@ -246,19 +257,17 @@ function addMenubar( parent_object ) {
 		menuLeft.add(backBtn);
 		backBtn.addEventListener('click', closeWindowController);
 	}
-	// SELECTIVELY ADD THE REST OF THE RIGHT SIDE BUTTONS
-	if (Ti.App.Properties.current_window=="settings" || 
-			Ti.App.Properties.current_window=="profile"  || 
-			Ti.App.Properties.current_window=="placeoverview" ) {
-		menuRight0.add(blankBtn);	
-		menuRight2.add(infoBtn);
-		infoBtn.addEventListener('click', showInfo);
-	}
-	else {
+	
+	// ADD ALL 3 RIGHT BUTTONS IF ON MAPVIEW
+	if (Ti.App.Properties.current_window == "mapview") {
 		menuRight0.add(profileBtn);
 		profileBtn.addEventListener('click', showProfile);
 		menuRight1.add(settingsBtn);
 		settingsBtn.addEventListener('click', showSettings);
+		menuRight2.add(infoBtn);
+		infoBtn.addEventListener('click', showInfo);
+	}	else {
+	
 		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}

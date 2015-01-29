@@ -38,7 +38,7 @@ function displayRemarks(data) {
   }
   else {
 	  var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-		var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", this._height_row+10, myUiFactory._text_medium );	
+		var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", myUiFactory._height_row+(2*myUiFactory._pad_top), myUiFactory._text_medium, "#000000", "" );	
 		no_marks_container.add(no_marks_label);
 		$.remarks.add(no_marks_container);
 	}
@@ -84,9 +84,9 @@ function displayRecentEstimates(data, place_ID) {
 		  	var latest_estimate = myUiFactory.buildInfoBar( activity_icon, "No recent estimate", "");
 		  }
 		  else {
+		  	
 		  	var photo_url = PROFILE_PATH + 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
-		  	Ti.API.debug (" >>>> photo_url: " + photo_url);
-		  	var latest_estimate = myUiFactory.buildTableRowHeader("", photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, "");
+		  	var latest_estimate = myUiFactory.buildTableRowHeader("", photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
 		  }
 		  $.activity.add(latest_estimate);
 	  
@@ -94,7 +94,7 @@ function displayRecentEstimates(data, place_ID) {
 	}
 	else {
 	  var nothing_here_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-		var nothing_here = myUiFactory.buildLabel( data.response, "100%", this._height_row+10, myUiFactory._text_medium );	
+		var nothing_here = myUiFactory.buildLabel( data.response, "100%", myUiFactory._icon_small+(2*myUiFactory._pad_top), myUiFactory._text_medium, "#000000", "" );	
 		nothing_here_container.add(nothing_here);
 		$.activity.add(nothing_here_container);
 	}
@@ -125,7 +125,7 @@ function addEstimatesButtons() {
 		var necessary_args = {
 			_place_ID  : args._place_ID
 		};
-		createWindowController( "viewparkestimate", necessary_args, "slide_left" );
+		createWindowController( "activityhistory", necessary_args, "slide_left" );
 	});
 	
 	$.activity.add(estimate_btn);
@@ -172,7 +172,6 @@ function displayPlaceCheckins(data, parentObject) {
   if( data.checkins.length > 0) {
   	var how_many_bar = myUiFactory.buildInfoBar( ICON_PATH + "POI-activity-dogscurrentlyhere.png", "Currently here",  data.checkins.length );;
     parentObject.add(how_many_bar);
-    parentObject.add(myUiFactory.buildSpacer("horz", 6));
    
 	 	if( data.checkins.length > 4) {
   		// size up parent container so that we can fit two rows, up to 8 thumbnails
@@ -209,7 +208,7 @@ function displayPlaceCheckins(data, parentObject) {
   }
   /*  got nathin' */
   else {
-  	parentObject.height = myUiFactory._height_row * 0.9;
+  	parentObject.height = myUiFactory._icon_small + (2*myUiFactory._pad_top);
     var how_many_bar = myUiFactory.buildInfoBar( "", "Nobody currently here", "" );;
     parentObject.add(how_many_bar);  
   }
@@ -226,7 +225,6 @@ function attachMiniHeader () {
     opacity: 1, duration : 340
   });
   $.miniHeaderContainer.animate(a);
-  // TODO:  change transparent menubar backgroundColor to be same as miniHeader backgroundColor
 }
 
 function hideMiniHeader () {
@@ -235,8 +233,6 @@ function hideMiniHeader () {
     opacity: 0, duration : 220
   });
   $.miniHeaderContainer.animate(a);
-  // menubar.backgroundColor = "";
-  // TODO:  change menubar backgroundColor to be blank (transparent) again
 }
 
 //================================================================================
@@ -416,10 +412,11 @@ $dog_name  			= $_POST['dog_name'];
 $post_text 			= $_POST['post_text'];
 */
 var necessary_args = {   // 
-	_place_ID    : args._place_ID,
-	_place_name	 : poiInfo.name,
-	_place_city	 : poiInfo.city,
-	_place_type  : 1
+	_place_ID    		: args._place_ID,
+	_place_name	 		: poiInfo.name,
+	_place_city	 		: poiInfo.city,
+	_place_bgcolor	: poiInfo.icon_color,
+	_place_type  		: 1
 };
 markBtn.addEventListener('click', function(e) {
 	createWindowController( "addpost", necessary_args, "slide_left" );

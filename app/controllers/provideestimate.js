@@ -125,7 +125,7 @@ $.mini_place_second_label.text	=	args._poiInfo.city;  // + ' ('+ poiInfo.dist + 
 
 //var section_header = myUiFactory.buildSectionHeader("park_name", park_name, 2)
 //$.sliders.add(section_header);
-var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", 40, myUiFactory._text_medium,"center" );		
+var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", 40, myUiFactory._text_medium, "#000000", "center" );		
 
 // backend script doesn't care if there are one or two sliders on the page
 // only needs to know if place_estimate.enclosure_type is mixed, large, or small
@@ -137,8 +137,8 @@ $.sliders.add(call_to_action);
 
 
 																			//  	title, width, height, font_style, text_align 
-var slider1_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "" );
-var slider1_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "" );   
+var slider1_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "#000000", "" );
+var slider1_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "#000000", "" );   
 var slider1 			= myUiFactory.buildSlider("slider1", 0, 7, 0);
 
 if (enclosure_count==1)  
@@ -158,8 +158,8 @@ if (enclosure_count==2) {   //
   $.sliders.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
   
   var slider2 			= myUiFactory.buildSlider("slider2", 0, 7, 0);
-  var slider2_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "" );
-  var slider2_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "" ); 
+  var slider2_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "#000000", "" );
+  var slider2_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "#000000", "" ); 
 
 	$.sliders.add( myUiFactory.buildSpacer("horz", 10) );      // pass in vert/horz, and dp size
   $.sliders.add(slider2_label);	

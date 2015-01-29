@@ -72,7 +72,7 @@ function displayMark(data, original_mark) {
 		// (5) parent mark is the only one, notify user
 		if (data.length == 1) {
 			var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-			var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", this._height_row+10, myUiFactory._text_medium );	
+			var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", myUiFactory._icon_small + (2* myUiFactory._pad_top), myUiFactory._text_medium, "#000000", "");	
 			no_marks_container.add(no_marks_label);
 			$.scrollView.add(no_marks_container);
 		}
@@ -116,9 +116,9 @@ var mark_subtext = "";							// mark.
 	var headerBottom  = myUiFactory.buildViewContainer("headerBottom", "vertical", "100%", Ti.UI.SIZE, 0);	
 	var headerStatBar = myUiFactory.buildViewContainer("headerStatBar", "horizontal", "100%", 20, 0);	
 				
-	var mark_title_label	 = myUiFactory.buildLabel(mark_title, "100%", 30, myUiFactory._text_large, "left");
-	var mark_text_label 	 = myUiFactory.buildLabel(mark_text, "100%", 30, myUiFactory._text_medium, "left");	
-	var mark_subtext_label = myUiFactory.buildLabel(mark_subtext, "100%", 30, myUiFactory._text_medium, "left");			
+	var mark_title_label	 = myUiFactory.buildLabel(mark_title, "100%", 30, myUiFactory._text_large, "#000000", "left");
+	var mark_text_label 	 = myUiFactory.buildLabel(mark_text, "100%", 30, myUiFactory._text_medium, "#000000", "left");	
+	var mark_subtext_label = myUiFactory.buildLabel(mark_subtext, "100%", 30, myUiFactory._text_medium, "#000000", "left");			
 	
 	headerBottom.add(mark_title_label);
 	headerBottom.add(mark_text_label);
