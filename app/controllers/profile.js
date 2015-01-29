@@ -2,7 +2,7 @@ Ti.API.debug( " >>> Dog Array (in Settings):  "+ JSON.stringify( mySesh.dog ) );
 
 if ( isset(mySesh.dog.name) ) {
   $.dog_name.text   = mySesh.dog.name;
-  alert( JSON.stringify(mySesh.dog) );
+  // alert( JSON.stringify(mySesh.dog) );
 }
 if ( isset(mySesh.user.email) )
   $.user_email.text = mySesh.user.email;

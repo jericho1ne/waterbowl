@@ -126,6 +126,8 @@
 ".fill_height"  : { height: Ti.UI.FILL, width: "100%" }
 ".fill_width"   : { width: Ti.UI.FILL }
 
+".center"   : { textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER }
+
 /* --------------- END ALL THE SPACING STUFF  -------------------------- */
 ".font_icon"	 : { font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, color: "#ffffff",
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }

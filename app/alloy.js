@@ -158,12 +158,12 @@ function addMenubar( parent_object ) {
 	// CONTAINER VIEWS --------------------------------------->					
 	var menuLeft = Ti.UI.createView( {
 		width: left_width,
-		borderWidth: 0, borderColor: "red" 
+		//borderWidth: 1, borderColor: "red" 
 	});
 	var menuCenter 	= Ti.UI.createView( {
 		width: middle_width, 
 		layout: "horizontal",
-		borderWidth: 0, borderColor: "gray", 
+		//borderWidth: 1, borderColor: "gray", 
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER 
 	});
 	var menuRight0 	= Ti.UI.createView( {
@@ -247,9 +247,10 @@ function addMenubar( parent_object ) {
 		backBtn.addEventListener('click', closeWindowController);
 	}
 	// SELECTIVELY ADD THE REST OF THE RIGHT SIDE BUTTONS
-	if (Ti.App.Properties.current_window == "settings" ) {
-		menuRight0.add(profileBtn);
-		profileBtn.addEventListener('click', showProfile);	
+	if (Ti.App.Properties.current_window=="settings" || 
+			Ti.App.Properties.current_window=="profile"  || 
+			Ti.App.Properties.current_window=="placeoverview" ) {
+		menuRight0.add(blankBtn);	
 		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}

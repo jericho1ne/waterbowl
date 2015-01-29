@@ -2,9 +2,9 @@
 	<Window id="placeoverview" class="absolute">	
 		<View id="content" class="window_container">
 		
-			<View id="miniHeaderContainer" width="100%" height="55" top="-2" class="layout_vert" backgroundColor="#777477" zIndex="97" opacity="0" >	
-				<Label id="mini_place_name_label" text="" class="feed_label_left_lg white text_large_bold"/>
-				<Label id="mini_place_second_label" text="" class="feed_label_left white text_medium_medium" />
+			<View id="miniHeaderContainer" width="100%" height="45" top="-2" class="layout_vert" backgroundColor="#777477" zIndex="97" opacity="0" >	
+				<Label id="mini_place_name_label" text="" class="feed_label_center_lg white text_large_bold" top="2"/>
+				<Label id="mini_place_second_label" text="" class="feed_label_center white text_medium_medium" top="-8" />
 			</View>
 			
 			<ScrollView id="scrollView" class="fill_height" top="-92" opacity="1">
@@ -26,7 +26,7 @@
 					</View>
 					<View id="headerBottom" class="layout_vert">
 						<Label id="place_name_label" 		text="" class="white feed_label_left_lg text_large_bold"/>
-						<Label id="place_address_label" text="" class="white feed_label_left text_medium_medium" />
+						<Label id="place_address_label" text="" class="white feed_label_left text_medium_medium" top="-6" />
 						<Label id="place_city_label" 		text="" class="white feed_label_left text_medium_medium" />
 						<Label id="place_dist_label" 		text="" class="white feed_label_left text_medium_medium" />			
 					</View>
