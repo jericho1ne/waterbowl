@@ -52,17 +52,19 @@ function loadJson ( params, url, callbackFunction ) {
 	query.send( params );
 	query.onload = function() {
 		var jsonResponse = this.responseText;
-		
 		if (jsonResponse != "" ) {
 			var data = JSON.parse( jsonResponse );
 			// Ti.API.debug("....[~] UiFactory.loadJson ["+JSON.stringify(data)+"]");
-			if (callbackFunction!="")			
+			if (callbackFunction!="")	{		
 				callbackFunction(data);
-			else
+			}	else {
 				return data;	
+			}
 		}
-		else
+		else {
+			createSimpleDialog('Error', 'No data received');
 			return [];
+		}
 	};
 }
 

@@ -84,6 +84,7 @@ function buildMapMenubar( mapObject ) {
   getPoiBtn.addEventListener('click', function() {			
   	Ti.API.info("...[+] GET POI button clicked on map");
 		// Only refresh MAP markers + annotations
+		myExtendedMap._wbMap.removeAllAnnotations();
 		getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
 	});
 	
@@ -140,47 +141,48 @@ function getNearbyPoi( user_lat, user_lon, view_lat, view_lon ) {
 		view_lon  : view_lon,
 		owner_ID  : mySesh.user.owner_ID
 	};
-  // TODO: write a generic function to queryBackend
-  // eg:  getJsonData("http://waterbowl.net/mobile/get-places-map.php", params);
-  
-	/* create an HTTP client object  */
+  loadJson(params, "http://waterbowl.net/mobile/get-places-map.php", refreshAnnotations);
+   
+	/* 
 	var place_query = Ti.Network.createHTTPClient();
-	/* open the HTTP client object  (locally at http://127.0.0.1/___ )  */
 	place_query.open("POST", "http://waterbowl.net/mobile/get-places-map.php");
-	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
 	place_query.send(params);
-	/* response data is available */
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
 		var jsonPlaces = [];
 		if (jsonResponse != "") {
 			var jsonPlaces = JSON.parse(jsonResponse);	
 		  Ti.API.info( ".... .... .... .... total map places: " + jsonPlaces.length );	
-			mySesh.allPlaces = jsonPlaces;
+			 jsonPlaces;
 			refreshAnnotations();
 			// Ti.API.debug( " ******[ mySesh.allPlaces ]********: " + JSON.stringify( mySesh.allPlaces ) );
 		}
 		else {
 			createSimpleDialog('No data received', 'Could not load place list');
 		}
-	};
+	}; */
 }
 
 //=========================================================================
 //	Name:			refreshAnnotations()
 //	Purpose:	grab POI/locations from backend php file, order by proximity
 //=========================================================================
-function refreshAnnotations() {
+function refreshAnnotations(data) {
+	//Ti.API.debug(".... [~] refreshAnnotations data :: "+JSON.stringify(data) );	
+
+	mySesh.allPlaces = data;
 	/* clear all map markers and annotations */
-	myExtendedMap._wbMap.removeAllAnnotations();
+	//myExtendedMap._wbMap.removeAllAnnotations();
 	var temp_annotationArray = [];
 	// Create an annotation for each POI in allPlaces session array
-	for (var i=0; i<mySesh.allPlaces.length; i++) {
+	for (var i=0; i<data.length; i++) {
 		// make sure to pass current array index, anything other than array index is useless
-		temp_annotationArray.push ( createMapAnnotation(mySesh.allPlaces[i], i) );	  
+		temp_annotationArray.push ( createMapAnnotation(data[i], i) );	  
 	}
 	/* save annotations globally, then attach all POI marker annotations to map */
 	Alloy.Globals.placeAnnotations = temp_annotationArray; 
+	// Ti.API.debug(".... [~] refreshAnnotations temp_annotationArray :: "+JSON.stringify(temp_annotationArray) );	
+
 	myExtendedMap._wbMap.addAnnotations( temp_annotationArray );
 }
 
@@ -192,11 +194,10 @@ function refreshAnnotations() {
 function createMapAnnotation( place_data, index ) {
 	//Ti.API.debug( ".... [~] Adding id #"+index+" / "+ place_data.place_ID + " / "+ place_data.name);
 	//Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);
-
 	// ADD ANNOTATION BUTTON 
 	var temp_button = Ti.UI.createButton({ 
+		id			   	    : "poi_"+place_data.place_ID,
 		name					  : place_data.name,
-		id			   		  : place_data.place_ID,
 		backgroundImage : ICON_PATH + 'button-forward.png',
 		zIndex					: 10, 
 		height					: 30, 
@@ -205,7 +206,7 @@ function createMapAnnotation( place_data, index ) {
 	
 	// ADD ANNOTATION BUTTON EVENT LISTENER
  	temp_button.addEventListener('click', function(e){
- 		Ti.API.debug ( ".... [+] Clicked on >> " + e.source.id );	
+ 		//Ti.API.debug ( ".... [+] Clicked on >> " + e.source.id );	
 		var necessary_args = {
 			_index		: index, 
 			_place_ID : e.source.id		// pass in array index and placeID so we can hit the backend for more details
@@ -215,14 +216,14 @@ function createMapAnnotation( place_data, index ) {
 
 	// ADD ANNOTATION CONTAINER  	
 	var annotation = myMapFactory.createAnnotation({
+		id        : place_data.place_ID, 
 		latitude  : place_data.lat, 
 		longitude : place_data.lon,
 		title     : place_data.name,
 		subtitle  : place_data.city + " (" + place_data.dist + " mi)",
 		animate   : false,
 		image     : ICON_PATH + place_data.icon, 		// or pull icon from AWS: mySesh.AWS.base_icon_url
-		rightView : temp_button,
-		id        : place_data.place_ID 
+		rightView : temp_button
 	});
 	return annotation;
 }
@@ -245,6 +246,8 @@ function refreshMarkAnnotations() {
 		marksArray.push ( createMarkAnnotation(mySesh.nearbyMarks[i], i) );	  
 	}
 	/* attach all POI marker annotations to map */
+	//Ti.API.debug(".... [~] refreshMarkAnnotations :: "+JSON.stringify(marksArray) );	
+
 	myExtendedMap._wbMap.addAnnotations( marksArray );
 }
 //
@@ -265,7 +268,7 @@ function createMarkAnnotation( mark, index ) {
 		width						: 30
 	});
 	temp_button.addEventListener('click', function(e){
-	 	Ti.API.debug ( "...[+] createMarkAnnotation >>>" + JSON.stringify(e.source.name) );
+	 	// Ti.API.debug ( "...[+] createMarkAnnotation >>>" + JSON.stringify(e.source.name) );
 		createWindowController( "markoverview", mark, 'slide_left' );
  	});
 	var annotation = myMapFactory.createAnnotation({
