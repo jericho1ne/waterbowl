@@ -310,8 +310,6 @@ var mini_header_display = 0;
 //--------------------------------------------------------------------------------
 var args = arguments[0] || {};
 var place_index = args._index;
-
-/*
 var poiInfo = mySesh.allPlaces[place_index];
 var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );
 //alert( how_close + " miles");
@@ -452,4 +450,4 @@ $.scrollView.addEventListener('scroll', function(e) {
   }
 });
 
-*/
+

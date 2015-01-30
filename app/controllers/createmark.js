@@ -111,8 +111,8 @@ function saveRemark(place_ID, place_type, text_content) {
 //=================================================================================
 function drawDefaultMap(lat, lon, delta) {
   Ti.API.log(".... .... .... drawDefaultMap lat/lon/delta: ["+lat+"/"+lon+"/"+delta+"]");
-	markMapView = myMap.createView({
-		mapType : Map.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
+	var markMapView = myMap.createView({
+		mapType : myMap.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
 		region : {
 			latitude 			: lat,
 			longitude 		: lon,

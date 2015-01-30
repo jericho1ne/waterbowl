@@ -221,7 +221,7 @@ function addMenubar( parent_object ) {
 		zIndex	: 100
 	} );
 	
-	//Ti.API.debug( JSON.stringify(mySesh));
+	Ti.API.debug( PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg' );
 	var	infoBtn 		= Ti.UI.createButton( {
 		id: "infoBtn",
 		left: myUiFactory._pad_left,
@@ -520,7 +520,10 @@ Ti.Geolocation.purpose 				= "Receive User Location";
 Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
 
 // TODO: is this still used by mapview.js??
-Alloy.Globals.annotations = [];
+
+Alloy.Globals.wbMap 	= "";
+Ti.API.debug(" Alloy.Globals.wbMapView init: "+JSON.stringify(Alloy.Globals.wbMapView) );
+Alloy.Globals.placeAnnotations = [];
 
 // var longPress;
 'use strict';

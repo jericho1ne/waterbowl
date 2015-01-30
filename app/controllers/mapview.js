@@ -11,20 +11,19 @@
 //======================================================================================
 
 //=================================================================================
-// 	Name:  		drawDefaultMap (lat, lon)
+// 	Name:  		initializeMap ()
 // 	Purpose:	draw default Apple map
 //=================================================================================
-function drawDefaultMap(lat, lon, delta) {
-  Ti.API.log(".... .... .... drawDefaultMap lat/lon/delta: ["+lat+"/"+lon+"/"+delta+"]");
-	wbMapView = myMap.createView({
-		mapType : Map.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
+function initializeMap(lat, lon) {
+	// DRAW MAP
+	Alloy.Globals.wbMap = myMap.createView({
+		mapType : myMap.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
 		region : {
-			latitude 			: lat,
-			longitude 		: lon,
-			latitudeDelta : delta,
-			longitudeDelta: delta
-		},
-		id : "wbMapView",
+			latitude 			: mySesh.geo.lat,
+			longitude 		: mySesh.geo.lon,
+			latitudeDelta : 0.07,
+			longitudeDelta: 0.07
+		}, 
 		top 					: 0,
 		opacity				: 1,
 		zIndex				: 20,
@@ -35,39 +34,29 @@ function drawDefaultMap(lat, lon, delta) {
 		userLocation 	: true,
 		enableZoomControls : true
 	});
-	wbMapView.addEventListener('regionChanged',function(evt) {
+	Alloy.Globals.wbMap.addEventListener('regionChanged',function(evt) {
 		// Ti.API.log( JSON.stringify (evt.source.region) );
 		// Ti.API.log( 'regionChanged:'+evt.source.region.latitude+"/"+evt.source.region.longitude );
 		mySesh.geo.view_lat = evt.source.region.latitude;
 		mySesh.geo.view_lon = evt.source.region.longitude;
 	});
 	Ti.API.log("...[~] Map object built ");
-	return wbMapView;
-}
-
-//=================================================================================
-// 	Name:  		initializeMap ()
-// 	Purpose:	draw default Apple map
-//=================================================================================
-function initializeMap(lat, lon) {
-	// DRAW MAP
-	var wbMapView = drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.07 );     // 0.05 
-	$.mapContainer.add( wbMapView );
-	buildMapMenubar(wbMapView);
-	//$.mapContainer.add( buildMapMenubar(wbMapView) );
 	
-	//$.mapContainer.add( drawMapMarkers(wbMapView) );
-  //$.mapContainer.add( buildRecenterButton(wbMapView) );
+	$.mapContainer.add( Alloy.Globals.wbMap );
+	
+	//	Ti.API.debug(" Alloy.Globals.Alloy.Globals.wbMap 2ndtime: "+JSON.stringify(Alloy.Globals.wbMap) );
+	$.mapContainer.add( Alloy.Globals.wbMap );
+	buildMapMenubar( Alloy.Globals.wbMap );
 }
 
 function refreshMapData() {
   // ADD MARKERS + ANNOTATIONS TO MAP
-	getPlacesMap( wbMapView, mySesh.geo.lat, mySesh.geo.lon, 0, 0);		// will affect map
+	getPlacesMap( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon, 0, 0);		// will affect map
 }
 
 function refreshPlaceListData() {
   Ti.API.debug(".... [~] refreshPlaceListData called ....");
-  getPlacesNearby( wbMapView, mySesh.geo.lat, mySesh.geo.lon );   // will affect place list
+  getPlacesNearby( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon );   // will affect place list
 	// POPULATE NEARBY PLACE TABLE
 	setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 600);
 	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
@@ -128,7 +117,7 @@ function getPlacesMap( mapObject, user_lat, user_lon, view_lat, view_lon ) {
 			// save incoming JSON array into global storage
 			mySesh.allPlaces = jsonPlaces;
 			refreshAnnotations(mapObject);
-			// Ti.API.debug( " ****** mySesh.allPlaces ************: " + JSON.stringify( mySesh.allPlaces ) );
+			Ti.API.debug( " ****** mySesh.allPlaces ************: " + JSON.stringify( mySesh.allPlaces ) );
 		}
 		else {
 			createSimpleDialog('Loading place list','No data received');
@@ -192,12 +181,12 @@ function refreshAnnotations(mapObject) {
 	var annotationArray = [];
 	// ALL PLACES ARRAY
 	for (var i=0; i<mySesh.allPlaces.length; i++) {
-		/* make sure to pass current array index, anything other than array index is useless */
+		// make sure to pass current array index, anything other than array index is useless
 		annotationArray.push ( createMapAnnotation(mySesh.allPlaces[i], i) );	  
 	}
 	/* attach all POI marker annotations to map */
 	mapObject.addAnnotations( annotationArray );
-	mySesh.placeAnnotations = annotationArray; 
+	Alloy.Globals.placeAnnotations = annotationArray; 
 }
 
 //=============================================================
@@ -206,24 +195,32 @@ function refreshAnnotations(mapObject) {
 //	Return:		annotation object
 //=============================================================
 function createMapAnnotation( place_data, index ) {
+	//Ti.API.debug( ".... [~] Adding id #"+index+" / "+ place_data.place_ID + " / "+ place_data.name);
+	//Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);
+
+	// ADD ANNOTATION BUTTON 
 	var temp_button = Ti.UI.createButton({ 
-		id 							: place_data.id,	 
+		name					  : place_data.name,
+		id			   		  : place_data.place_ID,
 		backgroundImage : ICON_PATH + 'button-forward.png',
-		zIndex					: 100, 
+		zIndex					: 10, 
 		height					: 30, 
 		width						: 30
 	});
+	
+	// ADD ANNOTATION BUTTON EVENT LISTENER
  	temp_button.addEventListener('click', function(e){
- 		Ti.API.info ( "...[+] Clicked on >>>" + JSON.stringify(e.source.name) );
- 		/*  prep all the required data to placeoverview.js */
- 		var necessary_args = {
+ 		Ti.API.debug ( ".... [+] Clicked on >> " + e.source.id );	
+		var necessary_args = {
 			_index		: index, 
-			_place_ID : place_data.id		// pass in array index and placeID so we can hit the backend for more details
+			_place_ID : e.source.id		// pass in array index and placeID so we can hit the backend for more details
 		};
 		createWindowController( "placeoverview", necessary_args, 'slide_left' );
  	});
+
+	// ADD ANNOTATION CONTAINER  	
 	var annotation = myMap.createAnnotation({
-    id        : place_data.id, 
+    id        : place_data.place_ID, 
 		latitude  : place_data.lat, 
 		longitude : place_data.lon,
 		title     : place_data.name,
@@ -305,20 +302,7 @@ function createMarkAnnotation( mark, index ) {
 //	Purpose:	
 //	Return:		
 //=============================================================
-function buildMapMenubar( mapObject ) {
-	/*	var menubarContainer = Ti.UI.createView( { 
-		id							: "menubarContainer", 
-		layout					: "horizontal",
-		backgroundColor : this._color_ltblue, 
-		borderColor     : this._color_ltpink, 	
-		borderWidth			: this._debug,
-		top					: 50,
-		right						: 10,
-		width						: "100%",
-		height 					: 60
-	});
-	*/
-	
+function buildMapMenubar( mapObject ) {	
 	// mySesh.device.screenwidth
 	var menubar_pad_right  = 20;
 	var	menubar_pad_bottom = 20;
@@ -431,18 +415,17 @@ function buildMapMenubar( mapObject ) {
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
         // createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
-      	getMarks( wbMapView, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
+      	getMarks( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
       } 
       else {  // if no errors, and we're not running in Simulator
         centerMapOnLocation(mapObject, e.coords.latitude, e.coords.longitude, 0.008);
         mySesh.geo.lon = e.coords.longitude;
         mySesh.geo.lat = e.coords.latitude;
         mapObject.removeAllAnnotations();
-        getMarks( wbMapView, e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
+        getMarks( Alloy.Globals.wbMap, e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
 	    }
     });  
 	});
-	// return menubarContainer;
 }
 
 //=================================================================================
@@ -595,9 +578,9 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				
 				// Ti.API.info ( "... mySesh.dog: " + JSON.stringify(mySesh.dog) );
 				// POPULATE NEARBY PLACE TABLE
-  		  setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 200);
+  		  setTimeout ( function(){ displayNearbyPlaces($.placeListTable); }, 300);
   		  // ADD PLACE LIST CLICK EVENT LISTENER
-  		  setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 210);
+  		  setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 310);
   		
 			  // instead of success message, bounce user to place overview
 			  var necessary_args = {
@@ -739,11 +722,11 @@ function placeListListener(e) {
 	//Ti.API.info("...[o] POI list click [ " + JSON.stringify(e.row) + " ]");
 	//Ti.API.info("...[o] event index [ " + e.index + " ]");
 	
-	centerMapOnLocation(wbMapView, e.row.lat, e.row.lon, 0.03);
+	centerMapOnLocation(Alloy.Globals.wbMap, e.row.lat, e.row.lon, 0.03);
 
   // figure out which annotation index to trigger
-  var anno_index = getArrayIndexById( mySesh.placeAnnotations, e.row.id );
-	wbMapView.selectAnnotation( mySesh.placeAnnotations[anno_index] );		
+  var anno_index = getArrayIndexById( Alloy.Globals.placeAnnotations, e.row.id );
+	Alloy.Globals.wbMap.selectAnnotation( Alloy.Globals.placeAnnotations[anno_index] );		
 	
 	// pop up a check in or check out dialog box based on current checkin status
 	presentUserCheckinOptions( e.row );
@@ -831,11 +814,14 @@ function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, mark
 	};
 }
 
-//====================================================================================================================
+//========================================================================================================================
 //
-//    Things to initialize upon Window load
+//    TO DO UPON WINDOW LOAD
 //
-//====================================================================================================================
+//========================================================================================================================
+var args = arguments[0] || {};
+
+// (0)	GET GEOLOCATION
 Titanium.Geolocation.getCurrentPosition(function(e){
 	Ti.API.debug("[ [ [ [ getCurrentPosition called ] ] ] ] ");
 	// use default Playa Del Rey coordinates
@@ -851,37 +837,24 @@ Titanium.Geolocation.getCurrentPosition(function(e){
     Ti.API.debug( 'ERROR TEXT: ' + JSON.stringify(e.error) );
 
   } else {		// RECEIVED COORDINATES
-  	// overwrite hardcoded coordinates with device geolocation */
-  	if (Titanium.Platform.model!="Simulator") {		
-  		// Alternatively, check for Math.round(lat)!=38 && Math.round(lat)!=122 (SF Apple Store)
+  	if (Titanium.Platform.model!="Simulator") {				// overwrite hardcoded coordinates with device geolocation
   		mySesh.geo.lat = e.coords.latitude;
   		mySesh.geo.lon = e.coords.longitude;
-   	 // set time last acquired (minutes since start of Unix Epoch)
-	 	 mySesh.geo.last_acquired = Math.round( Date.now() / (1000*60) );
+	 	 	mySesh.geo.last_acquired = Math.round( Date.now() / (1000*60) );		// set time last acquired (minutes since start of Unix Epoch)
   	}
   }
   Ti.API.log("............... lat: " + mySesh.geo.lat  + " / lon: " + mySesh.geo.lon);
   
   // Go through these steps regardless of whether we receiving an actual lat/lon
-  
-  // DRAW MAP FOR THE FIRST TIME
+  // (1)	DRAW THE MAP
   initializeMap();
   
-  // Get Map and PlaceList data
+  // (2) GET MAP POIs AND PLACELIST DATA
   refreshMapData();
   refreshPlaceListData();
-  getMarks( wbMapView, mySesh.geo.lat, mySesh.geo.lon, 1, 1.5, 20 );
+  //getMarks( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon, 1, 1.5, 20 );
 });
-  
-/*
-   HACK :: To skip to a specific window, uncomment block below and change which window name to jump to		
-*/
-/*
-setTimeout(function() { createWindowController('placeoverview',{ 
-	_index : 0, 
-	_place_ID :601000001 
-},'slide_left'); }, 1200);
-*/
+	
 //====================================================================================
 // 		Geolocation Change Event Listener
 //		Purpose:  

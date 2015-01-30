@@ -47,7 +47,7 @@ function Session(){
 	this.allPlaces		      =  [];				// top N places that are near user's location (n=20, 30, etc)
 	this.nearbyMarks		    =  [];
 	this.nearbyPlaces      =  []; 				// contains up to N places that are within the geofence
-	this.placeAnnotations  =  [];
+	// this.placeAnnotations  =  [];
 	this.currentPlace = { 
 		ID				: null,
 		name			: null,

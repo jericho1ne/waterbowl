@@ -175,7 +175,7 @@ if ( saved_user!=null && saved_pwd!=null ) {
 		Ti.API.info( " > > > IOS 7 or older *" );
 	}
 	
-	Titanium.API.info ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);
+	Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);
 	
 	// if credentials are already saved in mySesh
 	if( Ti.App.Properties.getString('user')!="" ) {
