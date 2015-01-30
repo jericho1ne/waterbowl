@@ -13,8 +13,6 @@
 	<analytics>false</analytics>
 	<guid>7b7a25bc-e694-412d-b827-787ca577dd63</guid>
 	<property name="ti.ui.defaultunit" type="string">dp</property>
-	<property name="ti.android.bug2373.finishfalseroot" type="bool">true</property>
-	<property name="ti.android.bug2373.skipAlert" type="bool">true</property>
 	<prerendered-icon>true</prerendered-icon>
     <ios>
         <plist>
@@ -62,8 +60,8 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-        <module platform="iphone">ti.map</module>
-    </modules>
+    <module platform="iphone">ti.map</module>
+  </modules>
     <deployment-targets>
         <target device="android">false</target>
         <target device="blackberry">false</target>

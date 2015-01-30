@@ -329,49 +329,56 @@ UiFactory.prototype.buildInfoBar = function(image_url, name, value) {
 }
 
 
-	// +=== buildTableRow ==========================+
-	//			col_1			 col_2
-	// |  +-thumb-+ +--row_one---------------+ |
-	// |  |       | |   name	  	timestamp  | |
-	// |  |  dog  | +--row_two---------------+ |
-	// |  | photo | |   desc+amount			     | |		
-	// |  +-------+ +------------------------+ |		
-	// +=======================================+
-/****************************************************************************
-*		Name:  		buildTableRow ( id, left, middle, right )  eg: photo_url, dog name, timestamp, amount, amount description
+/*
+  +=== buildActivityHistoryRow =============+
+  |	 column_1        column_2               | 
+  |  +-thumb--+ +--_row_1----------------+  |
+  |  |        | |   name	  	timestamp  |  |
+  |  |  dog   | +--_row_2----------------+  |
+  |  | photo  | |   description			     |  |		
+  |  +--------+ +------------------------+  |		
+  +=========================================+  
+  */
+/**************************************************************************************
+*		Name:  		buildActivityHistoryRow ( id, photo, top_left, top_right, info ) 
 *		Purpose:  modified format for feed items (marks, estimates, etc)
 *   Used by:  Marks display, etc
-***************************************************••••••••••••••••••••••*********/
-UiFactory.prototype.buildTableRow = function(id, photo_url, photo_caption, time_stamp, amount, amount_desc) {
+**************************************************************************************/
+UiFactory.prototype.buildActivityHistoryRow = function(id, photo_url, photo_caption, time_stamp, description) {
   var div_height = this._icon_medium+(2*this._pad_top);
   Ti.API.debug( ">>>>> time_stamp:"+ time_stamp);
-  if (amount_desc=="") 
-    div_height += 30;
     
 	var view_container = this.buildViewContainer ( id, "horizontal", "100%", div_height, 0 ); 
-  // view_container.add( this.buildSeparator() );
-	var column_3_width = this._pad_right;
-  var column_1_width = this._icon_medium+(2*this._pad_left);
-	var column_2_width = mySesh.device.screenwidth - column_3_width - column_1_width;
-  
-	var column_1 = this.buildViewContainer ( "col_1", "", 				column_1_width, div_height, 0 ); 
-	var column_2 = this.buildViewContainer ( "col_2", "vertical", column_2_width, div_height, 0 );
-	var column_3 = this.buildViewContainer ( "col_3", "", 				column_3_width, "100%", 		0 );
+  // DETERMIND VIEW CONTAINER WIDTHS
+  var column_1_width 	= this._icon_medium+(2*this._pad_left);
+	var column_2_width 	= mySesh.device.screenwidth - column_1_width - this._pad_right;
+	var col_2_name_width= (0.60 * column_2_width)-this._pad_left;
+	var col_2_ts_width  = (0.40 * column_2_width)-this._pad_left;
+	
+  // BUILD VIEWS (COLUMN 3 is a spacer)    id,     orientation  	view_width      view_height  top)
+	var column_1 = this.buildViewContainer ( "col_1", "horizontal", column_1_width, div_height,  0 ); 
+	var column_2 = this.buildViewContainer ( "col_2", "vertical", 	column_2_width, div_height,  0 );
+	//var column_3 = this.buildViewContainer ( "col_3", "", 				column_3_width, "100%", 		0 );
 		
 	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, "medium");
 	column_1.add(dog_photo);
 		
-	// all labels below will be 100% of the parent view (column_2)
-	var col_2_row_1 = this.buildViewContainer ( "", "horizontal", "100%", "50%", 0 ); 
-	var col_2_row_2 = this.buildViewContainer ( "", "horizontal", "100%", "50%", 0 );
+	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
+	var column_2_row_1 = this.buildViewContainer ( "", "horizontal", "100%", "50%", 0 ); 
+	var dog_name_label  	= this.buildLabel( photo_caption, col_2_name_width, "100%", this._text_medium_bold, "#000000", "left" );		
+	var time_stamp_label	= this.buildLabel( time_stamp, 		col_2_ts_width, 	"100%", this._text_tiny, 			  "#000000", "right");
+	// COLUMN 2 :: BUILD DESCRIPTION CONTAINER
+	var column_2_row_2 = this.buildViewContainer ( "", "horizontal", "100%", "50%", 0 );
+	var description_label = this.buildLabel( description, "100%", "100%", this._text_medium, "#000000", "left" );
 	
-	var dog_name_label  	= this.buildLabel( photo_caption, "50%", "100%", this._text_medium_bold, "#000000", "left" );		
-	var time_stamp_label	= this.buildLabel( time_stamp, "50%", "100%", this._text_tiny, "#000000", "left");
-	var amount_label      = this.buildLabel( amount_desc, "100%", "100%", this._text_medium, "#000000", "left" );
+	// ADJUST VERTICAL SPACING
+	dog_name_label.top = 2;
+	description_label.top = -4;
 	
-	col_2_row_1.add(dog_name_label);
-	col_2_row_1.add(time_stamp_label);
-	col_2_row_2.add(amount_label);
+	// ADD ALL CONTAINERS TO PARENT OBJECT
+	column_2_row_1.add(dog_name_label);
+	column_2_row_1.add(time_stamp_label);
+	column_2_row_2.add(description_label);
 	/*
 	if (amount_desc=="") {  // blank label, where is this used?
     var textarea = this.buildLabel( amount, "100%", "100%", this._text_medium, "#000000", "left" );
@@ -388,12 +395,12 @@ UiFactory.prototype.buildTableRow = function(id, photo_url, photo_caption, time_
 */
 	
  // col_2_row_2.add(this.buildSpacer("horz", this._pad_right));
-  column_2.add(col_2_row_1);
-	column_2.add(col_2_row_2);
+  column_2.add(column_2_row_1);
+	column_2.add(column_2_row_2);
 	
 	view_container.add(column_1);
 	view_container.add(column_2);
-	view_container.add(column_3);
+	//view_container.add(column_3);
 	return view_container;
 };
 

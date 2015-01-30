@@ -123,7 +123,7 @@ function addEstimatesButtons() {
 		// TODO:  Create gray "see more >" button 
 		// 				package estimate info in args._estimates, open if clicked
 		var necessary_args = {
-			_place_ID  : args._place_ID
+			_poiInfo	: poiInfo
 		};
 		createWindowController( "activityhistory", necessary_args, "slide_left" );
 	});
@@ -311,6 +311,7 @@ var mini_header_display = 0;
 var args = arguments[0] || {};
 var place_index = args._index;
 
+/*
 var poiInfo = mySesh.allPlaces[place_index];
 var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );
 //alert( how_close + " miles");
@@ -328,7 +329,7 @@ if ( poiInfo.banner != "" ) {
 	//bg_image = mySesh.AWS.url_base+'/'+mySesh.AWS.bucket_place+'/'+poiInfo.banner;
 	bg_image = BANNER_PATH + poiInfo.banner;
 		 
-	/*  image preloader of sorts  */
+	// image preloader 
 	var c = Titanium.Network.createHTTPClient();
 	c.setTimeout(4000);
 	c.onload = function() {
@@ -342,7 +343,7 @@ if ( poiInfo.banner != "" ) {
 }
 
 
-/*  fill in header and miniheader information */
+//  fill in header and miniheader information 
 $.place_dist_label.text 	= poiInfo.dist + " miles away";   // TODO: send in distance in miles from backend
 //$.mini_place_dist_label.text 	= poiInfo.dist + " mi away"; 
 
@@ -371,8 +372,8 @@ var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
 var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", "100%", whos_here_height, 0);	
 $.activity.add(whos_here_list);
 
-/* 	get feed of checkins, including your current checkin status; 
-		add the list to the view we've just created 												*/
+//	get feed of checkins, including your current checkin status; 
+//		add the list to the view we've just created 												
 // Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
 getPlaceCheckins( args._place_ID, mySesh.dog.dog_ID, whos_here_list);	
 
@@ -402,15 +403,8 @@ var params = {
 };
 getRemarks(params, displayRemarks);
 
-/*  TODO: send everything except post_text (added by user on next window)   
-$place_type 		= $_POST['place_type'];
-$place_ID 			= $_POST['place_ID'];
-$owner_ID 			= $_POST['owner_ID'];
-$owner_name 		= $_POST['owner_name'];
-$dog_ID  				= $_POST['dog_ID'];
-$dog_name  			= $_POST['dog_name'];
-$post_text 			= $_POST['post_text'];
-*/
+
+
 var necessary_args = {   // 
 	_place_ID    		: args._place_ID,
 	_place_name	 		: poiInfo.name,
@@ -458,4 +452,4 @@ $.scrollView.addEventListener('scroll', function(e) {
   }
 });
 
-
+*/
