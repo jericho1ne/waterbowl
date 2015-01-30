@@ -12,7 +12,7 @@
 //		Purpose:		( 1, args._place_ID, mySesh.dog.dog_ID, displayRemarks);
 //================================================================================
 function getRemarks( params, callbackFunction ) {
-	myUiFactory.loadJson(params, "http://waterbowl.net/mobile/get-place-posts.php", callbackFunction);
+	loadJson(params, "http://waterbowl.net/mobile/get-place-posts.php", callbackFunction);
 }
 
 //================================================================================
@@ -54,7 +54,7 @@ function getRecentEstimates( place_ID, enclosure_count, callbackFunction ) {
 		place_ID	: place_ID, 
 		enclosure_count : enclosure_count
 	};
-	myUiFactory.loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", callbackFunction);
+	loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", callbackFunction);
 }
 
 //================================================================================

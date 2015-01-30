@@ -42,14 +42,28 @@ function createSimpleDialog (title, msg) {
 	simple_dialog.show();
 }	
 
-//===========================================================================================
-//	Name:		 	createColorBlock (block_bg_color)
-//	Purpose:		simple nearby place list ui element
-//===========================================================================================
-function createColorBlock (block_bg_color) {
-	return Ti.UI.createView({
-		width : 8, height : 25, top:2, left : 6, zIndex : 20, backgroundColor : block_bg_color, borderRadius: 2
-	});
+//================================================================================
+//		Name:			loadJson
+//		Purpose:	standardize HTTP requests
+//================================================================================
+function loadJson ( params, url, callbackFunction ) {
+	var query = Ti.Network.createHTTPClient();
+	query.open("POST", url);	
+	query.send( params );
+	query.onload = function() {
+		var jsonResponse = this.responseText;
+		
+		if (jsonResponse != "" ) {
+			var data = JSON.parse( jsonResponse );
+			// Ti.API.debug("....[~] UiFactory.loadJson ["+JSON.stringify(data)+"]");
+			if (callbackFunction!="")			
+				callbackFunction(data);
+			else
+				return data;	
+		}
+		else
+			return [];
+	};
 }
 
 //===========================================================================================
@@ -60,7 +74,8 @@ function createWindowController ( win_name, args, animation ) {
 	mySesh.previousWindow = mySesh.currentWindow;
 	mySesh.currentWindow = win_name;
 	
-	Ti.API.debug(" ::::: createWindowController ::::: ["+win_name+"]" + "["+JSON.stringify(args) +"]");
+	Ti.API.debug("::::::::::::::: createWindowController ::::: [ "+win_name+" ] " + 
+							 "::::::::::::::: ["+JSON.stringify(args) +"] :::::::::::");
 
 	var winObject = Alloy.createController(win_name, args).getView();
 	addToAppWindowStack( winObject, win_name );
@@ -104,7 +119,8 @@ function createWindowController ( win_name, args, animation ) {
 	// status checks
 	Ti.API.info( " >>> User Array: "+ JSON.stringify( mySesh.user ) );
 	Ti.API.info( " >>> Dog Array: "+ JSON.stringify( mySesh.dog ) );
-	Ti.API.info( " >>> Checkin Place ID : "+ mySesh.dog.current_place_ID );
+	if (mySesh.dog.current_place_ID!=0)	
+		Ti.API.info( " >>> Checkin Place ID : "+ mySesh.dog.current_place_ID );
 }
 
 
@@ -445,7 +461,6 @@ function zeroPad( number, width )  {
 
 
 //============================================================================================
-
 //Ti.API.info('Ti.Platform.displayCaps.density: ' + Ti.Platform.displayCaps.density);
 //Ti.API.info('Ti.Platform.displayCaps.dpi: ' + Ti.Platform.displayCaps.dpi);
 //Ti.API.info('Ti.Platform.displayCaps.platformHeight: ' + Ti.Platform.displayCaps.platformHeight);
@@ -461,19 +476,17 @@ if(Ti.Platform.osname === 'android'){
 */
 
 /*----------------------------------------------------------------------
- *  	LOADING MAP MODULE
+ *  	Instantiate UiFactory
  *-----------------------------------------------------------------------*/
-if (Ti.Platform.osname === "iphone")
-	myMap = require('ti.map');  // 	Alloy.Globals.Map = require('ti.map');
-else if (Ti.Platform.osname == "android")
-	myMap = Ti.Map;
+var UiFactoryClass = require('lib/UiFactoryClass');
+var myUiFactory = new UiFactoryClass.UiFactory();
+
 
 /*----------------------------------------------------------------------
- *  	Instantiate UI factory
+ *  	Instantiate ExtendedMap
  *-----------------------------------------------------------------------*/
-var UiFactory = require('lib/UiFactoryClass');
-var myUiFactory = new UiFactory.UiFactory();
-
+var ExtendedMapClass = require('lib/ExtendedMapClass');
+var myExtendedMap = new ExtendedMapClass.ExtendedMap();
 
 /*----------------------------------------------------------------------
  *  	Instantiate Session class (contains all the app globals)
@@ -508,6 +521,7 @@ Ti.App.Properties.current_window = null;
 
 Alloy.Globals.placeList_clicks 	= 0;
 Alloy.Globals.placeList_ID 			= null;
+Alloy.Globals.placeAnnotations = [];
 
 /*----------------------------------------------------------------------
  *  	GEOLOCATION
@@ -521,9 +535,8 @@ Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
 
 // TODO: is this still used by mapview.js??
 
-Alloy.Globals.wbMap 	= "";
-Ti.API.debug(" Alloy.Globals.wbMapView init: "+JSON.stringify(Alloy.Globals.wbMapView) );
-Alloy.Globals.placeAnnotations = [];
+//Alloy.Globals.wbMap 	= "";
+
 
 // var longPress;
 'use strict';

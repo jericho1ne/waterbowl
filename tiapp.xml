@@ -60,8 +60,8 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-    <module platform="iphone" version="2.2.0">ti.map</module>
-  </modules>
+	    <module platform="iphone" version="2.2.0">ti.map</module>
+ 	  </modules>
     <deployment-targets>
         <target device="android">false</target>
         <target device="blackberry">false</target>

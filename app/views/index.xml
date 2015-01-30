@@ -11,24 +11,13 @@
 	|	|				registerBtn      | |
 	|	+------------------------+ |
 	|	+-----footerContainer----+ |	
-	| |				footer					 | |
-	|	|				fill_height 		 | |
+	| |				footer_img   		 | |
 	| +------------------------+ |	
 	+============================+
 */
-
 <Alloy>
-	<Window id="index" class="absolute login_bg">
-		<View id="content" class="container" >
-		
-		
-			<!-- 
-			<View id="footerContainer" top="70">
-				<ImageView id="footer"/>
-				<View class="fill_height bg_dk_blue"/>
-			</View>
-			-->
-		</View>	
+	<Window id="index" class="absolute">
+		<View id="content" class="container" />
 	</Window>
 </Alloy>
 

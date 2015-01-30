@@ -59,28 +59,6 @@ function UiFactory(){
 	this._icon_large  = 2.333 * this._base_icon_size;		//  70x70 px equivalent
 };
 
-//================================================================================
-//		Name:			loadJson
-//		Purpose:	standardize HTTP requests
-//================================================================================
-UiFactory.prototype.loadJson = function( params, url, callbackFunction ) {
-	Ti.API.info("* getRecentEstimates() called *");
-	var query = Ti.Network.createHTTPClient();
-	query.open("POST", url);	
-	query.send( params );
-	query.onload = function() {
-		var jsonResponse = this.responseText;
-		
-		if (jsonResponse != "" ) {
-			var data = JSON.parse( jsonResponse );
-			// Ti.API.debug("....[~] UiFactory.loadJson ["+JSON.stringify(data)+"]");
-			if (callbackFunction!="")			
-				callbackFunction(data);
-			return data;	
-		}
-	};
-}
-
 /************************************************************
 *		Name:  		buildViewContainer ( id, layout_orientation, view_width, view_height, top )
 *		Purpose:  create dark gray section title/divider
@@ -180,7 +158,8 @@ UiFactory.prototype.buildIcon = function(id, image, size){
 	if(image=="")
 		image = 'images/missing/WB-Icon-Placeholder.png';
 	
-	if 			(size == "small")		icon_size = this._icon_small;		//	small 
+	if (size === parseInt(size, 10))	icon_size = parseInt(size);
+	else if (size == "small")		icon_size = this._icon_small;		//	small 
 	else if (size == "medium")	icon_size = this._icon_medium; 	//	medium (base size)
 	else if (size == "large")		icon_size = this._icon_large;		//	large
 	else												icon_size = this._icon_medium;	//	default to medium 
@@ -580,11 +559,12 @@ UiFactory.prototype.buildSpacer = function(  orientation, size ){
  	});
  	return spacer;
 }
+
 /************************************************************
 *		Name:  		buildMediumIcon ( id, image ) 
 *		Purpose:  build icons for info bars
 ************************************************************/
-UiFactory.prototype.buildMediumIcon = function(id, image){
+/*UiFactory.prototype.buildMediumIcon = function(id, image){
   var image_view = Ti.UI.createImageView({ 
 		//id							: id, 
 		image   				: image,
@@ -598,7 +578,7 @@ UiFactory.prototype.buildMediumIcon = function(id, image){
 		borderWidth			: this._debug
 	});
 	return image_view;
-}
+}*/
 
 /*********************************************************************************
 *		Name:  		buildSectionHeader ( view_id, title, size={0,1,2} )
@@ -663,15 +643,14 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 *		Purpose:  create small test button
 ************************************************************/
 UiFactory.prototype.buildTextField = function(id, width, hint, is_pwd) {
-	var form_width = mySesh.device.screenwidth - this._pad_right - this._pad_left;
 	if (width=="")
-		width = form_width;
+		width = mySesh.device.screenwidth - this._pad_right - this._pad_left;
 		
   var text_field = Ti.UI.createTextField( {
   	id              : id,
   	backgroundColor : '#ffffff', 
     color           : this._color_dkgray, 
-    width           : form_width, 
+    width           : width, 
     height          : 34, 
     top             : 1, 
     opacity         : 1,
@@ -734,6 +713,22 @@ UiFactory.prototype.buildButton = function(id, title, type) {
 	view_container.add(button);
 	
 	return view_container;
+}
+
+//===========================================================================================
+//	Name:		 	createColorBlock (block_bg_color)
+//	Purpose:		simple nearby place list ui element
+//===========================================================================================
+UiFactory.prototype.createColorBlock = function(bg_color, icon_basic) {
+	var temp_view = Ti.UI.createView({
+		width : this._icon_small, height : this._icon_small, top:0, left : 6, 
+		//backgroundColor : bg_color, borderRadius: 2,
+		 zIndex : 20
+	});
+	// this.buildIcon( "", ICON_PATH+icon_basic, small );
+	temp_view.add( this.buildIcon( "", ICON_PATH+icon_basic, 18 ) );
+	// temp_view.add(place_label);
+	return temp_view;
 }
 
 /************************************************************

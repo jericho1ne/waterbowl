@@ -46,7 +46,7 @@ function Session(){
 	// this.local_banner_path : "images/places",
 	this.allPlaces		      =  [];				// top N places that are near user's location (n=20, 30, etc)
 	this.nearbyMarks		    =  [];
-	this.nearbyPlaces      =  []; 				// contains up to N places that are within the geofence
+	this.geofencePoi      =  []; 				// contains up to N places that are within the geofence
 	// this.placeAnnotations  =  [];
 	this.currentPlace = { 
 		ID				: null,
@@ -85,8 +85,23 @@ function Session(){
 };
 
 //================================================================================
+//		Name:				setGeoLatLon
+//================================================================================
+Session.prototype.setGeoLatLon = function (lat, lon, how_long_ago){
+	this.geo.lat = lat;
+	this.geo.lon = lon;
+	this.geo.last_acquired = how_long_ago;
+}
+//================================================================================
+//		Name:				setGeoViewport
+//================================================================================
+Session.prototype.setGeoViewport = function (region_lat, region_lat){
+	this.geo.view_lat = region_lat;
+	this.geo.view_lon = region_lat;
+}
+//================================================================================
 //		Name:				getUrl
-//		Purpose:		pick between remote-live, remote-dev, and local 	standardize HTTP requests
+//		Purpose:		pick between remote-live, remote-dev, and local HTTP requests
 //================================================================================
 Session.prototype.getUrl = function(server_type) {
 	if 			(server_type=="dev")

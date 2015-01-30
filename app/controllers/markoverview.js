@@ -10,7 +10,7 @@ function getMarkOverview( original_mark) {
 		place_ID 	 : original_mark.ID,
 		dog_ID  	 : mySesh.dog.dog_ID
 	};
-	//myUiFactory.loadJson(	params, "http://waterbowl.net/mobile/get-place-posts.php",  displayMark );
+	//loadJson(	params, "http://waterbowl.net/mobile/get-place-posts.php",  displayMark );
 	// alert( data.marking_dog_name );
 	
 	query.open("POST", "http://waterbowl.net/mobile/get-place-posts.php");	

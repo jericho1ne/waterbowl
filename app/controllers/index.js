@@ -59,8 +59,6 @@ function wbLogin(email, password) {
 				Ti.App.Properties.setString('pass', password);
 		
 				// TODO: dog info
-				Ti.API.log( "*** Saved Creds: "+mySesh.user.owner_ID+ "/" +mySesh.user.email+ "/" + mySesh.user.password);
-				Ti.API.log( "*** CURRENT CHECKINS: " + mySesh.dog.current_place_ID );
 				
 				// take user to the post-login window
 				createWindowController( "mapview", "", "slide_left" ); 
@@ -118,15 +116,15 @@ if ( saved_user!=null && saved_pwd!=null ) {
 	wbLogin(saved_user, saved_pwd);
 } else {
 	// Build 3 vertically stacked View Containers
-	var topView = myUiFactory.buildViewContainer ( "topView", "", "100%", topView_height, 0 );
+	var topView = myUiFactory.buildViewContainer ( "topView", "", 				"100%", topView_height, 0 );
 	var midView = myUiFactory.buildViewContainer ( "midView", "vertical", "100%", midView_height, 0 );
-	var botView = myUiFactory.buildViewContainer ( "botView", "", "100%", Ti.UI.FILL, 	0 );
+	var botView = myUiFactory.buildViewContainer ( "botView", "", 				"100%", Ti.UI.FILL, 0 );
 	
 	// 																		title, 			 w, 		 h,  font_style, 					    color 			text_align
 	var titlebar = myUiFactory.buildLabel("waterbowl", "100%", 60, myUiFactory._text_banner, "#ffffff", "center");
 	//                                         id,       width,  hint,       is_pwd
-	var email    = myUiFactory.buildTextField("email",   "99%",  "email",    "");
-	var password = myUiFactory.buildTextField("password", "99%", "password", true);
+	var email    = myUiFactory.buildTextField("email",   "100%",  "email",    "");
+	var password = myUiFactory.buildTextField("password", "100%", "password", true);
 	
 	var loginBtn = myUiFactory.buildButton("loginBtn", "login", "large");
 	loginBtn.addEventListener('click', function(){ goToLogin(); });
@@ -142,7 +140,6 @@ if ( saved_user!=null && saved_pwd!=null ) {
 		bottom					: 0
 	});
 
-
 	// add UI elements to containers		
 	topView.add(titlebar);
 	midView.add(email);
@@ -155,7 +152,6 @@ if ( saved_user!=null && saved_pwd!=null ) {
 	$.content.add(topView);
 	$.content.add(midView);
 	$.content.add(botView);
-
 
 	// Check if the device is running iOS 8 or later, before registering for local notifications
 	if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {

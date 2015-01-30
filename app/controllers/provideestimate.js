@@ -116,21 +116,19 @@ Ti.API.debug( " >>> Provide Estimate (@top) >>> "+JSON.stringify(args));
 var park_name       = args._poiInfo.name;
 var enclosure_count = args._poiInfo.enclosure_count;
 
-$.miniHeaderContainer.backgroundColor = args._poiInfo.icon_color;
-$.mini_place_name_label.text		= park_name;
-$.mini_place_second_label.text	=	args._poiInfo.city;  // + ' ('+ poiInfo.dist + " mi away)";
+var miniHeader = myUiFactory.buildMiniHeader(park_name, args._poiInfo.city, args._poiInfo.icon_color);
+$.scrollView.add(miniHeader);
 
 //var miniheader = myUiFactory.buildMiniHeader(park_name, , ); 
-//$.sliders.add(miniheader);
 
 //var section_header = myUiFactory.buildSectionHeader("park_name", park_name, 2)
-//$.sliders.add(section_header);
+//$.scrollView.add(section_header);
 var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", "100%", 40, myUiFactory._text_medium, "#000000", "center" );		
 
 // backend script doesn't care if there are one or two sliders on the page
 // only needs to know if place_estimate.enclosure_type is mixed, large, or small
 
-$.sliders.add(call_to_action);
+$.scrollView.add(call_to_action);
 
 /*   Mixed area, if this be the only slider  
      If a second one follows, it becomes the Large Dogs slider        */
@@ -142,30 +140,30 @@ var slider1_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._te
 var slider1 			= myUiFactory.buildSlider("slider1", 0, 7, 0);
 
 if (enclosure_count==1)  
-  $.sliders.add( myUiFactory.buildSectionHeader("", "Entire Area", 1) );	
+  $.scrollView.add( myUiFactory.buildSectionHeader("", "Entire Area", 1) );	
 else if (enclosure_count==2)  
-  $.sliders.add( myUiFactory.buildSectionHeader("", "Large Dog Area", 1) );	
+  $.scrollView.add( myUiFactory.buildSectionHeader("", "Large Dog Area", 1) );	
 
-$.sliders.add( myUiFactory.buildSpacer("horz", 10) );      // pass in vert/horz, and dp size 
-$.sliders.add(slider1_label);	
-$.sliders.add(slider1_value);
-$.sliders.add(slider1);	
-$.sliders.add( myUiFactory.buildSpacer("horz", 20) );      // pass in vert/horz, and dp size
+$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );      // pass in vert/horz, and dp size 
+$.scrollView.add(slider1_label);	
+$.scrollView.add(slider1_value);
+$.scrollView.add(slider1);	
+$.scrollView.add( myUiFactory.buildSpacer("horz", 20) );      // pass in vert/horz, and dp size
 
 
 // And the following slider will be for Small Dogs 
 if (enclosure_count==2) {   // 
-  $.sliders.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
+  $.scrollView.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
   
   var slider2 			= myUiFactory.buildSlider("slider2", 0, 7, 0);
   var slider2_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "#000000", "" );
   var slider2_value = myUiFactory.buildLabel( "?", "100%", "auto", myUiFactory._text_banner, "#000000", "" ); 
 
-	$.sliders.add( myUiFactory.buildSpacer("horz", 10) );      // pass in vert/horz, and dp size
-  $.sliders.add(slider2_label);	
-  $.sliders.add(slider2_value);
-  $.sliders.add(slider2);	
-  $.sliders.add(myUiFactory.buildSpacer("horz", 20));     // pass in vert/horz, and dp size
+	$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );      // pass in vert/horz, and dp size
+  $.scrollView.add(slider2_label);	
+  $.scrollView.add(slider2_value);
+  $.scrollView.add(slider2);	
+  $.scrollView.add(myUiFactory.buildSpacer("horz", 20));     // pass in vert/horz, and dp size
 }    
 //  SLIDE EVENT LISTENERS     
 slider1.addEventListener('change', function(e){
@@ -179,8 +177,8 @@ if (enclosure_count==2) {
   
 //  add save estimate button
 var save_est_btn   = myUiFactory.buildButton( "save_est_btn", "save estimate", "medium" );
-$.sliders.add(save_est_btn);
-//$.content.add( $.sliders );
+$.scrollView.add(save_est_btn);
+//$.content.add( $.scrollView );
 
 save_est_btn.addEventListener('click', function(e) {
 	// var estimate = ;

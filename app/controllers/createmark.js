@@ -111,8 +111,8 @@ function saveRemark(place_ID, place_type, text_content) {
 //=================================================================================
 function drawDefaultMap(lat, lon, delta) {
   Ti.API.log(".... .... .... drawDefaultMap lat/lon/delta: ["+lat+"/"+lon+"/"+delta+"]");
-	var markMapView = myMap.createView({
-		mapType : myMap.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
+	var tempMap = myMapFactory.createView({
+		mapType : myMapFactory.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
 		region : {
 			latitude 			: lat,
 			longitude 		: lon,
@@ -131,7 +131,7 @@ function drawDefaultMap(lat, lon, delta) {
 		enableZoomControls : true
 	});
 	Ti.API.log("...[~] Map object built ");
-	return markMapView;
+	return tempMap;
 }
 
 //===========================================================================================================
@@ -179,15 +179,12 @@ $.markForm.add(textarea_label);
 $.markForm.add(textArea);
 $.markForm.add(addMarkBtn);
 addMarkBtn.addEventListener('click', function(e){ saveRemark("", title_input.value, textArea.value, textarea_hint); });
-
 textArea.addEventListener('focus', function(e){ clearTextAreaContents(textArea); });
-
 
 
 /* TODO:  
 
 (-1) Need a function that is attached to any clears the 
-
 			function clearContents(element) {
 			  element.value = '';
 			}

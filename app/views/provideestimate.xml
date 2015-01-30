@@ -1,18 +1,9 @@
 <Alloy>
 	<Window id="provideestimate" class="absolute">	
 		<View id="content" class="window_container">
+		
+			<ScrollView id="scrollView" top="0" width="100%" class="fill_height" />
 			
-			<ScrollView id="estimates" top="0" width="100%" class="fill_height">
-
-				<View id="miniHeaderContainer" width="100%" height="60" top="0" class="layout_vert" backgroundColor="#CCCCCC" zIndex="97" opacity="1" >	
-					<Label id="mini_place_name_label" text="" class="feed_label_left_lg white text_large"/>
-					<Label id="mini_place_second_label" text="" class="feed_label_left white text_medium_medium" />
-				</View>
-				
-				<View id="sliders" width="100%" contentHeight="auto"/>
-				
-			</ScrollView>
-				
 		</View>
  	</Window>
 </Alloy>
