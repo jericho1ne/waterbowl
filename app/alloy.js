@@ -239,6 +239,8 @@ function addMenubar( parent_object ) {
 		zIndex	: 100
 	} );
 	
+	
+	// TODO: use missing / dog-0-iconmed.jpg
 	Ti.API.debug( PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg' );
 	var	infoBtn 		= Ti.UI.createButton( {
 		id: "infoBtn",
@@ -261,11 +263,10 @@ function addMenubar( parent_object ) {
 		opacity: 1
 	});
 	// TITLE BAR ------------------------------------>
-	var wbLogoMenubar = Ti.UI.createLabel( 
+	/* var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: "auto", 
 			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
-	
-	//menuCenter.add(wbLogoMenubar);	
+	menuCenter.add(wbLogoMenubar);	  */
 	
 	// DEBUG
 	Ti.API.debug(" ....[i] Ti.App.Properties.current_window :"+ Ti.App.Properties.current_window);
@@ -285,13 +286,12 @@ function addMenubar( parent_object ) {
 		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}	else {
-	
 		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}
 	
 	/* only show settings button if not currently on that window */	
-	if (Ti.App.Properties.current_window!="mapview" ||
+	/*if (Ti.App.Properties.current_window!="mapview" ||
 			Ti.App.Properties.current_window!="placeoverview" &&
 			Ti.App.Properties.current_window!="markview") {	
 			//TODO:  add the other register windows
@@ -299,7 +299,7 @@ function addMenubar( parent_object ) {
 		menuRight1.add(blankBtn);	
 		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
-	}
+	}*/
 
 	/* Add items to container divs, then add menubar to Window object */
 	menubar.add(menuLeft);	
@@ -405,7 +405,6 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 function addToAppWindowStack( winObject, win_name )  {
 	mySesh.windowStack.push( winObject );
 	Ti.App.Properties.current_window = win_name;
-	
 	//Ti.API.info ( "windowStack:"+ JSON.stringify( mySesh.windowStack ) + " || array size: " + ( mySesh.windowStack.length ) );
 	Ti.API.debug ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( mySesh.windowStack.length ) +" =========//" );
 }

@@ -1,7 +1,7 @@
 //=============================================================
 //	Name:			buildMapMenubar	
 //=============================================================
-function buildMapMenubar( mapObject ) {	
+function buildMapMenubar() {	
 	// mySesh.device.screenwidth
 	var menubar_pad_right  = 20;
 	var	menubar_pad_bottom = 20;
@@ -59,11 +59,12 @@ function buildMapMenubar( mapObject ) {
 		bottom					: menubar_pad_bottom, 
 		right						: 160
 	});
+	
 	/////////////////////////////////////// ADD BUTTONS TO MAPVIEW ////////////////////////
-	mapObject.add(recenterBtn);
-	mapObject.add(getPoiBtn);
-	mapObject.add(sniffBtn);
-	mapObject.add(markBtn);
+	$.mapContainer.add(recenterBtn);
+	$.mapContainer.add(getPoiBtn);
+	$.mapContainer.add(sniffBtn);
+	$.mapContainer.add(markBtn);
 	
 	//====== RECENTER listener ================================================
 	recenterBtn.addEventListener('click', function() {			// REFRESH button
@@ -73,25 +74,37 @@ function buildMapMenubar( mapObject ) {
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
         createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
-        // myExtendedMap.centerMapOnLocation(mapObject, mySesh.geo.lat, mySesh.geo.lon, 0.01);
+        // myExtendedMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.01);
       } 
       else {  // if no errors, and we're not running in Simulator
         myExtendedMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.02);
 	    }
     });  
   });
+  
   //====== WATERBOWL/POI BUTTON CLICK ==========================================
   getPoiBtn.addEventListener('click', function() {			
   	Ti.API.info("...[+] GET POI button clicked on map");
-		// Only refresh MAP markers + annotations
-		myExtendedMap._wbMap.removeAllAnnotations();
-		getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
+  	Ti.Geolocation.getCurrentPosition(function(e) {
+      if (e.error) {
+      	myExtendedMap._wbMap.removeAllAnnotations();
+      	getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
+      } 
+      else {  // if no errors
+        myExtendedMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.075);
+        mySesh.geo.lon = e.coords.longitude;
+        mySesh.geo.lat = e.coords.latitude;
+        myExtendedMap._wbMap.removeAllAnnotations();
+        getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
+	    }
+    });  
 	});
 	
 	//======  WATERBOWL/POI BUTTON LONGPRESS ==================================
 	getPoiBtn.addEventListener('longpress', function(e) {
 		alert("looong press on WB button");
 	});
+	
 	//====== MARK listener ================================================
 	markBtn.addEventListener('click', function() {			
 		Ti.API.info("...[+] Mark button clicked on map");
@@ -113,7 +126,6 @@ function buildMapMenubar( mapObject ) {
       if (e.error) {			
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
-        // createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
         myExtendedMap._wbMap.removeAllAnnotations();
       	getMarks( myExtendedMap._wbMap, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
       } 
@@ -206,10 +218,9 @@ function createMapAnnotation( place_data, index ) {
 	
 	// ADD ANNOTATION BUTTON EVENT LISTENER
  	temp_button.addEventListener('click', function(e){
- 		//Ti.API.debug ( ".... [+] Clicked on >> " + e.source.id );	
+ 		// Ti.API.debug ( ".... [+] Clicked on >> " + e.source.id );	
 		var necessary_args = {
-			_index		: index, 
-			_place_ID : e.source.id		// pass in array index and placeID so we can hit the backend for more details
+			_place_ID : place_data.place_ID		// pass in array index and placeID so we can hit the backend for more details
 		};
 		createWindowController( "placeoverview", necessary_args, 'slide_left' );
  	});
@@ -661,7 +672,7 @@ function refreshGeo() {
 	    	mySesh.geo.lat = e.coords.latitude;
 	  	  mySesh.geo.lon = e.coords.longitude;
 	      // see if user is still checked in somewhere, and if so, have they left the geofence
-	      getNearbyPoi(mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
+	      getNearbyPoi(e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
 	      refreshPlaceListData();
 	  	}
 		});
@@ -727,19 +738,19 @@ else if (Ti.Platform.osname == "android")
 // (0)	GET GEOLOCATION
 Titanium.Geolocation.getCurrentPosition(function(e){
 	Ti.API.debug("[ [ [ [ getCurrentPosition called ] ] ] ] ");
-	// use default Playa Del Rey coordinates
-  mySesh.setGeoLatLon(33.970, -118.4201, -1);
-  
-  // error occurred
-	if (!e.success || e.error) {
+	
+  // ERROR
+  if (!e.success || e.error) {
 	  if (Titanium.Platform.model!="Simulator") {
       Ti.API.log('............... Could not find the device location');
   	  createSimpleDialog("Can't get your location","Please check location services are enabled on your mobile device.");
     }
     Ti.API.debug( "GEO ERROR Code: "+ e.code);
     Ti.API.debug( 'ERROR TEXT: ' + JSON.stringify(e.error) );
-
-  } else {		// RECEIVED COORDINATES
+		mySesh.setGeoLatLon(33.970, -118.4201, -1);
+  } 
+  // SUCCESS
+  else {		
   	if (Titanium.Platform.model!="Simulator") {				// overwrite hardcoded coordinates with device geolocation
   		// time last GPS fix was acquired (minutes since start of Unix Epoch)
 	 		var last_acquired = Math.round( Date.now() / (1000*60) );		
@@ -749,9 +760,9 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 
   // Go through these steps regardless of whether we receiving an actual lat/lon
   // (1)	DRAW THE MAP
-  var wbMap = myExtendedMap.initializeMap(mySesh.geo.lat, mySesh.geo.lon);
- 	buildMapMenubar( wbMap );
- 	$.mapContainer.add( wbMap );
+  myExtendedMap.initializeMap(mySesh.geo.lat, mySesh.geo.lon);
+ 	buildMapMenubar();
+ 	$.mapContainer.add( myExtendedMap._wbMap );
  	
   // (2) GET MAP POIs AND PLACELIST DATA
   getNearbyPoi(mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);

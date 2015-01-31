@@ -69,8 +69,8 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 		id							: id, 
 		layout					: layout_orientation,
 		//backgroundColor : this._color_ltblue, 
-		borderColor     : this._color_ltpink, 	
-		borderWidth			: this._debug,
+		borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), 	
+		borderWidth			: ((this._debug == 1) ? 2 : ''), 	
 		top							: top,  
 		width						: view_width,
 		height 					: view_height
@@ -102,13 +102,61 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		height: height,
 		left  : left_pad,
 		color	: font_color,
-		borderColor : this._color_dkblue,
-		borderWidth : this._debug,
+		borderColor     : ((this._debug == 1) ? this._color_dkblue : ''), 	
+		borderWidth			: ((this._debug == 1) ? 1 : ''), 
 		textAlign		: align
-		//top   : 0
 	});
 	return label;
 }
+
+/*****************************************************************
+*		Name:  		buildBannerImage ( view_id, image ) 
+*		Purpose:  build top of page profile, mark or place headers
+*****************************************************************/
+UiFactory.prototype.buildBannerImage = function(view_id, image) {
+	// width and height == mySesh.device.screenwidth
+	var headerContainer = buildViewContainer("headerContainer", "vertical", mySesh.device.screenwidth, mySesh.device.screenwidth, 0);
+	var bg_image = MISSING_PATH + "poi-0-banner.jpg";
+	
+	var c = Titanium.Network.createHTTPClient();
+	c.setTimeout(3000);
+	c.onload = function() {
+	    if(c.status == 200) {
+	     	headerContainer.backgroundImage = image;
+	    }
+	};
+	c.open('GET', bg_image);
+	c.send();
+}
+
+/***********************************************************************************
+*		Name:  		buildHeader ( place_name, city, bg_color )  
+*		Purpose:  TODO: finish this mon!
+************************************************************************************/
+/*UiFactory.prototype.buildHeader = function(place_name, city, bg_color) {
+	var view_container = this.buildViewContainer ( "", "horizontal", "100%", 60, 0 ); 
+	
+	view_container.add( this.buildSpacer("vert", this._pad_left) );
+	
+	var column_right = Ti.UI.createView( {
+			layout					: "vertical",
+			backgroundColor : bg_color, 
+			borderColor     : this._color_dkpink, 	
+			borderWidth			: this._debug,
+			top							: this._pad_top,  
+			width						: "100%",
+			height 					: "100%"
+		});
+	
+	column_right.add( this.buildSpacer("horz", "10%") );
+	column_right.add( this.buildLabel(place_name, "100%", "40%", this._text_large, "#000000", "left") );
+	column_right.add( this.buildLabel(city, "100%", "50%", this._text_medium, "#000000", "left") );
+	
+	view_container.add(column_right);
+	
+	return view_container;
+}*/
+
 
 /************************************************************
 *		Name:  		buildProfileThumb ( id, image, border, size ) 
@@ -202,33 +250,6 @@ UiFactory.prototype.buildSlider = function(id, min_value, max_value, start_value
   });
 }
 
-/***********************************************************************************
-*		Name:  		buildHeader ( place_name, city, bg_color )  
-*		Purpose:  TODO: finish this mon!
-************************************************************************************/
-UiFactory.prototype.buildHeader = function(place_name, city, bg_color) {
-	var view_container = this.buildViewContainer ( "", "horizontal", "100%", 60, 0 ); 
-	
-	view_container.add( this.buildSpacer("vert", this._pad_left) );
-	
-	var column_right = Ti.UI.createView( {
-			layout					: "vertical",
-			backgroundColor : bg_color, 
-			borderColor     : this._color_dkpink, 	
-			borderWidth			: this._debug,
-			top							: this._pad_top,  
-			width						: "100%",
-			height 					: "100%"
-		});
-	
-	column_right.add( this.buildSpacer("horz", "10%") );
-	column_right.add( this.buildLabel(place_name, "100%", "40%", this._text_large, "#000000", "left") );
-	column_right.add( this.buildLabel(city, "100%", "50%", this._text_medium, "#000000", "left") );
-	
-	view_container.add(column_right);
-	
-	return view_container;
-}
 
 /***********************************************************************************
 *		Name:  		buildMiniHeader ( place_name, city, bg_color )  

@@ -88,6 +88,7 @@ function Session(){
 //		Name:				setGeoLatLon
 //================================================================================
 Session.prototype.setGeoLatLon = function (lat, lon, how_long_ago){
+	Ti.API.debug(".... [x] setGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
 	this.geo.lat = lat;
 	this.geo.lon = lon;
 	this.geo.last_acquired = how_long_ago;

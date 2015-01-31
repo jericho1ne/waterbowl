@@ -31,8 +31,8 @@ ExtendedMap.prototype.initializeMap = function(lat, lon) {
 		// Ti.API.log( 'regionChanged:'+evt.source.region.latitude+"/"+evt.source.region.longitude );
 		mySesh.setGeoViewport(evt.source.region.latitude, evt.source.region.longitude);
 	});
-	Ti.API.log("...[~] Map object built ");
-	return this._wbMap;
+	Ti.API.log(".... [~] Map object built ");
+	// return this._wbMap;
 }
 
 
@@ -42,8 +42,8 @@ ExtendedMap.prototype.initializeMap = function(lat, lon) {
 //=================================================================================
 ExtendedMap.prototype.centerMapOnLocation = function(lat, lon, delta) {
 	// set bounding box, move the map View/Location
-	Ti.API.log("...[~] set Region ["+ lat +" / "+ lon +"]");
-	 this._wbMap.setLocation ({
+	Ti.API.debug(".... [~] centerMapOnLocation ["+ lat +" / "+ lon +"]");
+	this._wbMap.setLocation ({
 		latitude 			: lat,
 		longitude 		: lon,
 		latitudeDelta : delta,
@@ -51,7 +51,5 @@ ExtendedMap.prototype.centerMapOnLocation = function(lat, lon, delta) {
 		animate : true
 	});
 }
-
-
 
 exports.ExtendedMap = ExtendedMap;
