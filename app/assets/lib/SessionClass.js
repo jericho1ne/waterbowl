@@ -73,7 +73,8 @@ function Session(){
 			url_local				: "http://localhost/wb.net/mobile/",
 			url_dev					: "http://www.waterbowl.net/dev/",
 			url_live 				: "http://www.waterbowl.net/mobile/",
-			bucket_banner		: "images/wb-banner/",
+			bucket_poi			: "images/wb-poi/",
+			bucket_mark			: "images/wb-mark/",
 			bucket_profile	: "images/wb-profile/",
 			bucket_uitext		: "images/wb-ui-text/",
 			// LOCAL PATHS BELOW
@@ -96,9 +97,11 @@ Session.prototype.setGeoLatLon = function (lat, lon, how_long_ago){
 //================================================================================
 //		Name:				setGeoViewport
 //================================================================================
-Session.prototype.setGeoViewport = function (region_lat, region_lat){
+Session.prototype.setGeoViewport = function (region_lat, region_lon){
 	this.geo.view_lat = region_lat;
-	this.geo.view_lon = region_lat;
+	this.geo.view_lon = region_lon;
+	Ti.API.log( ' ***** regionChanged (setGeoViewport) ::'+this.geo.view_lat+"/"+this.geo.view_lon+"******");
+
 }
 //================================================================================
 //		Name:				getUrl

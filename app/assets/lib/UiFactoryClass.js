@@ -6,6 +6,8 @@
 	5. Pet Care Services 	Purple		"#9a52a0"
 	6. Food/Restaurant		Orange		"#f5851f"
 	7. General						Gray			"#787578"
+	
+	X. Pee Mark 										"#f1d523"
 */
 
 function UiFactory(){
@@ -69,8 +71,7 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 		id							: id, 
 		layout					: layout_orientation,
 		//backgroundColor : this._color_ltblue, 
-		borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), 	
-		borderWidth			: ((this._debug == 1) ? 2 : ''), 	
+		//	borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth			: ((this._debug == 1) ? 2 : ''), 	
 		top							: top,  
 		width						: view_width,
 		height 					: view_height
@@ -102,51 +103,88 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		height: height,
 		left  : left_pad,
 		color	: font_color,
-		borderColor     : ((this._debug == 1) ? this._color_dkblue : ''), 	
-		borderWidth			: ((this._debug == 1) ? 1 : ''), 
+		//borderColor : ((this._debug == 1) ? this._color_dkblue : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
 		textAlign		: align
 	});
 	return label;
 }
 
 /*****************************************************************
-*		Name:  		buildBannerImage ( view_id, image ) 
+*		Name:  		buildPageHeader ( view_id, type, txt_title, txt_1, txt_2 ) 
 *		Purpose:  build top of page profile, mark or place headers
+*							type can be:  "mark", "profile", "poi"
 *****************************************************************/
-UiFactory.prototype.buildBannerImage = function(view_id, image) {
-	// width and height == mySesh.device.screenwidth
-	var headerContainer = buildViewContainer("headerContainer", "vertical", mySesh.device.screenwidth, mySesh.device.screenwidth, 0);
-	var bg_image = MISSING_PATH + "poi-0-banner.jpg";
+UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2) {
+	// width and height of parent object == mySesh.device.screenwidth
+	var headerContainer = this.buildViewContainer("headerContainer_"+id, "vertical", mySesh.device.screenwidth, mySesh.device.screenwidth, 0);
 	
-	var c = Titanium.Network.createHTTPClient();
-	c.setTimeout(3000);
-	c.onload = function() {
-	    if(c.status == 200) {
-	     	headerContainer.backgroundImage = image;
-	    }
-	};
-	c.open('GET', bg_image);
-	c.send();
+	// determine heights of child containers
+	var h_statbar_height= this._icon_small + this._pad_top;
+	var h_info_height 	= (3*this._height_header) + (2*this._pad_top);
+	var	h_top_height		= mySesh.device.screenwidth - h_info_height - h_statbar_height;  
+	
+	var headerTop 			= this.buildViewContainer("headerTop_"+id, 	"vertical", 	mySesh.device.screenwidth, h_top_height, 0);		// blank div
+	var headerInfo 			= this.buildViewContainer("headerInfo_"+id, "vertical", 	mySesh.device.screenwidth, h_info_height, 0);
+	
+	// header stat bar should be separate function
+	var headerStatBar 	= this.buildViewContainer("headerStatBar", 	"horizontal", "100%", h_statbar_height, 0);	
+	headerStatBar.backgroundColor = "#222222";
+	headerStatBar.bottom = 0;
+	
+	var mark_title_label	 = myUiFactory.buildLabel(txt_title,"100%", 24, this._text_large,  "#ffffff", "left");
+	var mark_text_label 	 = myUiFactory.buildLabel(txt_1,	 	"100%", 18, this._text_medium, "#ffffff", "left");	
+	var mark_subtext_label = myUiFactory.buildLabel(txt_2, 		"100%", 18, this._text_medium, "#ffffff", "left");			
+	
+	headerInfo.backgroundImage = "images/ui/header-overlay-black.png";
+
+	//  use gray waterbowl icon (POI placeholder) as default banner image  
+	var img_placeholder = MISSING_PATH + "poi-0-banner.jpg";
+	var img_actual   	  = POI_PATH 		 + "poi-"+ id +"-banner.jpg";
+	
+	// alert(img_placeholder +" || " +img_actual );
+	if (type == "profile")	{
+		img_placeholder = MISSING_PATH + "dog-0-banner.jpg";
+		img_actual   	  = PROFILE_PATH + "poi-"+ id +"-banner.jpg";
+	}
+	else if (type == "mark") { 
+		img_placeholder = MISSING_PATH + "mark-0-banner.jpg";
+		img_actual   	  = MARK_PATH + "poi-"+ id +"-banner.jpg";
+	}
+	// remoteFileExists( url ) 
+	// var bg_image = loadRemoteImage(img_actual, img_placeholder);   // pass in actual + fallback image
+	// Ti.API.debug(img_placeholder);
+	// TODO: MAKES SURE bg_image IS NOT BLANK / SET TIME OUT / PROMISE ??
+	headerContainer.backgroundImage = img_placeholder;
+		
+	headerInfo.add( this.buildSpacer("horz", this._pad_top) );
+	headerInfo.add(mark_title_label);
+	headerInfo.add(mark_text_label);
+	headerInfo.add(mark_subtext_label);
+	
+	headerContainer.add(headerTop);
+	headerContainer.add(headerInfo);
+	headerContainer.add(headerStatBar);
+	return headerContainer;
 }
 
 /***********************************************************************************
-*		Name:  		buildHeader ( place_name, city, bg_color )  
+*		Name:  		buildHeaderContainer ( place_name, city, bg_color )  
 *		Purpose:  TODO: finish this mon!
 ************************************************************************************/
-/*UiFactory.prototype.buildHeader = function(place_name, city, bg_color) {
+UiFactory.prototype.buildHeaderContainer = function(place_name, city, bg_color) {
 	var view_container = this.buildViewContainer ( "", "horizontal", "100%", 60, 0 ); 
+	
 	
 	view_container.add( this.buildSpacer("vert", this._pad_left) );
 	
 	var column_right = Ti.UI.createView( {
-			layout					: "vertical",
-			backgroundColor : bg_color, 
-			borderColor     : this._color_dkpink, 	
-			borderWidth			: this._debug,
-			top							: this._pad_top,  
-			width						: "100%",
-			height 					: "100%"
-		});
+		layout					: "vertical",
+		backgroundColor : bg_color, 
+		// borderColor     : ((this._debug == 1) ? this._color_dkpink : ''), borderWidth			: ((this._debug == 1) ? 1 : ''), 
+		top							: this._pad_top,  
+		width						: "100%",
+		height 					: "100%"
+	});
 	
 	column_right.add( this.buildSpacer("horz", "10%") );
 	column_right.add( this.buildLabel(place_name, "100%", "40%", this._text_large, "#000000", "left") );
@@ -155,7 +193,7 @@ UiFactory.prototype.buildBannerImage = function(view_id, image) {
 	view_container.add(column_right);
 	
 	return view_container;
-}*/
+}
 
 
 /************************************************************
@@ -243,8 +281,6 @@ UiFactory.prototype.buildSlider = function(id, min_value, max_value, start_value
     min     : min_value, 
     max     : max_value, 
     value   : start_value,
-    borderColor     : this._color_dkblue,
-    borderWidth     : 0,
     borderRadius    : 14, 
     backgroundColor : ''
   });
@@ -277,9 +313,9 @@ UiFactory.prototype.buildTextArea = function( hint_text ) {
 	var textArea = Ti.UI.createTextArea({
 		id						: "actual_text_area",
 	  borderWidth		: 1,
-	  borderColor		: '#bbb',
+	  borderColor		: '#bbbbbb',
 	  borderRadius	: 5,
-	  color					: '#888',
+	  color					: '#888888',
 	  textAlign			: 'left',
 	  value					: hint_text,
 	  left					: this._pad_left,
@@ -330,7 +366,7 @@ UiFactory.prototype.buildInfoBar = function(image_url, name, value) {
 
 
 /*
-  +=== buildActivityHistoryRow =============+
+  +=== buildFeedRow ========================+
   |	 column_1        column_2               | 
   |  +-thumb--+ +--_row_1----------------+  |
   |  |        | |   name	  	timestamp  |  |
@@ -340,27 +376,40 @@ UiFactory.prototype.buildInfoBar = function(image_url, name, value) {
   +=========================================+  
   */
 /**************************************************************************************
-*		Name:  		buildActivityHistoryRow ( id, photo, top_left, top_right, info ) 
+*		Name:  		buildFeedRow ( id, photo, top_left, top_right, info ) 
 *		Purpose:  modified format for feed items (marks, estimates, etc)
 *   Used by:  Marks display, etc
 **************************************************************************************/
-UiFactory.prototype.buildActivityHistoryRow = function(id, photo_url, photo_caption, time_stamp, description) {
-  var div_height = this._icon_medium+(2*this._pad_top);
-  Ti.API.debug( ">>>>> time_stamp:"+ time_stamp);
-    
+UiFactory.prototype.buildFeedRow = function(id, size, photo_url, photo_caption, time_stamp, description) {
+  //Ti.API.debug( ">>>>> buildFeedRow time_stamp:"+ time_stamp);  
+  var div_height = this._icon_medium + (2*this._pad_top);
+  var div_width = this._icon_medium + (2*this._pad_left);
+  
+  if (size=="small") {
+  	div_height = this._icon_small + (2*this._pad_top);
+  	div_width = this._icon_small + (2*this._pad_left);
+  }
+  if (size=="medium") {
+  	div_height = this._icon_medium + (2*this._pad_top);
+  	div_width  = this._icon_medium + (2*this._pad_left);
+  }
+  else if (size=="large") {
+  	div_height = this._icon_large + (2*this._pad_top);
+  	div_width  = this._icon_large + (2*this._pad_left);
+  }
 	var view_container = this.buildViewContainer ( id, "horizontal", "100%", div_height, 0 ); 
-  // DETERMIND VIEW CONTAINER WIDTHS
-  var column_1_width 	= this._icon_medium+(2*this._pad_left);
-	var column_2_width 	= mySesh.device.screenwidth - column_1_width - this._pad_right;
+ 
+  // DETERMINE VIEW CONTAINER WIDTHS
+  var column_1_width 	= div_width;		
+	var column_2_width 	= mySesh.device.screenwidth - column_1_width;
 	var col_2_name_width= (0.60 * column_2_width)-this._pad_left;
 	var col_2_ts_width  = (0.40 * column_2_width)-this._pad_left;
 	
   // BUILD VIEWS (COLUMN 3 is a spacer)    id,     orientation  	view_width      view_height  top)
 	var column_1 = this.buildViewContainer ( "col_1", "horizontal", column_1_width, div_height,  0 ); 
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", 	column_2_width, div_height,  0 );
-	//var column_3 = this.buildViewContainer ( "col_3", "", 				column_3_width, "100%", 		0 );
 		
-	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, "medium");
+	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, size);
 	column_1.add(dog_photo);
 		
 	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
@@ -379,28 +428,11 @@ UiFactory.prototype.buildActivityHistoryRow = function(id, photo_url, photo_capt
 	column_2_row_1.add(dog_name_label);
 	column_2_row_1.add(time_stamp_label);
 	column_2_row_2.add(description_label);
-	/*
-	if (amount_desc=="") {  // blank label, where is this used?
-    var textarea = this.buildLabel( amount, "100%", "100%", this._text_medium, "#000000", "left" );
-    // var textarea = this.buildButton( "", "100%", "100%", this._text_medium, "#000000", "left" );
-	  col_2_row_2.add(textarea);
-	}
 	
-	else {																	// title, 			width, height, font_style, text_align)
-    var hybrid_label = this.buildLabel( amount +" "+amount_desc, "100%", "100%", this._text_medium, "#000000", "left" );
-  	//var amount_label 		 	= this.buildLabel( amount, 		 	Ti.UI.FILL, "100%", this._number_medium, "#000000", "" );  
-  	col_2_row_2.add(hybrid_label);
-    //col_2_row_2.add(amount_label);
-	}
-*/
-	
- // col_2_row_2.add(this.buildSpacer("horz", this._pad_right));
-  column_2.add(column_2_row_1);
+	column_2.add(column_2_row_1);
 	column_2.add(column_2_row_2);
-	
 	view_container.add(column_1);
 	view_container.add(column_2);
-	//view_container.add(column_3);
 	return view_container;
 };
 
@@ -453,24 +485,22 @@ UiFactory.prototype.buildTableRowHeader = function(id, photo_url, photo_caption,
 	return view_container;
 };
 
-
 /****************************************************************************
 *		Name:  		buildRowMarkSummary ( id, left, middle, right )  eg: photo_url, dog name, timestamp, amount, amount description
 *		Purpose:  modified format for feed items (marks, estimates, etc)
 *   Used by:  Marks display, etc
 ***************************************************••••••••••••••••••••••*********/
 UiFactory.prototype.buildRowMarkSummary = function(id, photo_url, photo_caption, time_stamp, description) {
-  var div_height = this._icon_large+(this._pad_left*2);
+  Ti.API.debug( ">>>>> buildRowMarkSummary time_stamp:"+ time_stamp);  
+  var div_height = this._icon_large + (2*this._pad_top);
 	var view_container = this.buildViewContainer ( id, "horizontal", "100%", div_height, 0 ); 
-  // view_container.add( this.buildSeparator() );
 
-	var column_3_width = this._pad_right;
-  var column_1_width = this._icon_large+(2*this._pad_left);
-	var column_2_width = mySesh.device.screenwidth - column_3_width - column_1_width;
+  // DETERMINE VIEW CONTAINER WIDTHS
+	var column_1_width = this._icon_large + (2*this._pad_left);
+	var column_2_width = mySesh.device.screenwidth - column_1_width - this._pad_right;
   
-	var column_1 = this.buildViewContainer ( "col_1", "", 				column_1_width, div_height, 0 ); 
+	var column_1 = this.buildViewContainer ( "col_1", "horizontal",	column_1_width, div_height, 0 ); 
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", column_2_width, div_height, 0 );
-	var column_3 = this.buildViewContainer ( "col_3", "", 				column_3_width, "100%", 		0 );
 		
 	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, "large");
 	column_1.add(dog_photo);
@@ -492,7 +522,6 @@ UiFactory.prototype.buildRowMarkSummary = function(id, photo_url, photo_caption,
 	column_2.add(col_2_row_2);
 	
 	view_container.add(column_2);
-	view_container.add(column_3);
 	return view_container;
 };
 
@@ -574,32 +603,10 @@ UiFactory.prototype.buildSpacer = function(  orientation, size ){
 		height			: height,
     bottom			: 0,
     top					: 0,
-    borderColor : this._color_black,
-    borderWidth : this._debug,
     backgroundColor : bg_color
  	});
  	return spacer;
 }
-
-/************************************************************
-*		Name:  		buildMediumIcon ( id, image ) 
-*		Purpose:  build icons for info bars
-************************************************************/
-/*UiFactory.prototype.buildMediumIcon = function(id, image){
-  var image_view = Ti.UI.createImageView({ 
-		//id							: id, 
-		image   				: image,
-		height					: this._icon_medium,
-		width					  : this._icon_medium,
-		left						: this._pad_left,
-		right						: 2,
-		//top							: this._pad_top-2,
-		//borderColor			: borderColor,
-		//borderRadius		: this._icon_medium/2,
-		borderWidth			: this._debug
-	});
-	return image_view;
-}*/
 
 /*********************************************************************************
 *		Name:  		buildSectionHeader ( view_id, title, size={0,1,2} )
@@ -638,9 +645,7 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 	var view_container = Ti.UI.createView( { 
 		id							: view_id, 
 		backgroundColor : view_bg_color, 
-		height			   	: this._height_header,
-		borderColor     : this._color_white,
-		borderWidth			: this._debug
+		height			   	: this._height_header
 	});
 	// build a sexy label
 	var section_label = Ti.UI.createLabel( {	
@@ -713,8 +718,7 @@ UiFactory.prototype.buildButton = function(id, title, type) {
 		id							: id, 
 		layout					: "",
 		backgroundColor : "none", 
-		borderColor     : this._color_ltpink, 	
-		borderWidth			: this._debug,
+		// borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth			: ((this._debug == 1) ? 1 : ''), 
 		width						: "100%",
 		height 					: view_height
 	});
@@ -773,8 +777,7 @@ UiFactory.prototype.buildFullRowButton = function(id, title) {
 		height					: "100%",
 		top     				: this._pad_top,
 		right						: this._pad_right,				
-		borderColor     : this._color_black, 
-		borderWidth     : this._debug
+		// borderColor     : ((this._debug == 1) ? this._color_black : ''),  borderWidth			: ((this._debug == 1) ? 1 : ''), 
 	} );
 	
 	column_2.add(button);

@@ -29,8 +29,8 @@ function displayRemarks(data) {
     for (var i=0, len=data.length; i<len; i++) {
       var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
-		  var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
-		 
+		  //var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
+		  var mark = myUiFactory.buildFeedRow( "", "large", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 		  $.remarks.add(mark);
 		  if ( i < (len-1) )
 		   $.remarks.add( myUiFactory.buildSeparator() );
@@ -200,7 +200,10 @@ function displayPlaceCheckins(data, parentObject) {
 		if(data.checkins.length > 8 ) {
 			// Ti.API.debug(".... [~] displayPlaceCheckins:: found ["+ JSON.stringify(data.checkins.length) +"] dog(s) ");
 			var how_many_more_text = data.checkins.length - 7;
-			var how_many_more =  Ti.UI.createLabel( {text:"and "+how_many_more_text+" more", color: "#ec3c95" } );
+			var how_many_more =  Ti.UI.createLabel( { 
+				text:"and "+how_many_more_text+" more", 
+				color: "#ec3c95" }
+			);
 			$.addClass(how_many_more, "thumbnail");
 			how_many_more.image = "";
 			parentObject.add(how_many_more);
@@ -309,8 +312,11 @@ var mini_header_display = 0;
 //
 //--------------------------------------------------------------------------------
 var args = arguments[0] || {};
-var place_index = args._index;
+var place_index = getArrayIndexById(mySesh.allPlaces, args._place_ID);
+
+Ti.API.info(" >>>>> PLACEOVERVIEW >>> POI ID + INDEX:: " +args._place_ID + " / " + place_index);
 var poiInfo = mySesh.allPlaces[place_index];
+
 var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );
 //alert( how_close + " miles");
 //Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
@@ -320,16 +326,16 @@ var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInf
 //		(_2_)		Populate place header
 //
 //----------------------------------------------------------------------------
-var bg_image = MISSING_PATH + "place-header.png";
+var bg_image = MISSING_PATH + "poi-0-banner.jpg";
 $.headerContainer.backgroundImage = bg_image;
 
 if ( poiInfo.banner != "" ) {
 	//bg_image = mySesh.AWS.url_base+'/'+mySesh.AWS.bucket_place+'/'+poiInfo.banner;
-	bg_image = BANNER_PATH + poiInfo.banner;
+	bg_image = POI_PATH + poiInfo.banner;
 		 
 	// image preloader 
 	var c = Titanium.Network.createHTTPClient();
-	c.setTimeout(4000);
+	c.setTimeout(3000);
 	c.onload = function() {
 	    if(c.status == 200) {
 	     	$.headerContainer.backgroundImage = this.responseData;
@@ -401,9 +407,7 @@ var params = {
 };
 getRemarks(params, displayRemarks);
 
-
-
-var necessary_args = {   // 
+var necessary_args = {   
 	_place_ID    		: args._place_ID,
 	_place_name	 		: poiInfo.name,
 	_place_city	 		: poiInfo.city,
@@ -415,12 +419,14 @@ markBtn.addEventListener('click', function(e) {
 });
 
 
-//----------------------------------------------------------------------------
-//				FEATURES
-//----------------------------------------------------------------------------
-var features_header = myUiFactory.buildSectionHeader("features_header", "FEATURES", 1);
-$.features.add(features_header);
-displayFeatures(poiInfo, $.features);
+//------------------------------------------------------------------------------------------------
+//				FEATURES (only if category == [] )
+//-------------------------------------------------------------------------------------------------
+if (poiInfo.category==600 || poiInfo.category==601 || (poiInfo.category>=100 && poiInfo.category<=200) ) {
+	var features_header = myUiFactory.buildSectionHeader("features_header", "FEATURES", 1);
+	$.features.add(features_header);
+	displayFeatures(poiInfo, $.features);
+}
 
 //----------------------------------------------------------------------------
 //		 	 ScrollView listener (+ attach sticky mini-header bar)

@@ -1,41 +1,35 @@
 //================================================================================
-//		Name:			getPlaceEstimates( place_ID, callbackFunction )
-//		Purpose:		get latest user-provided estimates
+//		Name:			getMarkOverview( original_mark )
+//		Purpose:	
 //================================================================================
-function getMarkOverview( original_mark) {
-	Ti.API.info("* getPlaceEstimates() called *");
+function getMarkOverview( original_mark ) {
+	Ti.API.info("* getMarkOverview() called *");
 	var query = Ti.Network.createHTTPClient();
 	var params = {
 		place_type : 2,
 		place_ID 	 : original_mark.ID,
 		dog_ID  	 : mySesh.dog.dog_ID
 	};
-	//loadJson(	params, "http://waterbowl.net/mobile/get-place-posts.php",  displayMark );
-	// alert( data.marking_dog_name );
-	
 	query.open("POST", "http://waterbowl.net/mobile/get-place-posts.php");	
 	query.send( params );
 	query.onload = function() {
 		var jsonResponse = this.responseText;
 		if (jsonResponse != "" ) {
 			var data = JSON.parse( jsonResponse );
-			displayMark(data, original_mark);
-		}
-		else {
-			// TODO: pop up error message, no data received
-			return "";
+			displayRemarks(data);
+		} else {
+			createSimpleDialog("No data received", "Cannot get Marks from database");// TODO: pop up error message, no data received
 		}
 	};
-	
 }
 
 //================================================================================
-//		Name:			displayMark(data) 
+//		Name:			displayRemarks(data) 
 //		Purpose:	get original mark + remarks at this place
 //================================================================================
-function displayMark(data, original_mark) {
+function displayRemarks(data) {
 	// Ti.API.debug( "*displayRemarks ["+JSON.stringify(data)+"]" );
-  // alert(JSON.stringify(original_mark));
+  Ti.API.debug( ">>>>>>> displayRemarks :: " + JSON.stringify(data) );
 	if( data.length>0) {	
 		var last_one = data.length-1;
 		
@@ -47,8 +41,8 @@ function displayMark(data, original_mark) {
 		// (2)  Add original mark section header + first mark
 		$.scrollView.add( myUiFactory.buildSectionHeader("mark_header", "ORIGINAL MARK", 1) );
 		var photo = PROFILE_PATH + 'dog-'+data[last_one].marking_dog_ID+'-iconmed.jpg';		
- 		var mark = myUiFactory.buildRowMarkSummary( "", photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text  );
-		$.scrollView.add(mark);
+ 		var original_mark = myUiFactory.buildFeedRow( "original_mark", "large", photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text );		
+		$.scrollView.add(original_mark);
 		
 		// (3)  Add the remarks section header to the parent view
 		var overview_header = myUiFactory.buildSectionHeader("overview_header", "REMARKS", 1);
@@ -58,15 +52,14 @@ function displayMark(data, original_mark) {
 		var addRemarkBtn = myUiFactory.buildButton( "addRemarkBtn", "add remark", "large" );
 		$.scrollView.add(addRemarkBtn);
 		var necessary_args = {   // 
-			_place_ID    : original_mark.ID,
-			_place_name	 : original_mark.mark_name,
-			_place_city	 : original_mark.mark_city,
+			_place_ID    : data[last_one].mark_ID,
+			_place_name	 : args.mark_name,
+			_place_city	 : args.mark_city,
+			_place_bgcolor : "#f1d523",
 			_place_type  : 2
 		};
-		Ti.API.debug( "*displayRemarks :: necessary_args ["+JSON.stringify(necessary_args)+"]" );
-
- 
 		addRemarkBtn.addEventListener('click', function(e) {
+			Ti.API.debug( ".... [+] addRemarkBtn :: necessary_args ["+JSON.stringify(necessary_args)+"]" );
 			createWindowController( "addpost", necessary_args, "slide_left" );
 		});
 		// (5) parent mark is the only one, notify user
@@ -80,60 +73,30 @@ function displayMark(data, original_mark) {
 	  else {
 			for (var i=0, len=data.length; i<(len-1); i++) {
 	      var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
-	      																				// (id, photo_url, photo_caption, time_stamp, description)
-			  var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
+			  var mark = myUiFactory.buildFeedRow ( "mark_"+i, "large", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text );
 			  $.scrollView.add(mark);
 			  if ( i < (len-2) )
 			    $.scrollView.add( myUiFactory.buildSeparator() );
 	    }
  		}
   }
-  
 }
-
 
 //================================================================================================
 var args = arguments[0] || {};
-//var mark_ID =  args._mark_ID;
+
 // predefined placeholder values until we hit the backend
-var mark_title 	 = "Loading mark title...";			// mark.title
-var mark_text 	 = "Loading mark text...";	// mark.text
-var mark_subtext = "";							// mark.
+var mark_title 	 = "Loading mark title...";			
+var mark_text 	 = "Loading mark text...";	
+var mark_subtext = "";							  
 
-//if(args.length>0) {
-	mark_title	 = args.mark_name;
-	mark_text		 = args.mark_city;
-	mark_subtext = args.dist+" miles away";
+mark_title	 = args.mark_name;
+mark_text		 = args.mark_city;
+mark_subtext = args.dist+" miles away";
 
-	var header_size = mySesh.device.screenwidth;
+$.scrollView.add( myUiFactory.buildPageHeader(args.ID, "mark", mark_title, mark_text, mark_subtext) );
+// (1) 	getMarkOverview gets the mark info from mark_common
+// (2) 	then it calls getRemarks, which populates the table below original mark
+getMarkOverview(args);
+
 	
-	// if(marks.length > 0)
-	
-	// try Ti.UI.SIZE for height for the veritcal containers  // also width = 100 or Ti.UI.SIZE
-	var headerContainer = myUiFactory.buildViewContainer("headerContainer", "vertical", Ti.UI.SIZE, header_size, -30);	
-	
-	var headerTop     = myUiFactory.buildViewContainer("headerTop", "horizontal", "100%", "40%", 0);	
-	var headerBottom  = myUiFactory.buildViewContainer("headerBottom", "vertical", "100%", Ti.UI.SIZE, 0);	
-	var headerStatBar = myUiFactory.buildViewContainer("headerStatBar", "horizontal", "100%", 20, 0);	
-				
-	var mark_title_label	 = myUiFactory.buildLabel(mark_title, "100%", 30, myUiFactory._text_large, "#000000", "left");
-	var mark_text_label 	 = myUiFactory.buildLabel(mark_text, "100%", 30, myUiFactory._text_medium, "#000000", "left");	
-	var mark_subtext_label = myUiFactory.buildLabel(mark_subtext, "100%", 30, myUiFactory._text_medium, "#000000", "left");			
-	
-	headerBottom.add(mark_title_label);
-	headerBottom.add(mark_text_label);
-	headerBottom.add(mark_subtext_label);
-	
-	headerContainer.add(headerTop);
-	headerContainer.add(headerBottom);
-	
-	$.scrollView.add(headerContainer);
-	
-	var bg_image = MISSING_PATH + "mark-0-banner.jpg";
-	headerContainer.backgroundImage = bg_image;
-	
-	getMarkOverview(args);
-//} else {
-//	createSimpleDialog("No data", "Back we go to the map view");
-//	closeWindowController();
-//}

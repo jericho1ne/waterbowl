@@ -18,6 +18,44 @@ function clearTextAreaContents(textarea_object) {
 	textarea_object.value = ""; 
 }
 
+//=====================================================
+//	Name:    remoteFileExists ( url )
+//	Desc:	   see if the file exists or not
+//=====================================================
+function remoteFileExists( url ) {
+	var http = Titanium.Network.createHTTPClient();
+  http.open('HEAD', url, false);
+  http.send();
+  return http.status!=404;
+}
+
+
+//=====================================================================
+//	Name:    loadRemoteImage ( img_actual, img_placeholder )
+//	Desc:	   if it exists, return actual image, otherwise placeholder
+//==============================================================
+function loadRemoteImage( image, fallback_img ) {
+	Ti.API.debug( "<< loadRemoteImage >>> "+ image + " | " +remoteFileExists(image));
+	if( remoteFileExists(image) ) {
+		var c = Titanium.Network.createHTTPClient();
+		c.setTimeout(2000);
+		c.onload = function() {
+			if(c.status == 200) {
+				//alert(image);
+				// object.backgroundImage = image;
+		  	return image;
+		  } else {
+		  	// object.property = fallback_img;
+		  	return fallback_img;
+		  }
+		};
+		c.open('GET', image);
+		c.send();
+	}	else {
+		return fallback_img;
+	}
+}
+
 //========================================================================
 //	Name:			countCharacters (textAreaObject, charCountLabel)
 //========================================================================
@@ -76,8 +114,11 @@ function createWindowController ( win_name, args, animation ) {
 	mySesh.previousWindow = mySesh.currentWindow;
 	mySesh.currentWindow = win_name;
 	
-	Ti.API.debug("::::::::::::::: createWindowController ::::: [ "+win_name+" ] " + 
-							 "::::::::::::::: ["+JSON.stringify(args) +"] :::::::::::");
+	
+	Ti.API.debug ( "//===================================== [ "+win_name+" ] ===== win # " +
+		 ( mySesh.windowStack.length+1 ) +" =========//" );
+	Ti.API.debug(":::::::::: createWindowController  " + 
+							 "::::: ["+JSON.stringify(args) +"] ::::::::::");
 
 	var winObject = Alloy.createController(win_name, args).getView();
 	addToAppWindowStack( winObject, win_name );
@@ -119,8 +160,7 @@ function createWindowController ( win_name, args, animation ) {
 	else
 	  winObject.open(animStyle);
 	// status checks
-	Ti.API.info( " >>> User Array: "+ JSON.stringify( mySesh.user ) );
-	Ti.API.info( " >>> Dog Array: "+ JSON.stringify( mySesh.dog ) );
+	Ti.API.info( ".... [~] createWindowController :: User / Dog [ "+  mySesh.user.name +"/"+ mySesh.dog.name +" ]" );
 	if (mySesh.dog.current_place_ID!=0)	
 		Ti.API.info( " >>> Checkin Place ID : "+ mySesh.dog.current_place_ID );
 }
@@ -157,7 +197,7 @@ function deg2rad(deg) {
 //======================================================================
 function getArrayIndexById( array, value ) {
   for (var i=0; i<array.length; i++) {
-    if (array[i].id == value) {
+    if (array[i].place_ID == value) {
       return i;
 	  }
   }
@@ -174,6 +214,9 @@ function addMenubar( parent_object ) {
 	var right_width_1 = myUiFactory._icon_small + myUiFactory._pad_left;
 	var right_width_2 = myUiFactory._icon_small + myUiFactory._pad_left + myUiFactory._pad_right;
 	var middle_width = mySesh.device.screenwidth - left_width - (2*right_width_1) - right_width_2;
+	
+	// DEBUG
+	Ti.API.debug(" .... [i] addMenubar :: Ti.App.Properties.current_window [ "+ Ti.App.Properties.current_window +"]");
 	
 	// PARENT OBJECT ----------------------------------------->	
 	var menubar = Ti.UI.createView( {
@@ -226,6 +269,8 @@ function addMenubar( parent_object ) {
 		zIndex	: 100
 	} );
 	
+	
+	// TODO : PIPE DOG ICON THROUGH PRELOADER / MISSING IMAGE CHECKER
 	var profileBtn 		= Ti.UI.createButton( {
 		id			: "profileBtn",	 
 		left		: myUiFactory._pad_left,
@@ -239,9 +284,6 @@ function addMenubar( parent_object ) {
 		zIndex	: 100
 	} );
 	
-	
-	// TODO: use missing / dog-0-iconmed.jpg
-	Ti.API.debug( PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg' );
 	var	infoBtn 		= Ti.UI.createButton( {
 		id: "infoBtn",
 		left: myUiFactory._pad_left,
@@ -267,9 +309,6 @@ function addMenubar( parent_object ) {
 			{ id: "wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: "auto", 
 			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
 	menuCenter.add(wbLogoMenubar);	  */
-	
-	// DEBUG
-	Ti.API.debug(" ....[i] Ti.App.Properties.current_window :"+ Ti.App.Properties.current_window);
 		
 	// ADD BACK BUTTON ONLY IF NOT ON MAPVIEW
 	if (Ti.App.Properties.current_window != "mapview") {
@@ -279,10 +318,10 @@ function addMenubar( parent_object ) {
 	
 	// ADD ALL 3 RIGHT BUTTONS IF ON MAPVIEW
 	if (Ti.App.Properties.current_window == "mapview") {
-		menuRight0.add(profileBtn);
+		menuRight1.add(profileBtn);
 		profileBtn.addEventListener('click', showProfile);
-		menuRight1.add(settingsBtn);
-		settingsBtn.addEventListener('click', showSettings);
+		//menuRight1.add(settingsBtn);
+		//settingsBtn.addEventListener('click', showSettings);
 		menuRight2.add(infoBtn);
 		infoBtn.addEventListener('click', showInfo);
 	}	else {
@@ -406,7 +445,6 @@ function addToAppWindowStack( winObject, win_name )  {
 	mySesh.windowStack.push( winObject );
 	Ti.App.Properties.current_window = win_name;
 	//Ti.API.info ( "windowStack:"+ JSON.stringify( mySesh.windowStack ) + " || array size: " + ( mySesh.windowStack.length ) );
-	Ti.API.debug ( "// #[ "+ win_name + " ]=============================================||== Window # " + ( mySesh.windowStack.length ) +" =========//" );
 }
 
 //=================================================================================
@@ -503,8 +541,10 @@ var mySesh = new SessionClass.Session();
 var SERVER_URL 		= mySesh.getUrl("live");
 var ICON_PATH 	 	= "images/icons/";
 var MISSING_PATH	= "images/missing/";
+
+var POI_PATH 			= SERVER_URL + mySesh.server.wb_path.bucket_poi;
+var MARK_PATH			= SERVER_URL + mySesh.server.wb_path.bucket_mark;
 var PROFILE_PATH 	= SERVER_URL + mySesh.server.wb_path.bucket_profile;
-var BANNER_PATH 	= SERVER_URL + mySesh.server.wb_path.bucket_banner;
 /*----------------------------------------------------------------------
  *  	GLOBAL VARIABLES
  *-----------------------------------------------------------------------*/

@@ -4,7 +4,6 @@ function ExtendedMap(){
   this._wbMap = '';
 };
 
-
 //=================================================================================
 // 	Name:  		initializeMap ()
 // 	Purpose:	draw default Apple map
@@ -27,9 +26,8 @@ ExtendedMap.prototype.initializeMap = function(lat, lon) {
 		userLocation 	: true,
 		enableZoomControls : true
 	});
-	this._wbMap.addEventListener('regionChanged',function(evt) {
-		// Ti.API.log( 'regionChanged:'+evt.source.region.latitude+"/"+evt.source.region.longitude );
-		mySesh.setGeoViewport(evt.source.region.latitude, evt.source.region.longitude);
+	this._wbMap.addEventListener('regionChanged',function(e) {
+		mySesh.setGeoViewport(e.source.region.latitude, e.source.region.longitude);
 	});
 	Ti.API.log(".... [~] Map object built ");
 	// return this._wbMap;

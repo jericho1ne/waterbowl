@@ -1,9 +1,10 @@
 //========================================================================
-//	Name:			saveRemark ()
+//	Name:			saveRemark (place_ID, place_type, text_content)
 //========================================================================
 function saveRemark(place_ID, place_type, text_content) {
-	if (text_content.length>0 && text_content.length<=mySesh.stringMaxes.poiRemarkMaxLength) {
-		addMarkBtn.removeEventListener('click', function(e){ saveRemark(textArea.value); });
+	if (	text_content.length > 0  && 
+				text_content.length <= mySesh.stringMaxes.poiRemarkMaxLength ) {
+		disableAddMarkBtn();
 		var query = Ti.Network.createHTTPClient();
 		query.open("POST", SERVER_URL+"add-response-post.php");
 		var params = {
@@ -11,7 +12,7 @@ function saveRemark(place_ID, place_type, text_content) {
 			place_type 	: place_type,
 			owner_ID 		: mySesh.user.owner_ID,
 			owner_name	: mySesh.user.name,
-			dog_ID 	 		: mySesh.dog.dog_ID,		// mySesh.dog.dog_ID,
+			dog_ID 	 		: mySesh.dog.dog_ID,	
 			dog_name 		: mySesh.dog.name, 
 			post_text		: text_content
 		};
@@ -21,29 +22,21 @@ function saveRemark(place_ID, place_type, text_content) {
 		query.onload = function() {
 			var json = this.responseText;
 			if (json != "") {
-				Ti.API.info("* checkin JSON " + json);
 				var response = JSON.parse(json);
 				if (response.status == 1) { 		// success
-					Ti.API.log("  [>]  Info added successfully ");
 					createSimpleDialog('Success','Your mark was saved!');
-					// close current window and bounce user to Place Overview
-					closeWindowController();
-				}
-				else {
-					addMarkBtn.addEventListener('click', function(e){ saveRemark(textArea.value); });
+					closeWindowController();		// close current window and bounce user to Place Overview
+				} else {
+					enableAddMarkBtn();
 					createSimpleDialog( "Problems Houston", response.message); 
 				}
-			}
-			else {
-				addMarkBtn.addEventListener('click', function(e){ saveRemark(textArea.value); });
+			}	else {
+				enableAddMarkBtn();
 				createSimpleDialog( "Server timeout", "No data received"); 
 			}
-				
-			//		addMarkBtn.focus();
-			
 		};
 	}
-	else if (text_content.length>mySesh.stringMaxes.poiRemarkMaxLength){ 
+	else if (text_content.length > mySesh.stringMaxes.poiRemarkMaxLength){ 
 		createSimpleDialog( "Uh oh", "You've exceeded the maximum character length ("+
 													mySesh.stringMaxes.poiRemarkMaxLength+")."); 
 	}
@@ -52,6 +45,13 @@ function saveRemark(place_ID, place_type, text_content) {
 	}
 }
 
+// ADD / REMOVE LISTENER SHORTCUTS
+function enableAddMarkBtn() {
+	addMarkBtn.addEventListener('click', function(e){ saveRemark(args._place_ID,args._place_type,textArea.value); });
+}
+function disableAddMarkBtn() {
+	addMarkBtn.removeEventListener('click', function(e){ saveRemark(args._place_ID,args._place_type,textArea.value); });
+}
 //======================================================================================================
 var args = arguments[0] || {};
 
@@ -71,6 +71,6 @@ $.scrollView.add(textArea);
 $.scrollView.add(character_count);
 $.scrollView.add(addMarkBtn);
 
-textArea.addEventListener('focus',  function(e){ clearTextAreaContents(textArea); });
-textArea.addEventListener('change', function(e){ countCharacters(textArea, character_count); });
+textArea.addEventListener('focus',  function(e) { clearTextAreaContents(textArea); });
+textArea.addEventListener('change', function(e) { countCharacters(textArea, character_count); });
 addMarkBtn.addEventListener('click', function(e){ saveRemark(args._place_ID, args._place_type, textArea.value); });

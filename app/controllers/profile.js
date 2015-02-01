@@ -1,21 +1,21 @@
-Ti.API.debug( " >>> Dog Array (in Settings):  "+ JSON.stringify( mySesh.dog ) );
+Ti.API.debug( " >>> Dog Array - Profile ::  "+ JSON.stringify( mySesh.dog ) );
 
-if ( isset(mySesh.dog.name) ) {
-  $.dog_name.text   = mySesh.dog.name;
-  // alert( JSON.stringify(mySesh.dog) );
-}
-if ( isset(mySesh.user.email) )
-  $.user_email.text = mySesh.user.email;
 
-// 
+//  $.user_email.text = mySesh.user.email;
+ 
+
+// predefined placeholder values until we hit the backend
+//var mark_title 	 = "Loading mark title...";			// mark.title
+//var mark_text 	 = "Loading mark text...";	// mark.text
+//var mark_subtext = "";							// mark.
+
+$.scrollview.add( myUiFactory.buildPageHeader(mySesh.dog.dog_ID, "profile", mySesh.dog.name, mySesh.dog.breed, mySesh.dog.sex) );
 
 /*
 setInterval (function(){
   refreshGlobalValues();
-}, 2000);
-
+}, 2000);		
 */
-
 
 
 //------------------------------------------------------------------------------------------------------
