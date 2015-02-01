@@ -41,6 +41,11 @@ function wbLogin(email, password) {
 				mySesh.user.owner_ID = response.human.owner_ID;
 				mySesh.user.name 		 = response.human.owner_name;
 				mySesh.dog.dog_ID  	 = response.dog.dog_ID;
+				mySesh.dog.sex			 = response.dog.sex;
+				mySesh.dog.breed		 = response.dog.breed;
+				mySesh.dog.age				=	response.dog.age;
+				mySesh.dog.birthdate 	=	response.dog.birthdate;
+				mySesh.dog.weight			= response.dog.weight;
 				mySesh.dog.marks_made = parseInt(response.dog.marks_made);
 				
 				// TODO:  grab all dog info (SELECT *)

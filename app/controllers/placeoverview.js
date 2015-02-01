@@ -326,26 +326,14 @@ var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInf
 //		(_2_)		Populate place header
 //
 //----------------------------------------------------------------------------
-var bg_image = MISSING_PATH + "poi-0-banner.jpg";
-$.headerContainer.backgroundImage = bg_image;
+var img_fallback = MISSING_PATH + "poi-0-banner.jpg";
+var img_actual   = POI_PATH + poiInfo.banner;
+
+//$.headerContainer.backgroundImage = bg_image;
 
 if ( poiInfo.banner != "" ) {
-	//bg_image = mySesh.AWS.url_base+'/'+mySesh.AWS.bucket_place+'/'+poiInfo.banner;
-	bg_image = POI_PATH + poiInfo.banner;
-		 
-	// image preloader 
-	var c = Titanium.Network.createHTTPClient();
-	c.setTimeout(3000);
-	c.onload = function() {
-	    if(c.status == 200) {
-	     	$.headerContainer.backgroundImage = this.responseData;
-	    }
-	};
-	c.open('GET', bg_image);
-	c.send();
-	// Ti.API.info ( "...(i) banner image [ "+ bg_image +" ]");
+	loadRemoteImage($.headerContainer, img_actual, img_fallback);
 }
-
 
 //  fill in header and miniheader information 
 $.place_dist_label.text 	= poiInfo.dist + " miles away";   // TODO: send in distance in miles from backend

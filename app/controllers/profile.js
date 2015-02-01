@@ -9,23 +9,5 @@ Ti.API.debug( " >>> Dog Array - Profile ::  "+ JSON.stringify( mySesh.dog ) );
 //var mark_text 	 = "Loading mark text...";	// mark.text
 //var mark_subtext = "";							// mark.
 
-$.scrollview.add( myUiFactory.buildPageHeader(mySesh.dog.dog_ID, "profile", mySesh.dog.name, mySesh.dog.breed, mySesh.dog.sex) );
-
-/*
-setInterval (function(){
-  refreshGlobalValues();
-}, 2000);		
-*/
-
-
-//------------------------------------------------------------------------------------------------------
-//  This scrollView contains the following top level elements, all dynamically filled in by controller
-//	  (0)		headerContainer / miniHeaderContainer
-//	  (1)		activityContainer
-//					|
-//					+-- checkinContainer
-//					|
-//					+-- estimateContainer
-//		(2)		marksContainer
-//		(3)		poiDetailContainer
-//------------------------------------------------------------------------------------------------------
+var dog_info = mySesh.dog.sex+" / "+mySesh.dog.breed+" / "+mySesh.dog.age+" yrs old";
+$.scrollview.add( myUiFactory.buildPageHeader(mySesh.dog.dog_ID, "profile", mySesh.dog.name, dog_info, "---") );

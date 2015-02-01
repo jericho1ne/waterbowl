@@ -34,25 +34,25 @@ function remoteFileExists( url ) {
 //	Name:    loadRemoteImage ( img_actual, img_placeholder )
 //	Desc:	   if it exists, return actual image, otherwise placeholder
 //==============================================================
-function loadRemoteImage( image, fallback_img ) {
-	Ti.API.debug( "<< loadRemoteImage >>> "+ image + " | " +remoteFileExists(image));
-	if( remoteFileExists(image) ) {
+function loadRemoteImage( headerContainer, img_actual, img_placeholder ) {
+	Ti.API.debug( "<< loadRemoteImage >>> "+ img_actual + " | " +remoteFileExists(img_actual));
+	
+	if( remoteFileExists(img_actual) ) {
 		var c = Titanium.Network.createHTTPClient();
-		c.setTimeout(2000);
+		c.setTimeout(6000);
 		c.onload = function() {
 			if(c.status == 200) {
-				//alert(image);
-				// object.backgroundImage = image;
-		  	return image;
+				headerContainer.backgroundImage = this.responseData;
+		  	Ti.API.debug( "SUCCESS :: Attaching [ "+img_actual+" ] to headerContainer");
 		  } else {
-		  	// object.property = fallback_img;
-		  	return fallback_img;
+		  	headerContainer.backgroundImage = img_placeholder;
+		  	Ti.API.debug( "ERROR :: Could not load remote image" );
 		  }
 		};
-		c.open('GET', image);
+		c.open('GET', img_actual);
 		c.send();
 	}	else {
-		return fallback_img;
+		Ti.API.debug( "ERROR :: Remote image doesn't exists" );
 	}
 }
 

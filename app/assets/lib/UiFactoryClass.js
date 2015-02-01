@@ -138,23 +138,43 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	headerInfo.backgroundImage = "images/ui/header-overlay-black.png";
 
 	//  use gray waterbowl icon (POI placeholder) as default banner image  
-	var img_placeholder = MISSING_PATH + "poi-0-banner.jpg";
-	var img_actual   	  = POI_PATH 		 + "poi-"+ id +"-banner.jpg";
+	var img_placeholder = ""; 
+	var img_actual   	  = "";
 	
 	// alert(img_placeholder +" || " +img_actual );
 	if (type == "profile")	{
 		img_placeholder = MISSING_PATH + "dog-0-banner.jpg";
-		img_actual   	  = PROFILE_PATH + "poi-"+ id +"-banner.jpg";
+		img_actual   	  = PROFILE_PATH + "dog-"+ id +"-banner.jpg";
 	}
 	else if (type == "mark") { 
 		img_placeholder = MISSING_PATH + "mark-0-banner.jpg";
-		img_actual   	  = MARK_PATH + "poi-"+ id +"-banner.jpg";
+		img_actual   	  = MARK_PATH 	 + "mark-"+ id +"-banner.jpg";
 	}
-	// remoteFileExists( url ) 
-	// var bg_image = loadRemoteImage(img_actual, img_placeholder);   // pass in actual + fallback image
-	// Ti.API.debug(img_placeholder);
+	else  { //  (type == "poi") {
+		img_placeholder = MISSING_PATH + "poi-0-banner.jpg";
+	  img_actual   	  = POI_PATH 		 + "poi-"+ id +"-banner.jpg";
+	}
+	
+	/*
+	var getImg = Titanium.Network.createHTTPClient();
+	getImg.setTimeout(4000);
+	getImg.open('GET', img_actual);
+	getImg.send();
+
+	getImg.onload = function() {
+		if(getImg.status == 200) {
+			headerContainer.backgroundImage = this.responseData;
+		  
+		 	//alert(img_actual);
+		 } else {
+		  headerContainer.backgroundImage = img_placeholder;
+		  alert ("ERROR :: Could not load remote image");
+		 }
+	};
+	*/
+	loadRemoteImage(headerContainer, img_actual, img_placeholder);   // pass in actual + fallback image
 	// TODO: MAKES SURE bg_image IS NOT BLANK / SET TIME OUT / PROMISE ??
-	headerContainer.backgroundImage = img_placeholder;
+	// headerContainer.backgroundImage = img_placeholder;
 		
 	headerInfo.add( this.buildSpacer("horz", this._pad_top) );
 	headerInfo.add(mark_title_label);

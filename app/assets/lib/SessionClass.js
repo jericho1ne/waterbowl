@@ -20,6 +20,7 @@ function Session(){
 		name				:	null,
 		sex					: null,
 		age					:	null,
+		birthdate 	:	null,
 		weight			: null,
 		marks_made	: null,
 		current_place_ID  				: null,
