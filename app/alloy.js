@@ -31,28 +31,30 @@ function remoteFileExists( url ) {
 
 
 //=====================================================================
-//	Name:    loadRemoteImage ( img_actual, img_placeholder )
+//	Name:    loadRemoteImage ( type, img_actual, img_placeholder )
 //	Desc:	   if it exists, return actual image, otherwise placeholder
 //==============================================================
-function loadRemoteImage( headerContainer, img_actual, img_placeholder ) {
+function loadRemoteImage( type, alloyObject, img_actual, img_placeholder ) {
 	Ti.API.debug( "<< loadRemoteImage >>> "+ img_actual + " | " +remoteFileExists(img_actual));
 	
 	if( remoteFileExists(img_actual) ) {
 		var c = Titanium.Network.createHTTPClient();
-		c.setTimeout(6000);
+		c.setTimeout(3000);
 		c.onload = function() {
 			if(c.status == 200) {
-				headerContainer.backgroundImage = this.responseData;
+				(type=="bg") ? alloyObject.backgroundImage = this.responseData : alloyObject.image = this.responseData;
 		  	Ti.API.debug( "SUCCESS :: Attaching [ "+img_actual+" ] to headerContainer");
 		  } else {
-		  	headerContainer.backgroundImage = img_placeholder;
-		  	Ti.API.debug( "ERROR :: Could not load remote image" );
+		  	(type=="bg") ? alloyObject.backgroundImage = this.img_placeholder : alloyObject.image = img_placeholder;
+		  	// alloyObject.backgroundImage = img_placeholder;
+		  	Ti.API.debug( "ERROR :: Could not load remote image attaching [ " +img_placeholder +' ] instead' );
 		  }
 		};
 		c.open('GET', img_actual);
 		c.send();
 	}	else {
-		Ti.API.debug( "ERROR :: Remote image doesn't exists" );
+		alloyObject.backgroundImage = img_placeholder;
+		Ti.API.debug( "ERROR :: Remote image doesn't exist" );
 	}
 }
 
@@ -111,10 +113,6 @@ function loadJson ( params, url, callbackFunction ) {
 //	Purpose:	to be the bestest window manager ever
 //===========================================================================================
 function createWindowController ( win_name, args, animation ) {
-	mySesh.previousWindow = mySesh.currentWindow;
-	mySesh.currentWindow = win_name;
-	
-	
 	Ti.API.debug ( "//===================================== [ "+win_name+" ] ===== win # " +
 		 ( mySesh.windowStack.length+1 ) +" =========//" );
 	Ti.API.debug(":::::::::: createWindowController  " + 
@@ -269,21 +267,6 @@ function addMenubar( parent_object ) {
 		zIndex	: 100
 	} );
 	
-	
-	// TODO : PIPE DOG ICON THROUGH PRELOADER / MISSING IMAGE CHECKER
-	var profileBtn 		= Ti.UI.createButton( {
-		id			: "profileBtn",	 
-		left		: myUiFactory._pad_left,
-		top			: myUiFactory._pad_top,
-		width		: myUiFactory._icon_small,
-		height	: myUiFactory._icon_small,
-		backgroundImage : PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg',
-		borderWidth		: 2,
-		borderColor		: myUiFactory._color_dkpink,
-		borderRadius 	: myUiFactory._icon_small/2,
-		zIndex	: 100
-	} );
-	
 	var	infoBtn 		= Ti.UI.createButton( {
 		id: "infoBtn",
 		left: myUiFactory._pad_left,
@@ -318,6 +301,24 @@ function addMenubar( parent_object ) {
 	
 	// ADD ALL 3 RIGHT BUTTONS IF ON MAPVIEW
 	if (Ti.App.Properties.current_window == "mapview") {
+		// Only create profile button here
+		var img_actual  = PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg';
+		var img_missing = MISSING_PATH + 'dog-0-iconmed.jpg';
+		var profileBtn 		= Ti.UI.createButton( {
+			id			: "profileBtn",	 
+			left		: myUiFactory._pad_left,
+			top			: myUiFactory._pad_top,
+			width		: myUiFactory._icon_small,
+			height	: myUiFactory._icon_small,
+			backgroundImage : img_actual,
+			borderWidth		: 2,
+			borderColor		: myUiFactory._color_dkpink,
+			borderRadius 	: myUiFactory._icon_small/2,
+			zIndex	: 100
+		} );
+		// PIPE DOG ICON THROUGH PRELOADER
+		// loadRemoteImage("bg", profileBtn, img_actual, img_missing);
+	
 		menuRight1.add(profileBtn);
 		profileBtn.addEventListener('click', showProfile);
 		//menuRight1.add(settingsBtn);
@@ -329,17 +330,6 @@ function addMenubar( parent_object ) {
 		infoBtn.addEventListener('click', showInfo);
 	}
 	
-	/* only show settings button if not currently on that window */	
-	/*if (Ti.App.Properties.current_window!="mapview" ||
-			Ti.App.Properties.current_window!="placeoverview" &&
-			Ti.App.Properties.current_window!="markview") {	
-			//TODO:  add the other register windows
-			// OR:  	 only show settings btn on map, place, and mark
-		menuRight1.add(blankBtn);	
-		menuRight2.add(infoBtn);
-		infoBtn.addEventListener('click', showInfo);
-	}*/
-
 	/* Add items to container divs, then add menubar to Window object */
 	menubar.add(menuLeft);	
 	menubar.add(menuCenter); 
@@ -467,7 +457,10 @@ function closeWindowController() {
 // 	Purpose:	content-specific help function 
 //=============================================================
 function showInfo() {
-	Ti.API.info( "[+] info button clicked");
+	var last_window_index = mySesh.windowStack.length - 1;
+	Ti.API.info( ".... [+] Help Button clicked for [ "+mySesh.windowStack[last_window_index].id+" ]");
+	var args = { current_window : mySesh.windowStack[last_window_index].id };
+	createWindowController('help', args, 'slide_left'); 
 }
 //======================================================================
 // 	Name:  		showSettings()
@@ -541,6 +534,7 @@ var mySesh = new SessionClass.Session();
 var SERVER_URL 		= mySesh.getUrl("live");
 var ICON_PATH 	 	= "images/icons/";
 var MISSING_PATH	= "images/missing/";
+var HELP_PATH			= "images/help/";
 
 var POI_PATH 			= SERVER_URL + mySesh.server.wb_path.bucket_poi;
 var MARK_PATH			= SERVER_URL + mySesh.server.wb_path.bucket_mark;

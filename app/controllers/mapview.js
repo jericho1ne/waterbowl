@@ -627,12 +627,9 @@ function refreshRAM() {
 //	Purpose:	  
 //=================================================================================
 function refreshGeo() {
-	Ti.API.debug("[[[[[[[[[[[ refreshGeo called ]]]]]]]]]] ");
-  
-  if(Ti.Network.online ) {
+	if(Ti.Network.online ) {
 	  var mins_elapsed = Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired;
 	  mySesh.geo.geo_trigger_count++;
-	  $.geo_trigger.text = "Geo trigger #"+mySesh.geo.geo_trigger_count;
 	  mySesh.geo.last_acquired = Math.round( Date.now() / (1000*60) );    
 	     
 	  //if (mins_elapsed > mySesh.geo.refresh_interval) {   // only if 2 mins have passed since last geo update
@@ -640,13 +637,13 @@ function refreshGeo() {
 	      
 	  Titanium.Geolocation.getCurrentPosition(function(e) {
 	  	if (!e.success || e.error) {
-	  		Ti.API.debug( "  X X X  Problems with Geolocation...  "+e.error);
+	  		Ti.API.debug( "[[[ refreshGeo ]]] ::  X X X  Problems with Geolocation...  "+e.error);
 	  	}
 	  	else {   
-	    	Ti.API.debug(".... NEW GEO CHECK #[" + mySesh.geo.geo_trigger_count + "] "+e.coords.latitude+", "+e.coords.longitude);     	    
+	    	Ti.API.debug( "[[[ refreshGeo ]]] :: + + + Got location #[" + mySesh.geo.geo_trigger_count + "] "+e.coords.latitude+", "+e.coords.longitude);     	    
 				mySesh.geo.geo_trigger_success ++;
-				$.geo_success.text = "lat/lng rec'd #" + mySesh.geo.geo_trigger_success;
-				$.geo_latlng.text = e.coords.latitude+"/" +e.coords.longitude;
+				$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
+				$.geo_latlng.text = e.coords.latitude.toFixed(4)+"/" +e.coords.longitude.toFixed(4);
 	      //$.current_place_ID.text = "Checked in at : "+mySesh.dog.current_place_ID;
 	      /* save newly acquired coordinates */
 	    	mySesh.geo.lat = e.coords.latitude;
@@ -693,13 +690,12 @@ function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, mark
 	};
 }
 
-//-----------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
 //
 //    TO DO UPON WINDOW LOAD
 //
-//-----------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
 var args = arguments[0] || {};
-
 
 /*----------------------------------------------------------------------
  *  	LOADING MAP MODULE
@@ -736,16 +732,19 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   	mySesh.setGeoLatLon(e.coords.latitude, e.coords.longitude, last_acquired);
   }
 
-  // Go through these steps regardless of whether we receiving an actual lat/lon
   // (1)	DRAW THE MAP
   myExtendedMap.initializeMap(mySesh.geo.lat, mySesh.geo.lon);
+ 	
+ 	// (2)  ATTACH MENU BAR ICONS (MARK + SNIFF + SHOW POI)
  	buildMapMenubar();
  	$.mapContainer.add( myExtendedMap._wbMap );
  	
-  // (2) GET MAP POIs AND PLACELIST DATA
+  // (3) GET MAP POIs AND PLACELIST DATA
   getNearbyPoi(mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
   refreshPlaceListData();
 });
+
+
 	
 	
 //====================================================================================
@@ -755,5 +754,5 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 //		2) 	Refresh nearby places table
 //		2)  Save latest user location into mySesh.geo.lat, mySesh.geo.lon
 //====================================================================================
-setInterval(refreshGeo, 60000);			// LOOP every 20 seconds
-setInterval(refreshRAM, 2000);			// LOOP every 2 seconds
+setInterval(refreshGeo, 20000);			// every X milliseconds
+setInterval(refreshRAM, 2000);			// show RAM usage every 2 seconds

@@ -155,24 +155,7 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	  img_actual   	  = POI_PATH 		 + "poi-"+ id +"-banner.jpg";
 	}
 	
-	/*
-	var getImg = Titanium.Network.createHTTPClient();
-	getImg.setTimeout(4000);
-	getImg.open('GET', img_actual);
-	getImg.send();
-
-	getImg.onload = function() {
-		if(getImg.status == 200) {
-			headerContainer.backgroundImage = this.responseData;
-		  
-		 	//alert(img_actual);
-		 } else {
-		  headerContainer.backgroundImage = img_placeholder;
-		  alert ("ERROR :: Could not load remote image");
-		 }
-	};
-	*/
-	loadRemoteImage(headerContainer, img_actual, img_placeholder);   // pass in actual + fallback image
+	loadRemoteImage("bg", headerContainer, img_actual, img_placeholder);   // pass in actual + fallback image
 	// TODO: MAKES SURE bg_image IS NOT BLANK / SET TIME OUT / PROMISE ??
 	// headerContainer.backgroundImage = img_placeholder;
 		

@@ -332,7 +332,7 @@ var img_actual   = POI_PATH + poiInfo.banner;
 //$.headerContainer.backgroundImage = bg_image;
 
 if ( poiInfo.banner != "" ) {
-	loadRemoteImage($.headerContainer, img_actual, img_fallback);
+	loadRemoteImage("bg", $.headerContainer, img_actual, img_fallback);
 }
 
 //  fill in header and miniheader information 

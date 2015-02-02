@@ -41,8 +41,6 @@ function Session(){
 		last_acquired	: 0           // minutes since start of UNIX epoch
 	};
 	this.windowStack				= [];
-	this.currentWindow			=  "index"; 
-	this.previousWindow		=  null;
 	// this.local_icon_path		:	"images/icons",
 	// this.local_banner_path : "images/places",
 	this.allPlaces		      =  [];				// top N places that are near user's location (n=20, 30, etc)
