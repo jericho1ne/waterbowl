@@ -236,7 +236,7 @@ function addMenubar( parent_object ) {
 	  top: 0, 
 	  height: myUiFactory._icon_small + (2 * myUiFactory._pad_top),
    	// backgroundColor: "#58c6d5", 
-    opacity: 0.88, zIndex: 99 
+    opacity: 0.94, zIndex: 99 
    }); 
 				
 	// CONTAINER VIEWS --------------------------------------->					
@@ -281,8 +281,8 @@ function addMenubar( parent_object ) {
 		zIndex	: 100
 	} );
 	
-	var	infoBtn 		= Ti.UI.createButton( {
-		id: "infoBtn",
+	var	helpBtn 		= Ti.UI.createButton( {
+		id: "helpBtn",
 		left: myUiFactory._pad_left,
 		top: myUiFactory._pad_top,
 		width: myUiFactory._icon_small,
@@ -337,11 +337,15 @@ function addMenubar( parent_object ) {
 		profileBtn.addEventListener('click', showProfile);
 		//menuRight1.add(settingsBtn);
 		//settingsBtn.addEventListener('click', showSettings);
-		menuRight2.add(infoBtn);
-		infoBtn.addEventListener('click', showInfo);
+		menuRight2.add(helpBtn);
+		helpBtn.addEventListener('click', showHelp);
 	}	else {
-		menuRight2.add(infoBtn);
-		infoBtn.addEventListener('click', showInfo);
+		var last_window_index = mySesh.windowStack.length - 1;
+		//Ti.API.info( ".... [+] Help Button clicked for [ "+mySesh.windowStack[last_window_index].id+" ]");
+		if(mySesh.windowStack[last_window_index].id!="help") {
+			menuRight2.add(helpBtn);
+			helpBtn.addEventListener('click', showHelp);
+		}
 	}
 	
 	/* Add items to container divs, then add menubar to Window object */
@@ -467,15 +471,16 @@ function closeWindowController() {
 }
 
 //=============================================================
-// 	Name:  		showInfo()
+// 	Name:  		showHelp()
 // 	Purpose:	content-specific help function 
 //=============================================================
-function showInfo() {
+function showHelp() {
 	var last_window_index = mySesh.windowStack.length - 1;
 	Ti.API.info( ".... [+] Help Button clicked for [ "+mySesh.windowStack[last_window_index].id+" ]");
 	var args = { current_window : mySesh.windowStack[last_window_index].id };
-	createWindowController('help', args, 'slide_left'); 
+	createWindowController('help', args, 'slide_left');
 }
+
 //======================================================================
 // 	Name:  		showSettings()
 // 	Purpose:	generic settings for user / app
@@ -484,6 +489,7 @@ function showSettings() {
 	Ti.API.info( "[+] settings button clicked");
 	createWindowController('settings','','slide_left');
 }
+
 //=================================================================================
 // 	Name:  		showProfile()
 // 	Purpose:	dog profile view/edit window

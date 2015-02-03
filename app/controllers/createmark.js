@@ -3,6 +3,7 @@
 //========================================================================
 function saveRemark(title, text_content, textarea_hint) {
 	if ( title!='' && text_content!='' && text_content!=textarea_hint ) {
+		disableAddMarkBtn();
 		var query = Ti.Network.createHTTPClient();
 		query.open("POST", SERVER_URL+"mark-create.php");
 		var params = {
@@ -24,7 +25,6 @@ function saveRemark(title, text_content, textarea_hint) {
 		query.onload = function() {
 			var json = this.responseText;
 			if (json != "") {
-				disableAddMarkBtn();
 				var response = JSON.parse(json);
 				if (response.status == 1) { 		// success
 					Ti.API.log("  [>]  Info added successfully ");

@@ -673,19 +673,18 @@ function refreshGeo() {
 	}
 }
 
-//=============================================================================
+//=========================================================================================
 //	Name:			getMarks 
-//
-//=============================================================================
+//	Purpose:	display marks nearby user position, or say there are none
+//==========================================================================================
 function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, marks_shown ) {
   var params = {
-		lat       		: user_lat,
-		lon       		: user_lon, 
-		sniff_type 		: sniff_type,
-		sniff_radius  : sniff_radius,
-		number_marks_shown : marks_shown
+		lat       					: user_lat,
+		lon       					: user_lon, 
+		sniff_type 					: sniff_type,
+		sniff_radius  			: sniff_radius,
+		number_marks_shown 	: marks_shown
 	};
-
 	var place_query = Ti.Network.createHTTPClient();
 	place_query.open("POST", "http://waterbowl.net/mobile/marks-mapshow.php");
 	place_query.send(params);
@@ -693,13 +692,12 @@ function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, mark
 		var jsonResponse = this.responseText;
 		var jsonPlaces = [];
 		if (jsonResponse != "") {
-			var jsonPlaces = JSON.parse(jsonResponse);	
+			mySesh.nearbyMarks = JSON.parse(jsonResponse);	
 		  Ti.API.info( ".... .... .... .... total marks: " + jsonPlaces.length );	
-			mySesh.nearbyMarks = jsonPlaces;			// save incoming JSON array into global storage
+			 // = jsonMarks;			// save incoming JSON array into global storage
 			refreshMarkAnnotations(mapObject);
 			enableAllButtons();
-		}
-		else {
+		} else {
 			createSimpleDialog('Loading marks','No data received');
 			enableAllButtons();
 		}
