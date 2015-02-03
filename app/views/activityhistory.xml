@@ -2,23 +2,8 @@
 	<Window id="viewparkestimate" class="absolute">	
 		<View class="window_container">
 			
-			<ScrollView id="scrollView" class="fill_height" top="0" opacity="1">
-				// +============== feedContainer ===============================+
-				// |  +----------- feed_item (#1) ---------------------------+  |
-				// |  | +-photo-+ +------------------+  +------------------+ |  |                
-				// |  | |  		 	| | feed_label_left  |  | feed_label_right | |  |            
-				// |  | | 	    | | feed_label_left  |  |                  | |  |  		
-				// |  | +-------+ +------------------+  +------------------+ |  | 
-				// |  +------------------------------------------------------+  |	
-				// |															  			                      |
-				// |  +---------- feed_item (#2) ------------+                  |
-				// |  |				    e t c . . .                |                  |
-				// |  |                                      |                  |
-				// |  ^                                      ^                  |
-				// +============================================================+
-				<!-- <View id="feedContainer" class="border" /> -->
+			<ScrollView id="scrollView" class="fill_height" top="0" opacity="1" />
 				
-			</ScrollView>
 		</View>
 	</Window>
 </Alloy>

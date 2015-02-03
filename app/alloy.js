@@ -333,7 +333,7 @@ function addMenubar( parent_object ) {
 		// loadRemoteImage("bg", profileBtn, img_actual, img_missing);
 	
 		menuRight1.add(profileBtn);
-		profileBtn.addEventListener('click', showProfile);
+		profileBtn.addEventListener('click', function(){ showProfile(mySesh.dog.dog_ID)} );
 		//menuRight1.add(settingsBtn);
 		//settingsBtn.addEventListener('click', showSettings);
 		menuRight2.add(helpBtn);
@@ -491,13 +491,13 @@ function showSettings() {
 }
 
 //=================================================================================
-// 	Name:  		showProfile()
+// 	Name:  		showProfile(ID)
 // 	Purpose:	dog profile view/edit window
 //=================================================================================
-function showProfile() {
+function showProfile(ID) {
 	Ti.API.info( "[+] Profile button clicked");
-	var args = { dog_ID : mySesh.dog.dog_ID };
-	createWindowController('profile', args,'slide_left');
+	var args = { dog_ID : ID };
+	createWindowController('profile', args, 'slide_left');
 }
 
 //==========================================================================================

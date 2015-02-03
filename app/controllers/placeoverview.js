@@ -30,7 +30,7 @@ function displayRemarks(data) {
       var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
 		  //var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
-		  var mark = myUiFactory.buildFeedRow( "", "large", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
+		  var mark = myUiFactory.buildFeedRow( data[i].marking_dog_ID, "large", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 		  $.remarks.add(mark);
 		  if ( i < (len-1) )
 		   $.remarks.add( myUiFactory.buildSeparator() );
@@ -86,7 +86,7 @@ function displayRecentEstimates(data, place_ID) {
 		  else {
 		  	
 		  	var photo_url = PROFILE_PATH + 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
-		  	var latest_estimate = myUiFactory.buildTableRowHeader("", photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
+		  	var latest_estimate = myUiFactory.buildTableRowHeader(data.payload[i].dog_ID, photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
 		  }
 		  $.activity.add(latest_estimate);
 	  
@@ -193,7 +193,7 @@ function displayPlaceCheckins(data, parentObject) {
 		  	
 		  var dog_image = PROFILE_PATH + 'dog-'+data.checkins[i].dog_ID+'-iconmed.jpg';
 		  // Ti.API.debug( "> > > " + dog_image);		 
-		  var dog_thumb = myUiFactory.buildProfileThumb("dog_thumb_"+i, dog_image, border, "large");
+		  var dog_thumb = myUiFactory.buildProfileThumb(data.checkins[i].dog_ID, dog_image, border, "large");
 		  parentObject.add(dog_thumb);
 		}
 		/*  only if more than 8 checkins here */

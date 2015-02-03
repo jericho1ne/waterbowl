@@ -94,6 +94,8 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 	}
 	else if (text_align=="right")
 		align =  Ti.UI.TEXT_ALIGNMENT_RIGHT;
+	else
+		align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
 		
 	var label = Ti.UI.createLabel( {	
 		//id	: something+"_label", 
@@ -118,6 +120,8 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	// width and height of parent object == mySesh.device.screenwidth
 	var headerContainer = this.buildViewContainer("headerContainer_"+id, "vertical", mySesh.device.screenwidth, mySesh.device.screenwidth, 0);
 	
+	var label_width = mySesh.device.screenwidth - this._pad_right;
+	
 	// determine heights of child containers
 	var h_statbar_height= this._icon_small + this._pad_top;
 	var h_info_height 	= (3*this._height_header) + (2*this._pad_top);
@@ -131,10 +135,10 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	headerStatBar.backgroundColor = "#222222";
 	headerStatBar.bottom = 0;
 	
-	var mark_title_label	 = myUiFactory.buildLabel(txt_title,"100%", 24, this._text_large,  "#ffffff", "left");
-	var mark_text_label 	 = myUiFactory.buildLabel(txt_1,	 	"100%", 18, this._text_medium, "#ffffff", "left");	
-	var mark_subtext_label = myUiFactory.buildLabel(txt_2, 		"100%", 18, this._text_medium, "#ffffff", "left");			
-	
+	var title_label	 = myUiFactory.buildLabel(txt_title, label_width, 24, this._text_large,  "#ffffff", "left");
+	var text_label 	 = myUiFactory.buildLabel(txt_1,	 	 label_width, 18, this._text_medium, "#ffffff", "left");	
+	var subtext_label = myUiFactory.buildLabel(txt_2, 	 label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "left");	
+			
 	headerInfo.backgroundImage = "images/ui/header-overlay-black.png";
 
 	//  use gray waterbowl icon (POI placeholder) as default banner image  
@@ -160,9 +164,9 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	// headerContainer.backgroundImage = img_placeholder;
 		
 	headerInfo.add( this.buildSpacer("horz", this._pad_top) );
-	headerInfo.add(mark_title_label);
-	headerInfo.add(mark_text_label);
-	headerInfo.add(mark_subtext_label);
+	headerInfo.add(title_label);
+	headerInfo.add(text_label);
+	headerInfo.add(subtext_label);
 	
 	headerContainer.add(headerTop);
 	headerContainer.add(headerInfo);
@@ -224,11 +228,12 @@ UiFactory.prototype.buildProfileThumb = function(id, image, border, size){
 		borderColor = this._color_dkblue;
 		borderWidth = 2;
 	}
+	/*
 	var image_view = Ti.UI.createImageView({ 
 		id							: id, 
 		image   				: image,
-		height					: icon_size,
 		width					  : icon_size,
+		height					: icon_size,
 		backgroundColor : this._color_ltgray,
 		left						: this._pad_left,
 		top							: this._pad_left,
@@ -236,7 +241,22 @@ UiFactory.prototype.buildProfileThumb = function(id, image, border, size){
 		borderRadius		: icon_size/2,
 		borderWidth			: borderWidth
 	});
-	return image_view;
+	return image_view; */
+	
+	var profileBtn 		= Ti.UI.createButton( {
+		id							: id,	 
+		backgroundImage : image,
+		width						: icon_size,
+		height					: icon_size,
+		backgroundColor : this._color_ltgray,
+		left						: myUiFactory._pad_left,
+		top							: myUiFactory._pad_top,
+		borderColor			: borderColor,
+		borderRadius 		: icon_size/2,
+		borderWidth			: borderWidth
+	} );
+	profileBtn.addEventListener('click', function(){ showProfile(id)} );
+	return profileBtn;
 }
 
 /************************************************************
@@ -297,8 +317,8 @@ UiFactory.prototype.buildSlider = function(id, min_value, max_value, start_value
 UiFactory.prototype.buildMiniHeader = function(place_name, subtitle, bg_color) {
 	var miniHeader = this.buildViewContainer("", "vertical", "100%", this._icon_small+(2*this._pad_top), 0);	
 	miniHeader.backgroundColor = bg_color;
-	var name_label			= this.buildLabel( place_name, "100%", this._height_header, this._text_large, "#ffffff", "" );
-	var subtitle_label	= this.buildLabel( subtitle, "100%", this._height_header, this._text_medium, "#ffffff", "" );	
+	var name_label			= this.buildLabel( place_name, "100%", this._height_header, this._text_large, "#ffffff", "center" );
+	var subtitle_label	= this.buildLabel( subtitle, "100%", this._height_header, this._text_medium, "#ffffff", "center" );	
 	name_label.top = 0;
 	subtitle_label.top = -14;
 	miniHeader.add(name_label);
@@ -400,7 +420,7 @@ UiFactory.prototype.buildFeedRow = function(id, size, photo_url, photo_caption, 
   	div_height = this._icon_large + (2*this._pad_top);
   	div_width  = this._icon_large + (2*this._pad_left);
   }
-	var view_container = this.buildViewContainer ( id, "horizontal", "100%", div_height, 0 ); 
+	var view_container = this.buildViewContainer ( "feedRow_"+id, "horizontal", "100%", div_height, 0 ); 
  
   // DETERMINE VIEW CONTAINER WIDTHS
   var column_1_width 	= div_width;		
@@ -412,7 +432,7 @@ UiFactory.prototype.buildFeedRow = function(id, size, photo_url, photo_caption, 
 	var column_1 = this.buildViewContainer ( "col_1", "horizontal", column_1_width, div_height,  0 ); 
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", 	column_2_width, div_height,  0 );
 		
-	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, size);
+	var dog_photo = this.buildProfileThumb(id, photo_url, 0, size);
 	column_1.add(dog_photo);
 		
 	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
@@ -457,11 +477,11 @@ UiFactory.prototype.buildTableRowHeader = function(id, photo_url, photo_caption,
   var middle_width 	= 0.5 * (mySesh.device.screenwidth - photo_width);
   var right_width 	= 0.5 * (mySesh.device.screenwidth - photo_width);
 	
-	var view_container = this.buildViewContainer ( id, "horizontal", "100%", div_height, 0 ); 
+	var view_container = this.buildViewContainer ( "rowHeader_"+id, "horizontal", "100%", div_height, 0 ); 
    
 	// all labels below will be 100% of the parent view
   var column_1 = this.buildViewContainer ( "", "vertical", photo_width, div_height, 0 ); 
-	var dog_photo = this.buildProfileThumb("last_updated_by_photo", photo_url, 0, "large");
+	var dog_photo = this.buildProfileThumb(id, photo_url, 0, "large");
 	column_1.add(dog_photo);
 	
 	var column_2 = this.buildViewContainer ( "", "vertical", middle_width, div_height, 0 ); 
