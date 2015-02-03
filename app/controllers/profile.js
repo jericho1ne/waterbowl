@@ -7,22 +7,39 @@ function displayDogProfile(dog) {
 	
 	//	alert(dog[0].name);
 	var dog_info = dog.sex+" / "+dog.weight+" lbs / "+dog.age+" yrs old";
-	$.scrollview.add( myUiFactory.buildPageHeader(dog.ID, "profile", dog.name, dog_info, dog.breed ) );
-	/*
-	var category_icon = ICON_PATH + dogInfo.icon_basic;
-	var rating_df = ICON_PATH + "POI-basic-dogfriendliness.png";
-	var rating_wb = ICON_PATH + "POI-basic-ratingwb.png";
-	parent.add(  myUiFactory.buildInfoBar(category_icon, dogInfo.type, "") );
-	parent.add( myUiFactory.buildSeparator() );
-	parent.add(  myUiFactory.buildInfoBar(rating_df, "Dog friendliness", dogInfo.rating_dogfriendly+"/5") );
-	parent.add( myUiFactory.buildSeparator() );
-	parent.add(  myUiFactory.buildInfoBar(rating_wb, "Rating", dogInfo.rating_dogfriendly+"/5") );
-	*/
+	$.scrollView.add( myUiFactory.buildPageHeader(dog.ID, "profile", dog.name, dog_info, dog.breed ) );
+	
+	
 	//-----------------------------------------------------------------------------------------------------------
 	//			BASIC INFO
 	//-----------------------------------------------------------------------------------------------------------
-	var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1);
-	$.scrollview.add(basics_header);
+	$.scrollView.add(myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1));
+	//var category_icon = ICON_PATH + dogInfo.icon_basic;
+	var icon_home = ICON_PATH + "icon-dog-homecity.png";
+	var icon_wb		= ICON_PATH + "POI-basic-dogfriendliness.png";
+	var icon_bone = ICON_PATH + "POI-basic-ratingwb.png";
+	$.scrollView.add(  myUiFactory.buildInfoBar(icon_home, "City", dog.city) );
+	$.scrollView.add( myUiFactory.buildSeparator() );
+
+	$.scrollView.add(  myUiFactory.buildInfoBar(icon_bone, "Helpfulness", dog.helpfulness+"/5") );
+	$.scrollView.add( myUiFactory.buildSeparator() );
+	
+	$.scrollView.add(  myUiFactory.buildInfoBar(icon_wb, "Dog Friendliness", dog.dog_friendliness_ownerans+"/5") );
+	$.scrollView.add( myUiFactory.buildSeparator() );
+	
+	$.scrollView.add(  myUiFactory.buildInfoBar(icon_bone, "Human Friendliness", dog.human_friendliness_ownerans+"/5") );
+	$.scrollView.add( myUiFactory.buildSeparator() );
+	
+	$.scrollView.add(  myUiFactory.buildInfoBar(icon_bone, "Energy Level", dog.energy_level_ownerans+"/5") );
+	
+	
+	//-----------------------------------------------------------------------------------------------------------
+	//			INTRODUCTION
+	//-----------------------------------------------------------------------------------------------------------
+	$.scrollView.add(myUiFactory.buildSectionHeader("intro_header", "INTRODUCTION", 1));
+	var icon_intro = ICON_PATH + "icon-dog-intro.png";
+	$.scrollView.add(  myUiFactory.buildInfoBar(icon_intro, dog.intro, "") );
+	$.scrollView.add( myUiFactory.buildSeparator() );
 }
 
 //---------------------------------------------------------------------------------------------------------------
@@ -33,6 +50,3 @@ var params = {
 	dog_ID : args.dog_ID
 }
 loadJson ( params, "http://waterbowl.net/mobile/get-dog-profile.php", displayDogProfile )
-
-
-//displayBasicDogInfo(dogInfo, $.scrollview);
