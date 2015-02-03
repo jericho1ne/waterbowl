@@ -1,4 +1,5 @@
 function Session(){
+	this.actionOngoing = false;
 	this.device = { 
 		screenwidth  : Ti.Platform.displayCaps.platformWidth,
 		screenheight : Ti.Platform.displayCaps.platformHeight
@@ -76,7 +77,8 @@ function Session(){
 			bucket_mark			: "images/wb-mark/",
 			bucket_profile	: "images/wb-profile/",
 			bucket_uitext		: "images/wb-ui-text/",
-			// LOCAL PATHS BELOW
+		
+			// LOCAL PATHS ARE INSIDE ALLOY.JS
 			// TODO: Figure out why these aren't working. Hardcoded in alloy.js for now...
 			// icon						: "images/icons/",
 			// missing				: "images/missing/"

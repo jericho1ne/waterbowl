@@ -19,6 +19,20 @@ function clearTextAreaContents(textarea_object) {
 }
 
 //=====================================================
+//	Name:    disableAllButtons(disableAllButtons)
+//=====================================================
+function disableAllButtons() {
+	mySesh.actionOngoing = true; 
+}
+
+//=====================================================
+//	Name:    disableAllButtons(disableAllButtons)
+//=====================================================
+function enableAllButtons() {
+	mySesh.actionOngoing = false; 
+}
+
+//=====================================================
 //	Name:    remoteFileExists ( url )
 //	Desc:	   see if the file exists or not
 //=====================================================

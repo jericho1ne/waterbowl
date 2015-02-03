@@ -1,3 +1,29 @@
+
+
+//===============================================================================================
+//
+//
+//===============================================================================================
+function getMapPoi() {
+	Ti.API.info("...[+] GET POI button clicked on map (anything ongoing? "+mySesh.actionOngoing+")");
+	if ( !mySesh.actionOngoing ) {
+		Ti.Geolocation.getCurrentPosition(function(e) {
+	    if (e.error) {
+	    	// myExtendedMap._wbMap.removeAllAnnotations();
+	    	getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
+	    	disableAllButtons();  // disable button after first click while we load backend data
+	    } 
+	    else {  // if no errors
+	      //myExtendedMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.075);
+	      mySesh.geo.lon = e.coords.longitude;
+	      mySesh.geo.lat = e.coords.latitude;
+	      // myExtendedMap._wbMap.removeAllAnnotations();
+	      getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
+	      disableAllButtons();  // disable button after first click while we load backend data
+	    }
+	  });
+	}  
+}
 //=============================================================
 //	Name:			buildMapMenubar	
 //=============================================================
@@ -83,23 +109,7 @@ function buildMapMenubar() {
   });
   
   //====== WATERBOWL/POI BUTTON CLICK ==========================================
-  getPoiBtn.addEventListener('click', function() {			
-  	Ti.API.info("...[+] GET POI button clicked on map");
-  	Ti.Geolocation.getCurrentPosition(function(e) {
-      if (e.error) {
-      	// myExtendedMap._wbMap.removeAllAnnotations();
-      	getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
-      } 
-      else {  // if no errors
-        //myExtendedMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.075);
-        mySesh.geo.lon = e.coords.longitude;
-        mySesh.geo.lat = e.coords.latitude;
-        // myExtendedMap._wbMap.removeAllAnnotations();
-        getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
-	    }
-    });  
-	});
-	
+  getPoiBtn.addEventListener( 'click', function() { getMapPoi(); } );
 	//======  WATERBOWL/POI BUTTON LONGPRESS ==================================
 	getPoiBtn.addEventListener('longpress', function(e) {
 		alert("looong press on WB button");
@@ -128,6 +138,7 @@ function buildMapMenubar() {
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
         myExtendedMap._wbMap.removeAllAnnotations();
       	getMarks( myExtendedMap._wbMap, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
+      	disableAllButtons();
       } 
       else {  // if no errors
         myExtendedMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.008);
@@ -135,6 +146,7 @@ function buildMapMenubar() {
         mySesh.geo.lat = e.coords.latitude;
         myExtendedMap._wbMap.removeAllAnnotations();
         getMarks( myExtendedMap._wbMap, e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
+        disableAllButtons();
 	    }
     });  
 	});
@@ -169,9 +181,11 @@ function getNearbyPoi( user_lat, user_lon, view_lat, view_lon ) {
 		  Ti.API.info( ".... .... .... .... total map places: " + jsonPlaces.length );	
 		  mySesh.allPlaces = jsonPlaces;
 			refreshAnnotations(jsonPlaces);
+			enableAllButtons();
 			// Ti.API.debug( " ******[ mySesh.allPlaces ]********: " + JSON.stringify( mySesh.allPlaces ) );
 		}	else {
 			createSimpleDialog('No data received', 'Could not load place list');
+			enableAllButtons();
 		}
 	};
 }
@@ -222,7 +236,7 @@ function createMapAnnotation( place_data, index ) {
 		longitude : place_data.lon,
 		title     : place_data.name,
 		subtitle  : place_data.city + " (" + place_data.dist + " mi)",
-		animate   : true,
+		animate   : false,
 		image     : ICON_PATH + place_data.icon, 		// or pull icon from AWS: mySesh.AWS.base_icon_url
 		rightView : anno_button
 	});
@@ -269,7 +283,7 @@ function createMarkAnnotation( mark, index ) {
 		longitude : mark.mark_lon,
 		title     : mark.mark_name,
 		subtitle  :	mark.marking_dog_name,
-		animate   : true,
+		animate   : false,
 		image     : ICON_PATH + 'Mark-MapMarker-4-small.png', 
 		rightView : anno_mark_button
 	});
@@ -683,9 +697,11 @@ function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, mark
 		  Ti.API.info( ".... .... .... .... total marks: " + jsonPlaces.length );	
 			mySesh.nearbyMarks = jsonPlaces;			// save incoming JSON array into global storage
 			refreshMarkAnnotations(mapObject);
+			enableAllButtons();
 		}
 		else {
 			createSimpleDialog('Loading marks','No data received');
+			enableAllButtons();
 		}
 	};
 }
