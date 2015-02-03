@@ -43,11 +43,10 @@ function remoteFileExists( url ) {
   return http.status!=404;
 }
 
-
-//=====================================================================
+//==========================================================================
 //	Name:    loadRemoteImage ( type, img_actual, img_placeholder )
 //	Desc:	   if it exists, return actual image, otherwise placeholder
-//==============================================================
+//==========================================================================
 function loadRemoteImage( type, alloyObject, img_actual, img_placeholder ) {
 	Ti.API.debug( "<< loadRemoteImage >>> "+ img_actual + " | " +remoteFileExists(img_actual));
 	
@@ -341,8 +340,9 @@ function addMenubar( parent_object ) {
 		helpBtn.addEventListener('click', showHelp);
 	}	else {
 		var last_window_index = mySesh.windowStack.length - 1;
+		var help_img = HELP_PATH + "help-" + mySesh.windowStack[last_window_index].id +".jpg";
 		//Ti.API.info( ".... [+] Help Button clicked for [ "+mySesh.windowStack[last_window_index].id+" ]");
-		if(mySesh.windowStack[last_window_index].id!="help") {
+		if(mySesh.windowStack[last_window_index].id!="help" && Ti.Filesystem.getFile('.', help_img).exists() ) {
 			menuRight2.add(helpBtn);
 			helpBtn.addEventListener('click', showHelp);
 		}
@@ -496,7 +496,8 @@ function showSettings() {
 //=================================================================================
 function showProfile() {
 	Ti.API.info( "[+] Profile button clicked");
-	createWindowController('profile','','slide_left');
+	var args = { dog_ID : mySesh.dog.dog_ID };
+	createWindowController('profile', args,'slide_left');
 }
 
 //==========================================================================================
