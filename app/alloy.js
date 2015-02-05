@@ -103,6 +103,7 @@ function loadJson ( params, url, callbackFunction ) {
 	var query = Ti.Network.createHTTPClient();
 	query.open("POST", url);	
 	query.send( params );
+	query.setTimeout(2000);
 	query.onload = function() {
 		var jsonResponse = this.responseText;
 		if (jsonResponse != "" ) {
@@ -512,6 +513,29 @@ function zeroPad( number, width )  {
   return number + ""; 			// always return a string
 }
 
+function initializeMap(lat, lon) {
+	// DRAW MAP
+	Alloy.Globals.wbMap = myMapFactory.createView({
+		mapType : myMapFactory.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
+		region : {
+			latitude 			: lat,
+			longitude 		: lon,
+			latitudeDelta : 0.07,
+			longitudeDelta: 0.07,
+		}, 
+		top 					: 0,
+		animate 			: false,
+		maxZoom				: 1,
+		minZoom				: 2,
+		regionFit	 		: true,
+		userLocation 	: true,
+		enableZoomControls : true
+	});
+	Alloy.Globals.wbMap.addEventListener('regionChanged',function(e) {
+		mySesh.setGeoViewport(e.source.region.latitude, e.source.region.longitude);
+	});
+	Ti.API.log(".... [~] Map object built ");
+}
 
 //============================================================================================
 //Ti.API.info('Ti.Platform.displayCaps.density: ' + Ti.Platform.displayCaps.density);
@@ -536,10 +560,12 @@ var myUiFactory = new UiFactoryClass.UiFactory();
 
 
 /*----------------------------------------------------------------------
- *  	Instantiate ExtendedMap
+ *  	Instantiate ExtMap
  *-----------------------------------------------------------------------*/
-var ExtendedMapClass = require('lib/ExtendedMapClass');
-var myExtendedMap = new ExtendedMapClass.ExtendedMap();
+var ExtMapClass = require('lib/ExtMapClass');
+var myMap = new ExtMapClass.ExtMap();
+Alloy.Globals.wbMap = '';
+
 
 /*----------------------------------------------------------------------
  *  	Instantiate Session class (contains all the app globals)

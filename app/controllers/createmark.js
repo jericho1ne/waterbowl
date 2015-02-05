@@ -21,17 +21,28 @@ function saveRemark(title, text_content, textarea_hint) {
 		};
 		Ti.API.log( "* Sending info to PHP " + JSON.stringify(params) );
 		
+		// (1) :::: ATTEMPT TO LOAD REMOTE DATA ::::
 		query.send(params);
 		query.onload = function() {
 			var json = this.responseText;
 			if (json != "") {
+				// (2) :::: IF WE GET SUM JSON ::::
 				var response = JSON.parse(json);
 				if (response.status == 1) { 		// success
 					Ti.API.log("  [>]  Info added successfully ");
+					// (3) :::: SAVE THE SET OF MARKS TO GLOBAL ARRAY ::::
 					mySesh.dog.marks_made = mySesh.dog.marks_made + 1;
 					createSimpleDialog('Nice!',response.message + " ("+mySesh.dog.marks_made+" so far) ");
-					// TODO:  increment dog.marks_made global variable 
-					closeWindowController();				// close current window and bounce user to Map View
+					
+					// (4) :::: INCREMENT THE  dog.marks_made GLOBAL VARIABLE, HIT BACKEND SCRIPT ::::
+					// TODO: stuff above
+					
+					// (5) :::: REFRESH MAP MARKS ON MAPVIEW ::::					
+					///myMap.getMarks( myExtendedMap._wbMap, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
+      		disableAllButtons();
+     		
+      		// (6) :::: CLOSE WINDOW, RETURN TO MAPVIEW ::::
+					closeWindowController();				
 				} else {
 					enableAddMarkBtn();
 					createSimpleDialog( "Problems Houston", response.message); 
@@ -82,8 +93,13 @@ function enableAddMarkBtn() {
 function disableAddMarkBtn() {
 	addMarkBtn.removeEventListener('click', function(e){ saveRemark(title_input.value, textArea.value, textarea_hint); });
 }
-//===========================================================================================================
+
+//=================================================================================================================
+//=========================================================================================================================
+//==============================================================================================================================
+var mapFunctions = require('../controllers/mapview');
 var args = arguments[0] || {};		// returns empty array instead of undefined thanks to the ||
+
 // Ti.API.debug(JSON.stringify(data));
 Ti.API.debug(" >>> args in CreateMark: "+JSON.stringify(args));
 

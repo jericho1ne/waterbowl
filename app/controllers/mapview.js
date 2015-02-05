@@ -1,32 +1,6 @@
-
-
-//===============================================================================================
-//
-//
-//===============================================================================================
-function getMapPoi() {
-	Ti.API.info("...[+] GET POI button clicked on map (anything ongoing? "+mySesh.actionOngoing+")");
-	if ( !mySesh.actionOngoing ) {
-		Ti.Geolocation.getCurrentPosition(function(e) {
-	    if (e.error) {
-	    	// myExtendedMap._wbMap.removeAllAnnotations();
-	    	getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
-	    	disableAllButtons();  // disable button after first click while we load backend data
-	    } 
-	    else {  // if no errors
-	      //myExtendedMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.075);
-	      mySesh.geo.lon = e.coords.longitude;
-	      mySesh.geo.lat = e.coords.latitude;
-	      // myExtendedMap._wbMap.removeAllAnnotations();
-	      getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
-	      disableAllButtons();  // disable button after first click while we load backend data
-	    }
-	  });
-	}  
-}
-//=============================================================
+//==================================================================================================================
 //	Name:			buildMapMenubar	
-//=============================================================
+//==================================================================================================================
 function buildMapMenubar() {	
 	// mySesh.device.screenwidth
 	var menubar_pad_right  = 20;
@@ -34,9 +8,10 @@ function buildMapMenubar() {
 	var btn_spacing 			 = 10;
 	var main_btn_size 		 = 60; 
 	var secondary_btn_size = 40;
-	var secondary_pad_right = ( (main_btn_size-secondary_btn_size)/2 )+menubar_pad_right;
-	var	secondary_pad_bottom = main_btn_size + menubar_pad_bottom + btn_spacing + ( (main_btn_size-secondary_btn_size)/2 ); 
-	
+	var secondary_pad_right 	= ( (main_btn_size-secondary_btn_size)/2 )+menubar_pad_right;
+	var	secondary_pad_bottom 	= main_btn_size + 
+															menubar_pad_bottom + btn_spacing + 
+															( (main_btn_size-secondary_btn_size)/2 ); 
 	////////////////////////////////////////////////// RECENTER BUTTON ///////////////////
 	var recenterBtn = Ti.UI.createButton( {
 		id			: "recenterBtn",	
@@ -49,7 +24,6 @@ function buildMapMenubar() {
 		right		: secondary_pad_right,
 		zIndex  : 100
 	} );
-	
 	////////////////////////////////////////////////// GET POI BUTTON //////////////////////
 	var getPoiBtn = Ti.UI.createButton({ 
 		id 							: "getPoiBtn",	 
@@ -61,7 +35,6 @@ function buildMapMenubar() {
 		bottom					: menubar_pad_bottom, 
 		right						: 20
 	});
-	
 	////////////////////////////////////////////////// SNIFF BUTTON ///////////////////////
   var sniffBtn = Ti.UI.createButton({ 
 		id 							: "sniffBtn",	 
@@ -73,7 +46,6 @@ function buildMapMenubar() {
 		bottom					: menubar_pad_bottom, 
 		right						: 90
 	});
-	
 	////////////////////////////////////////////////// MARK BUTTON ////////////////////////
   var markBtn = Ti.UI.createButton({ 
 		id 							: "markBtn",	 
@@ -85,14 +57,14 @@ function buildMapMenubar() {
 		bottom					: menubar_pad_bottom, 
 		right						: 160
 	});
-	
-	/////////////////////////////////////// ADD BUTTONS TO MAPVIEW ////////////////////////
+
+	/////////////////////////////////////// ADD ALL BUTTONS TO MAPVIEW ////////////////////////
 	$.mapContainer.add(recenterBtn);
 	$.mapContainer.add(getPoiBtn);
 	$.mapContainer.add(sniffBtn);
 	$.mapContainer.add(markBtn);
 	
-	//====== RECENTER listener ================================================
+	/////////////////////////////////////// ADD RECENTER BTN LISTENER ////////////////////////
 	recenterBtn.addEventListener('click', function() {			// REFRESH button
     Ti.API.info("...[+] RECENTER button clicked on map");
 		Ti.Geolocation.getCurrentPosition(function(e) {
@@ -100,22 +72,21 @@ function buildMapMenubar() {
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
         createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
-        // myExtendedMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.01);
-      } 
-      else {  // if no errors, and we're not running in Simulator
-        myExtendedMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.02);
+        // myMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.01);
+      } else {  // if no errors, and we're not running in Simulator
+        myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.02);
 	    }
     });  
   });
-  
-  //====== WATERBOWL/POI BUTTON CLICK ==========================================
-  getPoiBtn.addEventListener( 'click', function() { getMapPoi(); } );
-	//======  WATERBOWL/POI BUTTON LONGPRESS ==================================
+  ///////////////////// 	ADD WATERBOWL/POI BTN LISTENER 	////////////////////////
+  getPoiBtn.addEventListener( 'click', function() { 
+  	getMapPoi(); 
+  });
+	//							 WATERBOWL/POI BUTTON LONGPRESS				 												// 
 	getPoiBtn.addEventListener('longpress', function(e) {
 		alert("looong press on WB button");
 	});
-	
-	//====== MARK listener ================================================
+	/////////////////////////////////////// ADD MARK BTN LISTENER //////////////////
 	markBtn.addEventListener('click', function() {			
 		Ti.API.info("...[+] Mark button clicked on map");
 		var necessary_args = {
@@ -124,7 +95,7 @@ function buildMapMenubar() {
 		};
 		createWindowController( "createmark", necessary_args, "slide_left" );
 	});
-	//====== SNIFF listener ================================================
+	/////////////////////////////////////// ADD SNIFF LISTENER /////////////////////
 	sniffBtn.addEventListener('click', function() {		
     Ti.API.info("...[+] SNIFF button clicked on map");
     // WORKFLOW: 
@@ -136,157 +107,43 @@ function buildMapMenubar() {
       if (e.error) {			
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
-        myExtendedMap._wbMap.removeAllAnnotations();
-      	getMarks( myExtendedMap._wbMap, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
+        Alloy.Globals.wbMap.removeAllAnnotations();
+      	getMarks( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
       	disableAllButtons();
-      } 
-      else {  // if no errors
-        myExtendedMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.008);
+      } else {  // if no errors
+        myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.008);
         mySesh.geo.lon = e.coords.longitude;
         mySesh.geo.lat = e.coords.latitude;
-        myExtendedMap._wbMap.removeAllAnnotations();
-        getMarks( myExtendedMap._wbMap, e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
+        Alloy.Globals.wbMap.removeAllAnnotations();
+        getMarks( Alloy.Globals.wbMap, e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
         disableAllButtons();
 	    }
     });  
 	});
 }
 
-//---------------------------------------------------------------------------------------------------
-//
-// 					p			o				i				s	
-//
-//=============================================================================
-//	Name:			getNearbyPoi ( user_lat, user_lon, view_lat, view_lon )
-//=============================================================================
-function getNearbyPoi( user_lat, user_lon, view_lat, view_lon ) {
-	Ti.API.info("...[~] getNearbyPoi() [ "+user_lat+"/"+user_lon+"  ], view [ "+view_lat+"/"+view_lon+" ]");
-
-  var params = {
-		lat       : user_lat,
-		lon       : user_lon, 
-		view_lat  : view_lat,
-		view_lon  : view_lon,
-		owner_ID  : mySesh.user.owner_ID
-	};
-  // loadJson(params, "http://waterbowl.net/mobile/get-places-map.php", refreshAnnotations);
-	var place_query = Ti.Network.createHTTPClient();
-	place_query.open("POST", "http://waterbowl.net/mobile/get-places-map.php");
-	place_query.send(params);
-	place_query.onload = function() {
-		var jsonResponse = this.responseText;
-		var jsonPlaces = [];
-		if (jsonResponse != "") {
-			var jsonPlaces = JSON.parse(jsonResponse);	
-		  Ti.API.info( ".... .... .... .... total map places: " + jsonPlaces.length );	
-		  mySesh.allPlaces = jsonPlaces;
-			refreshAnnotations(jsonPlaces);
-			enableAllButtons();
-			// Ti.API.debug( " ******[ mySesh.allPlaces ]********: " + JSON.stringify( mySesh.allPlaces ) );
-		}	else {
-			createSimpleDialog('No data received', 'Could not load place list');
-			enableAllButtons();
-		}
-	};
-}
-//=========================================================================
-//	Name:			refreshAnnotations()
-//	Purpose:	grab POI/locations from backend php file, order by proximity
-//=========================================================================
-function refreshAnnotations(data) {
-	//Ti.API.debug(".... [~] refreshAnnotations data :: "+JSON.stringify(data) );	
-	myExtendedMap._wbMap.removeAllAnnotations();
-	var temp_annotationArray = [];
-	// Create an annotation for each POI in allPlaces session array
-	for (var i=0; i<data.length; i++) {
-		temp_annotationArray.push ( createMapAnnotation(data[i], i) );		// make sure to pass current array index  
-	}
-	Alloy.Globals.placeAnnotations = temp_annotationArray; 
-	// Ti.API.debug(".... [~] refreshAnnotations temp_annotationArray :: "+JSON.stringify(temp_annotationArray) );	
-	myExtendedMap._wbMap.addAnnotations( temp_annotationArray );
-}
-//=============================================================
-//	Name:			createMapAnnotation( place_data, index )
-//	Purpose:	build Apple Maps place marker from incoming array
-//	Return:		annotation object
-//=============================================================
-function createMapAnnotation( place_data, index ) {
-	//Ti.API.debug (".... [~] Added POI [ " +place_data.place_ID + " ] to map");
-	// ADD ANNOTATION BUTTON 
-	var anno_button = Ti.UI.createButton({ 
-		id			   	    : "poi_btn_"+place_data.place_ID,
-		name					  : place_data.name,
-		backgroundImage : ICON_PATH + 'button-forward.png',
-		zIndex					: 10, 
-		height					: 30, 
-		width						: 30
-	});
-	// ADD ANNOTATION BUTTON EVENT LISTENER g
- 	anno_button.addEventListener('click', function(e){
- 		// Ti.API.debug ( ".... [+] Clicked on >> " + e.source.id );	
-		var necessary_args = {
-			_place_ID : place_data.place_ID		// pass in array index and placeID so we can hit the backend for more details
-		};
-		createWindowController( "placeoverview", necessary_args, 'slide_left' );
- 	}); 
-	// ADD ANNOTATION CONTAINER  	
-	return myMapFactory.createAnnotation({
-		id        : "poi_anno_"+place_data.place_ID, 
-		latitude  : place_data.lat, 
-		longitude : place_data.lon,
-		title     : place_data.name,
-		subtitle  : place_data.city + " (" + place_data.dist + " mi)",
-		animate   : false,
-		image     : ICON_PATH + place_data.icon, 		// or pull icon from AWS: mySesh.AWS.base_icon_url
-		rightView : anno_button
-	});
-}
-
-//---------------------------------------------------------------------------------------------------
-//
-// 					m 			a				r				k				s
-//
-//=========================================================================
-//	Name:			refreshMarkAnnotations( map )
-//	Purpose:	
-//=========================================================================
-function refreshMarkAnnotations() {
-	myExtendedMap._wbMap.removeAllAnnotations();
-	var marksArray = [];
-	for (var i=0; i<mySesh.nearbyMarks.length; i++) {
-		/* make sure to pass current array index, anything other than array index is useless */
-		marksArray.push ( createMarkAnnotation(mySesh.nearbyMarks[i], i) );	  
-	}
-	myExtendedMap._wbMap.addAnnotations( marksArray );
-}
-//=============================================================
-//	Name:			createMarkAnnotation( mark, index )
-//	Purpose:	build Apple Maps place marker from incoming array
-//	Return:		annotation object
-//=============================================================
-function createMarkAnnotation( mark, index ) {
-	// Ti.API.info(" annotation marker for MARK:" + JSON.stringify(mark));
-	var anno_mark_button = Ti.UI.createButton({ 
-		id 							: mark.ID,	 
-		backgroundImage : ICON_PATH + 'button-forward.png',
-		zIndex					: 100, 
-		height					: 30, 
-		width						: 30
-	});
-	anno_mark_button.addEventListener('click', function(e){
-	 	// Ti.API.debug ( "...[+] createMarkAnnotation >>>" + JSON.stringify(e.source.name) );
-		createWindowController( "markoverview", mark, 'slide_left' );
- 	});
-	return myMapFactory.createAnnotation({
-    id        : mark.ID, 
-		latitude  : mark.mark_lat, 
-		longitude : mark.mark_lon,
-		title     : mark.mark_name,
-		subtitle  :	mark.marking_dog_name,
-		animate   : false,
-		image     : ICON_PATH + 'Mark-MapMarker-4-small.png', 
-		rightView : anno_mark_button
-	});
+//===============================================================================================
+//	Name:			getMapPoi()
+//	Purpose:	provide a centralized action for refreshing map POIs
+//===============================================================================================
+function getMapPoi() {
+	Ti.API.info("...[+] GET POI button clicked on map (anything ongoing? "+mySesh.actionOngoing+")");
+	if ( !mySesh.actionOngoing ) {
+		Ti.Geolocation.getCurrentPosition(function(e) {
+	    if (e.error) {
+	    	// Alloy.Globals.wbMap.removeAllAnnotations();
+	    	myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
+	    	disableAllButtons();  // disable button after first click while we load backend data
+	    } else {  // if no errors
+	      //myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.075);
+	      mySesh.geo.lon = e.coords.longitude;
+	      mySesh.geo.lat = e.coords.latitude;
+	      // Alloy.Globals.wbMap.removeAllAnnotations();
+	      myMap.getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
+	      disableAllButtons();  // disable button after first click while we load backend data
+	    }
+	  });
+	}  
 }
 
 //=================================================================================
@@ -564,17 +421,17 @@ function presentUserCheckinOptions( place ) {;
 } 
 
 //=================================================================================
-//	Name:			placeListListener(e)
+//	Name:			placeListListener(e)et
 //	Purpose:	listen for clicks on nearby place list  
 //=================================================================================
 function placeListListener(e) {
 	Ti.API.info("...[o] POI list click [ " + JSON.stringify(e.row) + " ]");
 	//Ti.API.info("...[o] event index [ " + e.index + " ]");
-	myExtendedMap.centerMapOnLocation(e.row.lat, e.row.lon, 0.03);
+	myMap.centerMapOnLocation(e.row.lat, e.row.lon, 0.03);
 
   // figure out which annotation index to trigger
   var anno_index = getArrayIndexById( Alloy.Globals.placeAnnotations, e.row.id );
-	myExtendedMap._wbMap.selectAnnotation( Alloy.Globals.placeAnnotations[anno_index] );		
+	Alloy.Globals.wbMap.selectAnnotation( Alloy.Globals.placeAnnotations[anno_index] );		
 	
 	// pop up a check in or check out dialog box based on current checkin status
 	presentUserCheckinOptions( e.row );
@@ -585,7 +442,7 @@ function placeListListener(e) {
 //=============================================================================
 function refreshPlaceListData() {
   Ti.API.debug(".... [~] refreshPlaceListData called ....");
-  getPoisInGeofence( myExtendedMap._wbMap, mySesh.geo.lat, mySesh.geo.lon );   // will affect place list
+  getPoisInGeofence( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon );   // will affect place list
 	// POPULATE NEARBY PLACE TABLE
 	setTimeout ( function(){ displayGeofencePoi($.placeListTable); }, 600);
 	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
@@ -593,6 +450,69 @@ function refreshPlaceListData() {
 	// ADD PLACE LIST CLICK EVENT LISTENER
 	// remove( PlaceListClickListeners )
 	setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 700);
+}
+
+//=================================================================================
+//	Name:			refreshRAM()
+//	Purpose:	debug memory leaks
+//=================================================================================
+function refreshRAM() {
+	$.mem_usage.text = Titanium.Platform.availableMemory.toFixed(2)+" MB available";
+}
+
+//--------------------------------------------------------------------------------------------------------------
+
+//				M						A						P						F						U						N						C
+
+//--------------------------------------------------------------------------------------------------------------
+
+
+
+//---------------------------------------------------------------------------------------------------
+//
+// 					m 			a				r				k				s
+//
+//=========================================================================
+//	Name:			refreshMarkAnnotations( map )
+//	Purpose:	
+//=========================================================================
+function refreshMarkAnnotations() {
+	Alloy.Globals.wbMap.removeAllAnnotations();
+	var marksArray = [];
+	for (var i=0; i<mySesh.nearbyMarks.length; i++) {
+		/* make sure to pass current array index, anything other than array index is useless */
+		marksArray.push ( createMarkAnnotation(mySesh.nearbyMarks[i], i) );	  
+	}
+	Alloy.Globals.wbMap.addAnnotations( marksArray );
+}
+//=============================================================
+//	Name:			createMarkAnnotation( mark, index )
+//	Purpose:	build Apple Maps place marker from incoming array
+//	Return:		annotation object
+//=============================================================
+function createMarkAnnotation( mark, index ) {
+	// Ti.API.info(" annotation marker for MARK:" + JSON.stringify(mark));
+	var anno_mark_button = Ti.UI.createButton({ 
+		id 							: mark.ID,	 
+		backgroundImage : ICON_PATH + 'button-forward.png',
+		zIndex					: 100, 
+		height					: 30, 
+		width						: 30
+	});
+	anno_mark_button.addEventListener('click', function(e){
+	 	// Ti.API.debug ( "...[+] createMarkAnnotation >>>" + JSON.stringify(e.source.name) );
+		createWindowController( "markoverview", mark, 'slide_left' );
+ 	});
+	return myMapFactory.createAnnotation({
+    id        : mark.ID, 
+		latitude  : mark.mark_lat, 
+		longitude : mark.mark_lon,
+		title     : mark.mark_name,
+		subtitle  :	mark.marking_dog_name,
+		animate   : false,
+		image     : ICON_PATH + 'Mark-MapMarker-4-small.png', 
+		rightView : anno_mark_button
+	});
 }
 
 //=============================================================================
@@ -613,7 +533,7 @@ function getPoisInGeofence( mapObject, user_lat, user_lon ) {
 //	Purpose:	
 //=============================================================================
 function updatePoisInGeofence( data ) {
-	Ti.API.info( ".... .... .... .... total nearby places: " + data.length );
+	Ti.API.info( ".... .... .... .... POIs in geofence: " + data.length );
 	if (data.length > 0) {
 		mySesh.geofencePoi = data;
 			
@@ -628,13 +548,6 @@ function updatePoisInGeofence( data ) {
 	}
 }	
 
-//=================================================================================
-//	Name:			refreshRAM()
-//	Purpose:	debug memory leaks
-//=================================================================================
-function refreshRAM() {
-	$.mem_usage.text = Titanium.Platform.availableMemory.toFixed(2)+" MB available";
-}
 
 //=================================================================================
 //	Name:			refreshGeo()
@@ -663,7 +576,7 @@ function refreshGeo() {
 	    	mySesh.geo.lat = e.coords.latitude;
 	  	  mySesh.geo.lon = e.coords.longitude;
 	      // see if user is still checked in somewhere, and if so, have they left the geofence
-	      // getNearbyPoi(e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
+	      // myMap.getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
 	      refreshPlaceListData();
 	  	}
 		});
@@ -677,7 +590,7 @@ function refreshGeo() {
 //	Name:			getMarks 
 //	Purpose:	display marks nearby user position, or say there are none
 //==========================================================================================
-function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, marks_shown ) {
+var getMarks = function ( mapObject, user_lat, user_lon, sniff_type, sniff_radius, marks_shown ) {
   var params = {
 		lat       					: user_lat,
 		lon       					: user_lon, 
@@ -690,11 +603,9 @@ function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, mark
 	place_query.send(params);
 	place_query.onload = function() {
 		var jsonResponse = this.responseText;
-		var jsonPlaces = [];
 		if (jsonResponse != "") {
 			mySesh.nearbyMarks = JSON.parse(jsonResponse);	
-		  Ti.API.info( ".... .... .... .... total marks: " + jsonPlaces.length );	
-			 // = jsonMarks;			// save incoming JSON array into global storage
+		  Ti.API.info( ".... .... .... .... MARKS nearby :: " + mySesh.nearbyMarks.length );	
 			refreshMarkAnnotations(mapObject);
 			enableAllButtons();
 		} else {
@@ -703,6 +614,8 @@ function getMarks( mapObject, user_lat, user_lon, sniff_type, sniff_radius, mark
 		}
 	};
 }
+
+
 
 //-----------------------------------------------------------------------------------------------------------------
 //
@@ -747,14 +660,14 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   }
 
   // (1)	DRAW THE MAP
-  myExtendedMap.initializeMap(mySesh.geo.lat, mySesh.geo.lon);
+  initializeMap(mySesh.geo.lat, mySesh.geo.lon);
  	
  	// (2)  ATTACH MENU BAR ICONS (MARK + SNIFF + SHOW POI)
  	buildMapMenubar();
- 	$.mapContainer.add( myExtendedMap._wbMap );
+ 	$.mapContainer.add( Alloy.Globals.wbMap );
  	
   // (3) GET MAP POIs AND PLACELIST DATA
-  getNearbyPoi(mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
+  myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
   refreshPlaceListData();
 });
 
@@ -768,5 +681,5 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 //		2) 	Refresh nearby places table
 //		2)  Save latest user location into mySesh.geo.lat, mySesh.geo.lon
 //====================================================================================
-setInterval(refreshGeo, 20000);			// every X milliseconds
-setInterval(refreshRAM, 2000);			// show RAM usage every 2 seconds
+setInterval(refreshGeo, 60000);			// every X milliseconds
+//setInterval(refreshRAM, 2000);			// show RAM usage every 2 seconds

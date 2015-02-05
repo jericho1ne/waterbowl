@@ -305,7 +305,7 @@ function displayFeatures(poiInfo, parent) {
 //-----------------------------------------------------------------------
 //var myUiFactory = new UiFactoryModule.UiFactory();
 var mini_header_display = 0;
-
+// Ti.API.debug( "PlaceOverview.js :: " + JSON.stringify(mySesh.allPlaces) );
 //--------------------------------------------------------------------------------
 //
 //		(_1_)		Grab incoming variables, set header image and title, build miniheader

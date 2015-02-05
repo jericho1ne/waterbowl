@@ -4,7 +4,7 @@
   	
   		<View id="outerMapContainer" class="absolute" height="100%" contentHeight="auto" width="100%">
   			
-  			<View id="mapHUD" backgroundColor='#333333' width="50%" top="4" zIndex="25" opacity="0.75" contentHeight="auto">
+  			<View id="mapHUD" backgroundColor='#333333' width="50%" top="4" zIndex="25" opacity="0.0" contentHeight="auto">
   				<Label id="geo_success" color='#ffffff'  text="Geo rec'd" class="text_small_light"/>
   				<Label id="geo_latlng" color='#ffffff'  text="lat/lng" class="text_small_light"/>
   				<Label id="mem_usage" color='#ffffff'  text="memory" class="text_small_light"/>

@@ -1,4 +1,4 @@
-"#headerContainer" 	: { zIndex: 30, top:0, height: "53%", width: "100%" }
+"#headerContainer" 	: { zIndex: 30, top:0, height: "58%", width: "100%" }
 "#headerTop"				: { height: "60%",  width: "100%", top: 20, left: 0 }
 "#headerBottom" 		: { 
   height: Ti.UI.SIZE, width: "100%", left: 0, top: 0, opacity: 1.0,

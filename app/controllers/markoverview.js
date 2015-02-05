@@ -41,7 +41,7 @@ function displayRemarks(data) {
 		// (2)  Add original mark section header + first mark
 		$.scrollView.add( myUiFactory.buildSectionHeader("mark_header", "ORIGINAL MARK", 1) );
 		var photo = PROFILE_PATH + 'dog-'+data[last_one].marking_dog_ID+'-iconmed.jpg';		
- 		var original_mark = myUiFactory.buildFeedRow( "original_mark", "large", photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text );		
+ 		var original_mark = myUiFactory.buildFeedRow( data[last_one].marking_dog_ID, "large", photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text );		
 		$.scrollView.add(original_mark);
 		
 		// (3)  Add the remarks section header to the parent view
