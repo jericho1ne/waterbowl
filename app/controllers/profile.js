@@ -16,18 +16,21 @@ function displayDogProfile(dog) {
 	$.scrollView.add(myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1));
 	//var category_icon = ICON_PATH + dogInfo.icon_basic;
 	var icon_home = ICON_PATH + "icon-dog-homecity.png";
-	var icon_wb		= ICON_PATH + "POI-basic-dogfriendliness.png";
+	var icon_hf		= ICON_PATH + "icon-dog-basic-humanfriendliness.png";
+	var icon_df		= ICON_PATH +	"icon-dog-basic-dogfriendliness.png";
 	var icon_bone = ICON_PATH + "POI-basic-ratingwb.png";
+	var icon_help = ICON_PATH + "icon-dog-basic-helpfulness.png";
+	
 	$.scrollView.add(  myUiFactory.buildInfoBar(icon_home, "City", dog.city) );
 	$.scrollView.add( myUiFactory.buildSeparator() );
 
-	$.scrollView.add(  myUiFactory.buildInfoBar(icon_bone, "Helpfulness", dog.helpfulness+"/5") );
+	$.scrollView.add(  myUiFactory.buildInfoBar(icon_help, "Helpfulness", dog.helpfulness+"/5") );
 	$.scrollView.add( myUiFactory.buildSeparator() );
 	
-	$.scrollView.add(  myUiFactory.buildInfoBar(icon_wb, "Dog Friendliness", dog.dog_friendliness_ownerans+"/5") );
+	$.scrollView.add(  myUiFactory.buildInfoBar(icon_df, "Dog Friendliness", dog.dog_friendliness_ownerans+"/5") );
 	$.scrollView.add( myUiFactory.buildSeparator() );
 	
-	$.scrollView.add(  myUiFactory.buildInfoBar(icon_bone, "Human Friendliness", dog.human_friendliness_ownerans+"/5") );
+	$.scrollView.add(  myUiFactory.buildInfoBar(icon_hf, "Human Friendliness", dog.human_friendliness_ownerans+"/5") );
 	$.scrollView.add( myUiFactory.buildSeparator() );
 	
 	$.scrollView.add(  myUiFactory.buildInfoBar(icon_bone, "Energy Level", dog.energy_level_ownerans+"/5") );

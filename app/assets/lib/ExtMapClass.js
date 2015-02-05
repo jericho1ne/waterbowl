@@ -8,7 +8,8 @@ function ExtMap(){
 // 	Name:  		initializeMap ()
 // 	Purpose:	draw default Apple map
 //=================================================================================
-/*ExtMap.prototype.initializeMap = function(lat, lon) {
+/*
+ExtMap.prototype.initializeMap = function(lat, lon) {
 	// DRAW MAP
 	Alloy.Globals.wbMap = myMapFactory.createView({
 		mapType : myMapFactory.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
@@ -82,6 +83,43 @@ ExtMap.prototype.loadMapJson = function ( params, url, callbackFunction ) {
 	};
 }
 
+
+//=========================================================================================
+//	Name:			getMarks 
+//	Purpose:	display marks nearby user position, or say there are none
+//==========================================================================================
+ExtMap.prototype.getMarks =  function ( user_lat, user_lon, sniff_type, sniff_radius, marks_shown ) {
+	Ti.API.info("...[~] getMarks() [ "+user_lat+"/"+user_lon+"  ] :: sniff [type/radius/how many] : [ "+sniff_type+"/"+sniff_radius+"/"+marks_shown+" ]");
+  var params = {
+		lat       					: user_lat,
+		lon       					: user_lon, 
+		sniff_type 					: sniff_type,
+		sniff_radius  			: sniff_radius,
+		number_marks_shown 	: marks_shown
+	};
+	
+	var self = this;
+	this.loadMapJson(params, "http://waterbowl.net/mobile/marks-mapshow.php", function(data) {
+		self.refreshMarkAnnotations(data)
+	});
+}
+
+//=========================================================================
+//	Name:			refreshMarkAnnotations( map )
+//	Purpose:	
+//=========================================================================
+ExtMap.prototype.refreshMarkAnnotations = function(data) {
+	Alloy.Globals.wbMap.removeAllAnnotations();
+	mySesh.nearbyMarks = data;
+	var marksAnnoArray = [];
+	for (var i=0; i<mySesh.nearbyMarks.length; i++) {
+		marksAnnoArray.push ( this.createMarkAnnotation(mySesh.nearbyMarks[i]) );	  
+	}
+	Alloy.Globals.wbMap.addAnnotations( marksAnnoArray );
+	enableAllButtons();
+}
+
+
 //=====================================================================================================
 //	Name:			getNearbyPoi ( user_lat, user_lon, view_lat, view_lon )
 //	Purpose:	grab the top X closest places to user position OR center of map view
@@ -95,102 +133,97 @@ ExtMap.prototype.getNearbyPoi = function( user_lat, user_lon, view_lat, view_lon
 		view_lon  : view_lon,
 		owner_ID  : mySesh.user.owner_ID
 	};
-	//this.refreshAnnotations(mapObject);
-	
 	var self = this;
 	this.loadMapJson(params, "http://waterbowl.net/mobile/get-places-map.php", function(data) {
-		self.refreshAnnotations(data)
+		self.refreshPoiAnnotations(data)
 	});
 }
 
 //=============================================================
-//	Name:			createMapAnnotation( place_data, index )
+//	Name:			createPoiAnnotation( place_data )
 //	Purpose:	build Apple Maps place marker from incoming array
 //	Return:		annotation object
 //=============================================================
-ExtMap.prototype.createMapAnnotation = function( place_data, index ) {
-	Ti.API.debug (".... [~] Added POI [ " +place_data.place_ID + " ] to map");
+ExtMap.prototype.createPoiAnnotation = function( poi ) {
+	// Ti.API.debug (".... [~] Added POI [ " +poi.place_ID + " ] to map");
+	
 	// ADD ANNOTATION BUTTON 
 	var anno_button = Ti.UI.createButton({ 
-		id			   	    : "poi_btn_"+place_data.place_ID,
-		name					  : place_data.name,
+		id			   	    : "poi_btn_"+poi.place_ID,
+		place_ID				: poi.place_ID,
+		name					  : poi.name,
 		backgroundImage : ICON_PATH + 'button-forward.png',
 		zIndex					: 10, 
 		height					: 30, 
 		width						: 30
 	});
-	// ADD ANNOTATION BUTTON EVENT LISTENER g
+	// ADD ANNOTATION BUTTON EVENT LISTENER 
  	anno_button.addEventListener('click', function(e){
- 		// Ti.API.debug ( ".... [+] Clicked on >> " + e.source.id );	
+ 		Ti.API.debug ( ".... [+] Clicked ANNOTATION >> " + e.source.place_ID );	
 		var necessary_args = {
-			_place_ID : place_data.place_ID		// pass in array index and placeID so we can hit the backend for more details
+			_place_ID : e.source.place_ID		// pass in array index and placeID so we can hit the backend for more details
 		};
 		createWindowController( "placeoverview", necessary_args, 'slide_left' );
  	}); 
 	// CREATE AND RETURN ANNOTATION CONTAINER  	
 	return myMapFactory.createAnnotation({
-		id        : "poi_anno_"+place_data.place_ID, 
-		latitude  : place_data.lat, 
-		longitude : place_data.lon,
-		title     : place_data.name,
-		subtitle  : place_data.city + " (" + place_data.dist + " mi)",
+		id        : "poi_anno_"+poi.place_ID, 
+		latitude  : poi.lat, 
+		longitude : poi.lon,
+		title     : poi.name,
+		subtitle  : poi.city + " (" + poi.dist + " mi)",
 		animate   : false,
-		image     : ICON_PATH + place_data.icon, 	// or pull icon from AWS: mySesh.AWS.base_icon_url
+		image     : ICON_PATH + poi.icon, 	// or pull icon from AWS: mySesh.AWS.base_icon_url
 		rightView : anno_button
 	});
 }
 
+//=============================================================
+//	Name:			createMarkAnnotation( mark )
+//	Purpose:	build native maps place marker from incoming array
+//	Return:		annotation object
+//=============================================================
+ExtMap.prototype.createMarkAnnotation = function( mark ) {
+	// Ti.API.info(" annotation marker for MARK:" + JSON.stringify(mark));
+	var anno_mark_button = Ti.UI.createButton({ 
+		id 							: mark.ID,	 
+		backgroundImage : ICON_PATH + 'button-forward.png',
+		zIndex					: 100, 
+		height					: 30, 
+		width						: 30
+	});
+	anno_mark_button.addEventListener('click', function(e){
+		createWindowController( "markoverview", mark, 'slide_left' );
+ 	});
+	return myMapFactory.createAnnotation({
+    id        : mark.ID, 
+		latitude  : mark.mark_lat, 
+		longitude : mark.mark_lon,
+		title     : mark.mark_name,
+		subtitle  :	mark.marking_dog_name,
+		animate   : false,
+		image     : ICON_PATH + 'Mark-MapMarker-4-small.png', 
+		rightView : anno_mark_button
+	});
+}
+
 //=========================================================================
-//	Name:			refreshAnnotations( data )
+//	Name:			refreshPoiAnnotations( data )
 //	Purpose:	grab POI/locations from backend php file, order by proximity
 //=========================================================================
-ExtMap.prototype.refreshAnnotations = function(data) {	
-	/////////////////////// REMOVE ANY EXISTING ANNOTATIONS ////////////////////////
+ExtMap.prototype.refreshPoiAnnotations = function(data) {	
+	/////////////////////// REMOVE ANY EXISTING ANNOTATIONS /////////////////
 	Alloy.Globals.wbMap.removeAllAnnotations();
-	var temp_annotationArray = [];
+	var poiAnnoArray = [];
 	mySesh.allPlaces = data;
-	Ti.API.debug( "ExtMap.prototype.refreshAnnotations called :: " );
-	
-	/////////////////////// CREATE ANNOTATION FOR EACH POI IN ARRAY //////////////// 
-	for (var i=0; i<mySesh.allPlaces.length; i++) { 
-		
-		// ADD ANNOTATION BUTTON 
-		var anno_button = Ti.UI.createButton({ 
-			id			   	    : "poi_btn_"+mySesh.allPlaces[i].place_ID,
-			place_ID				: mySesh.allPlaces[i].place_ID,
-			name					  : mySesh.allPlaces[i].name,
-			backgroundImage : ICON_PATH + 'button-forward.png',
-			zIndex					: 10, 
-			height					: 30, 
-			width						: 30
-		});
-		// ADD ANNOTATION BUTTON EVENT LISTENER g
-		// Ti.API.debug(".... [~] >>>>>>>>>>>>>>>>> :: "+ JSON.stringify(temp_place_ID) );
-	 	anno_button.addEventListener('click', function(e){
-	 		Ti.API.debug ( ".... [+] Clicked ANNOTATION >> " + e.source.place_ID );	
-			var necessary_args = {
-				_place_ID : e.source.place_ID		// pass in array index and placeID so we can hit the backend for more details
-			};
-			createWindowController( "placeoverview", necessary_args, 'slide_left' );
-	 	}); 
-		
-		// CREATE AND RETURN ANNOTATION CONTAINER  	
-		var annotation = myMapFactory.createAnnotation({
-			id        : "poi_anno_"+mySesh.allPlaces[i].place_ID, 
-			latitude  : mySesh.allPlaces[i].lat, 
-			longitude : mySesh.allPlaces[i].lon,
-			title     : mySesh.allPlaces[i].name,
-			subtitle  : mySesh.allPlaces[i].city + " (" + mySesh.allPlaces[i].dist + " mi)",
-			animate   : false,
-			image     : ICON_PATH + mySesh.allPlaces[i].icon, 	// or pull icon from AWS: mySesh.AWS.base_icon_url
-			rightView : anno_button
-		});
-		// var annotation = createMapAnnotation(, )
-		temp_annotationArray.push ( annotation );		// make sure to pass current array index  
+	Ti.API.debug( "ExtMap.prototype.refreshPoiAnnotations called :: " );
+	/////////////////////// CREATE ANNOTATION FOR EACH POI IN ARRAY ///////// 
+	for (var i=0; i<mySesh.allPlaces.length; i++) { 			
+		poiAnnoArray.push( this.createPoiAnnotation(mySesh.allPlaces[i]) );		  
 	}
-	Alloy.Globals.placeAnnotations = temp_annotationArray; 
-	/////////////////////// CREATE ANNOTATION FOR EACH POI IN ARRAY //////////////// 
-	Alloy.Globals.wbMap.addAnnotations( temp_annotationArray );
+	Alloy.Globals.placeAnnotations = poiAnnoArray; 
+	/////////////////////// CREATE ANNOTATION FOR EACH POI IN ARRAY ///////////// 
+	Alloy.Globals.wbMap.addAnnotations( poiAnnoArray );
 	enableAllButtons(); 
 }
 

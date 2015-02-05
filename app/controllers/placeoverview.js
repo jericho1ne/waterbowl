@@ -30,7 +30,7 @@ function displayRemarks(data) {
       var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
 		  //var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
-		  var mark = myUiFactory.buildFeedRow( data[i].marking_dog_ID, "large", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
+		  var mark = myUiFactory.buildFeedRow( data[i].marking_dog_ID, "medium", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 		  $.remarks.add(mark);
 		  if ( i < (len-1) )
 		   $.remarks.add( myUiFactory.buildSeparator() );

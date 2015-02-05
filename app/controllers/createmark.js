@@ -38,8 +38,8 @@ function saveRemark(title, text_content, textarea_hint) {
 					// TODO: stuff above
 					
 					// (5) :::: REFRESH MAP MARKS ON MAPVIEW ::::					
-					///myMap.getMarks( myExtendedMap._wbMap, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
-      		disableAllButtons();
+					myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
+      		//disableAllButtons();
      		
       		// (6) :::: CLOSE WINDOW, RETURN TO MAPVIEW ::::
 					closeWindowController();				
@@ -97,7 +97,6 @@ function disableAddMarkBtn() {
 //=================================================================================================================
 //=========================================================================================================================
 //==============================================================================================================================
-var mapFunctions = require('../controllers/mapview');
 var args = arguments[0] || {};		// returns empty array instead of undefined thanks to the ||
 
 // Ti.API.debug(JSON.stringify(data));

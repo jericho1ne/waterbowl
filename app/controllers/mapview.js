@@ -57,13 +57,11 @@ function buildMapMenubar() {
 		bottom					: menubar_pad_bottom, 
 		right						: 160
 	});
-
 	/////////////////////////////////////// ADD ALL BUTTONS TO MAPVIEW ////////////////////////
 	$.mapContainer.add(recenterBtn);
 	$.mapContainer.add(getPoiBtn);
 	$.mapContainer.add(sniffBtn);
 	$.mapContainer.add(markBtn);
-	
 	/////////////////////////////////////// ADD RECENTER BTN LISTENER ////////////////////////
 	recenterBtn.addEventListener('click', function() {			// REFRESH button
     Ti.API.info("...[+] RECENTER button clicked on map");
@@ -108,14 +106,14 @@ function buildMapMenubar() {
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
         Alloy.Globals.wbMap.removeAllAnnotations();
-      	getMarks( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
+      	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
       	disableAllButtons();
       } else {  // if no errors
         myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.008);
         mySesh.geo.lon = e.coords.longitude;
         mySesh.geo.lat = e.coords.latitude;
         Alloy.Globals.wbMap.removeAllAnnotations();
-        getMarks( Alloy.Globals.wbMap, e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
+        myMap.getMarks( e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
         disableAllButtons();
 	    }
     });  
@@ -460,60 +458,13 @@ function refreshRAM() {
 	$.mem_usage.text = Titanium.Platform.availableMemory.toFixed(2)+" MB available";
 }
 
+
+
 //--------------------------------------------------------------------------------------------------------------
 
-//				M						A						P						F						U						N						C
+//				G E O F E N C E - R E L A T E D 
 
 //--------------------------------------------------------------------------------------------------------------
-
-
-
-//---------------------------------------------------------------------------------------------------
-//
-// 					m 			a				r				k				s
-//
-//=========================================================================
-//	Name:			refreshMarkAnnotations( map )
-//	Purpose:	
-//=========================================================================
-function refreshMarkAnnotations() {
-	Alloy.Globals.wbMap.removeAllAnnotations();
-	var marksArray = [];
-	for (var i=0; i<mySesh.nearbyMarks.length; i++) {
-		/* make sure to pass current array index, anything other than array index is useless */
-		marksArray.push ( createMarkAnnotation(mySesh.nearbyMarks[i], i) );	  
-	}
-	Alloy.Globals.wbMap.addAnnotations( marksArray );
-}
-//=============================================================
-//	Name:			createMarkAnnotation( mark, index )
-//	Purpose:	build Apple Maps place marker from incoming array
-//	Return:		annotation object
-//=============================================================
-function createMarkAnnotation( mark, index ) {
-	// Ti.API.info(" annotation marker for MARK:" + JSON.stringify(mark));
-	var anno_mark_button = Ti.UI.createButton({ 
-		id 							: mark.ID,	 
-		backgroundImage : ICON_PATH + 'button-forward.png',
-		zIndex					: 100, 
-		height					: 30, 
-		width						: 30
-	});
-	anno_mark_button.addEventListener('click', function(e){
-	 	// Ti.API.debug ( "...[+] createMarkAnnotation >>>" + JSON.stringify(e.source.name) );
-		createWindowController( "markoverview", mark, 'slide_left' );
- 	});
-	return myMapFactory.createAnnotation({
-    id        : mark.ID, 
-		latitude  : mark.mark_lat, 
-		longitude : mark.mark_lon,
-		title     : mark.mark_name,
-		subtitle  :	mark.marking_dog_name,
-		animate   : false,
-		image     : ICON_PATH + 'Mark-MapMarker-4-small.png', 
-		rightView : anno_mark_button
-	});
-}
 
 //=============================================================================
 //	Name:			getPoisInGeofence ( mapObject, user_lat, user_lon )
@@ -585,36 +536,6 @@ function refreshGeo() {
 		Ti.API.log("No Internet connection...");
 	}
 }
-
-//=========================================================================================
-//	Name:			getMarks 
-//	Purpose:	display marks nearby user position, or say there are none
-//==========================================================================================
-var getMarks = function ( mapObject, user_lat, user_lon, sniff_type, sniff_radius, marks_shown ) {
-  var params = {
-		lat       					: user_lat,
-		lon       					: user_lon, 
-		sniff_type 					: sniff_type,
-		sniff_radius  			: sniff_radius,
-		number_marks_shown 	: marks_shown
-	};
-	var place_query = Ti.Network.createHTTPClient();
-	place_query.open("POST", "http://waterbowl.net/mobile/marks-mapshow.php");
-	place_query.send(params);
-	place_query.onload = function() {
-		var jsonResponse = this.responseText;
-		if (jsonResponse != "") {
-			mySesh.nearbyMarks = JSON.parse(jsonResponse);	
-		  Ti.API.info( ".... .... .... .... MARKS nearby :: " + mySesh.nearbyMarks.length );	
-			refreshMarkAnnotations(mapObject);
-			enableAllButtons();
-		} else {
-			createSimpleDialog('Loading marks','No data received');
-			enableAllButtons();
-		}
-	};
-}
-
 
 
 //-----------------------------------------------------------------------------------------------------------------

@@ -71,7 +71,7 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 		id							: id, 
 		layout					: layout_orientation,
 		//backgroundColor : this._color_ltblue, 
-		//	borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth			: ((this._debug == 1) ? 2 : ''), 	
+		//borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth			: ((this._debug == 1) ? 2 : ''), 	
 		top							: top,  
 		width						: view_width,
 		height 					: view_height
@@ -105,6 +105,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		height: height,
 		left  : left_pad,
 		color	: font_color,
+		top		: 0,
 		//borderColor : ((this._debug == 1) ? this._color_dkblue : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
 		textAlign		: align
 	});
@@ -358,6 +359,10 @@ UiFactory.prototype.buildTextArea = function( hint_text ) {
 ************************************************************************************/
 UiFactory.prototype.buildInfoBar = function(image_url, name, value) {
   var div_height = this._icon_small + (2* this._pad_top); // this._height_row-10;
+  if (name.length>80) {		// usually fits 40-44 chars per line
+  	div_height = div_height + ( (name.length/130) * this._height_row );
+	}
+	
 	// var padding = this._height_row - this._icon_medium;
 	var view_container = this.buildViewContainer ( "", "horizontal", "100%", div_height, 0 ); 
   
@@ -404,7 +409,8 @@ UiFactory.prototype.buildInfoBar = function(image_url, name, value) {
 *   Used by:  Marks display, etc
 **************************************************************************************/
 UiFactory.prototype.buildFeedRow = function(id, size, photo_url, photo_caption, time_stamp, description) {
-  //Ti.API.debug( ">>>>> buildFeedRow time_stamp:"+ time_stamp);  
+  //Ti.API.debug( ">>>>> buildFeedRow time_stamp:"+ time_stamp); 
+  var row_height = this._height_row - 20; 
   var div_height = this._icon_medium + (2*this._pad_top);
   var div_width = this._icon_medium + (2*this._pad_left);
   
@@ -420,6 +426,9 @@ UiFactory.prototype.buildFeedRow = function(id, size, photo_url, photo_caption, 
   	div_height = this._icon_large + (2*this._pad_top);
   	div_width  = this._icon_large + (2*this._pad_left);
   }
+	if (description.length>80 && size=="medium") {		// usually fits 40-44 chars per line
+  	div_height = div_height + ( (description.length/130) * this._height_row );
+	}
 	var view_container = this.buildViewContainer ( "feedRow_"+id, "horizontal", "100%", div_height, 0 ); 
  
   // DETERMINE VIEW CONTAINER WIDTHS
@@ -436,11 +445,11 @@ UiFactory.prototype.buildFeedRow = function(id, size, photo_url, photo_caption, 
 	column_1.add(dog_photo);
 		
 	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
-	var column_2_row_1 = this.buildViewContainer ( "", "horizontal", "100%", "50%", 0 ); 
-	var dog_name_label  	= this.buildLabel( photo_caption, col_2_name_width, "100%", this._text_medium_bold, "#000000", "left" );		
-	var time_stamp_label	= this.buildLabel( time_stamp, 		col_2_ts_width, 	"100%", this._text_tiny, 			  "#000000", "right");
+	var column_2_row_1 = this.buildViewContainer ( "", "horizontal", "100%", row_height, 0 ); 
+	var dog_name_label  	= this.buildLabel( photo_caption, col_2_name_width, row_height, this._text_medium_bold, "#000000", "left" );		
+	var time_stamp_label	= this.buildLabel( time_stamp, 		col_2_ts_width, 	row_height, this._text_tiny, 			  "#000000", "right");
 	// COLUMN 2 :: BUILD DESCRIPTION CONTAINER
-	var column_2_row_2 = this.buildViewContainer ( "", "horizontal", "100%", "50%", 0 );
+	var column_2_row_2 = this.buildViewContainer ( "", "horizontal", "100%", Ti.UI.FILL, 0 );
 	var description_label = this.buildLabel( description, "100%", "100%", this._text_medium, "#000000", "left" );
 	
 	// ADJUST VERTICAL SPACING
