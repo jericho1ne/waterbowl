@@ -146,6 +146,7 @@ if ( saved_user!=null && saved_pwd!=null ) {
 	});
 
 	// add UI elements to containers		
+	//topView.add( myUiFactory.buildSpacer("horz", 0.35*topView_height) ); 
 	topView.add(titlebar);
 	midView.add(email);
 	midView.add(password);

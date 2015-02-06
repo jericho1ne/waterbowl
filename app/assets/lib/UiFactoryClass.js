@@ -19,7 +19,13 @@ function UiFactory(){
   this._pad_left  = 7.5;
   this._pad_right = 7.5;
   this._pad_top   = 7.5;
-   
+
+  /*		DEVICE SCREEN WIDTH & HEIGHT			*/
+ 	this._device = { 
+		screenwidth  : Ti.Platform.displayCaps.platformWidth,
+		screenheight : Ti.Platform.displayCaps.platformHeight
+	};
+	
   /*   COLORS									*/
   this._color_white  = "#ffffff";
   this._color_black  = "#000000";
@@ -105,7 +111,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		height: height,
 		left  : left_pad,
 		color	: font_color,
-		top		: 0,
+		//top		: 0,
 		//borderColor : ((this._debug == 1) ? this._color_dkblue : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
 		textAlign		: align
 	});
@@ -118,18 +124,18 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 *							type can be:  "mark", "profile", "poi"
 *****************************************************************/
 UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2) {
-	// width and height of parent object == mySesh.device.screenwidth
-	var headerContainer = this.buildViewContainer("headerContainer_"+id, "vertical", mySesh.device.screenwidth, mySesh.device.screenwidth, 0);
+	// width and height of parent object == this._device.screenwidth
+	var headerContainer = this.buildViewContainer("headerContainer_"+id, "vertical", this._device.screenwidth, this._device.screenwidth, 0);
 	
-	var label_width = mySesh.device.screenwidth - this._pad_right;
+	var label_width = this._device.screenwidth - this._pad_right;
 	
 	// determine heights of child containers
 	var h_statbar_height= this._icon_small + this._pad_top;
 	var h_info_height 	= (3*this._height_header) + (2*this._pad_top);
-	var	h_top_height		= mySesh.device.screenwidth - h_info_height - h_statbar_height;  
+	var	h_top_height		= this._device.screenwidth - h_info_height - h_statbar_height;  
 	
-	var headerTop 			= this.buildViewContainer("headerTop_"+id, 	"vertical", 	mySesh.device.screenwidth, h_top_height, 0);		// blank div
-	var headerInfo 			= this.buildViewContainer("headerInfo_"+id, "vertical", 	mySesh.device.screenwidth, h_info_height, 0);
+	var headerTop 			= this.buildViewContainer("headerTop_"+id, 	"vertical", 	this._device.screenwidth, h_top_height, 0);		// blank div
+	var headerInfo 			= this.buildViewContainer("headerInfo_"+id, "vertical", 	this._device.screenwidth, h_info_height, 0);
 	
 	// header stat bar should be separate function
 	var headerStatBar 	= this.buildViewContainer("headerStatBar", 	"horizontal", "100%", h_statbar_height, 0);	
@@ -146,7 +152,6 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	var img_placeholder = ""; 
 	var img_actual   	  = "";
 	
-	// alert(img_placeholder +" || " +img_actual );
 	if (type == "profile")	{
 		img_placeholder = MISSING_PATH + "dog-0-banner.jpg";
 		img_actual   	  = PROFILE_PATH + "dog-"+ id +"-banner.jpg";
@@ -215,11 +220,6 @@ UiFactory.prototype.buildProfileThumb = function(id, image, border, size){
 	if(image=="")
 		image = 'images/missing/WB-PetProfilePic-Placeholder.png';
 	var borderWidth = 0;
-	
-	if 			(size == "small")		icon_size = this._icon_small;		//	small 
-	else if (size == "medium")	icon_size = this._icon_medium; 	//	medium
-	else if (size == "large")		icon_size = this._icon_large;		//	large
-	else												icon_size = this._icon_medium;	//	default to medium 
 			
 	if (border==1) {
 		borderColor = this._color_dkpink;
@@ -247,13 +247,13 @@ UiFactory.prototype.buildProfileThumb = function(id, image, border, size){
 	var profileBtn 		= Ti.UI.createButton( {
 		id							: id,	 
 		backgroundImage : image,
-		width						: icon_size,
-		height					: icon_size,
+		width						: size,
+		height					: size,
 		backgroundColor : this._color_ltgray,
 		left						: myUiFactory._pad_left,
 		top							: myUiFactory._pad_top,
 		borderColor			: borderColor,
-		borderRadius 		: icon_size/2,
+		borderRadius 		: size/2,
 		borderWidth			: borderWidth
 	} );
 	profileBtn.addEventListener('click', function(){ showProfile(id)} );
@@ -333,7 +333,7 @@ UiFactory.prototype.buildMiniHeader = function(place_name, subtitle, bg_color) {
 ************************************************************************************/
 UiFactory.prototype.buildTextArea = function( hint_text ) {
 	//var textAreaView = this.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-	var text_area_width = mySesh.device.screenwidth-(2*this._pad_left);
+	var text_area_width = this._device.screenwidth-(2*this._pad_left);
 	var textArea = Ti.UI.createTextArea({
 		id						: "actual_text_area",
 	  borderWidth		: 1,
@@ -354,103 +354,123 @@ UiFactory.prototype.buildTextArea = function( hint_text ) {
 
 
 /***********************************************************************************
-*		Name:  		buildInfoBar ( image_url, name, value )  
+*		Name:  		buildSingleRowInfoBar ( image_url, name, value )  
 *		Purpose:  generic single row bar with photo or icon / thing name  / thing value
 ************************************************************************************/
-UiFactory.prototype.buildInfoBar = function(image_url, name, value) {
+UiFactory.prototype.buildSingleRowInfoBar = function(image_url, name, value) {
   var div_height = this._icon_small + (2* this._pad_top); // this._height_row-10;
-  if (name.length>80) {		// usually fits 40-44 chars per line
-  	div_height = div_height + ( (name.length/130) * this._height_row );
-	}
-	
-	// var padding = this._height_row - this._icon_medium;
 	var view_container = this.buildViewContainer ( "", "horizontal", "100%", div_height, 0 ); 
   
   var column_1 = this.buildViewContainer ( "column_1", "", this._icon_medium+this._pad_left, div_height, 0 ); 
   if (image_url!="") {
-  	//image_url = 'images/missing/WB-PetProfilePic-Placeholder.png';
-		var image = this.buildIcon("", image_url, "small"); 
+  	var image = this.buildIcon("", image_url, "small"); 
 		column_1.add(image);
   }
   var column_2 = this.buildViewContainer ( "column_2", "horizontal", Ti.UI.FILL, div_height, 0 );
-  column_2.add( this.buildSpacer( "vert", 10 ) );
+  //column_2.add( this.buildSpacer( "vert", 10 ) );
 	
 	if (name!="") {
 		var name_label  = this.buildLabel( name, Ti.UI.SIZE, "100%", this._text_medium, "#000000", "left");
-	}
-  var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold, "#000000", "left" );
-	
-	if (name!="") {
 		column_2.add(name_label);
 		column_2.add( this.buildSpacer( "vert", 2 ) );
 	}
-	
-	column_2.add(value_label);
-	
+	if (value_label!="") {
+		var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold, "#000000", "left" );
+  	column_2.add(value_label);
+	}
 	view_container.add(column_1);
 	view_container.add(column_2);
   return view_container;
 }
 
+/***********************************************************************************
+*		Name:  		buildMultiRowInfoBar ( image_url, name, value )  
+*		Purpose:  generic single row bar with photo or icon / thing name  / thing value
+************************************************************************************/
+UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
+  // iphone 5s		~528 pixels available for text label / 40 chars per line = 13.2 px / char
+  // iphone 6			~? pixels available for text label / 40 chars per line = 13 px / char
+  // iphone 6+		~? pixels available for text label / 40 chars per line = 13 px / char
+  
+ 	// calculate thumbnail and text content view widths
+  var col_1_w = this._icon_medium+this._pad_left;
+  var col_2_w = this._device.screenwidth - col_1_w;
+  
+  // if text is two lines or less
+  var div_height = this._icon_medium + this._pad_top;
+ 	// if text is longer than 2 lines, perform dynamic div height calculation;  assumes each character is ~13px wide
+ 	if (text_content.length > 78) {
+ 		div_height = Math.round( (text_content.length / (col_2_w / 13) ) * 10)+this._pad_top;
+	}
+	var view_container = this.buildViewContainer ( "", "horizontal", "100%", div_height, 0 ); 
+  
+  var column_1 = this.buildViewContainer ( "column_1", "", 					 col_1_w, this._icon_medium+this._pad_top, 0 ); 
+	var column_2 = this.buildViewContainer ( "column_2", "horizontal", col_2_w, Ti.UI.SIZE, 0 );
+
+  if (image_url!="") {
+  	var image = this.buildIcon("", image_url, "small"); 
+		column_1.add(image);
+  }
+   //column_2.add( this.buildSpacer( "vert", 10 ) );
+	
+	var text_box = this.buildLabel( text_content, col_2_w-(2*this._pad_right), "100%", this._text_medium, "#000000", "left");
+	//	column_2.add( this.buildSpacer( "vert", 2 ) );
+	column_2.add(text_box);
+
+	view_container.add(column_1);
+	view_container.add(column_2);
+  return view_container;
+}
 
 /*
-  +=== buildFeedRow ========================+
-  |	 column_1        column_2               | 
-  |  +-thumb--+ +--_row_1----------------+  |
-  |  |        | |   name	  	timestamp  |  |
-  |  |  dog   | +--_row_2----------------+  |
-  |  | photo  | |   description			     |  |		
-  |  +--------+ +------------------------+  |		
-  +=========================================+  
-  */
-/**************************************************************************************
-*		Name:  		buildFeedRow ( id, photo, top_left, top_right, info ) 
+				  +=== buildFeedRow ========================+
+				  |	 column_1        column_2               | 
+				  |  +-thumb--+ +--_row_1----------------+  |
+				  |  |        | |   name	  	timestamp  |  |
+				  |  |  dog   | +--_row_2----------------+  |
+				  |  | photo  | |   description			     |  |		
+				  |  +--------+ +------------------------+  |		
+				  +=========================================+  
+ */
+/****************************************************************************************************************
+*		Name:  		buildFeedRow ( id, thumb_size, photo_url, photo_caption, time_stamp, description ) 
 *		Purpose:  modified format for feed items (marks, estimates, etc)
 *   Used by:  Marks display, etc
-**************************************************************************************/
-UiFactory.prototype.buildFeedRow = function(id, size, photo_url, photo_caption, time_stamp, description) {
+****************************************************************************************************************/
+UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_caption, time_stamp, description) {
   //Ti.API.debug( ">>>>> buildFeedRow time_stamp:"+ time_stamp); 
-  var row_height = this._height_row - 20; 
-  var div_height = this._icon_medium + (2*this._pad_top);
-  var div_width = this._icon_medium + (2*this._pad_left);
-  
-  if (size=="small") {
-  	div_height = this._icon_small + (2*this._pad_top);
-  	div_width = this._icon_small + (2*this._pad_left);
-  }
-  if (size=="medium") {
-  	div_height = this._icon_medium + (2*this._pad_top);
-  	div_width  = this._icon_medium + (2*this._pad_left);
-  }
-  else if (size=="large") {
-  	div_height = this._icon_large + (2*this._pad_top);
-  	div_width  = this._icon_large + (2*this._pad_left);
-  }
-	if (description.length>80 && size=="medium") {		// usually fits 40-44 chars per line
-  	div_height = div_height + ( (description.length/130) * this._height_row );
-	}
-	var view_container = this.buildViewContainer ( "feedRow_"+id, "horizontal", "100%", div_height, 0 ); 
- 
-  // DETERMINE VIEW CONTAINER WIDTHS
-  var column_1_width 	= div_width;		
-	var column_2_width 	= mySesh.device.screenwidth - column_1_width;
+  var row1_height = this._height_header; 
+  var row2_height = thumb_size - this._pad_top;
+	
+	// DETERMINE VIEW CONTAINER WIDTHS
+  var column_1_width 	= thumb_size + this._pad_left + this._pad_right;		
+	var column_2_width 	= this._device.screenwidth - column_1_width;
 	var col_2_name_width= (0.60 * column_2_width)-this._pad_left;
-	var col_2_ts_width  = (0.40 * column_2_width)-this._pad_left;
+	var col_2_ts_width  = (0.39 * column_2_width)-this._pad_left;
+
+	var multiline_row2_height = Math.round(description.length / (column_2_width / 13.3) * 11)+this._pad_top;
+	
+  if (multiline_row2_height > row2_height) {
+ 		row2_height = multiline_row2_height;
+	}
+	var total_height = row1_height + row2_height;
 	
   // BUILD VIEWS (COLUMN 3 is a spacer)    id,     orientation  	view_width      view_height  top)
-	var column_1 = this.buildViewContainer ( "col_1", "horizontal", column_1_width, div_height,  0 ); 
-	var column_2 = this.buildViewContainer ( "col_2", "vertical", 	column_2_width, div_height,  0 );
+	var view_container = this.buildViewContainer ( "feedRow_"+id, "horizontal", "100%", total_height, 0 ); 
+  
+	var column_1 = this.buildViewContainer ( "col_1", "horizontal", column_1_width, total_height,  0 ); 
+	var column_2 = this.buildViewContainer ( "col_2", "vertical", 	column_2_width, total_height,  0 );
 		
-	var dog_photo = this.buildProfileThumb(id, photo_url, 0, size);
+	var dog_photo = this.buildProfileThumb(id, photo_url, 0, thumb_size);			// pass along thumb size that was sent in
 	column_1.add(dog_photo);
 		
 	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
-	var column_2_row_1 = this.buildViewContainer ( "", "horizontal", "100%", row_height, 0 ); 
-	var dog_name_label  	= this.buildLabel( photo_caption, col_2_name_width, row_height, this._text_medium_bold, "#000000", "left" );		
-	var time_stamp_label	= this.buildLabel( time_stamp, 		col_2_ts_width, 	row_height, this._text_tiny, 			  "#000000", "right");
+	var column_2_row_1 		= this.buildViewContainer ( "", "horizontal", "100%", row1_height, 0 ); 
+	var dog_name_label  	= this.buildLabel( photo_caption, col_2_name_width, row1_height, this._text_medium_bold, "#000000", "left" );		
+	var time_stamp_label	= this.buildLabel( time_stamp, 		col_2_ts_width, 	row1_height, this._text_tiny, 			  "#000000", "right");
 	// COLUMN 2 :: BUILD DESCRIPTION CONTAINER
-	var column_2_row_2 = this.buildViewContainer ( "", "horizontal", "100%", Ti.UI.FILL, 0 );
-	var description_label = this.buildLabel( description, "100%", "100%", this._text_medium, "#000000", "left" );
+	var column_2_row_2 		= this.buildViewContainer ( "", "horizontal", column_2_width, row2_height, 0 );
+	var description_label = this.buildLabel( description, column_2_width-(2*this._pad_right), row2_height, this._text_medium, "#000000", "left" );
 	
 	// ADJUST VERTICAL SPACING
 	dog_name_label.top = 2;
@@ -483,14 +503,14 @@ UiFactory.prototype.buildFeedRow = function(id, size, photo_url, photo_caption, 
 UiFactory.prototype.buildTableRowHeader = function(id, photo_url, photo_caption, time_stamp, amount, amount_suffix) {
   var div_height 		= this._icon_large + (2*this._pad_top);
   var photo_width 	= this._icon_large + (2*this._pad_left);
-  var middle_width 	= 0.5 * (mySesh.device.screenwidth - photo_width);
-  var right_width 	= 0.5 * (mySesh.device.screenwidth - photo_width);
+  var middle_width 	= 0.5 * (this._device.screenwidth - photo_width);
+  var right_width 	= 0.5 * (this._device.screenwidth - photo_width);
 	
 	var view_container = this.buildViewContainer ( "rowHeader_"+id, "horizontal", "100%", div_height, 0 ); 
    
 	// all labels below will be 100% of the parent view
   var column_1 = this.buildViewContainer ( "", "vertical", photo_width, div_height, 0 ); 
-	var dog_photo = this.buildProfileThumb(id, photo_url, 0, "large");
+	var dog_photo = this.buildProfileThumb(id, photo_url, 0, this._icon_large);
 	column_1.add(dog_photo);
 	
 	var column_2 = this.buildViewContainer ( "", "vertical", middle_width, div_height, 0 ); 
@@ -517,19 +537,19 @@ UiFactory.prototype.buildTableRowHeader = function(id, photo_url, photo_caption,
 	return view_container;
 };
 
+
 /****************************************************************************
 *		Name:  		buildRowMarkSummary ( id, left, middle, right )  eg: photo_url, dog name, timestamp, amount, amount description
 *		Purpose:  modified format for feed items (marks, estimates, etc)
 *   Used by:  Marks display, etc
 ***************************************************••••••••••••••••••••••*********/
-UiFactory.prototype.buildRowMarkSummary = function(id, photo_url, photo_caption, time_stamp, description) {
-  Ti.API.debug( ">>>>> buildRowMarkSummary time_stamp:"+ time_stamp);  
+/*UiFactory.prototype.buildRowMarkSummary = function(id, photo_url, photo_caption, time_stamp, description) {
   var div_height = this._icon_large + (2*this._pad_top);
 	var view_container = this.buildViewContainer ( id, "horizontal", "100%", div_height, 0 ); 
 
   // DETERMINE VIEW CONTAINER WIDTHS
 	var column_1_width = this._icon_large + (2*this._pad_left);
-	var column_2_width = mySesh.device.screenwidth - column_1_width - this._pad_right;
+	var column_2_width = this._device.screenwidth - column_1_width - this._pad_right;
   
 	var column_1 = this.buildViewContainer ( "col_1", "horizontal",	column_1_width, div_height, 0 ); 
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", column_2_width, div_height, 0 );
@@ -555,8 +575,7 @@ UiFactory.prototype.buildRowMarkSummary = function(id, photo_url, photo_caption,
 	
 	view_container.add(column_2);
 	return view_container;
-};
-
+}; */
 
 
 /***********************************************************************
@@ -702,7 +721,7 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 ************************************************************/
 UiFactory.prototype.buildTextField = function(id, width, hint, is_pwd) {
 	if (width=="")
-		width = mySesh.device.screenwidth - this._pad_right - this._pad_left;
+		width = this._device.screenwidth - this._pad_right - this._pad_left;
 		
   var text_field = Ti.UI.createTextField( {
   	id              : id,

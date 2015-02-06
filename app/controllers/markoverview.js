@@ -41,7 +41,7 @@ function displayRemarks(data) {
 		// (2)  Add original mark section header + first mark
 		$.scrollView.add( myUiFactory.buildSectionHeader("mark_header", "ORIGINAL MARK", 1) );
 		var photo = PROFILE_PATH + 'dog-'+data[last_one].marking_dog_ID+'-iconmed.jpg';		
- 		var original_mark = myUiFactory.buildFeedRow( data[last_one].marking_dog_ID, "large", photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text );		
+ 		var original_mark = myUiFactory.buildFeedRow( data[last_one].marking_dog_ID, myUiFactory._icon_large, photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text );		
 		$.scrollView.add(original_mark);
 		
 		// (3)  Add the remarks section header to the parent view
@@ -73,7 +73,7 @@ function displayRemarks(data) {
 	  else {
 			for (var i=0, len=data.length; i<(len-1); i++) {
 	      var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
-			  var mark = myUiFactory.buildFeedRow ( "mark_"+i, "large", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text );
+			  var mark = myUiFactory.buildFeedRow ( "mark_"+i, myUiFactory._icon_medium, photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text );
 			  $.scrollView.add(mark);
 			  if ( i < (len-2) )
 			    $.scrollView.add( myUiFactory.buildSeparator() );

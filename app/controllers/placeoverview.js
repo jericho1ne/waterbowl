@@ -29,8 +29,7 @@ function displayRemarks(data) {
     for (var i=0, len=data.length; i<len; i++) {
       var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
-		  //var mark = myUiFactory.buildRowMarkSummary( "", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
-		  var mark = myUiFactory.buildFeedRow( data[i].marking_dog_ID, "medium", photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
+		  var mark = myUiFactory.buildFeedRow( data[i].marking_dog_ID, myUiFactory._icon_medium, photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
 		  $.remarks.add(mark);
 		  if ( i < (len-1) )
 		   $.remarks.add( myUiFactory.buildSeparator() );
@@ -49,12 +48,7 @@ function displayRemarks(data) {
 //		Purpose:		get latest user-provided estimates
 //================================================================================
 function getRecentEstimates( place_ID, enclosure_count, callbackFunction ) {
-	Ti.API.info("* getRecentEstimates() called *");
-	var params = {
-		place_ID	: place_ID, 
-		enclosure_count : enclosure_count
-	};
-	loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", callbackFunction);
+	
 }
 
 //================================================================================
@@ -81,7 +75,7 @@ function displayRecentEstimates(data, place_ID) {
 		  // var photo_url = mySesh.AWS.url_base+ '/' +mySesh.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  if(data.payload[i].amount==-1) {
 		  	var activity_icon = ICON_PATH + "POI-activity-dogscurrentlyhere.png";
-		  	var latest_estimate = myUiFactory.buildInfoBar( activity_icon, "No recent estimate", "");
+		  	var latest_estimate = myUiFactory.buildSingleRowInfoBar( activity_icon, "No recent estimate", "");
 		  }
 		  else {
 		  	
@@ -98,21 +92,21 @@ function displayRecentEstimates(data, place_ID) {
 		nothing_here_container.add(nothing_here);
 		$.activity.add(nothing_here_container);
 	}
-	addEstimatesButtons();
+	addEstimatesButton(data);
 }
 
 //================================================================================
-//		Name:			addEstimatesButtons( data )
+//		Name:			addEstimatesButton( data )
 //		Purpose:	LIKE THE TITLE SEZ.  I'M DOING STUFF HERE.
 //================================================================================
-function addEstimatesButtons() {
+function addEstimatesButton(data) {
 	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update estimate >"); 
 	estimate_btn.addEventListener('click', function(){
-    Ti.API.info("...[+] Estimate Update button clicked");
+    Ti.API.info( "...[+] Estimate Update button clicked :: " + JSON.stringify(data) );
     var necessary_args = {
 		  _place_ID    : args._place_ID,     // 601000001
 	    _place_index : place_index,
-	    _poiInfo		: poiInfo
+	    _poiInfo		 : data
     };
 		createWindowController( "provideestimate", necessary_args, "slide_left" );
 	});
@@ -170,7 +164,7 @@ function displayPlaceCheckins(data, parentObject) {
   
  	/* got stuff to show!  */
   if( data.checkins.length > 0) {
-  	var how_many_bar = myUiFactory.buildInfoBar( ICON_PATH + "POI-activity-dogscurrentlyhere.png", "Currently here",  data.checkins.length );;
+  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( ICON_PATH + "POI-activity-dogscurrentlyhere.png", "Currently here",  data.checkins.length );;
     parentObject.add(how_many_bar);
    
 	 	if( data.checkins.length > 4) {
@@ -193,7 +187,7 @@ function displayPlaceCheckins(data, parentObject) {
 		  	
 		  var dog_image = PROFILE_PATH + 'dog-'+data.checkins[i].dog_ID+'-iconmed.jpg';
 		  // Ti.API.debug( "> > > " + dog_image);		 
-		  var dog_thumb = myUiFactory.buildProfileThumb(data.checkins[i].dog_ID, dog_image, border, "large");
+		  var dog_thumb = myUiFactory.buildProfileThumb(data.checkins[i].dog_ID, dog_image, border, myUiFactory._icon_large);
 		  parentObject.add(dog_thumb);
 		}
 		/*  only if more than 8 checkins here */
@@ -212,7 +206,7 @@ function displayPlaceCheckins(data, parentObject) {
   /*  got nathin' */
   else {
   	parentObject.height = myUiFactory._icon_small + (2*myUiFactory._pad_top);
-    var how_many_bar = myUiFactory.buildInfoBar( "", "Nobody currently here", "" );;
+    var how_many_bar = myUiFactory.buildSingleRowInfoBar( "", "Nobody currently here", "" );;
     parentObject.add(how_many_bar);  
   }
     
@@ -248,19 +242,19 @@ function displayBasicInfo(poiInfo, parent) {
 	var category_icon = ICON_PATH + poiInfo.icon_basic;
 	var rating_df = ICON_PATH + "POI-basic-dogfriendliness.png";
 	var rating_wb = ICON_PATH + "POI-basic-ratingwb.png";
-	parent.add(  myUiFactory.buildInfoBar(category_icon, poiInfo.type, "") );
+	parent.add(  myUiFactory.buildSingleRowInfoBar(category_icon, poiInfo.type, "") );
 	parent.add( myUiFactory.buildSeparator() );
-	parent.add(  myUiFactory.buildInfoBar(rating_df, "Dog friendliness", poiInfo.rating_dogfriendly+"/5") );
+	parent.add(  myUiFactory.buildSingleRowInfoBar(rating_df, "Dog friendliness", poiInfo.rating_dogfriendly+"/5") );
 	parent.add( myUiFactory.buildSeparator() );
-	parent.add(  myUiFactory.buildInfoBar(rating_wb, "Rating", poiInfo.rating_dogfriendly+"/5") );
+	parent.add(  myUiFactory.buildSingleRowInfoBar(rating_wb, "Rating", poiInfo.rating_dogfriendly+"/5") );
 }
 
 //================================================================================
-//		Name:			displayFeatures( poiInfo, parent_view)
+//		Name:			displayOutdoorFeatures( poiInfo, parent_view)
 //		Purpose:	
 //================================================================================
-function displayFeatures(poiInfo, parent) {
-	Ti.API.debug("....[~] displayFeatures("+poiInfo.place_ID+") called ");
+function displayOutdoorFeatures(poiInfo, parent) {
+	Ti.API.debug("....[~] displayOutdoorFeatures("+poiInfo.place_ID+") called ");
 
 	var features = { 	
 		"Enclosures"		: poiInfo.enclosures,
@@ -272,10 +266,11 @@ function displayFeatures(poiInfo, parent) {
 		"Water"					: poiInfo.water,
 		"Waste Disposal": poiInfo.waste,
 		"Shade"					: poiInfo.shade,	
-		"Benches"				: poiInfo.benches
+		"Benches"				: poiInfo.benches,
+		"Managed by"		: poiInfo.managing_org
 	};
 	
-	//Ti.API.debug("....[~] displayFeatures :: features " + JSON.stringify(features) );
+	//Ti.API.debug("....[~] displayOutdoorFeatures :: " + JSON.stringify(features) );
 	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
 	var icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
 	
@@ -283,11 +278,11 @@ function displayFeatures(poiInfo, parent) {
 	var length = features.length;
   for (var k in features){
     if(features[k]!="" && features[k]!="NULL") {
-  		// call buildInfoBar w/ ( image_url, name, value ) 
+  		// call buildSingleRowInfoBar w/ ( image_url, name, value ) 
 			if (k=="Enclosures")
-				features_list.add(  myUiFactory.buildInfoBar(icon_url, "", features[k]) );
+				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, "", features[k]) );
 			else
-				features_list.add(  myUiFactory.buildInfoBar(icon_url, k+":", features[k]) );
+				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, k+":", features[k]) );
 			//if ( count < (length-1) )
 			features_list.add( myUiFactory.buildSeparator() );
     }
@@ -296,6 +291,66 @@ function displayFeatures(poiInfo, parent) {
 	parent.add( features_list );  	
 }
 
+//================================================================================
+//		Name:			displayHumanFeatures( poiInfo, parent_view)
+//		Purpose:	
+//================================================================================
+function displayHumanFeatures(poiInfo, parent) {
+	Ti.API.debug("....[~] displayHumanFeatures("+poiInfo.place_ID+") called ");
+	var features = { 	
+		"Dogs Allowed Inside"		: poiInfo.dogs_inside,
+		"Dogs Allowed Outside"	: poiInfo.dogs_outside,
+		"Outdoor Area" 					: poiInfo.outdoor_area, 
+		"Waterbowl Present" 		: poiInfo.waterbowl,
+		"Price Range"  					: poiInfo.price_range
+	};
+	Ti.API.debug("....[~] displayHumanFeatures :: " + JSON.stringify(features) );
+	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
+	var icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
+	
+	var count = 0;
+	var length = features.length;
+  for (var k in features){
+    if(features[k]!="" && features[k]!="NULL") {
+  		// call buildSingleRowInfoBar w/ ( image_url, name, value ) 
+			if (k=="Enclosures")
+				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, "", features[k]) );
+			else
+				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, k+":", features[k]) );
+			//if ( count < (length-1) )
+			features_list.add( myUiFactory.buildSeparator() );
+    }
+    count ++;
+	}
+	parent.add( features_list );  	
+}
+
+//================================================================================
+//		Name:			getPoiFeatures( data )
+//		Purpose:	
+//================================================================================
+function getPoiFeatures(data) {
+	//Ti.API.info(">>>>>>>>>>> " + data.poi_ID);
+	//----------------------------------------------------------------------------------------------------------
+	//       ESTIMATES (only if dog park)  
+	//----------------------------------------------------------------------------------------------------------
+	if (poiInfo.category==600 || poiInfo.category==601) {
+		// TODO:  redo this using class methods
+		var params = {
+			place_ID	: data.poi_ID, 
+			enclosure_count : data.enclosure_count
+		};
+		Ti.API.info("*** getRecentEstimates() for :: "+JSON.stringify(params)+" ] ***");
+		loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates);		
+	}
+	if ( poiInfo.category>=600 && poiInfo.category<=699 ) {
+		displayOutdoorFeatures(data, $.features);
+	}
+	else if ( poiInfo.category>=100 && poiInfo.category<=199 ) {
+		displayHumanFeatures(data, $.features);
+	}
+		
+}
 //===========================================================================================
 // 				LOGIC FLOW
 //-----------------------------------------------------------------------
@@ -313,9 +368,18 @@ var mini_header_display = 0;
 //--------------------------------------------------------------------------------
 var args = arguments[0] || {};
 var place_index = getArrayIndexById(mySesh.allPlaces, args._place_ID);
+var poiInfo = mySesh.allPlaces[place_index];
 
 Ti.API.info(" >>>>> PLACEOVERVIEW >>> POI ID + INDEX:: " +args._place_ID + " / " + place_index);
-var poiInfo = mySesh.allPlaces[place_index];
+
+var params = {
+	place_ID	  : poiInfo.place_ID,
+	place_cat		: poiInfo.category
+};
+// need poi features detail in order to call getRecentEstimates and getBasicFeatures
+loadJson(params, "http://waterbowl.net/mobile/get-poi-features.php", getPoiFeatures);
+
+// 
 
 var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );
 //alert( how_close + " miles");
@@ -352,7 +416,6 @@ var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO"
 $.basics.add(basics_header);
 displayBasicInfo(poiInfo, $.basics);
 
-
 //----------------------------------------------------------------------------------------------------------
 //		 CHECKINS
 //----------------------------------------------------------------------------------------------------------
@@ -372,13 +435,6 @@ getPlaceCheckins( args._place_ID, mySesh.dog.dog_ID, whos_here_list);
 
 // TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
 
-//----------------------------------------------------------------------------------------------------------
-//       ESTIMATES (only if dog park)  
-//----------------------------------------------------------------------------------------------------------
-if (poiInfo.category==600 || poiInfo.category==601) {
-	// TODO:  redo this using class methods
-	getRecentEstimates( args._place_ID, poiInfo.enclosure_count, displayRecentEstimates );	
-}
 
 //----------------------------------------------------------------------------
 //		   REMARKS
@@ -410,10 +466,9 @@ markBtn.addEventListener('click', function(e) {
 //------------------------------------------------------------------------------------------------
 //				FEATURES (only if category == [] )
 //-------------------------------------------------------------------------------------------------
-if (poiInfo.category==600 || poiInfo.category==601 || (poiInfo.category>=100 && poiInfo.category<=200) ) {
+if ( ( poiInfo.category>=600 && poiInfo.category<=699 ) || ( poiInfo.category>=100 && poiInfo.category<=199 ) ) {
 	var features_header = myUiFactory.buildSectionHeader("features_header", "FEATURES", 1);
 	$.features.add(features_header);
-	displayFeatures(poiInfo, $.features);
 }
 
 //----------------------------------------------------------------------------

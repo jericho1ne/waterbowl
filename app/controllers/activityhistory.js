@@ -33,7 +33,7 @@ function displayAllEstimates(data) {
   	if(data[i].amount == 1) 
 	  	dogs_here	 = data[i].amount + " dog in "+data[i].enclosure_type+" dog area";
 	  	
-  	var est_view = myUiFactory.buildFeedRow(data[i].dog_ID, "medium", photo_url, data[i].dog_name, data[i].time_elapsed, dogs_here);
+  	var est_view = myUiFactory.buildFeedRow(data[i].dog_ID, myUiFactory._icon_medium, photo_url, data[i].dog_name, data[i].time_elapsed, dogs_here);
   	estimate_list.add(est_view);
   	
   	if ( i < (len-1) )

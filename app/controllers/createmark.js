@@ -103,7 +103,7 @@ var args = arguments[0] || {};		// returns empty array instead of undefined than
 Ti.API.debug(" >>> args in CreateMark: "+JSON.stringify(args));
 
 // (1)  Create + Add map to the appropriate parent view; center on user's current location
-var markMapView = drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.07 );     // 0.05 
+var markMapView = drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.012 );      
 $.mapContainer.add( markMapView );
 
 // (2)  Add original mark section header + first mark
