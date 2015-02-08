@@ -30,7 +30,7 @@ function getMarkOverview( original_mark ) {
 function displayRemarks(data) {
 	// Ti.API.debug( "*displayRemarks ["+JSON.stringify(data)+"]" );
 	removeAllChildren($.remarks);	
-  Ti.API.debug( ">>>>>>> displayRemarks :: " + JSON.stringify(data) );
+  // Ti.API.debug( ">>>>>>> displayRemarks :: " + JSON.stringify(data) );
 	if( data.length>0) {	
 		var last_one = data.length-1;
 		

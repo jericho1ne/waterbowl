@@ -92,7 +92,7 @@ function displayRecentEstimates(data, place_ID) {
 		  
 		  // var photo_url = mySesh.AWS.url_base+ '/' +mySesh.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  if(data.payload[i].amount==-1) {
-		  	var activity_icon = ICON_PATH + "POI-activity-dogscurrentlyhere.png";
+		  	var activity_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
 		  	var latest_estimate = myUiFactory.buildSingleRowInfoBar( activity_icon, "No recent information", "");
 		  }
 		  else {
@@ -183,7 +183,7 @@ function displayPlaceCheckins(data, parentObject) {
   
  	/* got stuff to show!  */
   if( data.checkins.length > 0) {
-  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( ICON_PATH + "POI-activity-dogscurrentlyhere.png", "Members Here Now: ",  data.checkins.length );;
+  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( ICON_PATH + "poi-activity-dogscurrentlyhere.png", "Members Here Now: ",  data.checkins.length );;
     parentObject.add(how_many_bar);
    
 	 	if( data.checkins.length > 4) {
@@ -251,10 +251,10 @@ function hideMiniHeader () {
 }
 
 //================================================================================
-//		Name:			displayBasicInfo( poiInfo, parent_view )
+//		Name:			displayBasicInfo( poiInfo )
 //		Purpose:	
 //================================================================================
-function displayBasicInfo(poiInfo, parent) {
+function displayBasicInfo(poiInfo) {
 	// Ti.API.debug("....[~] displayBasicInfo("+JSON.stringify(poiInfo)+") called ");
 	var categories = [ 	poiInfo.category_type_1,
 											poiInfo.category_type_2,
@@ -270,14 +270,14 @@ function displayBasicInfo(poiInfo, parent) {
 	}
 	categories_text = categories_text.substring(0, categories_text.length - 2);		// delete last space and comma
 	
-	var category_icon = ICON_PATH + poiInfo.icon_basic;
-	var rating_df = ICON_PATH + "POI-basic-dogfriendliness.png";
-	var rating_wb = ICON_PATH + "POI-basic-ratingwb.png";
-	parent.add( myUiFactory.buildSingleRowInfoBar(category_icon, categories_text, "") );
-	parent.add( myUiFactory.buildSeparator() );
-	parent.add( myUiFactory.buildSingleRowInfoBar(rating_df, "Dog-Friendliness: ", poiInfo.rating_dogfriendly+"/5") );
-	parent.add( myUiFactory.buildSeparator() );
-	parent.add( myUiFactory.buildSingleRowInfoBar(rating_wb, "Overall Rating:", poiInfo.rating_dogfriendly+"/5") );
+	var category_icon 		 = ICON_PATH + poiInfo.icon_basic;
+	var rating_dogfriendly = ICON_PATH + "poi-basic-ratingwb.png";
+	var rating_overall 		 = ICON_PATH + "poi-features-waterbowl.png";
+	$.basics.add( myUiFactory.buildSingleRowInfoBar(category_icon, categories_text, "") );
+	$.basics.add( myUiFactory.buildSeparator() );
+	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_dogfriendly, "Dog-Friendliness: ", poiInfo.rating_dogfriendly+"/5") );
+	$.basics.add( myUiFactory.buildSeparator() );
+	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_overall, "Overall Rating:", poiInfo.rating_dogfriendly+"/5") );
 }
 
 //================================================================================
@@ -290,11 +290,11 @@ function displayFeaturesHeader() {
 }
 
 //================================================================================
-//		Name:			displayOutdoorFeatures( poiDetail, parent_view)
+//		Name:			displayOutdoorFeatures( poiDetail)
 //		Purpose:	
 //================================================================================
-function displayOutdoorFeatures(poiDetail, parent) {
-	// Ti.API.debug("....[~] displayOutdoorFeatures("+ poiDetail.poi_ID +") called ");
+function displayOutdoorFeatures(poiDetail) {
+	Ti.API.debug("....[~] displayOutdoorFeatures("+ JSON.stringify(poiDetail) +") called ");
 
 	var features = { 	
 		"Enclosures"		: poiDetail.enclosures,
@@ -321,24 +321,24 @@ function displayOutdoorFeatures(poiDetail, parent) {
   for (var k in features){
     if(features[k]!="" && features[k]!="NULL") {
     	// THIS IS THE ELSE CASE BASICALLY
-    	icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
+    	icon_url = ICON_PATH + "poi-features-waterbowl.png";
 			string_1 = k+":";
 			string_2 = features[k];
 
   		// CASES  
 			if (k=="Enclosures") {
-				icon_url = ICON_PATH + "icon-poi-enclosure-mixed.png";
+				icon_url = ICON_PATH + "poi-enclosure-mixed.png";
 				string_1 = "";
 				string_2 = features[k];
 			}
 			else if (k=="Area Size") {
-				icon_url = ICON_PATH + "icon-poi-features-sizemedium.png";
+				icon_url = ICON_PATH + "poi-features-sizemedium.png";
 			}
 			else if (k=="Terrain") {
-				icon_url = ICON_PATH + "POI-feature-dirt.png";
-				if   		(poiDetail.terrain=="Sand")			 icon_url = ICON_PATH + "POI-feature-sand.png";
-				else if (poiDetail.terrain=="Grass")		 icon_url = ICON_PATH + "POI-feature-grass.png";
-				else if (poiDetail.terrain=="Woodchips") icon_url = ICON_PATH + "POI-feature-woodchips.png";
+				icon_url = ICON_PATH + "poi-features-dirt.png";
+				if   		(poiDetail.terrain=="Sand")			 icon_url = ICON_PATH + "poi-features-sand.png";
+				else if (poiDetail.terrain=="Grass")		 icon_url = ICON_PATH + "poi-features-grass.png";
+				else if (poiDetail.terrain=="Woodchips") icon_url = ICON_PATH + "poi-features-woodchips.png";
 			}
 			
 			// ADD FEATURES TO LIST
@@ -349,16 +349,16 @@ function displayOutdoorFeatures(poiDetail, parent) {
 	}
 	if(count > 0) {
 		displayFeaturesHeader();
-		parent.add( features_list );  	
+		$.features.add( features_list );  	
 	}
 }
 
 //================================================================================
-//		Name:			displayHumanFeatures( poiDetail, parent_view)
+//		Name:			displayHumanFeatures( poiDetail )
 //		Purpose:	
 //================================================================================
-function displayHumanFeatures(poiDetail, parent) {
-	// Ti.API.debug("  .... [~] displayHumanFeatures("+ JSON.stringify(poiDetail) +") called ");
+function displayHumanFeatures(poiDetail) {
+	Ti.API.debug("  .... [~] displayHumanFeatures("+ JSON.stringify(poiDetail) +") called ");
 	
 	var count = 0;
 	
@@ -372,10 +372,10 @@ function displayHumanFeatures(poiDetail, parent) {
 	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
 		
 	if (poiDetail.dogs_inside !="" && poiDetail.dogs_inside!="NULL") {
-		var icon_url = ICON_PATH + "icon-poi-features-dogsallowedinside.png";
+		var icon_url = ICON_PATH + "poi-features-dogsallowedinside.png";
 		var string_inside = "Dogs Allowed";
 		if (poiDetail.outdoor_area != "Yes") {
-			icon_url = ICON_PATH + "icon-poi-features-dogsnotallowedinside.png";
+			icon_url = ICON_PATH + "poi-features-dogsnotallowedinside.png";
 			string_inside = "Dogs Not Allowed";	
 		} 
 		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Inside: ", string_inside) );
@@ -384,18 +384,18 @@ function displayHumanFeatures(poiDetail, parent) {
 	
 	if (poiDetail.outdoor_area !="" && poiDetail.outdoor_area!="NULL") {
 		if (poiDetail.outdoor_area == "No") {
-			var icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
+			var icon_url = ICON_PATH + "poi-basic-dogfriendliness.png";
 			features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "No Outdoor Area", "") );
 		} else {
 			var string_1 = "Outdoor Area:";
 			var string_2 = "Dogs Allowed";
-			var icon_url = ICON_PATH + "icon-poi-features-dogsallowedoutside.png";
+			var icon_url = ICON_PATH + "poi-features-dogsallowedoutside.png";
 			
 			if (poiDetail.outdoor_area!="Yes") {
 				string_1 = poiDetail.outdoor_area;
 			}
 			if (poiDetail.dogs_outside != "Yes") {
-				icon_url = ICON_PATH + "icon-poi-features-dogsnotallowedoutside.png";
+				icon_url = ICON_PATH + "poi-features-dogsnotallowedoutside.png";
 				string_2 = "Dogs Not Allowed";
 			}			
 			features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, string_1, string_2) );
@@ -404,12 +404,12 @@ function displayHumanFeatures(poiDetail, parent) {
 	}
 	
 	if ( poiDetail.waterbowl!="" && poiDetail.waterbowl!="NULL" ) {
-		var icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
+		var icon_url = ICON_PATH + "poi-basic-dogfriendliness.png";
 		var wb_text_string = "Yes";
 		//features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Waterbowl:", "No") );
 
 		if (poiDetail.waterbowl != "Yes") {
-			icon_url = ICON_PATH + "POI-feature-nowaterbowl.png";	
+			icon_url = ICON_PATH + "poi-features-nowaterbowl.png";	
 			wb_text_string = "No";
 		} 
 		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Waterbowl:", wb_text_string) );
@@ -434,7 +434,7 @@ function displayHumanFeatures(poiDetail, parent) {
 	*/
 	if (count > 0) {
 		displayFeaturesHeader();
-		parent.add( features_list );  	
+		$.features.add( features_list );  	
 	}  	
 }
 
@@ -443,9 +443,9 @@ function displayHumanFeatures(poiDetail, parent) {
 //		Purpose:	
 //================================================================================
 function getPoiFeatures(data) {
-	var poiFeatures = data;
-	// Ti.API.info("  .... [~] getPoiFeatures() :: "+JSON.stringify(poiFeatures)+" ***");
-	//Ti.API.info(">>>>>>>>>>> " + data.poi_ID);
+	var status = data.status;
+	var poiFeatures = data.payload;
+	Ti.API.info("  .... [~] getPoiFeatures() :: "+JSON.stringify(poiFeatures)+" ***");
 	//----------------------------------------------------------------------------------------------------------
 	//       ESTIMATES (only if dog park)  
 	//----------------------------------------------------------------------------------------------------------
@@ -457,12 +457,16 @@ function getPoiFeatures(data) {
 		//Ti.API.info("*** getRecentEstimates() for :: "+JSON.stringify(params)+" ] ***");
 		loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates);		
 	}
-	
-	if ( poiFeatures.category>=600 && poiFeatures.category<=699 ) {
-		displayOutdoorFeatures(poiFeatures, $.features);
-	}
-	else if ( poiFeatures.category>=100 && poiFeatures.category<=199 ) {
-		displayHumanFeatures(poiFeatures, $.features);
+	//----------------------------------------------------------------------------------------------------------
+	//       FEATURES (only if dog park or human place)  
+	//----------------------------------------------------------------------------------------------------------
+	if( status == 1) {
+		if ( poiFeatures.category>=600 && poiFeatures.category<=699 ) {
+			displayOutdoorFeatures(poiFeatures);
+		}
+		else if ( poiFeatures.category>=100 && poiFeatures.category<=199 ) {
+			displayHumanFeatures(poiFeatures);
+		}
 	}
 }
 
@@ -480,34 +484,22 @@ function doEverything(poiInfo) {
 	if( args._came_from!="checkin modal" )
 		dist_label_text 	= poiInfo.dist + " miles away"
 
-
-
 	$.mini_place_name_label.text 	= poiInfo.name;
 	$.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
 	$.mini_place_second_label.text	=	poiInfo.city; 
-	/*	
-	$.place_name_label.text 			= poiInfo.name;
-	$.place_address_label.text		=	poiInfo.address;
-	$.place_city_label.text	  		=	poiInfo.city + ' ' + poiInfo.zip;
-	if ( poiInfo.banner != "" ) 
-		loadRemoteImage("bg", $.headerContainer, img_actual, img_fallback);
-	*/
 		
 	//$.miniHeaderContainer.add( myUiFactory.buildMiniHeader(poiInfo.name, poiInfo.city, poiInfo.icon_color) );
 	$.headerContainer.add( myUiFactory.buildPageHeader(poiInfo.place_ID, "poi", poiInfo.name, poiInfo.address, poiInfo.city + ' ' + poiInfo.zip, dist_label_text ) );
 	$.headerContainer.zIndex = 30;
 	$.headerContainer.top = 0;
 	
-	// buildHeaderContainer ( place_name, city, bg_color );
-	  
-	
-	
+
 	//-----------------------------------------------------------------------------------------------------------
 	//			BASIC INFO
 	//-----------------------------------------------------------------------------------------------------------
 	var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1);
 	$.basics.add(basics_header);
-	displayBasicInfo(poiInfo, $.basics);
+	displayBasicInfo(poiInfo);
 	
 	//----------------------------------------------------------------------------------------------------------
 	//		 CHECKINS

@@ -1,4 +1,5 @@
 function Session(){
+	this.funcCallCount = 0;
 	this.actionOngoing = false;
 	this.device = { 
 		screenwidth  : Ti.Platform.displayCaps.platformWidth,

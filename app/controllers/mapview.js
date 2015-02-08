@@ -72,6 +72,10 @@ function buildMapMenubar() {
         createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
         // myMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.01);
       } else {  // if no errors, and we're not running in Simulator
+      	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
+			  mySesh.geo.geo_trigger_count++;  
+			  mySesh.setGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
+				// CENTER MAP ON USER LOCATION
         myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.02);
 	    }
     });  
@@ -86,7 +90,7 @@ function buildMapMenubar() {
 	});
 	/////////////////////////////////////// ADD MARK BTN LISTENER //////////////////
 	markBtn.addEventListener('click', function() {			
-		Ti.API.debug("  .... [+] Mark button clicked on map");
+		Ti.API.debug(mySesh.funcCallCount + "  .... [+] Mark button clicked on map");
 		var necessary_args = {
 			place_ID  	: 601000001,   // TODO: DO NOT HARDCODE
 			place_type 	: 2
@@ -95,7 +99,7 @@ function buildMapMenubar() {
 	});
 	/////////////////////////////////////// ADD SNIFF LISTENER /////////////////////
 	sniffBtn.addEventListener('click', function() {		
-    Ti.API.debug(" .... [+] SNIFF button clicked on map");
+    Ti.API.debug(mySesh.funcCallCount + " .... [+] SNIFF button clicked on map");
     // WORKFLOW: 
     //	(0) get current user location
     //	(1) center map on current location, zooming further than recenter btn
@@ -124,7 +128,7 @@ function buildMapMenubar() {
 //	Purpose:	provide a centralized action for refreshing map POIs
 //===============================================================================================
 function getMapPoi() {
-	// Ti.API.debug("  .... [+] GET POI button clicked on map (anything ongoing? "+mySesh.actionOngoing+")");
+	Ti.API.debug(mySesh.funcCallCount + "  .... [+] GET POI button clicked on map (anything ongoing? "+mySesh.actionOngoing+")");
 	if ( !mySesh.actionOngoing ) {
 		Ti.Geolocation.getCurrentPosition(function(e) {
 	    if (e.error) {
@@ -176,7 +180,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 			  var place_index = getArrayIndexById( mySesh.geofencePoi, place_ID );
 				/*		 save Place ID, checkin state, and timestamp in mySesh  	*/
 				// checkin now officially complete
-				mySesh.dog.current_place_ID 	= place_ID;
+				mySesh.dog.current_place_ID 		= place_ID;
 				
 				// grab place lat
 				mySesh.dog.current_place_lat     = place_lat;
@@ -366,6 +370,7 @@ function updateGeofenceTable() {
 	}
 	/* populate placeList TableViewRows*/
 	$.placeListTable.data = placeData;
+	addPlaceListClickListeners($.placeListTable);
 }
 
 function removePlaceListClickListeners () {
@@ -440,10 +445,10 @@ function refreshPlaceListData() {
  //  Ti.API.debug(".... [~] refreshPlaceListData called ....");
   getPoisInGeofence( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon );   // will affect place list
 	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
-	setTimeout ( function(){ updateGeofenceTable(); }, 650);
+//	setTimeout ( function(){ updateGeofenceTable(); }, 650);
 	// ADD PLACE LIST CLICK EVENT LISTENER
 	// remove( PlaceListClickListeners )
-	setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 700);
+	// setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 700);
 }
 
 //=================================================================================
@@ -466,7 +471,7 @@ function refreshRAM() {
 //	Purpose:	get places in db, plus a smaller subset of nearby ones
 //=============================================================================
 function getPoisInGeofence( mapObject, user_lat, user_lon ) {
-	//Ti.API.debug("...[~] getPoisInGeofence() user[ "+user_lat+"/"+user_lon+" ]");
+	//	Ti.API.debug("...[~] getPoisInGeofence() user[ "+user_lat+"/"+user_lon+" ]");
   var params = {
 		lat       : user_lat,
 		lon       : user_lon,
@@ -504,11 +509,7 @@ function updatePoisInGeofence( data ) {
 //=================================================================================
 function refreshGeo() {
 	if(Ti.Network.online ) {
-	  var mins_elapsed = Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired;
-	  mySesh.geo.geo_trigger_count++;
-	  mySesh.geo.last_acquired = Math.round( Date.now() / (1000*60) );    
-	     
-	  //if (mins_elapsed > mySesh.geo.refresh_interval) {   // only if 2 mins have passed since last geo update
+		  //if (mins_elapsed > mySesh.geo.refresh_interval) {   // only if 2 mins have passed since last geo update
 	  // set time last acquired (minutes since start of Unix Epoch)
 	      
 	  Titanium.Geolocation.getCurrentPosition(function(e) {
@@ -517,13 +518,14 @@ function refreshGeo() {
 	  	}
 	  	else {   
 	    	// Ti.API.debug( "[[[ refreshGeo ]]] :: + + + Got location #[" + mySesh.geo.geo_trigger_count + "] "+e.coords.latitude+", "+e.coords.longitude);     	    
-				mySesh.geo.geo_trigger_success ++;
+	    	
+	    	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
+			  mySesh.geo.geo_trigger_count++;  
+			  mySesh.setGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
+
 				$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
 				$.geo_latlng.text = e.coords.latitude.toFixed(4)+"/" +e.coords.longitude.toFixed(4);
 	      //$.current_place_ID.text = "Checked in at : "+mySesh.dog.current_place_ID;
-	      /* save newly acquired coordinates */
-	    	mySesh.geo.lat = e.coords.latitude;
-	  	  mySesh.geo.lon = e.coords.longitude;
 	      // see if user is still checked in somewhere, and if so, have they left the geofence
 	      // myMap.getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
 	      refreshPlaceListData();
@@ -559,24 +561,20 @@ else if (Ti.Platform.osname == "android")
 
 // (0)	GET GEOLOCATION
 Titanium.Geolocation.getCurrentPosition(function(e){
-	// Ti.API.debug("[ [ [ [ getCurrentPosition called ] ] ] ] ");
-	
   // ERROR
   if (!e.success || e.error) {
 	  if (Titanium.Platform.model!="Simulator") {
       //Ti.API.log('............... Could not find the device location');
   	  createSimpleDialog("Can't get your location","Please check location services are enabled on your mobile device.");
+    	//Ti.API.debug( "GEO ERROR Code: "+ e.code +" [ "+JSON.stringify(e.error)+" ]");
     }
-    //Ti.API.debug( "GEO ERROR Code: "+ e.code);
-    //Ti.API.debug( 'ERROR TEXT: ' + JSON.stringify(e.error) );
-		mySesh.setGeoLatLon(33.970, -118.4201, -1);
   } 
   // SUCCESS
   else {		
-  	// time last GPS fix was acquired (minutes since start of Unix Epoch)
-	 	var last_acquired = Math.round( Date.now() / (1000*60) );		
-  	mySesh.setGeoLatLon(e.coords.latitude, e.coords.longitude, last_acquired);
-  }
+  	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
+		mySesh.geo.geo_trigger_count++;  
+		mySesh.setGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
+	}
 
   // (1)	DRAW THE MAP
   initializeMap(mySesh.geo.lat, mySesh.geo.lon);
@@ -590,16 +588,19 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   refreshPlaceListData();
   
   // HACK!
-  /*
-	var necessary_args = {
+  /* 	var necessary_args = {
 		_came_from : "checkin modal", 
 	  _place_ID  : 620000001		// pass in array index and placeID so we can hit the backend for more details
 	};
-	createWindowController( "placeoverview", necessary_args, 'slide_left' );	
-	*/
+	createWindowController( "placeoverview", necessary_args, 'slide_left' );	 */
 });
-
 	
+/*
+$.mapview.addEventListener('focus',function(e) {
+	Ti.API.info(" Mapview in focus, refreshing Place List. Current Place ID# ["+mySesh.dog.current_place_ID+"]");
+	refreshPlaceListData();
+}); */
+
 //====================================================================================
 // 		Geolocation Change Event Listener
 //		Purpose:  
@@ -607,5 +608,5 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 //		2) 	Refresh nearby places table
 //		2)  Save latest user location into mySesh.geo.lat, mySesh.geo.lon
 //====================================================================================
-setInterval(refreshGeo, 60000);			// every X milliseconds
+setInterval(refreshGeo, 30000);			// every X milliseconds
 //setInterval(refreshRAM, 2000);			// show RAM usage every 2 seconds

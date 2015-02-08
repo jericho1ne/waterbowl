@@ -401,16 +401,17 @@ UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
   // iphone 6			~? pixels available for text label / 40 chars per line = 13 px / char
   // iphone 6+		~? pixels available for text label / 40 chars per line = 13 px / char
   
- 	// calculate thumbnail and text content view widths
+  // calculate thumbnail and text content view widths
   var col_1_w = Math.floor(this._icon_medium+this._pad_left);
   var col_2_w = Math.floor(this._device.screenwidth - col_1_w);
   
   // if text is two lines or less
-  var div_height = Math.floor(this._icon_medium + this._pad_top);
- 	// if text is longer than 2 lines, perform dynamic div height calculation;  assumes each character is ~13px wide
- 	if (text_content.length > 78) {
- 		div_height = Math.floor( (text_content.length / (col_2_w / 13) ) * 10)+this._pad_top;
-	}
+  var min_div_height  = this._icon_small + (2*this._pad_top);
+ 	var div_height 			= ( ( Math.round( text_content.length / (col_2_w / 12) ) ) * 10.5 )  + (2*this._pad_top);
+	
+	if (div_height < min_div_height)	
+		div_height = min_div_height;
+		
 	var view_container = this.buildViewContainer ( "", "horizontal", "100%", div_height, 0 ); 
   
   var column_1 = this.buildViewContainer ( "column_1", "", 					 col_1_w, this._icon_medium+this._pad_top, 0 ); 
