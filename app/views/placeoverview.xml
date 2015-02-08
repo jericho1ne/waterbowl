@@ -2,37 +2,14 @@
 	<Window id="placeoverview" class="absolute">	
 		<View id="content" class="window_container">
 		
-			<View id="miniHeaderContainer" width="100%" height="45" top="-2" class="layout_vert" backgroundColor="#777477" zIndex="97" opacity="0" >	
+		  <View id="miniHeaderContainer" width="100%" height="45" class="layout_vert" backgroundColor="#777477" zIndex="100" opacity="0" >	
 				<Label id="mini_place_name_label" text="" class="feed_label_center_lg white text_large_bold" top="2"/>
 				<Label id="mini_place_second_label" text="" class="feed_label_center white text_medium_medium" top="-8" />
 			</View>
-			
-			
-			<ScrollView id="scrollView" class="fill_height" top="-50" opacity="1">
-				//------------------------------------------------------------------------------------------------------
-				//  This scrollView contains the following top level elements, all dynamically filled in by controller
-				//	  (0)		headerContainer / miniHeaderContainer
-				//	  (1)		activityContainer
-				//					|
-				//					+-- checkinContainer
-				//					|
-				//					+-- estimateContainer
-				//		(2)		marksContainer
-				//		(3)		poiDetailContainer
-				//------------------------------------------------------------------------------------------------------
-				<View id="headerContainer" class="layout_vert">
-					<View id="headerTop" class="layout_horz">
-						<View class="width_50"/>
-						<View class="fill_width"/>
-					</View>
-					<View id="headerBottom" class="layout_vert">
-						<Label id="place_name_label" 		text="" class="white feed_label_left_lg text_large_bold"/>
-						<Label id="place_address_label" text="" class="white feed_label_left text_medium_medium" top="-6" />
-						<Label id="place_city_label" 		text="" class="white feed_label_left text_medium_medium" />
-						<Label id="place_dist_label" 		text="" class="white feed_label_left text_medium_medium" />			
-					</View>
-				</View>
-				
+		  
+		  <ScrollView id="scrollView" class="fill_width fill_height" top="-45">		
+					
+				<View id="headerContainer" />
 				<View id="basics" class="layout_vert"/>
         <View id="activity" class="layout_vert"/>
         <View id="remarks" class="layout_vert"/>

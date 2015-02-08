@@ -29,9 +29,9 @@ function displayAllEstimates(data) {
   for (var i=0, len=data.length; i<len; i++) {			// optimize loop to only calculate array size once
   	var photo_url = PROFILE_PATH + 'dog-'+data[i].dog_ID+'-iconmed.jpg';	
   	// Create latest estimate: dog's photo, name, timestamp, and most recent park estimate
-  	var dogs_here = data[i].amount + " dogs in "+data[i].enclosure_type+" dog area";
+  	var dogs_here = "Saw " + data[i].amount + " dogs in "+data[i].enclosure_type+" Dog area";
   	if(data[i].amount == 1) 
-	  	dogs_here	 = data[i].amount + " dog in "+data[i].enclosure_type+" dog area";
+	  	dogs_here	 = "Saw " + data[i].amount + " dog in "+data[i].enclosure_type+" Dog area";
 	  	
   	var est_view = myUiFactory.buildFeedRow(data[i].dog_ID, myUiFactory._icon_medium, photo_url, data[i].dog_name, data[i].time_elapsed, dogs_here);
   	estimate_list.add(est_view);

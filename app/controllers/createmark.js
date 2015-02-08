@@ -110,9 +110,9 @@ $.mapContainer.add( markMapView );
 $.markForm.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
 
 var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
-var title_label = myUiFactory.buildLabel( "Mark Title", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );	
+var title_label = myUiFactory.buildLabel( "Title", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );	
 var title_input = myUiFactory.buildTextField("mark_title", form_width, "Add a memorable title", false);
-var textarea_label = myUiFactory.buildLabel( "Mark Text", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );
+var textarea_label = myUiFactory.buildLabel( "Text", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );
 // used later to ensure the user has actually filled in the Mark textarea
 var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
 

@@ -29,6 +29,7 @@ function getMarkOverview( original_mark ) {
 //================================================================================
 function displayRemarks(data) {
 	// Ti.API.debug( "*displayRemarks ["+JSON.stringify(data)+"]" );
+	removeAllChildren($.remarks);	
   Ti.API.debug( ">>>>>>> displayRemarks :: " + JSON.stringify(data) );
 	if( data.length>0) {	
 		var last_one = data.length-1;
@@ -39,18 +40,18 @@ function displayRemarks(data) {
 		});
 		
 		// (2)  Add original mark section header + first mark
-		$.scrollView.add( myUiFactory.buildSectionHeader("mark_header", "ORIGINAL MARK", 1) );
+		$.remarks.add( myUiFactory.buildSectionHeader("mark_header", "ORIGINAL MARK", 1) );
 		var photo = PROFILE_PATH + 'dog-'+data[last_one].marking_dog_ID+'-iconmed.jpg';		
  		var original_mark = myUiFactory.buildFeedRow( data[last_one].marking_dog_ID, myUiFactory._icon_large, photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text );		
-		$.scrollView.add(original_mark);
+		$.remarks.add(original_mark);
 		
 		// (3)  Add the remarks section header to the parent view
 		var overview_header = myUiFactory.buildSectionHeader("overview_header", "REMARKS", 1);
-		$.scrollView.add(overview_header);
+		$.remarks.add(overview_header);
 
     // (4)  Add remark button and link it to addpost.js
 		var addRemarkBtn = myUiFactory.buildButton( "addRemarkBtn", "add remark", "large" );
-		$.scrollView.add(addRemarkBtn);
+		$.remarks.add(addRemarkBtn);
 		var necessary_args = {   // 
 			_place_ID    : data[last_one].mark_ID,
 			_place_name	 : args.mark_name,
@@ -67,16 +68,16 @@ function displayRemarks(data) {
 			var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
 			var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", myUiFactory._icon_small + (2* myUiFactory._pad_top), myUiFactory._text_medium, "#000000", "");	
 			no_marks_container.add(no_marks_label);
-			$.scrollView.add(no_marks_container);
+			$.remarks.add(no_marks_container);
 		}
 		// (6) if more than just the parent mark, display all child remarks next
 	  else {
 			for (var i=0, len=data.length; i<(len-1); i++) {
 	      var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
 			  var mark = myUiFactory.buildFeedRow ( "mark_"+i, myUiFactory._icon_medium, photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text );
-			  $.scrollView.add(mark);
+			  $.remarks.add(mark);
 			  if ( i < (len-2) )
-			    $.scrollView.add( myUiFactory.buildSeparator() );
+			    $.remarks.add( myUiFactory.buildSeparator() );
 	    }
  		}
   }
@@ -94,9 +95,14 @@ mark_title	 = args.mark_name;
 mark_text		 = args.mark_city;
 mark_subtext = args.dist+" miles away";
 
-$.scrollView.add( myUiFactory.buildPageHeader(args.ID, "mark", mark_title, mark_text, mark_subtext) );
+$.header.add( myUiFactory.buildPageHeader(args.ID, "mark", mark_title, mark_text, mark_subtext, "") );
 // (1) 	getMarkOverview gets the mark info from mark_common
 // (2) 	then it calls getRemarks, which populates the table below original mark
-getMarkOverview(args);
+
+$.markoverview.addEventListener('focus',function(e){
+	Ti.API.debug ("  .... [~] Place overview in focus, refreshing marks now.");
+	getMarkOverview(args);
+});
+
 
 	

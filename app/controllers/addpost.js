@@ -24,7 +24,7 @@ function saveRemark(place_ID, place_type, text_content) {
 			if (json != "") {
 				var response = JSON.parse(json);
 				if (response.status == 1) { 		// success
-					createSimpleDialog('Success','Your mark was saved!');
+					// createSimpleDialog('Success','Your mark was saved!');
 					closeWindowController();		// close current window and bounce user to Place Overview
 				} else {
 					enableAddMarkBtn();

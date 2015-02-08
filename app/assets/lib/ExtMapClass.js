@@ -41,7 +41,7 @@ ExtMap.prototype.initializeMap = function(lat, lon) {
 //=================================================================================
 ExtMap.prototype.centerMapOnLocation = function(lat, lon, delta) {
 	// set bounding box, move the map View/Location
-	Ti.API.debug(".... [~] centerMapOnLocation ["+ lat +" / "+ lon +"]");
+	// Ti.API.debug(".... [~] centerMapOnLocation ["+ lat +" / "+ lon +"]");
 	Alloy.Globals.wbMap.setLocation ({
 		latitude 			: lat,
 		longitude 		: lon,
@@ -125,8 +125,8 @@ ExtMap.prototype.refreshMarkAnnotations = function(data) {
 //	Purpose:	grab the top X closest places to user position OR center of map view
 //=====================================================================================================
 ExtMap.prototype.getNearbyPoi = function( user_lat, user_lon, view_lat, view_lon ) {
-	Ti.API.info("...[~] getNearbyPoi() [ "+user_lat+"/"+user_lon+"  ], view [ "+view_lat+"/"+view_lon+" ]");
-	 var params = {
+	// Ti.API.debug(" .... [~] getNearbyPoi() [ "+user_lat+"/"+user_lon+"  ], view [ "+view_lat+"/"+view_lon+" ]");
+	var params = {
 		lat       : user_lat,
 		lon       : user_lon, 
 		view_lat  : view_lat,
@@ -161,6 +161,7 @@ ExtMap.prototype.createPoiAnnotation = function( poi ) {
  	anno_button.addEventListener('click', function(e){
  		Ti.API.debug ( ".... [+] Clicked ANNOTATION >> " + e.source.place_ID );	
 		var necessary_args = {
+			_came_from : "map marker",
 			_place_ID : e.source.place_ID		// pass in array index and placeID so we can hit the backend for more details
 		};
 		createWindowController( "placeoverview", necessary_args, 'slide_left' );
@@ -216,7 +217,7 @@ ExtMap.prototype.refreshPoiAnnotations = function(data) {
 	Alloy.Globals.wbMap.removeAllAnnotations();
 	var poiAnnoArray = [];
 	mySesh.allPlaces = data;
-	Ti.API.debug( "ExtMap.prototype.refreshPoiAnnotations called :: " );
+	// Ti.API.debug( "ExtMap.prototype.refreshPoiAnnotations called :: " );
 	/////////////////////// CREATE ANNOTATION FOR EACH POI IN ARRAY ///////// 
 	for (var i=0; i<mySesh.allPlaces.length; i++) { 			
 		poiAnnoArray.push( this.createPoiAnnotation(mySesh.allPlaces[i]) );		  
@@ -231,3 +232,4 @@ ExtMap.prototype.refreshPoiAnnotations = function(data) {
 
 // ***********  D O N O T F O R G E T T O D O T H E D A M N T H I N G **************
 exports.ExtMap = ExtMap;
+

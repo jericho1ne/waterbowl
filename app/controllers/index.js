@@ -32,7 +32,7 @@ function wbLogin(email, password) {
 		// SUCCESS:  On data load
 		onload: function(e) {
 			var response = JSON.parse(this.responseText);	
-			Ti.API.debug(this.responseText);
+			// Ti.API.debug(this.responseText);
 			// TODO:  should probably put this into a separate function
 			if (response.status == 1) {
 				// save credentials locally in mySesh global arrays
@@ -86,7 +86,7 @@ function wbLogin(email, password) {
 		pass  : password
 	};
 	loginRequest.send(params);
-	Ti.API.info ( "SENDING >> "+JSON.stringify(params) );
+	Ti.API.debug ( "SENDING >> "+JSON.stringify(params) );
 }
 
 //================================================================================
@@ -160,8 +160,8 @@ if ( saved_user!=null && saved_pwd!=null ) {
 	$.content.add(botView);
 
 	// Check if the device is running iOS 8 or later, before registering for local notifications
-	if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
-	  /*
+	/*if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
+	  
 	  TODO:  turn this on if we use push notifications
 	  Ti.App.iOS.registerUserNotificationSettings({
 	    types: [
@@ -170,21 +170,21 @@ if ( saved_user!=null && saved_pwd!=null ) {
 	          Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE
 	      ]
 	  }); 
-	  */
-	  Ti.API.info( " > > > IOS 8 or greater *" );
+	 
+	 // Ti.API.debug( " > > > IOS 8 or greater *" );
 	}
 	else {
-		Ti.API.info( " > > > IOS 7 or older *" );
-	}
+		//Ti.API.debug( " > > > IOS 7 or older *" );
+	} */
 	
-	Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);
+	//Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);
 	
 	// if credentials are already saved in mySesh
 	if( Ti.App.Properties.getString('user')!="" ) {
 		email.value = Ti.App.Properties.getString('user');
 	}
 	if( Ti.App.Properties.getString('pass')!="" ) {
-			password.value = Ti.App.Properties.getString('pass');
+		password.value = Ti.App.Properties.getString('pass');
 	}	
 }
 

@@ -90,7 +90,7 @@ function Session(){
 //		Name:				setGeoLatLon
 //================================================================================
 Session.prototype.setGeoLatLon = function (lat, lon, how_long_ago){
-	Ti.API.debug(".... [x] setGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
+	// Ti.API.debug("  .... [~] Session.prototypesetGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
 	this.geo.lat = lat;
 	this.geo.lon = lon;
 	this.geo.last_acquired = how_long_ago;
@@ -101,8 +101,7 @@ Session.prototype.setGeoLatLon = function (lat, lon, how_long_ago){
 Session.prototype.setGeoViewport = function (region_lat, region_lon){
 	this.geo.view_lat = region_lat;
 	this.geo.view_lon = region_lon;
-	Ti.API.log( ' ***** regionChanged (setGeoViewport) ::'+this.geo.view_lat+"/"+this.geo.view_lon+"******");
-
+	// Ti.API.debug( '  .... [~] Session.prototype.regionChanged (setGeoViewport) ::'+this.geo.view_lat+"/"+this.geo.view_lon+"******");
 }
 //================================================================================
 //		Name:				getUrl

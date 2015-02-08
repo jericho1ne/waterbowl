@@ -10,6 +10,13 @@ function isset( value ) {
 		return null;
 }
 
+function removeAllChildren(obj) {
+    var c = obj.children.slice(0);
+    for (var i = 0; i < c.length; ++i) {
+        obj.remove(c[i]);
+    }
+}
+
 //=====================================================
 //	Name:    clearTextAreaContents ( textarea_object )
 //	Desc:	   clear hint text on focus / click inside
@@ -48,7 +55,7 @@ function remoteFileExists( url ) {
 //	Desc:	   if it exists, return actual image, otherwise placeholder
 //==========================================================================
 function loadRemoteImage( type, alloyObject, img_actual, img_placeholder ) {
-	Ti.API.debug( "<< loadRemoteImage >>> "+ img_actual + " | " +remoteFileExists(img_actual));
+	Ti.API.debug( "    << loadRemoteImage >\>> "+ img_actual + " | " +remoteFileExists(img_actual));
 	
 	if( remoteFileExists(img_actual) ) {
 		var c = Titanium.Network.createHTTPClient();
@@ -56,11 +63,11 @@ function loadRemoteImage( type, alloyObject, img_actual, img_placeholder ) {
 		c.onload = function() {
 			if(c.status == 200) {
 				(type=="bg") ? alloyObject.backgroundImage = this.responseData : alloyObject.image = this.responseData;
-		  	Ti.API.debug( "SUCCESS :: Attaching [ "+img_actual+" ] to headerContainer");
+		  	Ti.API.debug( "     SUCCESS :: Attached [ "+img_actual+" ] ");
 		  } else {
 		  	(type=="bg") ? alloyObject.backgroundImage = this.img_placeholder : alloyObject.image = img_placeholder;
 		  	// alloyObject.backgroundImage = img_placeholder;
-		  	Ti.API.debug( "ERROR :: Could not load remote image attaching [ " +img_placeholder +' ] instead' );
+		  	Ti.API.debug( "     ERROR :: Could not load remote image attaching [ " +img_placeholder +' ] instead' );
 		  }
 		};
 		c.open('GET', img_actual);
@@ -108,7 +115,7 @@ function loadJson ( params, url, callbackFunction ) {
 		var jsonResponse = this.responseText;
 		if (jsonResponse != "" ) {
 			var data = JSON.parse( jsonResponse );
-			// Ti.API.debug("....[~] UiFactory.loadJson ["+JSON.stringify(data)+"]");
+			// Ti.API.debug("....[~] Alloy.js ["+JSON.stringify(data)+"]");
 			if (callbackFunction!="")	{		
 				callbackFunction(data);
 			}	else {
@@ -127,10 +134,9 @@ function loadJson ( params, url, callbackFunction ) {
 //	Purpose:	to be the bestest window manager ever
 //===========================================================================================
 function createWindowController ( win_name, args, animation ) {
-	Ti.API.debug ( "//===================================== [ "+win_name+" ] ===== win # " +
+	Ti.API.info ( "//===================================== [ "+win_name+" ] ===== win # " +
 		 ( mySesh.windowStack.length+1 ) +" =========//" );
-	Ti.API.debug(":::::::::: createWindowController  " + 
-							 "::::: ["+JSON.stringify(args) +"] ::::::::::");
+	Ti.API.debug("  :::: createWindowController :::: args ["+JSON.stringify(args) +"] ::::");
 
 	var winObject = Alloy.createController(win_name, args).getView();
 	addToAppWindowStack( winObject, win_name );
@@ -172,9 +178,7 @@ function createWindowController ( win_name, args, animation ) {
 	else
 	  winObject.open(animStyle);
 	// status checks
-	Ti.API.info( ".... [~] createWindowController :: User / Dog [ "+  mySesh.user.name +"/"+ mySesh.dog.name +" ]" );
-	if (mySesh.dog.current_place_ID!=0)	
-		Ti.API.info( " >>> Checkin Place ID : "+ mySesh.dog.current_place_ID );
+	// if (mySesh.dog.current_place_ID!=0)	Ti.API.info( "  >>> checked in @ place ID #"+ mySesh.dog.current_place_ID+" <<< ");
 }
 
 
@@ -342,7 +346,6 @@ function addMenubar( parent_object ) {
 	}	else {
 		var last_window_index = mySesh.windowStack.length - 1;
 		var help_img = HELP_PATH + "help-" + mySesh.windowStack[last_window_index].id +".jpg";
-		//Ti.API.info( ".... [+] Help Button clicked for [ "+mySesh.windowStack[last_window_index].id+" ]");
 		if(mySesh.windowStack[last_window_index].id!="help" && Ti.Filesystem.getFile('.', help_img).exists() ) {
 			menuRight2.add(helpBtn);
 			helpBtn.addEventListener('click', showHelp);
@@ -375,7 +378,7 @@ function uploadFromCamera() {
 			}
 		},
 		cancel:function() {
-			Ti.API.info( "Camera snapshot canceled by user");
+			Ti.API.debug( "Camera snapshot canceled by user");
 		},
 		error:function(error) {
 			// called when there's an error
@@ -400,7 +403,7 @@ function uploadFromGallery( photoPlaceholder ) {
 	if (Titanium.Network.online) {
 		Titanium.Media.openPhotoGallery({
 			success:function(event) {			// success callback fired after media retrieved from gallery 
-				Ti.API.info ( event.media );		
+				Ti.API.debug ( event.media );		
 				var fileInfoArray = uploadToAWS( event.media, photoPlaceholder );
 				//Ti.API.info( fileInfoArray["filename"] + " // " + fileInfoArray["filehandle"] );
 				return fileInfoArray;
@@ -427,7 +430,7 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 	/* Returns a File object representing the file identified by the path arguments  */
 	var filehandle 	= Ti.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, filename);
 	filehandle.write( event_media );
-	Ti.API.info ( " >> uploadToAWS: " + filename + " || "  + filehandle);
+	Ti.API.debug ( " >> uploadToAWS: " + filename + " || "  + filehandle);
 	Alloy.Globals.AWS.S3.putObject( {
       'BucketName' : 'wb-profile',
      	'ObjectName' : filename, 
@@ -435,11 +438,11 @@ function uploadToAWS( event_media, photoPlaceholder ) {
       'Expires' : 30000
 	 	 	}, 
 	 	 	function(data, response) {		// success
-      	Ti.API.info(" >>> uploadToAWS success  >> " + JSON.stringify(data) );
+      	Ti.API.debug(" >>> uploadToAWS success  >> " + JSON.stringify(data) );
       	
  	 	}, function(message, error) {		// 
-      Ti.API.info( " >>> uploadToAWS message  >> " + message );
-      Ti.API.info( " >>> uploadToAWS error >> " + JSON.stringify(error));
+      Ti.API.debug( " >>> uploadToAWS message  >> " + message );
+      Ti.API.debug( " >>> uploadToAWS error >> " + JSON.stringify(error));
  	 	}
  	);
  	return { "filename": filename, "filehandle": filehandle };
@@ -453,7 +456,7 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 function addToAppWindowStack( winObject, win_name )  {
 	mySesh.windowStack.push( winObject );
 	Ti.App.Properties.current_window = win_name;
-	//Ti.API.info ( "windowStack:"+ JSON.stringify( mySesh.windowStack ) + " || array size: " + ( mySesh.windowStack.length ) );
+	//Ti.API.debug ( "windowStack:"+ JSON.stringify( mySesh.windowStack ) + " || array size: " + ( mySesh.windowStack.length ) );
 }
 
 //=================================================================================
@@ -462,7 +465,7 @@ function addToAppWindowStack( winObject, win_name )  {
 //=================================================================================
 function closeWindowController() {
 	var currentWindow = mySesh.windowStack.pop();
-	Ti.API.info( "[x] closing window ["+ Ti.App.Properties.current_window +"]");
+	Ti.API.info( "  [x] closing window ["+ Ti.App.Properties.current_window +"]");
 	// default close window animation is SLIDE RIGHT
 	currentWindow.close( { 
 		opacity: 0.1, duration: 300, left: 800,                                                   
@@ -477,7 +480,7 @@ function closeWindowController() {
 //=============================================================
 function showHelp() {
 	var last_window_index = mySesh.windowStack.length - 1;
-	Ti.API.info( ".... [+] Help Button clicked for [ "+mySesh.windowStack[last_window_index].id+" ]");
+	//Ti.API.debug( ".... [+] Help Button clicked for [ "+mySesh.windowStack[last_window_index].id+" ]");
 	var args = { current_window : mySesh.windowStack[last_window_index].id };
 	createWindowController('help', args, 'slide_left');
 }
@@ -487,7 +490,7 @@ function showHelp() {
 // 	Purpose:	generic settings for user / app
 //======================================================================
 function showSettings() {
-	Ti.API.info( "[+] settings button clicked");
+	//Ti.API.debug( "[+] settings button clicked");
 	createWindowController('settings','','slide_left');
 }
 
@@ -496,7 +499,7 @@ function showSettings() {
 // 	Purpose:	dog profile view/edit window
 //=================================================================================
 function showProfile(ID) {
-	Ti.API.info( "[+] Profile button clicked");
+	//Ti.API.debug( "[+] Profile button clicked");
 	var args = { dog_ID : ID };
 	createWindowController('profile', args, 'slide_left');
 }
@@ -534,7 +537,7 @@ function initializeMap(lat, lon) {
 	Alloy.Globals.wbMap.addEventListener('regionChanged',function(e) {
 		mySesh.setGeoViewport(e.source.region.latitude, e.source.region.longitude);
 	});
-	Ti.API.log(".... [~] Map object built ");
+	// Ti.API.log(".... [~] Map object built ");
 }
 
 //============================================================================================
@@ -613,7 +616,7 @@ Alloy.Globals.placeAnnotations = [];
 Ti.Geolocation.distanceFilter = 20;			// 10m=33 ft, 20m=65ft, 30m=100 ft
 Ti.Geolocation.accuracy 			= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_BEST doesn't work on iOS
 Ti.Geolocation.purpose 				= "Receive User Location";
-Ti.API.info( "Running on an [" + Ti.Platform.osname + "] device");
+// Ti.API.debug( "Running on an [" + Ti.Platform.osname + "] device");
 
 // TODO: is this still used by mapview.js??
 

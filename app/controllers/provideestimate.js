@@ -111,7 +111,7 @@ function updateEstimates (place_ID, value_1, value_2) {
 //
 //-----------------------------------------------------------------------
 var args = arguments[0] || {};
-Ti.API.debug( " >>> Provide Estimate (@top) >>> "+JSON.stringify(args));
+Ti.API.debug( " >>> Provide Estimate >>> "+JSON.stringify(args));
 	
 var park_name       = args._poiInfo.name;
 var enclosure_count = args._poiInfo.enclosure_count;

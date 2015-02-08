@@ -8,11 +8,11 @@
 //		Last update Jan 12 2014
 //
 //================================================================================
-//		Name:			getRemarks( params, callbackFunction )
+//		Name:			getRemarks( params )
 //		Purpose:		( 1, args._place_ID, mySesh.dog.dog_ID, displayRemarks);
 //================================================================================
-function getRemarks( params, callbackFunction ) {
-	loadJson(params, "http://waterbowl.net/mobile/get-place-posts.php", callbackFunction);
+function getRemarks( params ) {
+	loadJson(params, "http://waterbowl.net/mobile/get-place-posts.php", displayRemarks);
 }
 
 //================================================================================
@@ -20,7 +20,25 @@ function getRemarks( params, callbackFunction ) {
 //		Purpose:	
 //================================================================================
 function displayRemarks(data) {
-  if( data.length>0) {
+	removeAllChildren($.remarks);	
+	
+	var marks_header = myUiFactory.buildSectionHeader("marks", "REMARKS", 1);
+	$.remarks.add(marks_header); 
+	var markBtn = myUiFactory.buildButton( "markBtn", "add remark", "large" );
+	$.remarks.add(markBtn);
+	
+	var necessary_args = {   
+		_place_ID    		: args._place_ID,
+		_place_name	 		: poiInfo.name,
+		_place_city	 		: poiInfo.city,
+		_place_bgcolor	: poiInfo.icon_color,
+		_place_type  		: 1
+	};
+	markBtn.addEventListener('click', function(e) {
+		createWindowController( "addpost", necessary_args, "slide_left" );
+	});
+	
+	if( data.length>0) {
   	// (1)	Need to sort POIs based on proximity
 		data.sort(function(a, b) {		// sort by proximity (closest first)
 			return (b.ID - a.ID);
@@ -69,17 +87,17 @@ function displayRecentEstimates(data, place_ID) {
 	  	if (data.payload[i].size=="Large" || data.payload[i].size=="Small") {
 	  		area_type = data.payload[i].size+ " Dog";
 	    }
-	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", "");
+	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", 3);
 		  $.activity.add(dog_size_section_header);
 		  
 		  // var photo_url = mySesh.AWS.url_base+ '/' +mySesh.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  if(data.payload[i].amount==-1) {
 		  	var activity_icon = ICON_PATH + "POI-activity-dogscurrentlyhere.png";
-		  	var latest_estimate = myUiFactory.buildSingleRowInfoBar( activity_icon, "No recent estimate", "");
+		  	var latest_estimate = myUiFactory.buildSingleRowInfoBar( activity_icon, "No recent information", "");
 		  }
 		  else {
-		  	
 		  	var photo_url = PROFILE_PATH + 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
+		  	Ti.API.info( ">>>>>>> PHOTO URL >>>>> "+photo_url);
 		  	var latest_estimate = myUiFactory.buildTableRowHeader(data.payload[i].dog_ID, photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
 		  }
 		  $.activity.add(latest_estimate);
@@ -92,6 +110,7 @@ function displayRecentEstimates(data, place_ID) {
 		nothing_here_container.add(nothing_here);
 		$.activity.add(nothing_here_container);
 	}
+	Ti.API.info( ".... [+] >>>>>>> addEstimatesButton :: " + JSON.stringify(data) );
 	addEstimatesButton(data);
 }
 
@@ -100,7 +119,7 @@ function displayRecentEstimates(data, place_ID) {
 //		Purpose:	LIKE THE TITLE SEZ.  I'M DOING STUFF HERE.
 //================================================================================
 function addEstimatesButton(data) {
-	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "update estimate >"); 
+	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "report estimate >"); 
 	estimate_btn.addEventListener('click', function(){
     Ti.API.info( "...[+] Estimate Update button clicked :: " + JSON.stringify(data) );
     var necessary_args = {
@@ -164,7 +183,7 @@ function displayPlaceCheckins(data, parentObject) {
   
  	/* got stuff to show!  */
   if( data.checkins.length > 0) {
-  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( ICON_PATH + "POI-activity-dogscurrentlyhere.png", "Currently here",  data.checkins.length );;
+  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( ICON_PATH + "POI-activity-dogscurrentlyhere.png", "Members Here Now: ",  data.checkins.length );;
     parentObject.add(how_many_bar);
    
 	 	if( data.checkins.length > 4) {
@@ -206,10 +225,9 @@ function displayPlaceCheckins(data, parentObject) {
   /*  got nathin' */
   else {
   	parentObject.height = myUiFactory._icon_small + (2*myUiFactory._pad_top);
-    var how_many_bar = myUiFactory.buildSingleRowInfoBar( "", "Nobody currently here", "" );;
+    var how_many_bar = myUiFactory.buildSingleRowInfoBar( "", "No members currently here", "" );;
     parentObject.add(how_many_bar);  
   }
-    
 }
 
 //=================================================================================
@@ -237,84 +255,175 @@ function hideMiniHeader () {
 //		Purpose:	
 //================================================================================
 function displayBasicInfo(poiInfo, parent) {
-	Ti.API.debug("....[~] displayBasicInfo("+poiInfo.place_ID+") called ");
+	// Ti.API.debug("....[~] displayBasicInfo("+JSON.stringify(poiInfo)+") called ");
+	var categories = [ 	poiInfo.category_type_1,
+											poiInfo.category_type_2,
+											poiInfo.category_type_3	 ];
+											
+	if ( poiInfo.category>=100 && poiInfo.category<=199 ) {
+		categories.push(poiInfo.price_range);
+	}
+	var categories_text = "";
+	for (var i=0, len=categories.length; i<len; i++) {
+		if(categories[i]!="" && categories[i]!="NULL") 
+			categories_text += categories[i]+" / ";
+	}
+	categories_text = categories_text.substring(0, categories_text.length - 2);		// delete last space and comma
 	
 	var category_icon = ICON_PATH + poiInfo.icon_basic;
 	var rating_df = ICON_PATH + "POI-basic-dogfriendliness.png";
 	var rating_wb = ICON_PATH + "POI-basic-ratingwb.png";
-	parent.add(  myUiFactory.buildSingleRowInfoBar(category_icon, poiInfo.type, "") );
+	parent.add( myUiFactory.buildSingleRowInfoBar(category_icon, categories_text, "") );
 	parent.add( myUiFactory.buildSeparator() );
-	parent.add(  myUiFactory.buildSingleRowInfoBar(rating_df, "Dog friendliness", poiInfo.rating_dogfriendly+"/5") );
+	parent.add( myUiFactory.buildSingleRowInfoBar(rating_df, "Dog-Friendliness: ", poiInfo.rating_dogfriendly+"/5") );
 	parent.add( myUiFactory.buildSeparator() );
-	parent.add(  myUiFactory.buildSingleRowInfoBar(rating_wb, "Rating", poiInfo.rating_dogfriendly+"/5") );
+	parent.add( myUiFactory.buildSingleRowInfoBar(rating_wb, "Overall Rating:", poiInfo.rating_dogfriendly+"/5") );
 }
 
 //================================================================================
-//		Name:			displayOutdoorFeatures( poiInfo, parent_view)
+//		Name:			displayFeaturesHeader()
+//		Purpose:	only show header if there is at least one features to list
+//================================================================================
+function displayFeaturesHeader() {
+	var features_header = myUiFactory.buildSectionHeader("features_header", "FEATURES", 1);
+	$.features.add(features_header);
+}
+
+//================================================================================
+//		Name:			displayOutdoorFeatures( poiDetail, parent_view)
 //		Purpose:	
 //================================================================================
-function displayOutdoorFeatures(poiInfo, parent) {
-	Ti.API.debug("....[~] displayOutdoorFeatures("+poiInfo.place_ID+") called ");
+function displayOutdoorFeatures(poiDetail, parent) {
+	// Ti.API.debug("....[~] displayOutdoorFeatures("+ poiDetail.poi_ID +") called ");
 
 	var features = { 	
-		"Enclosures"		: poiInfo.enclosures,
-		"Size" 					: poiInfo.size, 
-		"Terrain" 			: poiInfo.terrain,
-		"Grade"  				: poiInfo.grade,
-		"Offleash"			: poiInfo.offleash,
-		"Fenced" 				: poiInfo.fenced,
-		"Water"					: poiInfo.water,
-		"Waste Disposal": poiInfo.waste,
-		"Shade"					: poiInfo.shade,	
-		"Benches"				: poiInfo.benches,
-		"Managed by"		: poiInfo.managing_org
+		"Enclosures"		: poiDetail.enclosures,
+		"Area Size" 		: poiDetail.size, 
+		"Terrain" 			: poiDetail.terrain,
+		"Grade"  				: poiDetail.grade,
+		"Off-Leash"			: poiDetail.offleash,
+		"Fenced" 				: poiDetail.fenced,
+		"Water"					: poiDetail.water,
+		"Waste Disposal": poiDetail.waste,
+		"Shade"					: poiDetail.shade,	
+		"Seating"				: poiDetail.benches,
+		"Managed By"		: poiDetail.managing_org
 	};
 	
 	//Ti.API.debug("....[~] displayOutdoorFeatures :: " + JSON.stringify(features) );
 	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
-	var icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
+	var icon_url = ""; 
 	
+	var string_1 = "";
+	var string_2 = "";
 	var count = 0;
 	var length = features.length;
   for (var k in features){
     if(features[k]!="" && features[k]!="NULL") {
-  		// call buildSingleRowInfoBar w/ ( image_url, name, value ) 
-			if (k=="Enclosures")
-				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, "", features[k]) );
-			else
-				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, k+":", features[k]) );
-			//if ( count < (length-1) )
+    	// THIS IS THE ELSE CASE BASICALLY
+    	icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
+			string_1 = k+":";
+			string_2 = features[k];
+
+  		// CASES  
+			if (k=="Enclosures") {
+				icon_url = ICON_PATH + "icon-poi-enclosure-mixed.png";
+				string_1 = "";
+				string_2 = features[k];
+			}
+			else if (k=="Area Size") {
+				icon_url = ICON_PATH + "icon-poi-features-sizemedium.png";
+			}
+			else if (k=="Terrain") {
+				icon_url = ICON_PATH + "POI-feature-dirt.png";
+				if   		(poiDetail.terrain=="Sand")			 icon_url = ICON_PATH + "POI-feature-sand.png";
+				else if (poiDetail.terrain=="Grass")		 icon_url = ICON_PATH + "POI-feature-grass.png";
+				else if (poiDetail.terrain=="Woodchips") icon_url = ICON_PATH + "POI-feature-woodchips.png";
+			}
+			
+			// ADD FEATURES TO LIST
+			features_list.add( myUiFactory.buildSingleRowInfoBar(icon_url, string_1, string_2) );
 			features_list.add( myUiFactory.buildSeparator() );
+			count ++;
     }
-    count ++;
 	}
-	parent.add( features_list );  	
+	if(count > 0) {
+		displayFeaturesHeader();
+		parent.add( features_list );  	
+	}
 }
 
 //================================================================================
-//		Name:			displayHumanFeatures( poiInfo, parent_view)
+//		Name:			displayHumanFeatures( poiDetail, parent_view)
 //		Purpose:	
 //================================================================================
-function displayHumanFeatures(poiInfo, parent) {
-	Ti.API.debug("....[~] displayHumanFeatures("+poiInfo.place_ID+") called ");
-	var features = { 	
-		"Dogs Allowed Inside"		: poiInfo.dogs_inside,
-		"Dogs Allowed Outside"	: poiInfo.dogs_outside,
-		"Outdoor Area" 					: poiInfo.outdoor_area, 
-		"Waterbowl Present" 		: poiInfo.waterbowl,
-		"Price Range"  					: poiInfo.price_range
-	};
-	Ti.API.debug("....[~] displayHumanFeatures :: " + JSON.stringify(features) );
-	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
-	var icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
+function displayHumanFeatures(poiDetail, parent) {
+	// Ti.API.debug("  .... [~] displayHumanFeatures("+ JSON.stringify(poiDetail) +") called ");
 	
 	var count = 0;
+	
+	var features = { 	
+		"Dogs Allowed Inside"		: poiDetail.dogs_inside,
+		"Outdoor Area" 					: poiDetail.outdoor_area, 
+		"Dogs Allowed Outside"	: poiDetail.dogs_outside,
+		"Waterbowl" 				  	: poiDetail.waterbowl
+	};
+	// Ti.API.debug("  .... [~] displayHumanFeatures :: " + JSON.stringify(features) );
+	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
+		
+	if (poiDetail.dogs_inside !="" && poiDetail.dogs_inside!="NULL") {
+		var icon_url = ICON_PATH + "icon-poi-features-dogsallowedinside.png";
+		var string_inside = "Dogs Allowed";
+		if (poiDetail.outdoor_area != "Yes") {
+			icon_url = ICON_PATH + "icon-poi-features-dogsnotallowedinside.png";
+			string_inside = "Dogs Not Allowed";	
+		} 
+		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Inside: ", string_inside) );
+		count ++;
+	}
+	
+	if (poiDetail.outdoor_area !="" && poiDetail.outdoor_area!="NULL") {
+		if (poiDetail.outdoor_area == "No") {
+			var icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
+			features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "No Outdoor Area", "") );
+		} else {
+			var string_1 = "Outdoor Area:";
+			var string_2 = "Dogs Allowed";
+			var icon_url = ICON_PATH + "icon-poi-features-dogsallowedoutside.png";
+			
+			if (poiDetail.outdoor_area!="Yes") {
+				string_1 = poiDetail.outdoor_area;
+			}
+			if (poiDetail.dogs_outside != "Yes") {
+				icon_url = ICON_PATH + "icon-poi-features-dogsnotallowedoutside.png";
+				string_2 = "Dogs Not Allowed";
+			}			
+			features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, string_1, string_2) );
+		}
+		count ++;
+	}
+	
+	if ( poiDetail.waterbowl!="" && poiDetail.waterbowl!="NULL" ) {
+		var icon_url = ICON_PATH + "POI-basic-dogfriendliness.png";
+		var wb_text_string = "Yes";
+		//features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Waterbowl:", "No") );
+
+		if (poiDetail.waterbowl != "Yes") {
+			icon_url = ICON_PATH + "POI-feature-nowaterbowl.png";	
+			wb_text_string = "No";
+		} 
+		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Waterbowl:", wb_text_string) );
+		count++;
+	}
+	
+	/*
 	var length = features.length;
   for (var k in features){
     if(features[k]!="" && features[k]!="NULL") {
   		// call buildSingleRowInfoBar w/ ( image_url, name, value ) 
-			if (k=="Enclosures")
+			if (k=="Outdoor Area") {
 				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, "", features[k]) );
+			}
 			else
 				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, k+":", features[k]) );
 			//if ( count < (length-1) )
@@ -322,7 +431,11 @@ function displayHumanFeatures(poiInfo, parent) {
     }
     count ++;
 	}
-	parent.add( features_list );  	
+	*/
+	if (count > 0) {
+		displayFeaturesHeader();
+		parent.add( features_list );  	
+	}  	
 }
 
 //================================================================================
@@ -330,29 +443,121 @@ function displayHumanFeatures(poiInfo, parent) {
 //		Purpose:	
 //================================================================================
 function getPoiFeatures(data) {
+	var poiFeatures = data;
+	// Ti.API.info("  .... [~] getPoiFeatures() :: "+JSON.stringify(poiFeatures)+" ***");
 	//Ti.API.info(">>>>>>>>>>> " + data.poi_ID);
 	//----------------------------------------------------------------------------------------------------------
 	//       ESTIMATES (only if dog park)  
 	//----------------------------------------------------------------------------------------------------------
-	if (poiInfo.category==600 || poiInfo.category==601) {
-		// TODO:  redo this using class methods
+	if (poiFeatures.category==600 || poiFeatures.category==601) {
 		var params = {
-			place_ID	: data.poi_ID, 
-			enclosure_count : data.enclosure_count
+			place_ID				: poiFeatures.poi_ID, 
+			enclosure_count : poiFeatures.enclosure_count
 		};
-		Ti.API.info("*** getRecentEstimates() for :: "+JSON.stringify(params)+" ] ***");
+		//Ti.API.info("*** getRecentEstimates() for :: "+JSON.stringify(params)+" ] ***");
 		loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates);		
 	}
-	if ( poiInfo.category>=600 && poiInfo.category<=699 ) {
-		displayOutdoorFeatures(data, $.features);
+	
+	if ( poiFeatures.category>=600 && poiFeatures.category<=699 ) {
+		displayOutdoorFeatures(poiFeatures, $.features);
 	}
-	else if ( poiInfo.category>=100 && poiInfo.category<=199 ) {
-		displayHumanFeatures(data, $.features);
+	else if ( poiFeatures.category>=100 && poiFeatures.category<=199 ) {
+		displayHumanFeatures(poiFeatures, $.features);
 	}
-		
 }
-//===========================================================================================
+
+
+//================================================================================
+//		Name:			doEverything( poiInfo )
+//		Purpose:	literally trigger all the modules that get drawn on this page
+//================================================================================
+function doEverything(poiInfo) {
+	var img_fallback = MISSING_PATH + "poi-0-banner.jpg";
+	var img_actual   = POI_PATH + poiInfo.banner;
+	
+	//  fill in miniheader information
+	var dist_label_text 	= "You're right next to it";    
+	if( args._came_from!="checkin modal" )
+		dist_label_text 	= poiInfo.dist + " miles away"
+
+
+
+	$.mini_place_name_label.text 	= poiInfo.name;
+	$.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
+	$.mini_place_second_label.text	=	poiInfo.city; 
+	/*	
+	$.place_name_label.text 			= poiInfo.name;
+	$.place_address_label.text		=	poiInfo.address;
+	$.place_city_label.text	  		=	poiInfo.city + ' ' + poiInfo.zip;
+	if ( poiInfo.banner != "" ) 
+		loadRemoteImage("bg", $.headerContainer, img_actual, img_fallback);
+	*/
+		
+	//$.miniHeaderContainer.add( myUiFactory.buildMiniHeader(poiInfo.name, poiInfo.city, poiInfo.icon_color) );
+	$.headerContainer.add( myUiFactory.buildPageHeader(poiInfo.place_ID, "poi", poiInfo.name, poiInfo.address, poiInfo.city + ' ' + poiInfo.zip, dist_label_text ) );
+	$.headerContainer.zIndex = 30;
+	$.headerContainer.top = 0;
+	
+	// buildHeaderContainer ( place_name, city, bg_color );
+	  
+	
+	
+	//-----------------------------------------------------------------------------------------------------------
+	//			BASIC INFO
+	//-----------------------------------------------------------------------------------------------------------
+	var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1);
+	$.basics.add(basics_header);
+	displayBasicInfo(poiInfo, $.basics);
+	
+	//----------------------------------------------------------------------------------------------------------
+	//		 CHECKINS
+	//----------------------------------------------------------------------------------------------------------
+	var activity_header = myUiFactory.buildSectionHeader("activity_header", "ACTIVITY", 1);
+	$.activity.add(activity_header);
+	
+	// the thumbs of dogs have to display inline-block (and wrap) 
+	var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
+	var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", "100%", whos_here_height, 0);	
+	$.activity.add(whos_here_list);
+	
+	//	get feed of checkins, including your current checkin status; 
+	//		add the list to the view we've just created 												
+	// Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
+	getPlaceCheckins( args._place_ID, mySesh.dog.dog_ID, whos_here_list);	
+	
+	// TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
+	
+	//----------------------------------------------------------------------------
+	//		   REMARKS
+	//----------------------------------------------------------------------------
+	/* var params = {
+		place_type : 1, 
+		place_ID   : args._place_ID,
+		dog_id     : mySesh.dog.dog_ID
+	};
+	getRemarks(params, displayRemarks);
+	*/
+	//------------------------------------------------------------------------------------------------
+	//				FEATURES (only if category == [] )
+	//-------------------------------------------------------------------------------------------------
+	if ( ( poiInfo.category>=600 && poiInfo.category<=699 ) || ( poiInfo.category>=100 && poiInfo.category<=199 ) ) {
+		var params = {
+			place_ID	  : poiInfo.place_ID,
+			place_cat		: poiInfo.category
+		};
+		// Ti.API.debug("  >> PLACEOVERVIEW PARAMS :: ID #" + poiInfo.place_ID + " / cat #" +  poiInfo.category);
+		// need poi features detail in order to call getRecentEstimates and getBasicFeatures
+		loadJson(params, "http://waterbowl.net/mobile/get-poi-features.php", getPoiFeatures);
+	}
+}
+
+
+
+//---------------------------------------------------------------------------------------------------------------
+
 // 				LOGIC FLOW
+
+//---------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------
 //
 //		(_0_)		Add window to global stack, display menubar
@@ -367,109 +572,35 @@ var mini_header_display = 0;
 //
 //--------------------------------------------------------------------------------
 var args = arguments[0] || {};
-var place_index = getArrayIndexById(mySesh.allPlaces, args._place_ID);
-var poiInfo = mySesh.allPlaces[place_index];
 
-Ti.API.info(" >>>>> PLACEOVERVIEW >>> POI ID + INDEX:: " +args._place_ID + " / " + place_index);
+//
+////		FIGURE OUT ENTRY VECTOR THEN POPULATE:
+////		- Place header, Basic Info, Checkins, Mark+Remarks, and Features
+//
+if (args._came_from=="checkin modal") {
+	var params = {	place_ID : args._place_ID	};
+	loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", doEverything);	
+} else {  		
+	// came here from map marker, therefore place info can be pulled from global array
+	var place_index = getArrayIndexById(mySesh.allPlaces, args._place_ID);
+	var poiInfo = mySesh.allPlaces[place_index];
+	doEverything(poiInfo);
+}
 
-var params = {
-	place_ID	  : poiInfo.place_ID,
-	place_cat		: poiInfo.category
-};
-// need poi features detail in order to call getRecentEstimates and getBasicFeatures
-loadJson(params, "http://waterbowl.net/mobile/get-poi-features.php", getPoiFeatures);
+$.placeoverview.addEventListener('focus',function(e){
+	Ti.API.debug ("  .... [~] Place overview in focus, refreshing marks now.");
+ 	var params = {
+		place_type : 1, 
+		place_ID   : args._place_ID,
+		dog_id     : mySesh.dog.dog_ID
+	};
+	setTimeout ( function(){ getRemarks(params, displayRemarks); }, 200);
+});
 
-// 
-
-var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );
+//var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );
 //alert( how_close + " miles");
 //Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
 
-//----------------------------------------------------------------------------
-//
-//		(_2_)		Populate place header
-//
-//----------------------------------------------------------------------------
-var img_fallback = MISSING_PATH + "poi-0-banner.jpg";
-var img_actual   = POI_PATH + poiInfo.banner;
-
-//$.headerContainer.backgroundImage = bg_image;
-
-if ( poiInfo.banner != "" ) {
-	loadRemoteImage("bg", $.headerContainer, img_actual, img_fallback);
-}
-
-//  fill in header and miniheader information 
-$.place_dist_label.text 	= poiInfo.dist + " miles away";   // TODO: send in distance in miles from backend
-//$.mini_place_dist_label.text 	= poiInfo.dist + " mi away"; 
-
-$.place_name_label.text 			= poiInfo.name;
-$.place_address_label.text		=	poiInfo.address;
-$.place_city_label.text	  		=	poiInfo.city + ' ' + poiInfo.zip;
-$.mini_place_name_label.text 	= poiInfo.name;
-$.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
-$.mini_place_second_label.text	=	poiInfo.city;  // + ' ('+ poiInfo.dist + " mi away)";
-//-----------------------------------------------------------------------------------------------------------
-//			BASIC INFO
-//-----------------------------------------------------------------------------------------------------------
-var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1);
-$.basics.add(basics_header);
-displayBasicInfo(poiInfo, $.basics);
-
-//----------------------------------------------------------------------------------------------------------
-//		 CHECKINS
-//----------------------------------------------------------------------------------------------------------
-var activity_header = myUiFactory.buildSectionHeader("activity_header", "ACTIVITY", 1);
-$.activity.add(activity_header);
-
-// the thumbs of dogs have to display inline-block (and wrap) 
-var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
-var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", "100%", whos_here_height, 0);	
-$.activity.add(whos_here_list);
-
-//	get feed of checkins, including your current checkin status; 
-//		add the list to the view we've just created 												
-// Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
-getPlaceCheckins( args._place_ID, mySesh.dog.dog_ID, whos_here_list);	
-
-
-// TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
-
-
-//----------------------------------------------------------------------------
-//		   REMARKS
-//----------------------------------------------------------------------------
-var marks_header = myUiFactory.buildSectionHeader("marks", "REMARKS", 1);
-$.remarks.add(marks_header); 
-var markBtn = myUiFactory.buildButton( "markBtn", "add remark", "large" );
-$.remarks.add(markBtn);
-
-var params = {
-	place_type : 1, 
-	place_ID   : args._place_ID,
-	dog_id     : mySesh.dog.dog_ID
-};
-getRemarks(params, displayRemarks);
-
-var necessary_args = {   
-	_place_ID    		: args._place_ID,
-	_place_name	 		: poiInfo.name,
-	_place_city	 		: poiInfo.city,
-	_place_bgcolor	: poiInfo.icon_color,
-	_place_type  		: 1
-};
-markBtn.addEventListener('click', function(e) {
-	createWindowController( "addpost", necessary_args, "slide_left" );
-});
-
-
-//------------------------------------------------------------------------------------------------
-//				FEATURES (only if category == [] )
-//-------------------------------------------------------------------------------------------------
-if ( ( poiInfo.category>=600 && poiInfo.category<=699 ) || ( poiInfo.category>=100 && poiInfo.category<=199 ) ) {
-	var features_header = myUiFactory.buildSectionHeader("features_header", "FEATURES", 1);
-	$.features.add(features_header);
-}
 
 //----------------------------------------------------------------------------
 //		 	 ScrollView listener (+ attach sticky mini-header bar)
@@ -483,7 +614,7 @@ $.scrollView.addEventListener('scroll', function(e) {
     	miniHeader = attachMiniHeader();			// show the mini header
    		//Titanium.API.info(' * scrollView Y offset: ' + offsetY);
  			mini_header_display = 1;
- 			Titanium.API.info( ' * miniHeader attached * ' +  mini_header_display );
+ 			//Titanium.API.info( ' * miniHeader attached * ' +  mini_header_display );
     }
     else if ( offsetY < threshold && offsetY != null && mini_header_display==1) {
     	//Ti.API.info (" MINIHEADER CONTENTS: "+ miniHeader);
@@ -491,12 +622,11 @@ $.scrollView.addEventListener('scroll', function(e) {
      	
     	//Titanium.API.info(' * scrollView Y offset: ' + offsetY);
    		mini_header_display = 0;
- 			Titanium.API.info( ' * miniHeader removed * ' + mini_header_display );
+ 			//Titanium.API.info( ' * miniHeader removed * ' + mini_header_display );
  		}
     	
   } else {
     Titanium.API.info(' * scrollView Y offset is null');
   }
 });
-
 

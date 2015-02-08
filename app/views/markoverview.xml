@@ -2,7 +2,10 @@
 	<Window id="markoverview" class="absolute">	
 		<View class="window_container">
 			
-			<ScrollView id="scrollView" class="fill_height" top="0" opacity="1" />
+			<ScrollView id="scrollView" class="fill_height" top="0" opacity="1">
+				<View id="header" />
+				<View id="remarks" />
+			</ScrollView>
 		
 		</View>
 	</Window>
