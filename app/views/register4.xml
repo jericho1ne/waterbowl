@@ -14,10 +14,17 @@
 	| +------------------------+ |	
 	+============================+
 */
-
-
 <Alloy>
-	<Window id="registerpetinfo" class="window_container">
+	<Window id="register2" class="abosolute">
+		<View id="content" class="window_container">
+			<ScrollView id="scrollView" class="fill_width fill_height" />
+		</View>
+	</Window>
+</Alloy>
+
+<!-- 
+<Alloy>
+	<Window id="register2" class="window_container">
 		<View id="menubar"/>
 		
 		<ScrollView id="petinfoScrollView" height="100%" class="layout_vert fill_width fit_height bg_lt_blue">
@@ -34,11 +41,7 @@
 						</Labels>
 					</TabbedBar>
 				</View>
-				<!--
-				<Label class="" id="male_label" width="40%">M</Label>
-      		<Switch id="gender_toggle" value="true"  width="20%" class="" onChange="genderToggled"/>
-				<Label class=""  id="female_label" width="40%">F</Label>
-				-->
+			
 			</View>
 			<Label class="form_label">breed</Label>
 			<TextField id="breed"/>
@@ -48,14 +51,14 @@
 			
 			<Label class="form_label">birthdate</Label>
 			<TextField id="age_picker_dummy" hintText="please pick a date"/>
-			<!-- 
+
 			<View class="fit_height">
 				<Picker id="age_picker" contentHeight="" width="85%" class="border_blu"
 	          onChange="ageChanged" type="Ti.UI.PICKER_TYPE_DATE"
 	          minDate="1980,1,1" maxDate="2014,12,1"
 	          value="2014-01-01T12:00:00">
 	       </Picker>
-			</View> -->
+			</View> 
 			<Button id="continueBtn" class="btn_large top_40 bg_dk_gray" onClick="gotoPhotoUpload">continue</Button>
 			
 	 	</ScrollView> 
@@ -63,23 +66,7 @@
 	</Window>
 </Alloy>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+				-->
 
 
 

@@ -23,6 +23,8 @@ function Session(){
 		sex					: null,
 		age					:	null,
 		birthdate 	:	null,
+		breed1			:	null,
+		breed2			:	null,
 		weight			: null,
 		marks_made	: null,
 		current_place_ID  				: null,
@@ -88,21 +90,21 @@ function Session(){
 };
 
 //================================================================================
-//		Name:				setGeoLatLon
+//		Name:				xsetGeoLatLon
 //================================================================================
-Session.prototype.setGeoLatLon = function (lat, lon, how_long_ago){
-	// Ti.API.debug("  .... [~] Session.prototypesetGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
+Session.prototype.xsetGeoLatLon = function (lat, lon, how_long_ago){
+	// Ti.API.debug("  .... [~] Session.prototype.xsetGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
 	this.geo.lat = lat;
 	this.geo.lon = lon;
 	this.geo.last_acquired = how_long_ago;
 }
 //================================================================================
-//		Name:				setGeoViewport
+//		Name:				xsetGeoViewport
 //================================================================================
-Session.prototype.setGeoViewport = function (region_lat, region_lon){
+Session.prototype.xsetGeoViewport = function (region_lat, region_lon){
 	this.geo.view_lat = region_lat;
 	this.geo.view_lon = region_lon;
-	// Ti.API.debug( '  .... [~] Session.prototype.regionChanged (setGeoViewport) ::'+this.geo.view_lat+"/"+this.geo.view_lon+"******");
+	// Ti.API.debug( '  .... [~] Session.prototype.regionChanged (xsetGeoViewport) ::'+this.geo.view_lat+"/"+this.geo.view_lon+"******");
 }
 //================================================================================
 //		Name:				getUrl

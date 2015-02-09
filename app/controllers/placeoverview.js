@@ -183,7 +183,8 @@ function displayPlaceCheckins(data, parentObject) {
   
  	/* got stuff to show!  */
   if( data.checkins.length > 0) {
-  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( ICON_PATH + "poi-activity-dogscurrentlyhere.png", "Members Here Now: ",  data.checkins.length );;
+  	var gray_dog_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
+  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( gray_dog_icon, "Members Here Now: ",  data.checkins.length );;
     parentObject.add(how_many_bar);
    
 	 	if( data.checkins.length > 4) {
@@ -374,7 +375,7 @@ function displayHumanFeatures(poiDetail) {
 	if (poiDetail.dogs_inside !="" && poiDetail.dogs_inside!="NULL") {
 		var icon_url = ICON_PATH + "poi-features-dogsallowedinside.png";
 		var string_inside = "Dogs Allowed";
-		if (poiDetail.outdoor_area != "Yes") {
+		if (poiDetail.dogs_inside != "Yes") {
 			icon_url = ICON_PATH + "poi-features-dogsnotallowedinside.png";
 			string_inside = "Dogs Not Allowed";	
 		} 
@@ -392,7 +393,7 @@ function displayHumanFeatures(poiDetail) {
 			var icon_url = ICON_PATH + "poi-features-dogsallowedoutside.png";
 			
 			if (poiDetail.outdoor_area!="Yes") {
-				string_1 = poiDetail.outdoor_area;
+				string_1 = poiDetail.outdoor_area+":";
 			}
 			if (poiDetail.dogs_outside != "Yes") {
 				icon_url = ICON_PATH + "poi-features-dogsnotallowedoutside.png";
@@ -587,6 +588,7 @@ $.placeoverview.addEventListener('focus',function(e){
 		dog_id     : mySesh.dog.dog_ID
 	};
 	setTimeout ( function(){ getRemarks(params, displayRemarks); }, 200);
+	
 });
 
 //var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );

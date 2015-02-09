@@ -28,7 +28,7 @@ ExtMap.prototype.initializeMap = function(lat, lon) {
 		enableZoomControls : true
 	});
 	Alloy.Globals.wbMap.addEventListener('regionChanged',function(e) {
-		mySesh.setGeoViewport(e.source.region.latitude, e.source.region.longitude);
+		mySesh.xsetGeoViewport(e.source.region.latitude, e.source.region.longitude);
 	});
 	Ti.API.log(".... [~] Map object built ");
 	// return Alloy.Globals.wbMap;

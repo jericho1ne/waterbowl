@@ -1,0 +1,33 @@
+/*
+  +=== register2 ============+
+  |	+----------------------+ |
+  | |    		menubar        | |
+  |	+----------------------+ |
+  | +----content-----------+ |
+ 	|	|											 | |
+	|	|			age OR           | |
+	| |			weight OR			   | | 	
+	|	|			breedPicker			 | | 
+	| |     								 | |
+	|	+----------------------+ |
+	|	+----------------------+ |	
+	|	|			saveBtn				   | |
+	| +----------------------+ |	
+	+==========================+
+*/
+<Alloy>
+	<Window id="uipicker" class="abosolute">
+		<View id="content" class="window_container">
+			<!-- <View id="scrollView" class="fill_width fill_height" /> -->
+		</View>
+	</Window>
+</Alloy>
+
+ 
+
+
+
+
+
+
+

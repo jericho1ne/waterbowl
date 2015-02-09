@@ -40,6 +40,7 @@ function UiFactory(){
   this._base_font = 14;			// medium(28pt), large(36pt)
 
   this._text_banner			 	= { fontFamily: 'Raleway', 				fontSize: 3.000 * this._base_font, color: "#ffffff" };	// large banners
+  this._text_xl						= { fontFamily: 'Raleway-Medium',	fontSize: 2.000 * this._base_font };	// 36 pt
   this._text_large				= { fontFamily: 'Raleway-Bold', 	fontSize: 1.285 * this._base_font };	// 36 pt
   this._text_medium				= { fontFamily: 'Raleway-Medium',	fontSize: this._base_font }; 	// 28 pt
   this._text_medium_bold	= { fontFamily: 'Raleway-Bold',		fontSize: this._base_font }; 	// 28 pt
@@ -713,7 +714,7 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 		font             = this._text_medium;
 		view_height			 = this._height_subheader;
 	}
-	
+
 	var view_container = Ti.UI.createView( { 
 		id							: view_id, 
 		backgroundColor : view_bg_color, 
@@ -736,6 +737,28 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 	return view_container;
 };
 
+/*********************************************************************************
+*		Name:  		buildMasterSectionHeader ( view_id, title )				 
+*		Purpose:  WHAT IT DO
+*********************************************************************************/
+UiFactory.prototype.buildMasterSectionHeader = function(view_id, title) {
+	var view_container = Ti.UI.createView( { 
+		id							: view_id, 
+		backgroundColor : this._color_dkblue, 
+		height			   	: this._height_row
+	});
+	var section_label = Ti.UI.createLabel( {	
+		id				: view_id+"_label", 
+		text			: title,
+		textAlign : Ti.UI.TEXT_ALIGNMENT_CENTER,
+		height		: Ti.UI.SIZE,     
+		font			: this._text_large,
+		color			: this._color_white
+	});	
+	view_container.add(section_label);
+	return view_container;	
+}
+
 /************************************************************
 *		Name:  		buildTextField ( id, width, hint, is_pwd )
 *		Purpose:  create small test button
@@ -749,13 +772,14 @@ UiFactory.prototype.buildTextField = function(id, width, hint, is_pwd) {
   	backgroundColor : '#ffffff', 
     color           : this._color_dkgray, 
     width           : width, 
-    height          : 34, 
-    top             : 1, 
+    height          : this._height_row, 
+    top             : this._pad_top, 
+    paddingLeft			: 16,
     opacity         : 1,
   	font            : this._text_medium,
   	keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
   	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,
-  	textAlign       : Ti.UI.TEXT_ALIGNMENT_CENTER,
+  	textAlign       : Ti.UI.TEXT_ALIGNMENT_LEFT,
   	hintText        : hint,
   	passwordMask    : is_pwd,
     autocorrect     : false,
@@ -776,7 +800,7 @@ UiFactory.prototype.buildButton = function(id, title, type) {
   
   var font   				= this._text_small;
 
-  if (type == "header") {  
+  if (type == "header") { 
     font   = this._text_large;
   }
   else if (type == "large") {  
@@ -784,6 +808,10 @@ UiFactory.prototype.buildButton = function(id, title, type) {
   }
   else if (type == "medium") {
     font   = this._text_medium;
+  }
+  else if (type == "xl") {
+    font   = this._text_xl;
+    btn_height += 10;
   }
 
   var view_container = Ti.UI.createView( { 

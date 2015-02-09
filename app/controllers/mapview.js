@@ -74,7 +74,7 @@ function buildMapMenubar() {
       } else {  // if no errors, and we're not running in Simulator
       	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
 			  mySesh.geo.geo_trigger_count++;  
-			  mySesh.setGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
+			  mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
 				// CENTER MAP ON USER LOCATION
         myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.02);
 	    }
@@ -521,7 +521,7 @@ function refreshGeo() {
 	    	
 	    	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
 			  mySesh.geo.geo_trigger_count++;  
-			  mySesh.setGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
+			  mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
 
 				$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
 				$.geo_latlng.text = e.coords.latitude.toFixed(4)+"/" +e.coords.longitude.toFixed(4);
@@ -573,7 +573,7 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   else {		
   	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
 		mySesh.geo.geo_trigger_count++;  
-		mySesh.setGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
+		mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
 	}
 
   // (1)	DRAW THE MAP

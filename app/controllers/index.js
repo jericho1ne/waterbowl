@@ -108,28 +108,45 @@ var footer_height = 80;
 var content_height = mySesh.device.screenheight - footer_height;
 var topView_height = .5 * content_height;
 var midView_height = .5 * content_height;
+var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
 
 //alert(mySesh.device.screenheight +"["+ topView_height +", "+ midView_height +"]");
+// Check if the device is running iOS 8 or later, before registering for local notifications
+	/*if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
+	  
+	  TODO:  turn this on if we use push notifications
+	  Ti.App.iOS.registerUserNotificationSettings({
+	    types: [
+	          Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT,
+	          Ti.App.iOS.USER_NOTIFICATION_TYPE_SOUND,
+	          Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE
+	      ]
+	  }); 
+	 
+	 // Ti.API.debug( " > > > IOS 8 or greater *" );
+	}
+	else {
+		//Ti.API.debug( " > > > IOS 7 or older *" );
+	} */
 
-// mySesh.device.screenheight - 150
+//Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);	
+
 
 // FIRST THINGS FIRST - IF CREDS ARE SAVED, AUTOLOGIN!
 var saved_user = Ti.App.Properties.getString('user');
 var saved_pwd  = Ti.App.Properties.getString('pass');
 
-if ( saved_user!=null && saved_pwd!=null ) {
-	wbLogin(saved_user, saved_pwd);
-} else {
+//if (saved_user=="" || saved_pwd=="") {
 	// Build 3 vertically stacked View Containers
 	var topView = myUiFactory.buildViewContainer ( "topView", "", 				"100%", topView_height, 0 );
 	var midView = myUiFactory.buildViewContainer ( "midView", "vertical", "100%", midView_height, 0 );
 	var botView = myUiFactory.buildViewContainer ( "botView", "", 				"100%", Ti.UI.FILL, 0 );
 	
 	// 																		title, 			 w, 		 h,  font_style, 					    color 			text_align
-	var titlebar = myUiFactory.buildLabel("waterbowl", "100%", 60, myUiFactory._text_banner, "#ffffff", "center");
+	var titlebar = myUiFactory.buildLabel("waterbowl", form_width, 60, myUiFactory._text_banner, "#ffffff", "center");
 	//                                         id,       width,  hint,       is_pwd
-	var email    = myUiFactory.buildTextField("email",   "100%",  "email",    "");
-	var password = myUiFactory.buildTextField("password", "100%", "password", true);
+	var email    = myUiFactory.buildTextField("email",   form_width,  "email",    "");
+	var password = myUiFactory.buildTextField("password", form_width, "password", true);
 	
 	var loginBtn = myUiFactory.buildButton("loginBtn", "login", "large");
 	loginBtn.addEventListener('click', function(){ goToLogin(); });
@@ -158,35 +175,18 @@ if ( saved_user!=null && saved_pwd!=null ) {
 	$.content.add(topView);
 	$.content.add(midView);
 	$.content.add(botView);
-
-	// Check if the device is running iOS 8 or later, before registering for local notifications
-	/*if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
-	  
-	  TODO:  turn this on if we use push notifications
-	  Ti.App.iOS.registerUserNotificationSettings({
-	    types: [
-	          Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT,
-	          Ti.App.iOS.USER_NOTIFICATION_TYPE_SOUND,
-	          Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE
-	      ]
-	  }); 
-	 
-	 // Ti.API.debug( " > > > IOS 8 or greater *" );
-	}
-	else {
-		//Ti.API.debug( " > > > IOS 7 or older *" );
-	} */
-	
-	//Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);
 	
 	// if credentials are already saved in mySesh
-	if( Ti.App.Properties.getString('user')!="" ) {
-		email.value = Ti.App.Properties.getString('user');
+	if( saved_user!="" ) {
+		email.value = saved_user;
 	}
-	if( Ti.App.Properties.getString('pass')!="" ) {
-		password.value = Ti.App.Properties.getString('pass');
+	if( saved_pwd!="" ) {
+		password.value = saved_pwd;
 	}	
-}
+//} else {
+//	wbLogin(saved_user, saved_pwd);
+//}
+
 
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
 // Ti.App.Properties.setString('user', '');
@@ -204,4 +204,4 @@ var necessary_args = {
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
 
-// createWindowController("mapview","","slide_left");
+//createWindowController("register2","","slide_left");

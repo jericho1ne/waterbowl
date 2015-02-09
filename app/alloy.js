@@ -146,29 +146,29 @@ function createWindowController ( win_name, args, animation ) {
 		animStyle = { transition: Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT };
 	} 
 	else if (animation=="slide_up") {
-		winObject.top = 800;
+		winObject.top = mySesh.device.screenheight;
  		winObject.opacity = 0.1;
-		animStyle = {	top: 0, opacity: 1,	duration: 320, 
+		animStyle = {	top: 0, opacity: 1,	duration: 120, 
 		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}
 	else if (animation=="slide_left") {
-	 	winObject.left = 600;
+	 	winObject.left = mySesh.device.screenwidth;
 	 	winObject.top = 0;
  		winObject.opacity = 0.1;
-		animStyle = {	left: 0, opacity: 1,	duration: 320, 
+		animStyle = {	left: 0, opacity: 1,	duration: 120, 
 		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}	
 	else if (animation=="slide_right") {
-	 	winObject.left = -600;
+	 	winObject.left = -1 * mySesh.device.screenwidth;
 	  winObject.top = 0;
  		winObject.opacity = 0.1;
-		animStyle = {	left: 0, opacity: 1,	duration: 320, 
+		animStyle = {	left: 0, opacity: 1,	duration: 80, 
 		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}
 	else {
 		/* default == quick fade-in animation   */
 		winObject.opacity = 0.05;
-		animStyle = {	opacity:1, duration:280, 
+		animStyle = {	opacity:1, duration:200, 
 		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT };
 	}	
 	// attach menubar to each new Window controller
@@ -281,7 +281,7 @@ function addMenubar( parent_object ) {
 		top: myUiFactory._pad_top,
 		width: myUiFactory._icon_small,
 		height: myUiFactory._icon_small,
-		backgroundImage : "images/icons/" +'mainnav-back.png',
+		backgroundImage : ICON_PATH +'mainnav-back.png',
 		zIndex	: 100
 	} );
 	
@@ -291,7 +291,7 @@ function addMenubar( parent_object ) {
 		top: myUiFactory._pad_top,
 		width: myUiFactory._icon_small,
 		height: myUiFactory._icon_small,
-		backgroundImage : "images/icons/" +'button-info-small.png',  
+		backgroundImage : ICON_PATH +'button-info-small.png',  
 		zIndex: 100
 	});
 	
@@ -301,10 +301,22 @@ function addMenubar( parent_object ) {
 		top: myUiFactory._pad_top,
 		width: myUiFactory._icon_small,
 		height: myUiFactory._icon_small,
-		backgroundImage : "images/icons/" +'mainnav-settings.png',
+		backgroundImage : ICON_PATH +'mainnav-settings.png',
 		zIndex: 100,
 		opacity: 1
 	});
+	
+	var	logoutBtn	= Ti.UI.createButton( {
+		id: "logoutBtn", 
+		left: myUiFactory._pad_left,
+		top: myUiFactory._pad_top,
+		width: myUiFactory._icon_small,
+		height: myUiFactory._icon_small,
+		backgroundImage : ICON_PATH + "dog-basic-energy.png",
+		zIndex: 100,
+		opacity: 1
+	});
+	
 	// TITLE BAR ------------------------------------>
 	/* var wbLogoMenubar = Ti.UI.createLabel( 
 			{ id: "wbLogoMenubar", width: Ti.UI.SIZE, text: 'waterbowl', top: 4, height: "auto", 
@@ -343,6 +355,9 @@ function addMenubar( parent_object ) {
 		//settingsBtn.addEventListener('click', showSettings);
 		menuRight2.add(helpBtn);
 		helpBtn.addEventListener('click', showHelp);
+		
+		menuLeft.add(logoutBtn);
+		logoutBtn.addEventListener('click', logoutUser);
 	}	else {
 		var last_window_index = mySesh.windowStack.length - 1;
 		var help_img = HELP_PATH + "help-" + mySesh.windowStack[last_window_index].id +".jpg";
@@ -485,6 +500,22 @@ function showHelp() {
 	createWindowController('help', args, 'slide_left');
 }
 
+//================================================================
+// 	Name:  		logoutUser()
+// 	Purpose:	erase local creds, take user back to login screen
+//================================================================
+function logoutUser() {
+	// clear username/pass
+	Ti.App.Properties.setString('user', null);
+	Ti.App.Properties.setString('pass', null);
+
+//	var last_window_index = mySesh.windowStack.length - 1;
+	//Ti.API.debug( ".... [+] Help Button clicked for [ "+mySesh.windowStack[last_window_index].id+" ]");
+	//var args = { current_window : mySesh.windowStack[last_window_index].id };
+	closeWindowController();
+	createWindowController('index', '', 'slide_right');
+}
+
 //======================================================================
 // 	Name:  		showSettings()
 // 	Purpose:	generic settings for user / app
@@ -535,7 +566,7 @@ function initializeMap(lat, lon) {
 		enableZoomControls : true
 	});
 	Alloy.Globals.wbMap.addEventListener('regionChanged',function(e) {
-		mySesh.setGeoViewport(e.source.region.latitude, e.source.region.longitude);
+		mySesh.xsetGeoViewport(e.source.region.latitude, e.source.region.longitude);
 	});
 	// Ti.API.log(".... [~] Map object built ");
 }

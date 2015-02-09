@@ -1,45 +1,29 @@
 /*
-  +=== register ===============+
+  +=== register3 ==============+
   |	+------------------------+ |
   | |    		menubar          | |
   |	+------------------------+ |
-  | +----ScrollView----------+ |
- 	|	|				email						 | |
-	|	|				password1				 | | 	
-	|	|				password2				 | | 
-	|	+------------------------+ |
 	|	+------------------------+ |	
-	|	|				continueBtn			 | |
+	|	|				galleryBtn			 | |
 	| +------------------------+ |	
+	|	+------------------------+ |	
+	|	|				cameraBtn		     | |
+	| +------------------------+ |
+	|	+------------------------+ |
+	| |												 | |
+	| |	placeholder/progressbar| |
+	| |			then thumb				 | |
+	| |												 | |
+	|	+------------------------+ |
 	+============================+
 */
-
 <Alloy>
-	<Window id="register" class="abosolute">
+	<Window id="register3" class="abosolute">
 		<View id="content" class="window_container">
 			<ScrollView id="scrollView" class="fill_width fill_height" />
 		</View>
 	</Window>
 </Alloy>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
