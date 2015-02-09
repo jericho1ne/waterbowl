@@ -195,7 +195,6 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
   		  // ADD PLACE LIST CLICK EVENT LISTENER
   		  setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 310);
   		
-  		
   			// center map on user location, get all places in that area
   			myMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.03);
   			myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);

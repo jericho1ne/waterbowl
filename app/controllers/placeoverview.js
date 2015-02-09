@@ -12,6 +12,7 @@
 //		Purpose:		( 1, args._place_ID, mySesh.dog.dog_ID, displayRemarks);
 //================================================================================
 function getRemarks( params ) {
+	Ti.API.debug("  >>> getRemarks params >>> "+ JSON.stringify(params) );
 	loadJson(params, "http://waterbowl.net/mobile/get-place-posts.php", displayRemarks);
 }
 
@@ -20,6 +21,7 @@ function getRemarks( params ) {
 //		Purpose:	
 //================================================================================
 function displayRemarks(data) {
+	var remarks = data;
 	removeAllChildren($.remarks);	
 	
 	var marks_header = myUiFactory.buildSectionHeader("marks", "REMARKS", 1);
@@ -38,16 +40,16 @@ function displayRemarks(data) {
 		createWindowController( "addpost", necessary_args, "slide_left" );
 	});
 	
-	if( data.length>0) {
+	if( remarks.length>0) {
   	// (1)	Need to sort POIs based on proximity
 		data.sort(function(a, b) {		// sort by proximity (closest first)
 			return (b.ID - a.ID);
 		});
 		// (2)	Print a list of all the remarks at this POI
-    for (var i=0, len=data.length; i<len; i++) {
-      var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
+    for (var i=0, len=remarks.length; i<len; i++) {
+      var photo = PROFILE_PATH + 'dog-'+remarks[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
-		  var mark = myUiFactory.buildFeedRow( data[i].marking_dog_ID, myUiFactory._icon_medium, photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text  );
+		  var mark = myUiFactory.buildFeedRow( remarks[i].marking_dog_ID, myUiFactory._icon_medium, photo, remarks[i].marking_dog_name, remarks[i].time_elapsed, remarks[i].post_text  );
 		  $.remarks.add(mark);
 		  if ( i < (len-1) )
 		   $.remarks.add( myUiFactory.buildSeparator() );
@@ -61,13 +63,6 @@ function displayRemarks(data) {
 	}
 }
 
-//================================================================================
-//		Name:			getRecentEstimates( place_ID, enclosure_count, callbackFunction )
-//		Purpose:		get latest user-provided estimates
-//================================================================================
-function getRecentEstimates( place_ID, enclosure_count, callbackFunction ) {
-	
-}
 
 //================================================================================
 //		Name:			displayRecentEstimates( data )
@@ -477,6 +472,7 @@ function getPoiFeatures(data) {
 //		Purpose:	literally trigger all the modules that get drawn on this page
 //================================================================================
 function doEverything(poiInfo) {
+	Ti.API.debug(" .... >>  doEverything(poiInfo) >> "+ JSON.stringify(poiInfo));
 	var img_fallback = MISSING_PATH + "poi-0-banner.jpg";
 	var img_actual   = POI_PATH + poiInfo.banner;
 	
@@ -494,7 +490,7 @@ function doEverything(poiInfo) {
 	$.headerContainer.zIndex = 30;
 	$.headerContainer.top = 0;
 	
-
+	
 	//-----------------------------------------------------------------------------------------------------------
 	//			BASIC INFO
 	//-----------------------------------------------------------------------------------------------------------
@@ -520,16 +516,18 @@ function doEverything(poiInfo) {
 	
 	// TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
 	
+
+	
 	//----------------------------------------------------------------------------
-	//		   REMARKS
+	//		   REMARKS (OLD SCHOOL NO AUTO REFRESH WAY)
 	//----------------------------------------------------------------------------
-	/* var params = {
+	/*var params = {
 		place_type : 1, 
 		place_ID   : args._place_ID,
 		dog_id     : mySesh.dog.dog_ID
 	};
-	getRemarks(params, displayRemarks);
-	*/
+	getRemarks(params, displayRemarks);*/
+	
 	//------------------------------------------------------------------------------------------------
 	//				FEATURES (only if category == [] )
 	//-------------------------------------------------------------------------------------------------
@@ -570,16 +568,18 @@ var args = arguments[0] || {};
 ////		FIGURE OUT ENTRY VECTOR THEN POPULATE:
 ////		- Place header, Basic Info, Checkins, Mark+Remarks, and Features
 //
+
 if (args._came_from=="checkin modal") {
 	var params = {	place_ID : args._place_ID	};
-	loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", doEverything);	
+	//loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", doEverything);	
 } else {  		
 	// came here from map marker, therefore place info can be pulled from global array
 	var place_index = getArrayIndexById(mySesh.allPlaces, args._place_ID);
 	var poiInfo = mySesh.allPlaces[place_index];
 	doEverything(poiInfo);
 }
-
+ 
+/// ///////  //////// ///  getRemarks on window focus /// /// / / / / //  //////
 $.placeoverview.addEventListener('focus',function(e){
 	Ti.API.debug ("  .... [~] Place overview in focus, refreshing marks now.");
  	var params = {
@@ -587,9 +587,9 @@ $.placeoverview.addEventListener('focus',function(e){
 		place_ID   : args._place_ID,
 		dog_id     : mySesh.dog.dog_ID
 	};
-	setTimeout ( function(){ getRemarks(params, displayRemarks); }, 200);
-	
+	setTimeout ( function(){ getRemarks(params, displayRemarks); }, 800);
 });
+
 
 //var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );
 //alert( how_close + " miles");
