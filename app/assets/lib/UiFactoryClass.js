@@ -796,8 +796,7 @@ UiFactory.prototype.buildButton = function(id, title, type) {
   // defaults (small button)
   var view_height 	= this._icon_medium+10;
   var btn_height 		= 34; // this._icon_medium;
-  var borderRadius  = btn_height/2;
-  
+ 
   var font   				= this._text_small;
 
   if (type == "header") { 
@@ -814,6 +813,8 @@ UiFactory.prototype.buildButton = function(id, title, type) {
     btn_height += 10;
   }
 
+	var borderRadius  = btn_height/2;
+ 
   var view_container = Ti.UI.createView( { 
 		id							: id, 
 		layout					: "",

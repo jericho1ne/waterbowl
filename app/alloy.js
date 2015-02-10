@@ -26,14 +26,14 @@ function clearTextAreaContents(textarea_object) {
 }
 
 //=====================================================
-//	Name:    disableAllButtons(disableAllButtons)
+//	Name:    disableAllButtons()
 //=====================================================
 function disableAllButtons() {
 	mySesh.actionOngoing = true; 
 }
 
 //=====================================================
-//	Name:    disableAllButtons(disableAllButtons)
+//	Name:    enableAllButtons()
 //=====================================================
 function enableAllButtons() {
 	mySesh.actionOngoing = false; 

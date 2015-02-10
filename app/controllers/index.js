@@ -106,8 +106,8 @@ $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
 
 var footer_height = 80;
 var content_height = mySesh.device.screenheight - footer_height;
-var topView_height = .5 * content_height;
-var midView_height = .5 * content_height;
+var topView_height = .45 * content_height;
+var midView_height = .55 * content_height;
 var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
 
 //alert(mySesh.device.screenheight +"["+ topView_height +", "+ midView_height +"]");
@@ -148,15 +148,15 @@ var saved_pwd  = Ti.App.Properties.getString('pass');
 	var email    = myUiFactory.buildTextField("email",   form_width,  "email",    "");
 	var password = myUiFactory.buildTextField("password", form_width, "password", true);
 	
-	var loginBtn = myUiFactory.buildButton("loginBtn", "login", "large");
+	var loginBtn = myUiFactory.buildButton("loginBtn", "login", "xl");
 	loginBtn.addEventListener('click', function(){ goToLogin(); });
 	
-	var regBtn = myUiFactory.buildButton("regBtn", "register", "large");
+	var regBtn = myUiFactory.buildButton("regBtn", "register", "xl");
 	regBtn.addEventListener('click', function(){ goToRegister(); });
 	
 	var footer = Ti.UI.createImageView({ 
 		//height				: icon_size,
-		//width				 : icon_size,
+		//width				  : icon_size,
 		image						: 'images/WB-FooterBar.png',
 		backgroundColor : '',  //myUiFactory._color_dkblue,
 		bottom					: 0
@@ -167,6 +167,7 @@ var saved_pwd  = Ti.App.Properties.getString('pass');
 	topView.add(titlebar);
 	midView.add(email);
 	midView.add(password);
+	midView.add( myUiFactory.buildSpacer("horz", 4) );
 	midView.add(loginBtn);
 	midView.add(regBtn);
 	botView.add(footer);

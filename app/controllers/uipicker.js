@@ -9,30 +9,56 @@ Ti.API.debug(JSON.stringify(args));
 //		(0)		Build dog info registration form
 //-----------------------------------------------------------------------
 // 		(1)  Add section header
+
+var intro_text = "";
 var header_title = "";
+
 if (args._type=="breed") {
-	header_title = args._dog_name + "'s "+(args._index_val==1 ? "1st" : "2nd") + " breed";
+	header_title = "Breed";
+	intro_text   = "What is " + args._dog_name + "'s "+(args._index_val==1 ? "Primary" : "Secondary") + " breed?";
 }
 else if (args._type=="birthdate") {
-	header_title = "Tell us "+ args._dog_name + "'s birthdate";
+	header_title = "Birthdate";
+	intro_text 	 = "Tell us "+ args._dog_name + "'s birthdate!";
 }
 else if (args._type=="weight") {
-	header_title = "How much does "+ args._dog_name + " weigh?";
+	header_title = "Size / Weight";
+	intro_text	 = "How much does "+ args._dog_name + " weigh?";
 }
-$.content.add( myUiFactory.buildMasterSectionHeader("picker_header", header_title) );
 
 var form_width  = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
-var title_label = myUiFactory.buildLabel( "Pick your dog's first breed.  You'll have the option of adding a second breed later.", form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000","left" );	
+
+$.content.add( myUiFactory.buildMasterSectionHeader("picker_header", header_title) );
+$.content.add( myUiFactory.buildSpacer("horz", 20) );
+$.content.add( myUiFactory.buildLabel( intro_text, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000","left" ) );	
 
 /////////////////////	 	CONTAINERS AND ANIMATIONS  		/////////////////////////////////
-var value_picker = Titanium.UI.createPicker( { 
-	top				: 20,
-  useSpinner: true,
-  width			: form_width,
-	opacity 	: 1,
-	borderColor: "#000000",
-	borderWidth: 2
-} );
+if (args._type=="birthdate" ) {
+	var value_picker = Titanium.UI.createPicker( { 
+		top				: 20,
+	  useSpinner: true,
+	  width			: form_width,
+		type			: Ti.UI.PICKER_TYPE_DATE,
+	 	minDate		: new Date(1980,1,1),
+	 	maxDate		: new Date(2015,12,12),
+	 	value		  : new Date(2015,1,1),
+		opacity 	: 1,
+		borderColor: myUiFactory._color_dkblue,
+		borderRadius : 10,
+		borderWidth: 2
+	} );
+} else {
+	var value_picker = Titanium.UI.createPicker( { 
+		top				: 20,
+	  useSpinner: true,
+	  width			: form_width,
+	  opacity 	: 1,
+		borderColor: "#000000",
+		borderColor: myUiFactory._color_dkblue,
+		borderRadius : 10,
+		borderWidth: 2
+	} );
+}
 
 
 /////////////////////	 	BREED PICKER 							/////////////////////////////////////
@@ -43,35 +69,52 @@ var data_weight = [ "1","2","3","4","5","6","7","8","9","10","11","12","13","14"
 if			(args._type=="breed")		var data = data_breed;
 else if (args._type=="weight")	var data = data_weight;
 
-
-var dataRows = [];
-var data_length = data.length
-for (var i=0; i<data_length; i++) {
-	var tableRow = Ti.UI.createPickerRow( { "title": data[i] } )
-	dataRows.push(  tableRow  );
+if (args._type!="birthdate") {
+	var dataRows = [];
+	var data_length = data.length
+	for (var i=0; i<data_length; i++) {
+		var tableRow = Ti.UI.createPickerRow( { "title": data[i] } )
+		dataRows.push(  tableRow  );
+	}
+	value_picker.add(dataRows);
 }
-value_picker.add(dataRows);
-
-
-$.content.add(title_label);
 
 var saveBtn = myUiFactory.buildButton( "saveBtn", "save", "xl" );
 saveBtn.addEventListener('click', function(e) {
-	var selected_value = value_picker.getSelectedRow(0).title
+	if (args._type=="birthdate")
+		var selected_value = value_picker.value;
+	else
+		var selected_value = value_picker.getSelectedRow(0).title;
+		
 	//alert( JSON.stringify(e) );
-	if 			(args._type	=="breed") {
-		if  (args._index_val==1) 			mySesh.dog.breed1 = selected_value;
+	if 	(args._type	=="breed") {
+		if  		(args._index_val==1) 	mySesh.dog.breed1 = selected_value;
 		else if (args._index_val==2)	mySesh.dog.breed2 = selected_value;
 	}  
 	else if (args._type	=="weight") {
 		mySesh.dog.weight = selected_value;
 	}
 	else if (args._type	=="birthdate") {
-		mySesh.dog.birthdate = selected_value;
+		var day = selected_value.getDate();
+    day = day.toString();
+ 
+    if (day.length < 2)         day = '0' + day;
+ 
+    var month = selected_value.getMonth();
+    month = month + 1;
+    month = month.toString();
+ 
+    if (month.length < 2)       month = '0' + month; 
+    var year = selected_value.getFullYear();
+    var b_date = year + "-" + month + "-" + day;
+		mySesh.dog.birthdate = b_date;
+		selected_value = b_date;
 	}
+	Ti.API.debug( " .... [+] saveBtn :: "+ selected_value );
 	closeWindowController();
 });	
 
 $.content.add(value_picker);
+$.content.add( myUiFactory.buildSpacer("horz", 30) );
 $.content.add(saveBtn);
 
