@@ -53,12 +53,12 @@ var fwd_button_4 =  Titanium.UI.createButton({
 
 var dog_breed1 = myUiFactory.buildTextField("dog_breed1",  form_width,  "select your dog's breed", false);
 var dog_breed2 = myUiFactory.buildTextField("dog_breed2",  form_width,  "and a second one if you wish", false);
-var dog_size 	 = myUiFactory.buildTextField("dog_size", 	 form_width,  "size", 		 false);
+var dog_weight 	 = myUiFactory.buildTextField("dog_weight", 	 form_width,  "weight (lbs)", 		 false);
 var dog_bdate	 = myUiFactory.buildTextField("dog_bdate",   form_width,  "birthdate", false);
 
 dog_breed1.rightButton	= fwd_button_1;
 dog_breed2.rightButton 	= fwd_button_2;
-dog_size.rightButton 		= fwd_button_3;
+dog_weight.rightButton 		= fwd_button_3;
 dog_bdate.rightButton 	= fwd_button_4;
 
 var nextBtn = myUiFactory.buildButton( "nextBtn", "next", "xl" );
@@ -81,7 +81,7 @@ $.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
 
 $.scrollView.add( dog_breed1 );
 $.scrollView.add( dog_breed2 );
-$.scrollView.add( dog_size );
+$.scrollView.add( dog_weight );
 $.scrollView.add( dog_bdate );
 
 $.scrollView.add( myUiFactory.buildSpacer("horz", 20) );
@@ -109,16 +109,27 @@ dog_breed2.addEventListener('focus', function(e) {
 	createWindowController( "uipicker", necessary_args, "slide_left" );
 });
 
+dog_weight.addEventListener('focus', function(e) {
+	var necessary_args = {
+		_dog_name  : dog_name.value,
+		_type    		: "weight",
+		_index_val 	: ''
+	};
+	this.blur();
+	createWindowController( "uipicker", necessary_args, "slide_left" );
+});
+
 
 // ON FOCUS PAGE LISTENER
 
 $.register2.addEventListener('focus',function(e){
 	//Ti.UI.debug(" **** window has focus **** ");
-	if (dog_breed1.value == "")
+	if (dog_breed1.value=="" || mySesh.dog.breed1!=dog_breed1.value)
 		dog_breed1.value = mySesh.dog.breed1; 
-	if (dog_breed2.value == "")
+	if (dog_breed2.value=="" || mySesh.dog.breed2!=dog_breed2.value)
 		dog_breed2.value = mySesh.dog.breed2; 
-	
+	if (dog_weight.value=="" || mySesh.dog.weight!=dog_weight.value)
+		dog_weight.value = mySesh.dog.weight;
 	Ti.API.debug( "  >> mySesh.dog.breed1 >> " + mySesh.dog.breed1 );
 });
 
