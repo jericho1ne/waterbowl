@@ -203,7 +203,7 @@ ExtMap.prototype.createMarkAnnotation = function( mark ) {
 		title     : mark.mark_name,
 		subtitle  :	mark.marking_dog_name,
 		animate   : false,
-		image     : ICON_PATH + 'Mark-MapMarker-4-small.png', 
+		image     : ICON_PATH + 'mark-mapmarker-medium.png', 
 		rightView : anno_mark_button
 	});
 }

@@ -28,15 +28,14 @@
 
 /*				PREDEFIND   TITANIUM  UI  ELEMENTS  									*/
 "Window":{
-	exitOnClose: "true", fullscreen: "true", horizontalWrap: "true" 
-	 // statusBarStyle: Ti.UI.iPhone.StatusBar.TRANSLUCENT_BLACK
+	exitOnClose: "true", fullscreen: "true", horizontalWrap: "true"
 }
 
 "NavigationWindow":{ exitOnClose: "true", fullscreen: "false" }
 
 "Label": {
 	font:{ fontFamily: 'Raleway', fontSize: 18 },
-	width: "100%",  height: 18, color: "#000000", // color: "#777477" 
+	width: "100%",  height: 18, color: "#000000", 
 	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 	verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER
 }
@@ -44,7 +43,7 @@
 "View" : { layout: 'vertical', height: Ti.UI.SIZE }
 
 "ScrollView": {
-  layout: 'vertical', contentHeight: 'auto',
+  layout: 'vertical', contentHeight: 'auto',  backgroundColor: "#DCF1FC", 
 	showVerticalScrollIndicator: "true",
 	showHorizontalScrollIndicator: "true"
 }
@@ -78,11 +77,10 @@
 
 /*********************************************************************************************************
 									Layouts and ScrollViews																				  												 
-****************************************************************************************************/"#scrollView" 			: { backgroundColor: "" }
-"#feedContainer" 	: { layout: 'vertical', height: Titanium.UI.SIZE, width: "100%", top: 0, backgroundColor: '#777477' }
+****************************************************************************************************/
 
 /* SINGLE USE -- height should equal top value of .container!  */
-".window_container" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", backgroundColor: '#DCF1FC', width: "100%", exitOnClose: true }  // originally, top: 32
+".window_container" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", backgroundColor: '#737375', width: "100%", exitOnClose: true }  // originally, top: 32
 
 /********************************************************************************************************
  						ALL OUTER DIVS -- div in each XML view is a .container * Forewarned. *
@@ -94,31 +92,7 @@
 
 /**************************************************************************************************************/
 /* 									Class Selectors 																	  								 */
-/**************************************************************************************************************//* --------------- ALL OF THE SPACING STUFF  -------------------------- */ 
-".top_5"  : { top: 5 }
-".top_10"  : { top: 10 }
-".top_20"  : { top: 20 }
-".top_40"  : { top: 40 }
-".top_80"  : { top: 80 }
-".top_100" : { top: 100 }
-
-".width_20"  : { width: "20%" }
-".width_40"  : { width: "40%" }
-".width_50"  : { width: "50%" }
-".width_60"  : { width: "60%" }
-".width_80"  : { width: "80%" }
-
-".width_60dp"  : { width: 60 }
-".width_80dp"  : { width: 80 }
-
-".height_20"  : { height: "20%" }
-".height_40"  : { height: "40%" }
-".height_50"  : { height: "50%" }
-".height_60"  : { height: "60%" }
-".height_80"  : { height: "80%" }
-
-".height_60dp"  : { height: 60 }
-".height_80dp"  : { height: 80 }
+/**************************************************************************************************************/
 
 ".fit_height"  : { height: Ti.UI.SIZE, width: "auto" }
 ".fit_width"   : { width: Ti.UI.SIZE, height: "auto" }
@@ -129,13 +103,7 @@
 ".center"   : { textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER }
 
 /* --------------- END ALL THE SPACING STUFF  -------------------------- */
-".font_icon"	 : { font:{ fontFamily: 'Sosa-Regular', fontSize: 28 }, color: "#ffffff",
-	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
 
-".font_icon_sm"	 : { font:{ fontFamily: 'Sosa-Regular', fontSize: 24 }, color: "#ffffff", 
-	textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER, verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER }
-	
-".blue_line" : { image: 'images/ui/blue-line.png', height: 2, width: "100%" }
 
 ".float_left" 			: { width: Ti.UI.FILL, left: 2 }
 ".float_right" 			: { width: Ti.UI.FILL, right: 2 }

@@ -78,7 +78,7 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 	var view_container = Ti.UI.createView( { 
 		id							: id, 
 		layout					: layout_orientation,
-		//backgroundColor : this._color_ltblue, 
+		// backgroundColor : this._color_ltblue, 
 		//borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 	
 		top							: top,  
 		width						: view_width,

@@ -49,7 +49,7 @@ function Session(){
 	// this.local_banner_path : "images/places",
 	this.allPlaces		      =  [];				// top N places that are near user's location (n=20, 30, etc)
 	this.nearbyMarks		    =  [];
-	this.geofencePoi      =  []; 				// contains up to N places that are within the geofence
+	this.geofencePlaces     =  []; 				// contains up to N places that are within the geofence
 	// this.placeAnnotations  =  [];
 	this.currentPlace = { 
 		ID				: null,

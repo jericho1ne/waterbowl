@@ -267,8 +267,8 @@ function displayBasicInfo(poiInfo) {
 	categories_text = categories_text.substring(0, categories_text.length - 2);		// delete last space and comma
 	
 	var category_icon 		 = ICON_PATH + poiInfo.icon_basic;
-	var rating_dogfriendly = ICON_PATH + "poi-basic-ratingwb.png";
-	var rating_overall 		 = ICON_PATH + "poi-features-waterbowl.png";
+	var  rating_overall		 = ICON_PATH + "poi-basic-ratingwb.png";
+	var rating_dogfriendly = ICON_PATH + "poi-features-waterbowl.png";
 	$.basics.add( myUiFactory.buildSingleRowInfoBar(category_icon, categories_text, "") );
 	$.basics.add( myUiFactory.buildSeparator() );
 	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_dogfriendly, "Dog-Friendliness: ", poiInfo.rating_dogfriendly+"/5") );
@@ -570,14 +570,16 @@ var args = arguments[0] || {};
 //
 
 if (args._came_from=="checkin modal") {
-	var params = {	place_ID : args._place_ID	};
+	var place_index = getArrayIndexById(mySesh.geofencePlaces, args._place_ID);
+	var poiInfo = mySesh.allPlaces[place_index];
+	//var params = {	place_ID : args._place_ID	};
 	//loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", doEverything);	
 } else {  		
 	// came here from map marker, therefore place info can be pulled from global array
 	var place_index = getArrayIndexById(mySesh.allPlaces, args._place_ID);
 	var poiInfo = mySesh.allPlaces[place_index];
-	doEverything(poiInfo);
 }
+doEverything(poiInfo);
  
 /// ///////  //////// ///  getRemarks on window focus /// /// / / / / //  //////
 $.placeoverview.addEventListener('focus',function(e){

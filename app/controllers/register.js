@@ -19,7 +19,7 @@ function checkemail(emailAddress) {
 //		Name: 			saveUserDetails ()
 //		Purpose:  add new user to database
 //================================================================================
-function saveUserDetails (email, pwd1, pwd2, city, state, zip) {
+function saveUserDetails(email, pwd1, pwd2, city, state, zip) {
 	disableAllButtons();
 	if (pwd1!='' && pwd2!='' && email!='' && city!='' && state!='') {
 		if (pwd1 != pwd2) {
@@ -53,8 +53,13 @@ function saveUserInfo(data) {
 	Ti.API.debug( "  .... [~] saveUserInfo :: " + JSON.stringify(data) );
 	enableAllButtons();
 	
-	if (data.status==1)
+	if (data.status==1) {
+		mySesh.owner.owner_ID = data.owner_ID;
+		/* var params = {
+			"_owner_ID" 	: data.owner_ID,
+		}; */
  		createWindowController( "register2", "", "slide_left" ); 
+ 	}
   else	
     createSimpleDialog("Error", data.message);
 	// TODO: 			

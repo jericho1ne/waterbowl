@@ -259,10 +259,10 @@ function addMenubar( parent_object ) {
 		width	: right_width_1
 	});
 	var menuRight1 	= Ti.UI.createView( {
-		//borderWidth: 1, borderColor: "black",
+	  //borderWidth: 1, borderColor: "black",
 		width: right_width_1
 	});
-	var menuRight2 	= Ti.UI.createView( {
+	var menuRight2 	= Ti.UI.createView( {		// on mapview, leave open for compass
 		//borderWidth: 1, borderColor: "blue",
 		width: right_width_2	
 	});
@@ -291,7 +291,7 @@ function addMenubar( parent_object ) {
 		top: myUiFactory._pad_top,
 		width: myUiFactory._icon_small,
 		height: myUiFactory._icon_small,
-		backgroundImage : ICON_PATH +'button-info-small.png',  
+		backgroundImage : ICON_PATH +'button-info.png',  
 		zIndex: 100
 	});
 	
@@ -312,7 +312,7 @@ function addMenubar( parent_object ) {
 		top: myUiFactory._pad_top,
 		width: myUiFactory._icon_small,
 		height: myUiFactory._icon_small,
-		backgroundImage : ICON_PATH + "dog-basic-energy.png",
+		backgroundImage : ICON_PATH + "mainnav-back.png",
 		zIndex: 100,
 		opacity: 1
 	});
@@ -349,11 +349,11 @@ function addMenubar( parent_object ) {
 		// PIPE DOG ICON THROUGH PRELOADER
 		// loadRemoteImage("bg", profileBtn, img_actual, img_missing);
 	
-		menuRight1.add(profileBtn);
+		menuRight0.add(profileBtn);
 		profileBtn.addEventListener('click', function(){ showProfile(mySesh.dog.dog_ID)} );
-		//menuRight1.add(settingsBtn);
+		//menuRight0.add(settingsBtn);
 		//settingsBtn.addEventListener('click', showSettings);
-		menuRight2.add(helpBtn);
+		menuRight1.add(helpBtn);
 		helpBtn.addEventListener('click', showHelp);
 		
 		menuLeft.add(logoutBtn);
@@ -508,12 +508,26 @@ function logoutUser() {
 	// clear username/pass
 	Ti.App.Properties.setString('user', null);
 	Ti.App.Properties.setString('pass', null);
-
-//	var last_window_index = mySesh.windowStack.length - 1;
-	//Ti.API.debug( ".... [+] Help Button clicked for [ "+mySesh.windowStack[last_window_index].id+" ]");
-	//var args = { current_window : mySesh.windowStack[last_window_index].id };
-	closeWindowController();
-	createWindowController('index', '', 'slide_right');
+	
+	var modal_title = 'Log out?';
+  // modal popup 
+	var optns = {
+		options : ['Yes', 'Cancel'],
+		cancel        : 1,
+		selectedIndex : 0,
+		destructive   : 1,
+		title : modal_title
+	};
+	var logoutDialog = Ti.UI.createOptionDialog(optns);
+	logoutDialog.show();
+	logoutDialog.addEventListener('click', function(e_dialog) {
+		if (e_dialog.index == 0) {  // user clicked OK
+	    closeWindowController();
+			createWindowController('index', '', 'slide_right');
+		} else {
+		    // CANCEL CASE
+		 } 
+	});
 }
 
 //======================================================================

@@ -35,38 +35,59 @@ function wbLogin(email, password) {
 			// Ti.API.debug(this.responseText);
 			// TODO:  should probably put this into a separate function
 			if (response.status == 1) {
+				var dog_ID = response.dog.dog_ID;
+				
+				
 				// save credentials locally in mySesh global arrays
 				mySesh.user.email 	 = email;
-				mySesh.user.password = password;
-				mySesh.user.owner_ID = response.human.owner_ID;
-				mySesh.user.name 		 = response.human.owner_name;
-				mySesh.dog.dog_ID  	 = response.dog.dog_ID;
-				mySesh.dog.sex			 = response.dog.sex;
-				mySesh.dog.breed		 = response.dog.breed;
-				mySesh.dog.age				=	response.dog.age;
-				mySesh.dog.birthdate 	=	response.dog.birthdate;
-				mySesh.dog.weight			= response.dog.weight;
-				mySesh.dog.marks_made = parseInt(response.dog.marks_made);
-				
-				// TODO:  grab all dog info (SELECT *)
-				
-				mySesh.dog.current_place_ID        = response.dog.current_place_ID;
-				if (response.place!=null) {
-				  mySesh.dog.current_place_name    = response.place.name;
-				  mySesh.dog.current_place_lat     = response.place.lat;
-				  mySesh.dog.current_place_lon     = response.place.lon;
-				  mySesh.dog.current_place_geofence_radius = response.place.geofence_radius;
-        }
-				mySesh.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
-				mySesh.dog.name	 	= response.dog.dog_name;
-			
 				Ti.App.Properties.setString('user', email);
 				Ti.App.Properties.setString('pass', password);
-		
-				// TODO: dog info
+				mySesh.user.owner_ID = response.human.owner_ID;
+				mySesh.user.name 		 = response.human.owner_name;
+	
+				// USER HAS VALID ACCOUNT BUT NO DOG PROFILE	//////////////////////////////////////////////////////
+				if(dog_ID=="" || dog_ID==null) {
+					var modal_title = "Please complete your Dog's profile before proceeding"; 
+					var optns = {
+						options : ['OK'],
+						selectedIndex : 0,
+						title : modal_title
+					};
+					var gotoRegPage2 = Ti.UI.createOptionDialog(optns);
+					gotoRegPage2.show();
+					gotoRegPage2.addEventListener('click', function(e_dialog) {
+						if (e_dialog.index == 0) {  // user clicked OK
+					    closeWindowController();
+							createWindowController("register2","","slide_left");
+						} else {
+						    // TODO: figure out if cancel case is necessary
+						 } 
+					});
+				}
+				// USER HAS VALID ACCOUNT + VALID DOG PROFILE  //////////////////////////////////////////////////////
+				else {
+					mySesh.dog.dog_ID  	 = response.dog.dog_ID;
+					mySesh.dog.sex			 = response.dog.sex;
+					mySesh.dog.breed		 = response.dog.breed;
+					mySesh.dog.age				=	response.dog.age;
+					mySesh.dog.birthdate 	=	response.dog.birthdate;
+					mySesh.dog.weight			= response.dog.weight;
+					mySesh.dog.marks_made = parseInt(response.dog.marks_made);
+					
+					// GRAB ALL DOG RELATE INFO
+					mySesh.dog.current_place_ID        = response.dog.current_place_ID;
+					if (response.place!=null) {
+					  mySesh.dog.current_place_name    = response.place.name;
+					  mySesh.dog.current_place_lat     = response.place.lat;
+					  mySesh.dog.current_place_lon     = response.place.lon;
+					  mySesh.dog.current_place_geofence_radius = response.place.geofence_radius;
+	        }
+					mySesh.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
+					mySesh.dog.name	 	= response.dog.dog_name;
 				
-				// take user to the post-login window
-				createWindowController( "mapview", "", "slide_left" ); 
+					// TAKE USER TO MAP
+					createWindowController( "mapview", "", "slide_left" ); 	
+				}
 			} else {
 				// pass on error message from backend 
 				createSimpleDialog('Login Error', response.message);
@@ -102,19 +123,19 @@ function goToRegister (e) {
 $.index.open();	
 addToAppWindowStack( $.index, "index" );
 
+
 $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
 
+// DIV HEIGHTS
 var footer_height = 80;
 var content_height = mySesh.device.screenheight - footer_height;
-var topView_height = .45 * content_height;
-var midView_height = .55 * content_height;
+var topView_height = .35 * content_height;
+var midView_height = .65 * content_height;
 var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
 
-//alert(mySesh.device.screenheight +"["+ topView_height +", "+ midView_height +"]");
 // Check if the device is running iOS 8 or later, before registering for local notifications
-	/*if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) {
-	  
-	  TODO:  turn this on if we use push notifications
+	/*if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) { 
+	 // TODO:  turn this on if we use push notifications
 	  Ti.App.iOS.registerUserNotificationSettings({
 	    types: [
 	          Ti.App.iOS.USER_NOTIFICATION_TYPE_ALERT,
@@ -122,15 +143,12 @@ var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactor
 	          Ti.App.iOS.UESR_NOTIFICATION_TYPE_BADGE
 	      ]
 	  }); 
-	 
-	 // Ti.API.debug( " > > > IOS 8 or greater *" );
+	  // Ti.API.debug( " > > > IOS 8 or greater *" );
 	}
 	else {
 		//Ti.API.debug( " > > > IOS 7 or older *" );
 	} */
-
 //Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);	
-
 
 // FIRST THINGS FIRST - IF CREDS ARE SAVED, AUTOLOGIN!
 var saved_user = Ti.App.Properties.getString('user');
@@ -205,4 +223,4 @@ var necessary_args = {
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
 
-//createWindowController("register2","","slide_left");
+// createWindowController("register","","slide_left");

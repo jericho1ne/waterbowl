@@ -177,7 +177,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				Ti.API.log("  [>]  Checkin added successfully ");
 	
 				// in case we want to look up more info on this specific place in the global place array
-			  var place_index = getArrayIndexById( mySesh.geofencePoi, place_ID );
+			  var place_index = getArrayIndexById( mySesh.geofencePlaces, place_ID );
 				/*		 save Place ID, checkin state, and timestamp in mySesh  	*/
 				// checkin now officially complete
 				mySesh.dog.current_place_ID 		= place_ID;
@@ -186,7 +186,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				mySesh.dog.current_place_lat     = place_lat;
 				mySesh.dog.current_place_lon     = place_lon;
 				mySesh.dog.current_place_name    = place_name;
-				mySesh.dog.current_place_geo_radius = mySesh.geofencePoi[place_index].geo_radius;
+				mySesh.dog.current_place_geo_radius = mySesh.geofencePlaces[place_index].geo_radius;
 				mySesh.dog.last_checkin_timestamp= new Date().getTime();
 				
 				// Ti.API.debug ( "... mySesh.dog: " + JSON.stringify(mySesh.dog) );
@@ -264,7 +264,7 @@ function checkoutFromPlace (place_ID) {
 function updateGeofenceTable() {
 	$.placeListTitle.height = myUiFactory._height_header;
 	
-	var array_size = mySesh.geofencePoi.length;
+	var array_size = mySesh.geofencePlaces.length;
 	if (array_size == 0) {
     $.placeListTitle.text = "no nearby places";
 	  $.outerMapContainer.height = '100%';
@@ -274,9 +274,9 @@ function updateGeofenceTable() {
 	  $.outerMapContainer.height = mySesh.device.screenheight - ( 2.5 * myUiFactory._height_header );  //  "75%"
 	}
 	else if (array_size==1) {
-		// alert(mySesh.geofencePoi[0].id+" / "+mySesh.dog.current_place_ID);
+		// alert(mySesh.geofencePlaces[0].id+" / "+mySesh.dog.current_place_ID);
 		$.placeListTitle.text = array_size + " place nearby ";
-		if (mySesh.geofencePoi[0].id == mySesh.dog.current_place_ID ) {
+		if (mySesh.geofencePlaces[0].id == mySesh.dog.current_place_ID ) {
 			$.placeListTitle.text += "- tap to leave current place.";
 		} else {
 		  $.placeListTitle.text += "- tap to mark it.";
@@ -292,7 +292,7 @@ function updateGeofenceTable() {
 	var placeData = new Array();
 	
 	// (2)	SORT POIs BASED ON PROXIMITY	///////////////////////////////////////////////////////////
-	var nearby = mySesh.geofencePoi;
+	var nearby = mySesh.geofencePlaces;
 	nearby.sort(function(a, b) {		// sort by proximity (closest first)
 		return parseFloat(a.dist) - parseFloat(b.dist);
 	});
@@ -486,16 +486,16 @@ function getPoisInGeofence( mapObject, user_lat, user_lon ) {
 function updatePoisInGeofence( data ) {
 	Ti.API.debug( ".... .... .... .... POIs in geofence: " + data.length );
 	if (data.length > 0) {
-		mySesh.geofencePoi = data;
+		mySesh.geofencePlaces = data;
 			
 		// CHECK #1 - Have we left previous place's geofence?  
-		// If current_place_ID is not null, and looking up existing place's ID in geofencePOI returns -1
+		// If current_place_ID is not null, and looking up existing place's ID in geofencePlaces returns -1
     if (mySesh.dog.current_place_ID>0 && getArrayIndexById(data, mySesh.dog.current_place_ID)==-1 ) {
     	checkoutFromPlace( mySesh.dog.current_place_ID );
    		createSimpleDialog( "Seems you've left", "Automatically checked you out from " + mySesh.dog.current_place_name);
     }
     // CHECK #2 - If there a Checkin modal currently up, then check if situation is still valid 
-    //    eg: is the currently displayed place name still part of geofencePoi
+    //    eg: is the currently displayed place name still part of geofencePlaces
 	}
 	// POPULATE NEARBY PLACE TABLE
 	updateGeofenceTable($.placeListTable);
