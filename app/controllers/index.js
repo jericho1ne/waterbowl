@@ -212,15 +212,10 @@ var saved_pwd  = Ti.App.Properties.getString('pass');
 // Ti.App.Properties.setString('pass', '');
 // setTimeout ( function() { loginBtn.fireEvent('click'); }, 300 );  // wait for login fields to populate
 
-/*    To skip to a specific window, uncomment block below and change which window name to jump to		*/
-/*
-var necessary_args = {
-  _place_ID    : 601000001,
-	_place_index : 0,
-	_place_name  : "Oberieder Park!",
-	_enclosure_count : 2
-};
+//   To skip to a specific window, uncomment block below and change which window name to jump to
+/* 
+var necessary_args = {  _place_ID    : 601000001, };
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
 
-createWindowController("register3","","slide_left");
+// createWindowController("register3","","slide_left");
