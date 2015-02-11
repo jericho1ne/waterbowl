@@ -54,7 +54,7 @@ function saveUserInfo(data) {
 	enableAllButtons();
 	
 	if (data.status==1) {
-		mySesh.owner.owner_ID = data.owner_ID;
+		mySesh.user.owner_ID = data.owner_ID;
 		/* var params = {
 			"_owner_ID" 	: data.owner_ID,
 		}; */

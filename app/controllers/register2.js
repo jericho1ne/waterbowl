@@ -95,6 +95,8 @@ dog_bdate.rightButton 	= fwd_button_4;
 var nextBtn = myUiFactory.buildButton( "nextBtn", "next", "xl" );
 	nextBtn.addEventListener('click',  function(dog){ 
 		disableAllButtons();	
+		Ti.API.info( " >>>>>> dog_name " + ucwords(dog_name.value) );
+		mySesh.dog.name = ucwords(dog_name.value);
 		var dog_gender = "";
 		if (gender_tabs.index==0)
 			dog_gender = "M";
@@ -112,7 +114,7 @@ var nextBtn = myUiFactory.buildButton( "nextBtn", "next", "xl" );
 			
 			var dog = {
 				"owner_ID" 	: mySesh.user.owner_ID,
-				"name" 			: dog_name.value,
+				"name" 			: ucwords(dog_name.value),
 				"sex" 			: dog_gender,
 				"breed"  		: dog_breed1.value,
 				"breed2" 		: dog_breed2.value,
@@ -192,10 +194,8 @@ dog_bdate.addEventListener('focus', function(e) {
 
 ////////////// ON FOCUS PAGE LISTENER ////////////////////////////
 $.register2.addEventListener('focus',function(e){
-	//Ti.UI.debug(" **** window has focus **** ");
 	if ( mySesh.dog.breed1!="" && mySesh.dog.breed1!=null ) {
 		dog_breed1.value = mySesh.dog.breed1; 
-		// Ti.API.debug(" >>>> FIRST BREED  IF CASE  >>>> ");
 		/*dog_breed2.animate({
 			opacity	  : 1,
 			height		: 45,

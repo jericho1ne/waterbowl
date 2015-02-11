@@ -223,4 +223,4 @@ var necessary_args = {
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
 
-// createWindowController("register","","slide_left");
+createWindowController("register3","","slide_left");

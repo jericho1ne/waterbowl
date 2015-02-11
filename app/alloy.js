@@ -129,6 +129,18 @@ function loadJson ( params, url, callbackFunction ) {
 	};
 }
 
+
+//===========================================================================================
+//	Name:		 	ucwords ( str )
+//	Purpose:	equivalent of PHP's ucwords
+//===========================================================================================
+function ucwords(str) {
+  return (str + '')
+    .replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1) {
+      return $1.toUpperCase();
+    });
+}
+
 //===========================================================================================
 //	Name:		 	createWindowController ( win_name, args, animation[optional])
 //	Purpose:	to be the bestest window manager ever
@@ -136,7 +148,7 @@ function loadJson ( params, url, callbackFunction ) {
 function createWindowController ( win_name, args, animation ) {
 	Ti.API.info ( "//===================================== [ "+win_name+" ] ===== win # " +
 		 ( mySesh.windowStack.length+1 ) +" =========//" );
-	Ti.API.debug("  :::: createWindowController :::: args ["+JSON.stringify(args) +"] ::::");
+	Ti.API.debug("  :::: createWindowController :::: args ["+JSON.stringify(args) +"] :::: user/dog IDs [ "+mySesh.user.owner_ID+" / "+mySesh.dog.dog_ID+" ]");
 
 	var winObject = Alloy.createController(win_name, args).getView();
 	addToAppWindowStack( winObject, win_name );

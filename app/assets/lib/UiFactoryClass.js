@@ -796,7 +796,7 @@ UiFactory.prototype.buildButton = function(id, title, type) {
   // defaults (small button)
   var view_height 	= this._icon_medium+10;
   var btn_height 		= 34; // this._icon_medium;
- 
+ 	var btn_width 		= this._button_width;
   var font   				= this._text_small;
 
   if (type == "header") { 
@@ -811,6 +811,11 @@ UiFactory.prototype.buildButton = function(id, title, type) {
   else if (type == "xl") {
     font   = this._text_xl;
     btn_height += 10;
+  }
+   else if (type == "xxl") {
+    font   = this._text_xl;
+    btn_height += 10;
+    btn_width = this._device.screenwidth - (2*this._pad_left);
   }
 
 	var borderRadius  = btn_height/2;
@@ -830,7 +835,7 @@ UiFactory.prototype.buildButton = function(id, title, type) {
 		backgroundColor : this._color_dkpink, 
 		font						: font, 
 		textAlign       : Ti.UI.TEXT_ALIGNMENT_CENTER,
-  	width						: this._button_width, 
+  	width						: btn_width, 
 		height					: btn_height, 
 		opacity         : 1,
 		borderRadius		: borderRadius 
