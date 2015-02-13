@@ -50,6 +50,96 @@ function remoteFileExists( url ) {
   return http.status!=404;
 }
 
+//================================================================================
+//	Name: wbLogin
+//	Purpose: check credentials against backend
+//================================================================================
+function wbLogin(email, password) {
+	//alert(email+"/"+password);
+	// >> XHR REQUEST
+	var loginRequest = Ti.Network.createHTTPClient( {
+		// SUCCESS:  On data load
+		onload: function(e) {
+			var response = JSON.parse(this.responseText);	
+			// Ti.API.debug(this.responseText);
+			// TODO:  should probably put this into a separate function
+			if (response.status == 1) {
+				var dog_ID = response.dog.dog_ID;
+				
+				
+				// save credentials locally in mySesh global arrays
+				mySesh.user.email 	 = email;
+				Ti.App.Properties.setString('user', email);
+				Ti.App.Properties.setString('pass', password);
+				mySesh.user.owner_ID = response.human.owner_ID;
+				mySesh.user.name 		 = response.human.owner_name;
+	
+				// USER HAS VALID ACCOUNT BUT NO DOG PROFILE	//////////////////////////////////////////////////////
+				if(dog_ID=="" || dog_ID==null) {
+					var modal_title = "Please complete your Dog's profile before proceeding"; 
+					var optns = {
+						options : ['OK'],
+						selectedIndex : 0,
+						title : modal_title
+					};
+					var gotoRegPage2 = Ti.UI.createOptionDialog(optns);
+					gotoRegPage2.show();
+					gotoRegPage2.addEventListener('click', function(e_dialog) {
+						if (e_dialog.index == 0) {  // user clicked OK
+					    closeWindowController();
+							createWindowController("register2","","slide_left");
+						} else {
+						    // TODO: figure out if cancel case is necessary
+						 } 
+					});
+				}
+				// USER HAS VALID ACCOUNT + VALID DOG PROFILE  //////////////////////////////////////////////////////
+				else {
+					mySesh.dog.dog_ID  	 = response.dog.dog_ID;
+					mySesh.dog.sex		 = response.dog.sex;
+					mySesh.dog.breed		 = response.dog.breed;
+					mySesh.dog.age				=	response.dog.age;
+					mySesh.dog.birthdate 	=	response.dog.birthdate;
+					mySesh.dog.weight			= response.dog.weight;
+					mySesh.dog.marks_made = parseInt(response.dog.marks_made);
+					
+					// GRAB ALL DOG RELATE INFO
+					mySesh.dog.current_place_ID        = response.dog.current_place_ID;
+					if (response.place!=null) {
+					  mySesh.dog.current_place_name    = response.place.name;
+					  mySesh.dog.current_place_lat     = response.place.lat;
+					  mySesh.dog.current_place_lon     = response.place.lon;
+					  mySesh.dog.current_place_geofence_radius = response.place.geofence_radius;
+	        }
+					mySesh.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
+					mySesh.dog.name	 	= response.dog.dog_name;
+				
+					// TAKE USER TO MAP
+					createWindowController( "mapview", "", "slide_left" ); 	
+				}
+			} else {
+				// pass on error message from backend 
+				createSimpleDialog('Login Error', response.message);
+			}
+		},
+		//  ERROR:  No data received from XHRequest
+		onerror: function(e) {
+			Ti.API.debug(e.error);
+			createSimpleDialog('Error', e.error);
+		},
+		timeout: 4000 /* in milliseconds */
+	} );
+	// << XHR REQUEST
+	loginRequest.open("POST", SERVER_URL+"login.php");
+	var params = {
+		email : email,
+		pass  : password
+	};
+	loginRequest.send(params);
+	Ti.API.debug ( "SENDING >> "+JSON.stringify(params) );
+}
+
+
 //==========================================================================
 //	Name:    loadRemoteImage ( type, img_actual, img_placeholder )
 //	Desc:	   if it exists, return actual image, otherwise placeholder
@@ -148,7 +238,7 @@ function ucwords(str) {
 function createWindowController ( win_name, args, animation ) {
 	Ti.API.info ( "//===================================== [ "+win_name+" ] ===== win # " +
 		 ( mySesh.windowStack.length+1 ) +" =========//" );
-	Ti.API.debug("  :::: createWindowController :::: args ["+JSON.stringify(args) +"] :::: user/dog IDs [ "+mySesh.user.owner_ID+" / "+mySesh.dog.dog_ID+" ]");
+	Ti.API.debug("  :::: createWindowController :::: args ["+JSON.stringify(args) +"] :::: user [ "+JSON.stringify(mySesh.user)+" ] /// "+ 		" [ "+JSON.stringify(mySesh.dog)+" ]");
 
 	var winObject = Alloy.createController(win_name, args).getView();
 	addToAppWindowStack( winObject, win_name );
@@ -336,7 +426,10 @@ function addMenubar( parent_object ) {
 	menuCenter.add(wbLogoMenubar);	  */
 		
 	// ADD BACK BUTTON ONLY IF NOT ON MAPVIEW
-	if (Ti.App.Properties.current_window != "mapview") {
+	if (Ti.App.Properties.current_window != "mapview" && 
+			Ti.App.Properties.current_window != "register2" &&
+			Ti.App.Properties.current_window != "register3" &&
+			Ti.App.Properties.current_window != "register4") {
 		menuLeft.add(backBtn);
 		backBtn.addEventListener('click', closeWindowController);
 	}
@@ -487,17 +580,22 @@ function addToAppWindowStack( winObject, win_name )  {
 }
 
 //=================================================================================
-// 	Name:  		closeWindowController()
+// 	Name:  		closeWindowController( anim )
 // 	Purpose:	generic cleanup function usually attached to Back Button
 //=================================================================================
-function closeWindowController() {
+function closeWindowController( anim ) {
 	var currentWindow = mySesh.windowStack.pop();
-	Ti.API.info( "  [x] closing window ["+ Ti.App.Properties.current_window +"]");
+	Ti.API.info( "  [x] closing window ["+ currentWindow.id +"]");
 	// default close window animation is SLIDE RIGHT
-	currentWindow.close( { 
-		opacity: 0.1, duration: 300, left: 800,                                                   
-		curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
-	} );
+	if (anim == 0) {
+		currentWindow.close();
+	}
+	else {
+		currentWindow.close( { 
+			opacity: 0.1, duration: 300, left: 800,                                                   
+			curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT
+		} );
+	}
 	currentWindow = null;
 }
 

@@ -74,10 +74,10 @@ var fwd_button_4 =  Titanium.UI.createButton({
 	height					: myUiFactory._icon_small
 });
 
-var dog_breed1 = myUiFactory.buildTextField("dog_breed1",  form_width,  "select your dog's breed", false);
-var dog_breed2 = myUiFactory.buildTextField("dog_breed2",  form_width,  "and a second one if you wish", false);
+var dog_breed1 = myUiFactory.buildTextField("dog_breed1",  form_width, "select your dog's breed", false);
+var dog_breed2 = myUiFactory.buildTextField("dog_breed2",  form_width, "and a second one if you wish", false);
 var dog_weight = myUiFactory.buildTextField("dog_weight",  form_width, "weight (lbs)", 		 false);
-var dog_bdate	 = myUiFactory.buildTextField("dog_bdate",   form_width,  "birthdate", false);
+var dog_bdate	 = myUiFactory.buildTextField("dog_bdate",   form_width, "birthdate", false);
 
 if (mySesh.dog.breed1=="" || mySesh.dog.breed1==null) {
 	dog_breed2.opacity = 0;
@@ -98,8 +98,8 @@ dog_bdate.rightButton 	= fwd_button_4;
 var nextBtn = myUiFactory.buildButton( "nextBtn", "next", "xl" );
 	nextBtn.addEventListener('click',  function(dog){ 
 		disableAllButtons();	
-		Ti.API.info( " >>>>>> dog_name " + ucwords(dog_name.value) );
-		mySesh.dog.name = ucwords(dog_name.value);
+		
+		// Ti.API.info( " >>>>>> dog_name " + ucwords(dog_name.value) );
 		var dog_gender = "";
 		if (gender_tabs.index==0)
 			dog_gender = "M";
@@ -115,12 +115,19 @@ var nextBtn = myUiFactory.buildButton( "nextBtn", "next", "xl" );
 				dog_bdate.value			!='' && 
 				dog_weight.value		!='') {
 			
+		
+			mySesh.dog.name 	= ucwords(dog_name.value);
+			mySesh.dog.sex  	= dog_gender;
+			mySesh.dog.breed1 = dog_breed1.value;
+			mySesh.dog.breed2 = (dog_breed2.value!="- None -" ? dog_breed2.value : "");
+			// TODO: calculate age
+			
 			var dog = {
 				"owner_ID" 	: mySesh.user.owner_ID,
 				"name" 			: ucwords(dog_name.value),
 				"sex" 			: dog_gender,
 				"breed"  		: dog_breed1.value,
-				"breed2" 		: dog_breed2.value,
+				"breed2" 		: (dog_breed2.value!="- None -" ? dog_breed2.value : ""),
 				"birthdate" : dog_bdate.value,
 				"weight" 		: dog_weight_int
 			};
@@ -197,6 +204,7 @@ dog_bdate.addEventListener('focus', function(e) {
 
 ////////////// ON FOCUS PAGE LISTENER ////////////////////////////
 $.register2.addEventListener('focus',function(e){
+	// BREEDS
 	if ( mySesh.dog.breed1!="" && mySesh.dog.breed1!=null ) {
 		dog_breed1.value = mySesh.dog.breed1; 
 		/*dog_breed2.animate({
@@ -213,12 +221,16 @@ $.register2.addEventListener('focus',function(e){
 	} 
 	if (dog_breed2.value=="" || mySesh.dog.breed2!=dog_breed2.value)
 		dog_breed2.value = mySesh.dog.breed2; 
-
+	if (dog_breed2.value==dog_breed1.value && dog_breed1.value != "")
+		dog_breed2.value = "- None -";
+	
+	// WEIGHT
 	if (dog_weight.value=="" || mySesh.dog.weight!=dog_weight.value) {
 		if (mySesh.dog.weight!=null) {
 			dog_weight.value = mySesh.dog.weight + " lbs";
 		}
 	}
+	// BDATE CHECKS
 	if (dog_bdate.value=="" || mySesh.dog.birthdate!=dog_bdate.value)
 		dog_bdate.value = mySesh.dog.birthdate;
 

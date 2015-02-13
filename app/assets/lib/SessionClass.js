@@ -92,6 +92,28 @@ function Session(){
 //================================================================================
 //		Name:				xsetGeoLatLon
 //================================================================================
+Session.prototype.clearSavedDogInfo = function (){
+	// Ti.API.debug("  .... [~] Session.prototype.xsetGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
+	this.dog.dog_ID 				= null;
+	this.dog.name						=	null;
+	this.dog.sex						= null;
+	this.dog.age						=	null;
+	this.dog.birthdate  		=	null;
+	this.dog.breed1					=	null;
+	this.dog.breed2					=	null;
+	this.dog.weight					= null;
+	this.dog.marks_made			= null;
+	this.dog.current_place_ID  				= null;
+	this.dog.current_place_name 			= null;
+	this.dog.current_place_geo_radius	= null;
+	this.dog.current_place_lat 				= null;
+	this.dog.current_place_lon 				= null;
+	this.dog.last_checkin_timestamp 	= null;
+}
+
+//================================================================================
+//		Name:				xsetGeoLatLon
+//================================================================================
 Session.prototype.xsetGeoLatLon = function (lat, lon, how_long_ago){
 	// Ti.API.debug("  .... [~] Session.prototype.xsetGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
 	this.geo.lat = lat;

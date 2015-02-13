@@ -16,10 +16,10 @@ function checkemail(emailAddress) {
 };
 
 //================================================================================
-//		Name: 			saveUserDetails ()
+//		Name: 		saveUserToDb ()
 //		Purpose:  add new user to database
 //================================================================================
-function saveUserDetails(email, pwd1, pwd2, city, state, zip) {
+function saveUserToDb(email, pwd1, pwd2, city, state, zip) {
 	disableAllButtons();
 	if (pwd1!='' && pwd2!='' && email!='' && city!='' && state!='') {
 		if (pwd1 != pwd2) {
@@ -28,7 +28,8 @@ function saveUserDetails(email, pwd1, pwd2, city, state, zip) {
 			if ( !checkemail(email) ) {
 				createSimpleDialog("Email error","Please enter a valid email");
 			}	else {
-				// TODO:  ALSO save dog info here locally	
+				// save user's provided email, even though the db call could fail
+				Ti.App.Properties.setString('user', email);
 				var params = {
 					"email" 	: email,
 					"pwd" 		: pwd1,
@@ -36,7 +37,7 @@ function saveUserDetails(email, pwd1, pwd2, city, state, zip) {
 					"city"  	: city,
 					"zipcode" : zip
 				};
-				loadJson(params, "http://waterbowl.net/mobile/create-user.php", saveUserInfo);				
+				loadJson(params, "http://waterbowl.net/mobile/create-user.php", saveUserInfoLocally);				
 			}
 		}
 	} else {
@@ -46,25 +47,28 @@ function saveUserDetails(email, pwd1, pwd2, city, state, zip) {
 }
 
 //================================================================================
-//		Name: 			saveUserDetails ()
+//		Name: 			saveUserInfoLocally ()
 //		Purpose:  add new user to database
 //================================================================================
-function saveUserInfo(data) {
-	Ti.API.debug( "  .... [~] saveUserInfo :: " + JSON.stringify(data) );
+function saveUserInfoLocally(data) {
+	Ti.API.debug( "  .... [~] saveUserInfoLocally :: " + JSON.stringify(data) );
 	enableAllButtons();
 	
 	if (data.status==1) {
 		mySesh.user.owner_ID = data.owner_ID;
+		
+		Ti.API.debug( "  >>> Ti.App.Properties.setString('user') :: "+data.email);
+		// Ti.App.Properties.setString('pass', data.pwd);
 		/* var params = {
 			"_owner_ID" 	: data.owner_ID,
 		}; */
  		createWindowController( "register2", "", "slide_left" ); 
  	}
-  else	
-    createSimpleDialog("Error", data.message);
-	// TODO: 			
-	//	$.continueBtn.enabled = false;
-	//	$.continueBtn.opacity = 0.3;
+  else {
+  	// clear presaved user email
+  	Ti.App.Properties.setString('user', data.email);
+  	createSimpleDialog("Error", data.message);
+  }
 }
 
 //
@@ -96,13 +100,8 @@ sz_row_view.add( user_zip );
 
 var nextBtn = myUiFactory.buildButton( "nextBtn", "next", "xl" );
 nextBtn.addEventListener('click',  function(){ 
-	saveUserDetails(user_email.value, user_pwd_1.value, user_pwd_2.value, user_city.value, user_state.value, user_zip.value) 
+	saveUserToDb(user_email.value, user_pwd_1.value, user_pwd_2.value, user_city.value, user_state.value, user_zip.value) 
 });
-
-
-// used later to ensure the user has actually filled in the Mark textarea
-//var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
-//var textArea = myUiFactory.buildTextArea( 'What does '+ mySesh.dog.name +' want to say about this place?' );
 
 $.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
 $.scrollView.add( title_label );
@@ -116,29 +115,9 @@ $.scrollView.add( sz_row_view );
 $.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
 $.scrollView.add( nextBtn );
 
-// response from create-account.php =========================================================
-// TODO:  should be wrapped inside a User.create() function
 /*
-var createAccountRequest = Titanium.Network.createHTTPClient();
-createAccountRequest.onload = function() {
-	var json = this.responseText;
-	Ti.API.log("*** create-account.php ***" + json);
-	Titanium.API.info(json);
-	// debug message
-	var response = JSON.parse(json);
-
-	if (response.logged == 1) {
-		$.email.value     = '';
-		$.password1.value = '';
-		$.password2.value = '';
-	
-    createWindowController( "registerpetinfo", "", "slide_left" ); 
-	} 
-	else {
-		createSimpleDialog("Cannot create account", response.message);
-	}
 	// regardless of success or error, reactivate Submit button
 	$.continueBtn.enabled = true;
+	$.continueBtn.backgroundColor = "#cccccc";
 	$.continueBtn.opacity = 1;
-};
 */

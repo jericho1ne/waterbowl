@@ -22,109 +22,30 @@ function goToLogin() {
 }
 
 //================================================================================
-//	Name: wbLogin
-//	Purpose: check credentials against backend
-//================================================================================
-function wbLogin(email, password) {
-	//alert(email+"/"+password);
-	// >> XHR REQUEST
-	var loginRequest = Ti.Network.createHTTPClient( {
-		// SUCCESS:  On data load
-		onload: function(e) {
-			var response = JSON.parse(this.responseText);	
-			// Ti.API.debug(this.responseText);
-			// TODO:  should probably put this into a separate function
-			if (response.status == 1) {
-				var dog_ID = response.dog.dog_ID;
-				
-				
-				// save credentials locally in mySesh global arrays
-				mySesh.user.email 	 = email;
-				Ti.App.Properties.setString('user', email);
-				Ti.App.Properties.setString('pass', password);
-				mySesh.user.owner_ID = response.human.owner_ID;
-				mySesh.user.name 		 = response.human.owner_name;
-	
-				// USER HAS VALID ACCOUNT BUT NO DOG PROFILE	//////////////////////////////////////////////////////
-				if(dog_ID=="" || dog_ID==null) {
-					var modal_title = "Please complete your Dog's profile before proceeding"; 
-					var optns = {
-						options : ['OK'],
-						selectedIndex : 0,
-						title : modal_title
-					};
-					var gotoRegPage2 = Ti.UI.createOptionDialog(optns);
-					gotoRegPage2.show();
-					gotoRegPage2.addEventListener('click', function(e_dialog) {
-						if (e_dialog.index == 0) {  // user clicked OK
-					    closeWindowController();
-							createWindowController("register2","","slide_left");
-						} else {
-						    // TODO: figure out if cancel case is necessary
-						 } 
-					});
-				}
-				// USER HAS VALID ACCOUNT + VALID DOG PROFILE  //////////////////////////////////////////////////////
-				else {
-					mySesh.dog.dog_ID  	 = response.dog.dog_ID;
-					mySesh.dog.sex			 = response.dog.sex;
-					mySesh.dog.breed		 = response.dog.breed;
-					mySesh.dog.age				=	response.dog.age;
-					mySesh.dog.birthdate 	=	response.dog.birthdate;
-					mySesh.dog.weight			= response.dog.weight;
-					mySesh.dog.marks_made = parseInt(response.dog.marks_made);
-					
-					// GRAB ALL DOG RELATE INFO
-					mySesh.dog.current_place_ID        = response.dog.current_place_ID;
-					if (response.place!=null) {
-					  mySesh.dog.current_place_name    = response.place.name;
-					  mySesh.dog.current_place_lat     = response.place.lat;
-					  mySesh.dog.current_place_lon     = response.place.lon;
-					  mySesh.dog.current_place_geofence_radius = response.place.geofence_radius;
-	        }
-					mySesh.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
-					mySesh.dog.name	 	= response.dog.dog_name;
-				
-					// TAKE USER TO MAP
-					createWindowController( "mapview", "", "slide_left" ); 	
-				}
-			} else {
-				// pass on error message from backend 
-				createSimpleDialog('Login Error', response.message);
-			}
-		},
-		//  ERROR:  No data received from XHRequest
-		onerror: function(e) {
-			Ti.API.debug(e.error);
-			createSimpleDialog('Error', e.error);
-		},
-		timeout: 4000 /* in milliseconds */
-	} );
-	// << XHR REQUEST
-	loginRequest.open("POST", SERVER_URL+"login.php");
-	var params = {
-		email : email,
-		pass  : password
-	};
-	loginRequest.send(params);
-	Ti.API.debug ( "SENDING >> "+JSON.stringify(params) );
-}
-
-//================================================================================
 //	Name: 	goToRegister(e)
 //	Purpose:  bounce user to Registration page
 //================================================================================
 function goToRegister (e) {
-	Ti.API.log("* Register clicked * ");
+	// Ti.API.log("* Register clicked * ");
+ 	mySesh.clearSavedDogInfo();
  	createWindowController("register", "", "slide_left"); 
 }
 
 //======================== Create and Open top level UI components ==================================== 
 $.index.open();	
 addToAppWindowStack( $.index, "index" );
-
-
 $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
+
+$.index.addEventListener('focus',function(e) {
+	// if credentials are already saved in mySesh
+	if( Ti.App.Properties.getString('user')!="" ) {
+		email.value = Ti.App.Properties.getString('user');
+	}
+	if( Ti.App.Properties.getString('pass')!="" ) {
+		password.value = saved_pwd;
+	}
+});
+
 
 // DIV HEIGHTS
 var footer_height = 80;
@@ -194,14 +115,7 @@ var saved_pwd  = Ti.App.Properties.getString('pass');
 	$.content.add(topView);
 	$.content.add(midView);
 	$.content.add(botView);
-	
-	// if credentials are already saved in mySesh
-	if( saved_user!="" ) {
-		email.value = saved_user;
-	}
-	if( saved_pwd!="" ) {
-		password.value = saved_pwd;
-	}	
+		
 //} else {  // AUTOLOGIN IF CREDENTIALS ARE SAVED
 //	wbLogin(saved_user, saved_pwd);
 //}
@@ -218,4 +132,6 @@ var necessary_args = {  _place_ID    : 601000001, };
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
 
-createWindowController("register3","","slide_left");
+
+
+// createWindowController("register","","slide_left");

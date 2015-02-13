@@ -4,7 +4,8 @@
 //================================================================================
 function displayDogProfile(dog) {
 	var dog_info = dog.sex+" / "+dog.weight+" lbs / "+dog.age+" yrs old";
-	$.scrollView.add( myUiFactory.buildPageHeader(dog.ID, "profile", dog.name, dog_info, dog.breed, "" ) );
+	var breeds_comp = dog.breed + (dog.breed_2!="" ? " + "+dog.breed_2 : "");
+	$.scrollView.add( myUiFactory.buildPageHeader(dog.ID, "profile", dog.name, dog_info, breeds_comp, "" ) );
 	
 	//-----------------------------------------------------------------------------------------------------------
 	//			BASIC INFO

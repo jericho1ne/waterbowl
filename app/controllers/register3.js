@@ -14,12 +14,12 @@ function gotoPhotoUpload() {
 // 		(1)  Add section header
 $.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "account setup 3/3") );
 
-var dog_name = (mySesh.dog.namem==null ? "Your dog" : mySesh.dog.name);
+var dog_name = (mySesh.dog.name==null ? "your dog" : mySesh.dog.name);
 var form_width 		= mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
 var title_label	 	= myUiFactory.buildLabel( dog_name + "'s Furry Mug", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95","left" );	
 
 var dog_intro 		= "Last step! All we now is a clear photo of your dog so they are easily identifiable by other Waterbowl members.";
-var warning 			= "Note:  No humans or other dogs allowed.  This one is just for "+dog_name+".";
+var warning 			= "Note:  No humans or other dogs allowed.";
 
 var galleryBtn 		= myUiFactory.buildButton( "galleryBtn", "upload from gallery", "xxl" );
 var cameraBtn 		= myUiFactory.buildButton( "cameraBtn", "use camera", "xxl" );
@@ -70,13 +70,12 @@ galleryBtn.addEventListener('click', function(e) {
 	    xhr.onerror = function(e) {
 	        Ti.API.info('IN ERROR ' + e.error);
 	    };
-	    
 	    xhr.onload = function(response) {
 				if ( this.responseText != ''){
 	      	var jsonData = JSON.parse(this.responseText);
 	      	if (jsonData.status>0) {
-	        	createSimpleDialog('Success', jsonData.message);
-	        	// TODO:  take user to register4 screen where they get to see the fully built profile
+	        	// createSimpleDialog('Success', jsonData.message);
+	        	createWindowController('register4','',"slide_left");
 	      	} else {
 	      		cameraBtn.show();
 						galleryBtn.show();
@@ -94,9 +93,12 @@ galleryBtn.addEventListener('click', function(e) {
 	    xhr.send({
 				'userfile'		: image,
 				'type'				: 'dog',
-				'type_ID'			: 80, // mySesh.dog.dog_ID,		// last dog inserted ID from register2
+				'type_ID'			: mySesh.dog.dog_ID,		// last dog inserted ID from register2
 	      'image_type'  : 'banner'  						// TODO: inquire about image type on client?? 
 	    });
+	    Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + image, 'dog', mySesh.dog.dog_ID, + 'banner' +"]");
+	    
+
 		},
 	  /////////		CANCEL
 	  cancel : function() {
@@ -122,13 +124,21 @@ cameraBtn.addEventListener('click', function(e) {
 	    xhr.onerror = function(e) {
 	        Ti.API.info('IN ERROR ' + e.error);
 	    };
-	    
 	    xhr.onload = function(response) {
-				if ( this.responseText !=0){
-	      	//var re = this.responseText;
-	        alert( '  RESULTS >> ' + this.responseText );
+				if ( this.responseText != ''){
+	      	var jsonData = JSON.parse(this.responseText);
+	      	if (jsonData.status>0) {
+	        	createSimpleDialog('Success', jsonData.message);
+	        	// TODO:  take user to register4 screen where they get to see the fully built profile
+	      	} else {
+	      		cameraBtn.show();
+						galleryBtn.show();
+	      		createSimpleDialog('Login Error', jsonData.message);
+	      	}	
 	      } else {
-					alert( "The upload did not work! Check your PHP server settings." );
+      		cameraBtn.show();
+					galleryBtn.show();
+					alert( "No response from server" );
 	      }
 	    };
 	    xhr.onsendstream = function(e) {
@@ -137,9 +147,10 @@ cameraBtn.addEventListener('click', function(e) {
 	    xhr.send({
 				'userfile'		: image,
 				'type'				: 'dog',
-				'type_ID'			: 88,		// TODO: pass in dog_ID (mysql_last_insert_ID) from register2
+				'type_ID'			: mySesh.dog.dog_ID,		// last dog inserted ID from register2
 	      'image_type'  : 'banner'  						// TODO: inquire about image type on client?? 
 	    });
+	    Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + image, mySesh.dog.dog_ID +"]");  
 		},
 	  /////////		CANCEL
 	  cancel : function() {
