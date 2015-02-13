@@ -202,7 +202,7 @@ var saved_pwd  = Ti.App.Properties.getString('pass');
 	if( saved_pwd!="" ) {
 		password.value = saved_pwd;
 	}	
-//} else {
+//} else {  // AUTOLOGIN IF CREDENTIALS ARE SAVED
 //	wbLogin(saved_user, saved_pwd);
 //}
 
@@ -218,4 +218,4 @@ var necessary_args = {  _place_ID    : 601000001, };
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
 
-// createWindowController("register3","","slide_left");
+createWindowController("register3","","slide_left");

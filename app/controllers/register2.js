@@ -6,8 +6,11 @@ function saveDogInfo(data) {
 	Ti.API.debug( "  .... [~] saveDogInfo :: " + JSON.stringify(data) );
 	enableAllButtons();
 	
-	if (data.status==1)
+	if (data.status==1) {
+		if (data.dog_ID!="" && data.dog_ID!=null)
+ 			mySesh.dog.dog_ID = data.dog_ID;
  		createWindowController( "register3", "", "slide_left" ); 
+  }
   else	
     createSimpleDialog("Error", data.message);
 	
