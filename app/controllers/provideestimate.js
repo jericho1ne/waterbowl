@@ -62,9 +62,6 @@ function updateLabel(e, slider_label, slider_value){
 //========================================================================
 function updateEstimates (place_ID, value_1, value_2) {
 	Ti.API.debug(".... [~] updateEstimates: "+value_1+" "+value_2);
-	
-	// alert("estimate_scale values:  large dog "+value_1+" / small dog "+value_2 );
-	
 	var grabPlaces = Ti.Network.createHTTPClient();
 	grabPlaces.open("POST", "http://waterbowl.net/mobile/set-place-estimate.php");
 	
@@ -89,7 +86,7 @@ function updateEstimates (place_ID, value_1, value_2) {
 			var response = JSON.parse(json);
 			if (response.status == 1) { 		// success
 				Ti.API.log("  [>]  Estimate added successfully ");
-				createSimpleDialog("Result", response.message);
+				// createSimpleDialog("Result", response.message);
 				// close current window and bounce user to Place Overview
 				closeWindowController();
 			}
@@ -114,7 +111,7 @@ var args = arguments[0] || {};
 Ti.API.debug( " >>> Provide Estimate >>> "+JSON.stringify(args));
 	
 var park_name       = args._poiInfo.name;
-var enclosure_count = args._poiInfo.enclosure_count;
+var enclosure_count = args._poiDetail.enclosure_count;
 
 var miniHeader = myUiFactory.buildMiniHeader(park_name, args._poiInfo.city, args._poiInfo.icon_color);
 $.scrollView.add(miniHeader);
@@ -132,7 +129,6 @@ $.scrollView.add(call_to_action);
 
 /*   Mixed area, if this be the only slider  
      If a second one follows, it becomes the Large Dogs slider        */
-
 
 																			//  	title, width, height, font_style, text_align 
 var slider1_label = myUiFactory.buildLabel( "0", "100%", "auto", myUiFactory._text_medium, "#000000", "" );
@@ -178,12 +174,11 @@ if (enclosure_count==2) {
 //  add save estimate button
 var save_est_btn   = myUiFactory.buildButton( "save_est_btn", "save estimate", "medium" );
 $.scrollView.add(save_est_btn);
-//$.content.add( $.scrollView );
 
 save_est_btn.addEventListener('click', function(e) {
 	// var estimate = ;
 	if (enclosure_count==1)
-		updateEstimates(args._place_ID, Math.round(slider1.value), -1);
+		updateEstimates(args._poiInfo.place_ID, Math.round(slider1.value), -1);
 	else if (enclosure_count==2)
-		updateEstimates(args._place_ID, Math.round(slider1.value), Math.round(slider2.value) );
+		updateEstimates(args._poiInfo.place_ID, Math.round(slider1.value), Math.round(slider2.value) );
 });

@@ -1,12 +1,59 @@
 //
-//	Waterbowl App
-//		:: placeoverview.js
+//	Waterbowl App	:: placeoverview.js
 //	
 //	Created by Mihai Peteu Oct 2014
 //	(c) 2014 waterbowl
 //
-//		Last update Jan 12 2014
+//		Last update Feb 16 2015
 //
+
+/*
+
+ poiDetail {
+    "ID"							: "11",
+    "poi_ID"					: "601000001",
+    "size"						: "Medium",
+    "terrain"					: "Woodchips",
+    "grade"						: "Flat",
+    "water"						: "Yes",
+    "shade"						: "Limited",
+    "waste"						: "Doggie Pot",
+    "offleash"				: "Allowed",
+    "enclosures"			: "Large Dog Area + Small Dog Area",
+    "enclosure_count"	: "2",
+    "benches"					: "A few benches",
+    "fenced"					: "Yes",
+    "managing_org"		: "",
+    "category"				: "601"
+}
+
+poiInfo {
+    "place_ID"						: "601000001",
+    "name"								: "Oberreider Park",
+    "geofence_radius"			: 0.0123106,
+    "category"						: "601",
+    "price_range"					: "",
+    "category_type_1"			: "Dog Park",
+    "category_type_2"			: "",
+    "category_type_3"			: "",
+    "rating_wb"						: "4.0",
+    "rating_dogfriendly"	: "5.0",
+    "type"								: "Dog Parks",
+    "lat"									: "33.971995",
+    "lon"									: "-118.420496",
+    "city"								: "Playa Vista",
+    "address"							: "Bluff Creek Dr & Seabluff Dr",
+    "zip"									: "90094",
+    "icon"								: "poi-mapmarker-dogpark.png",
+    "icon_basic"					: "poi-basic-dogpark.png",
+    "icon_color"					: "#986d4f",
+    "dist"								: 2.38
+}
+
+*/
+
+// getPoiInfo > getPoiDetail > drawEverything
+
 //================================================================================
 //		Name:			getRemarks( params )
 //		Purpose:		( 1, args._place_ID, mySesh.dog.dog_ID, displayRemarks);
@@ -31,9 +78,9 @@ function displayRemarks(data) {
 	
 	var necessary_args = {   
 		_place_ID    		: args._place_ID,
-		_place_name	 		: poiInfo.name,
-		_place_city	 		: poiInfo.city,
-		_place_bgcolor	: poiInfo.icon_color,
+		_place_name	 		: mySesh.currentPlaceInfo.name,
+		_place_city	 		: mySesh.currentPlaceInfo.city,
+		_place_bgcolor	: mySesh.currentPlaceInfo.icon_color,
 		_place_type  		: 1
 	};
 	markBtn.addEventListener('click', function(e) {
@@ -69,13 +116,6 @@ function displayRemarks(data) {
 //		Purpose:	add place estimate modules to Window and fill them in w/ data
 //================================================================================
 function displayRecentEstimates(data, place_ID) {
-	// +=== last_estimate_view (in XML) =========+
-	// |  +-thumb-+ +-- middle --+ +-- right--+  |
-	// |  |       | |            | |          |  |
-	// |  |       | |            | |          |  |
-	// |  |       | |            | |          |  |		
-	// |  +-------+ +------------+ +----------+  |		
-	// +=========================================+
 	if( data.payload.length>0) {	
 	  for (var i=0, len=data.payload.length; i<len; i++) {	
 	  	var area_type = "Entire";
@@ -83,61 +123,59 @@ function displayRecentEstimates(data, place_ID) {
 	  		area_type = data.payload[i].size+ " Dog";
 	    }
 	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", 3);
-		  $.activity.add(dog_size_section_header);
+		  $.estimates.add(dog_size_section_header);
 		  
 		  // var photo_url = mySesh.AWS.url_base+ '/' +mySesh.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  if(data.payload[i].amount==-1) {
 		  	var activity_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
-		  	var latest_estimate = myUiFactory.buildSingleRowInfoBar( activity_icon, "No recent information", "");
+		  	var latest_estimate = myUiFactory.buildSingleRowInfoBar( "", "No recent information", "");
 		  }
 		  else {
 		  	var photo_url = PROFILE_PATH + 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
 		  	Ti.API.info( ">>>>>>> PHOTO URL >>>>> "+photo_url);
 		  	var latest_estimate = myUiFactory.buildTableRowHeader(data.payload[i].dog_ID, photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
 		  }
-		  $.activity.add(latest_estimate);
-	  
+		  $.estimates.add(latest_estimate);
 	  }
 	}
 	else {
 	  var nothing_here_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
 		var nothing_here = myUiFactory.buildLabel( data.response, "100%", myUiFactory._icon_small+(2*myUiFactory._pad_top), myUiFactory._text_medium, "#000000", "" );	
 		nothing_here_container.add(nothing_here);
-		$.activity.add(nothing_here_container);
+		$.estimates.add(nothing_here_container);
 	}
 	Ti.API.info( ".... [+] >>>>>>> addEstimatesButton :: " + JSON.stringify(data) );
-	addEstimatesButton(data);
 }
 
 //================================================================================
-//		Name:			addEstimatesButton( data )
+//		Name:			addEstimatesButton( )
 //		Purpose:	LIKE THE TITLE SEZ.  I'M DOING STUFF HERE.
 //================================================================================
-function addEstimatesButton(data) {
-	var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "report estimate >"); 
-	estimate_btn.addEventListener('click', function(){
-    Ti.API.info( "...[+] Estimate Update button clicked :: " + JSON.stringify(data) );
-    var necessary_args = {
-		  _place_ID    : args._place_ID,     // 601000001
-	    _place_index : place_index,
-	    _poiInfo		 : data
-    };
-		createWindowController( "provideestimate", necessary_args, "slide_left" );
-	});
+function addEstimatesButton(poiDetail) {
+	//////////		 ONLY ALLOW USER TO PROVIDE ESTIMATE IF CURRENTLY CHECKED IN HERE		 /////////////////////
+	if (	mySesh.dog.current_place_ID == args._place_ID ) {
+		var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "report estimate >"); 
+		estimate_btn.addEventListener('click', function(){
+		  var necessary_args = {
+			  _poiInfo		 : mySesh.currentPlaceInfo,
+	   		_poiDetail	 : mySesh.currentPlaceFeatures
+	    };
+			createWindowController( "provideestimate", necessary_args, "slide_left" );
+		});
+	}
 	// if there are multiple estimates to be seen at this park
 	var more_btn = myUiFactory.buildFullRowButton("more_btn", "see history >"); 
 	more_btn.addEventListener('click', function(){
-			Ti.API.info("...[+] Estimate History button clicked");
+		Ti.API.info("...[+] Estimate History button clicked");
 		// TODO:  Create gray "see more >" button 
 		// 				package estimate info in args._estimates, open if clicked
 		var necessary_args = {
-			_poiInfo	: poiInfo
+			_poiInfo	: mySesh.currentPlaceInfo
 		};
 		createWindowController( "activityhistory", necessary_args, "slide_left" );
 	});
-	
-	$.activity.add(estimate_btn);
-	$.activity.add(more_btn);
+	$.estimates_buttons.add(estimate_btn);
+	$.estimates_buttons.add(more_btn);
 }
 
 //================================================================================
@@ -167,13 +205,13 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 }
 
 //====================================================================================================
-//		Name:				displayPlaceCheckins(dataArray, parentObject)
+//		Name:				displayPlaceCheckins(data, parentObject)
 //		Purpose:		replace full size header w/ smaller version upon downward scroll
 //====================================================================================================
 function displayPlaceCheckins(data, parentObject) {
 	Ti.API.debug(".... [~] displayPlaceCheckins:: ["+ data.checkins.length +"] ");
  	if ( data.you_are_here==1 ) {
-    mySesh.dog.current_place_ID = place_ID;
+    mySesh.dog.current_place_ID = data.checkins.current_place_ID;
   }
   
  	/* got stuff to show!  */
@@ -256,18 +294,17 @@ function displayBasicInfo(poiInfo) {
 											poiInfo.category_type_2,
 											poiInfo.category_type_3	 ];
 											
-	if ( poiInfo.category>=100 && poiInfo.category<=199 ) {
-		categories.push(poiInfo.price_range);
-	}
 	var categories_text = "";
 	for (var i=0, len=categories.length; i<len; i++) {
 		if(categories[i]!="" && categories[i]!="NULL") 
-			categories_text += categories[i]+" / ";
+			categories_text += categories[i]+" + ";
 	}
 	categories_text = categories_text.substring(0, categories_text.length - 2);		// delete last space and comma
-	
+	if ( poiInfo.category>=100 && poiInfo.category<=199 ) {
+		categories_text += " / " + poiInfo.price_range;
+	}
 	var category_icon 		 = ICON_PATH + poiInfo.icon_basic;
-	var  rating_overall		 = ICON_PATH + "poi-basic-ratingwb.png";
+	var rating_overall		 = ICON_PATH + "poi-basic-ratingwb.png";
 	var rating_dogfriendly = ICON_PATH + "poi-features-waterbowl.png";
 	$.basics.add( myUiFactory.buildSingleRowInfoBar(category_icon, categories_text, "") );
 	$.basics.add( myUiFactory.buildSeparator() );
@@ -355,7 +392,6 @@ function displayOutdoorFeatures(poiDetail) {
 //================================================================================
 function displayHumanFeatures(poiDetail) {
 	Ti.API.debug("  .... [~] displayHumanFeatures("+ JSON.stringify(poiDetail) +") called ");
-	
 	var count = 0;
 	
 	var features = { 	
@@ -375,6 +411,7 @@ function displayHumanFeatures(poiDetail) {
 			string_inside = "Dogs Not Allowed";	
 		} 
 		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Inside: ", string_inside) );
+		features_list.add( myUiFactory.buildSeparator() );
 		count ++;
 	}
 	
@@ -396,6 +433,7 @@ function displayHumanFeatures(poiDetail) {
 			}			
 			features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, string_1, string_2) );
 		}
+		features_list.add( myUiFactory.buildSeparator() );
 		count ++;
 	}
 	
@@ -409,25 +447,10 @@ function displayHumanFeatures(poiDetail) {
 			wb_text_string = "No";
 		} 
 		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Waterbowl:", wb_text_string) );
+		//features_list.add( myUiFactory.buildSeparator() );
 		count++;
 	}
 	
-	/*
-	var length = features.length;
-  for (var k in features){
-    if(features[k]!="" && features[k]!="NULL") {
-  		// call buildSingleRowInfoBar w/ ( image_url, name, value ) 
-			if (k=="Outdoor Area") {
-				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, "", features[k]) );
-			}
-			else
-				features_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, k+":", features[k]) );
-			//if ( count < (length-1) )
-			features_list.add( myUiFactory.buildSeparator() );
-    }
-    count ++;
-	}
-	*/
 	if (count > 0) {
 		displayFeaturesHeader();
 		$.features.add( features_list );  	
@@ -441,21 +464,22 @@ function displayHumanFeatures(poiDetail) {
 function getPoiFeatures(data) {
 	var status = data.status;
 	var poiFeatures = data.payload;
+	mySesh.currentPlaceFeatures = data.payload;
+	
 	Ti.API.info("  .... [~] getPoiFeatures() :: "+JSON.stringify(poiFeatures)+" ***");
-	//----------------------------------------------------------------------------------------------------------
-	//       ESTIMATES (only if dog park)  
-	//----------------------------------------------------------------------------------------------------------
+	// alert(" mySesh.dog.current_place_ID #" + mySesh.dog.current_place_ID);
+	
+	//////////////////////		ENCLOSURE ESTIMATES (only if dog park) 	 ////////////////////////////////////
 	if (poiFeatures.category==600 || poiFeatures.category==601) {
 		var params = {
 			place_ID				: poiFeatures.poi_ID, 
 			enclosure_count : poiFeatures.enclosure_count
 		};
 		//Ti.API.info("*** getRecentEstimates() for :: "+JSON.stringify(params)+" ] ***");
-		loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates);		
-	}
-	//----------------------------------------------------------------------------------------------------------
-	//       FEATURES (only if dog park or human place)  
-	//----------------------------------------------------------------------------------------------------------
+		loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates);	
+		addEstimatesButton();	
+	} 
+	//////////////////////		FEATURES ESTIMATES (only if dog park or human place)   	 /////////////////////////
 	if( status == 1) {
 		if ( poiFeatures.category>=600 && poiFeatures.category<=699 ) {
 			displayOutdoorFeatures(poiFeatures);
@@ -472,24 +496,24 @@ function getPoiFeatures(data) {
 //		Purpose:	literally trigger all the modules that get drawn on this page
 //================================================================================
 function doEverything(poiInfo) {
-	Ti.API.debug(" .... >>  doEverything(poiInfo) >> "+ JSON.stringify(poiInfo));
+	mySesh.currentPlaceInfo = poiInfo;
+	
+	Ti.API.debug( " .... >>  doEverything(poiInfo) >> "+ JSON.stringify(poiInfo) );
 	var img_fallback = MISSING_PATH + "poi-0-banner.jpg";
 	var img_actual   = POI_PATH + poiInfo.banner;
 	
 	//  fill in miniheader information
-	var dist_label_text 	= "You're right next to it";    
-	if( args._came_from!="checkin modal" )
-		dist_label_text 	= poiInfo.dist + " miles away"
+	var dist_label_text = poiInfo.dist + " miles away";
+	// if( args._came_from=="checkin modal" )		dist_label_text 	= "You're right next to it";
 
-	$.mini_place_name_label.text 	= poiInfo.name;
+	$.mini_place_name_label.text 					= poiInfo.name;
 	$.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
-	$.mini_place_second_label.text	=	poiInfo.city; 
+	$.mini_place_second_label.text				=	poiInfo.city; 
 		
 	//$.miniHeaderContainer.add( myUiFactory.buildMiniHeader(poiInfo.name, poiInfo.city, poiInfo.icon_color) );
 	$.headerContainer.add( myUiFactory.buildPageHeader(poiInfo.place_ID, "poi", poiInfo.name, poiInfo.address, poiInfo.city + ' ' + poiInfo.zip, dist_label_text ) );
-	$.headerContainer.zIndex = 30;
-	$.headerContainer.top = 0;
-	
+	$.headerContainer.zIndex 	= 30;
+	$.headerContainer.top 		= 0;
 	
 	//-----------------------------------------------------------------------------------------------------------
 	//			BASIC INFO
@@ -516,8 +540,6 @@ function doEverything(poiInfo) {
 	
 	// TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
 	
-
-	
 	//----------------------------------------------------------------------------
 	//		   REMARKS (OLD SCHOOL NO AUTO REFRESH WAY)
 	//----------------------------------------------------------------------------
@@ -542,87 +564,73 @@ function doEverything(poiInfo) {
 	}
 }
 
-
-
 //---------------------------------------------------------------------------------------------------------------
 
 // 				LOGIC FLOW
 
 //---------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------
-//
-//		(_0_)		Add window to global stack, display menubar
-//
-//-----------------------------------------------------------------------
-//var myUiFactory = new UiFactoryModule.UiFactory();
+//////	( 0 )		Add window to global stack, display menubar	/////////////////////////////	
 var mini_header_display = 0;
-// Ti.API.debug( "PlaceOverview.js :: " + JSON.stringify(mySesh.allPlaces) );
-//--------------------------------------------------------------------------------
-//
-//		(_1_)		Grab incoming variables, set header image and title, build miniheader
-//
-//--------------------------------------------------------------------------------
 var args = arguments[0] || {};
+// Ti.API.debug( "PlaceOverview.js :: " + JSON.stringify(args) );
 
-//
-////		FIGURE OUT ENTRY VECTOR THEN POPULATE:
-////		- Place header, Basic Info, Checkins, Mark+Remarks, and Features
-//
-
+//////	( 2 )		FIGURE OUT WHERE WE CAME FROM ///////////////////////////////////////////
+/*
 if (args._came_from=="checkin modal") {
 	var place_index = getArrayIndexById(mySesh.geofencePlaces, args._place_ID);
 	var poiInfo = mySesh.allPlaces[place_index];
-	//var params = {	place_ID : args._place_ID	};
-	//loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", doEverything);	
 } else {  		
 	// came here from map marker, therefore place info can be pulled from global array
 	var place_index = getArrayIndexById(mySesh.allPlaces, args._place_ID);
 	var poiInfo = mySesh.allPlaces[place_index];
 }
-doEverything(poiInfo);
+*/
+//////	( 3 )	 	BUILD PLACE HEADER, ACTIVITY, REMARKS, SPECIFIC FEATURES 	///////////////
+var params = {	
+	place_ID : args._place_ID,
+	user_lat	: mySesh.geo.lat,
+	user_lon	: mySesh.geo.lon
+};
+loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", doEverything);	
+// doEverything(poiInfo);
  
-/// ///////  //////// ///  getRemarks on window focus /// /// / / / / //  //////
+//////	( 4 )	 	GET REMARKS ON WINDOW FOCUS  	//////////////////////////////////////////
 $.placeoverview.addEventListener('focus',function(e){
-	Ti.API.debug ("  .... [~] Place overview in focus, refreshing marks now.");
+	Ti.API.debug (".... [~] Place overview in focus, refreshing marks now.");
  	var params = {
 		place_type : 1, 
 		place_ID   : args._place_ID,
 		dog_id     : mySesh.dog.dog_ID
 	};
-	setTimeout ( function(){ getRemarks(params, displayRemarks); }, 800);
+	setTimeout ( function(){ getRemarks(params, displayRemarks); }, 300);
+	
+	/*
+	var params = {
+		place_ID				: args._place_ID, 
+		enclosure_count : mySesh.currentPlaceFeatures.enclosure_count
+	};
+	setTimeout ( function(){ loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates); }, 300);
+	addEstimatesButton();
+	*/
 });
 
-
-//var how_close = getDistance( mySesh.geo.lat, mySesh.geo.lon, poiInfo.lat, poiInfo.lon );
-//alert( how_close + " miles");
-//Ti.API.info (  " *  placeArray[" + args._place_ID +"], "+ JSON.stringify( poiInfo )  );
-
-
-//----------------------------------------------------------------------------
-//		 	 ScrollView listener (+ attach sticky mini-header bar)
-//----------------------------------------------------------------------------
+//////	( 5 )	 	ATTACH MINIHEADER  / SCROLLVIEW LISTENER   	/////////////////////////////
 $.scrollView.addEventListener('scroll', function(e) {
   if (e.y!=null) {
     var offsetY = e.y;
     var threshold = 173;
-   
     if  ( offsetY >= threshold && offsetY != null && mini_header_display==0 ) {
     	miniHeader = attachMiniHeader();			// show the mini header
-   		//Titanium.API.info(' * scrollView Y offset: ' + offsetY);
+   		//Titanium.API.info('* miniHeader attached :: scrollView Y offset= ' + offsetY);
  			mini_header_display = 1;
- 			//Titanium.API.info( ' * miniHeader attached * ' +  mini_header_display );
     }
     else if ( offsetY < threshold && offsetY != null && mini_header_display==1) {
-    	//Ti.API.info (" MINIHEADER CONTENTS: "+ miniHeader);
-    	miniHeader = hideMiniHeader();			// hide the mini header
-     	
-    	//Titanium.API.info(' * scrollView Y offset: ' + offsetY);
+    	miniHeader = hideMiniHeader();			// hide the mini header     	
+    	//Titanium.API.info('* miniHeader removed :: scrollView Y offset: ' + offsetY);
    		mini_header_display = 0;
- 			//Titanium.API.info( ' * miniHeader removed * ' + mini_header_display );
  		}
-    	
   } else {
-    Titanium.API.info(' * scrollView Y offset is null');
+    Titanium.API.info(' * scrollView Y offset is null ');
   }
 });
 

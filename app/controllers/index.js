@@ -11,7 +11,7 @@ function goToLogin() {
 		password.blur();
 				
 		if (email.value != '' && password.value != '') {
-			wbLogin(email.value, password.value);
+			wbLogin( email.value.trim(), password.value.trim() );
 		} 
 		else {
 			createSimpleDialog('Login Error', 'Please fill in both fields.');	
@@ -36,23 +36,13 @@ $.index.open();
 addToAppWindowStack( $.index, "index" );
 $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
 
-$.index.addEventListener('focus',function(e) {
-	// if credentials are already saved in mySesh
-	if( Ti.App.Properties.getString('user')!="" ) {
-		email.value = Ti.App.Properties.getString('user');
-	}
-	if( Ti.App.Properties.getString('pass')!="" ) {
-		password.value = saved_pwd;
-	}
-});
-
 
 // DIV HEIGHTS
 var footer_height = 80;
 var content_height = mySesh.device.screenheight - footer_height;
 var topView_height = .35 * content_height;
 var midView_height = .65 * content_height;
-var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
+var form_width = myUiFactory._form_width;
 
 // Check if the device is running iOS 8 or later, before registering for local notifications
 	/*if (Ti.Platform.name == "iPhone OS" && parseInt(Ti.Platform.version.split(".")[0]) >= 8) { 
@@ -120,18 +110,24 @@ var saved_pwd  = Ti.App.Properties.getString('pass');
 //	wbLogin(saved_user, saved_pwd);
 //}
 
+/////// FILL IN USER / EMAIL FIELDS IF INFO IS SAVED LOCALLY //////////
+if( Ti.App.Properties.getString('user')!=""  ) 
+	email.value = Ti.App.Properties.getString('user');
+if( Ti.App.Properties.getString('pass')!="" ) 
+	password.value = saved_pwd;
+$.index.addEventListener('focus',function(e) {
+	// if credentials are already saved in mySesh
+	if( Ti.App.Properties.getString('user')!="" )
+		email.value = Ti.App.Properties.getString('user');
+	if( Ti.App.Properties.getString('pass')!="" )
+		password.value = saved_pwd;
+});
+
 
 /*  	LOGIN HACK - skip past login screen and go to Map 	*/
-// Ti.App.Properties.setString('user', '');
-// Ti.App.Properties.setString('pass', '');
-// setTimeout ( function() { loginBtn.fireEvent('click'); }, 300 );  // wait for login fields to populate
-
-//   To skip to a specific window, uncomment block below and change which window name to jump to
 /* 
+//   To skip to a specific window, uncomment block below and change which window name to jump to
 var necessary_args = {  _place_ID    : 601000001, };
 createWindowController("provideestimate",necessary_args,"slide_left");
 */
-
-
-
-// createWindowController("register","","slide_left");
+//createWindowController("register3","","slide_left");

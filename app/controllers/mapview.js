@@ -1,3 +1,12 @@
+//
+//	Waterbowl App	:: mapview.js
+//	
+//	Created by Mihai Peteu Oct 2014
+//	(c) 2014 waterbowl
+//
+//		Last update Feb 16 2015
+//
+
 //==================================================================================================================
 //	Name:			buildMapMenubar	
 //==================================================================================================================
@@ -582,7 +591,9 @@ Titanium.Geolocation.getCurrentPosition(function(e){
  	buildMapMenubar();
  	$.mapContainer.add( Alloy.Globals.wbMap );
  	
-  // (3) GET MAP POIs AND PLACELIST DATA
+  // (3) GET MAP POIs AND PLACELIST DATA (only fill the view lat/lon the first time)
+  mySesh.geo.view_lat = mySesh.geo.lat; 
+  mySesh.geo.view_lon = mySesh.geo.lon;
   myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
   refreshPlaceListData();
   

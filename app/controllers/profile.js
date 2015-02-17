@@ -36,21 +36,20 @@ function displayDogProfile(dog) {
 	//-----------------------------------------------------------------------------------------------------------
 	//			INTRODUCTION
 	//-----------------------------------------------------------------------------------------------------------
-	$.scrollView.add(myUiFactory.buildSectionHeader("intro_header", "INTRODUCTION", 1));
-	var icon_intro = ICON_PATH + "dog-intro.png";
-	$.scrollView.add(  myUiFactory.buildMultiRowInfoBar(icon_intro, dog.intro) );
-	$.scrollView.add( myUiFactory.buildSeparator() );
-	
+	if( dog.intro.trim()!="" ) {
+		$.scrollView.add(myUiFactory.buildSectionHeader("intro_header", "INTRODUCTION", 1));
+		var icon_intro = ICON_PATH + "dog-intro.png";
+		$.scrollView.add( myUiFactory.buildMultiRowInfoBar(icon_intro, dog.intro) );
+		$.scrollView.add( myUiFactory.buildSeparator() );
+	}
 	//-----------------------------------------------------------------------------------------------------------
 	//			FAVORITES
 	//-----------------------------------------------------------------------------------------------------------
-	$.scrollView.add(myUiFactory.buildSectionHeader("faves_header", "FAVORITES", 1));
 	showFavorites(dog, $.scrollView );
 	
 	//-----------------------------------------------------------------------------------------------------------
 	//			INTERESTED IN
 	//-----------------------------------------------------------------------------------------------------------
-	$.scrollView.add(myUiFactory.buildSectionHeader("interests_header", "INTERESTED IN", 1));
 	showInterests(dog, $.scrollView );
 }
 
@@ -85,10 +84,13 @@ function showInterests(dog, parentObject) {
     	
  			interests_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, k, "") );
 			interests_list.add( myUiFactory.buildSeparator() );
+			count ++;
     }
-    count ++;
 	}
-	parentObject.add( interests_list );  	
+	if (count > 0) {
+		parentObject.add(myUiFactory.buildSectionHeader("interests_header", "INTERESTED IN", 1));
+		parentObject.add( interests_list );  	
+	}
 }
 
 //================================================================================
@@ -116,7 +118,11 @@ function showFavorites(dog, parentObject) {
 			faves_text += favorites[i]+", ";
 	}
 	faves_text = faves_text.substring(0, faves_text.length - 2);		// delete last space and comma
-	parentObject.add(  myUiFactory.buildMultiRowInfoBar(icon_url, faves_text, "")  );  	
+	
+	if (faves_text.trim() != "") {	
+		parentObject.add(myUiFactory.buildSectionHeader("faves_header", "FAVORITES", 1));
+		parentObject.add(  myUiFactory.buildMultiRowInfoBar(icon_url, faves_text, "")  );  	
+	}
 }
 
 //---------------------------------------------------------------------------------------------------------------

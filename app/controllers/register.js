@@ -21,9 +21,11 @@ function checkemail(emailAddress) {
 //================================================================================
 function saveUserToDb(email, pwd1, pwd2, city, state, zip) {
 	disableAllButtons();
-	if (pwd1!='' && pwd2!='' && email!='' && city!='' && state!='') {
+	if (pwd1!='' && pwd2!='' && email!='' && city!='' && zip!='' && state!='') {
 		if (pwd1 != pwd2) {
 			createSimpleDialog("Passwords do not match","Please handle that and try again");
+		} else if ( !isValidZip( zip ) ) {
+			createSimpleDialog("Zipcode error","Please enter a valid zip code");
 		} else {
 			if ( !checkemail(email) ) {
 				createSimpleDialog("Email error","Please enter a valid email");
@@ -81,7 +83,7 @@ function saveUserInfoLocally(data) {
 // 		(1)  Add section header
 $.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "account creation") );
 
-var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
+var form_width = myUiFactory._form_width;
 var title_label = myUiFactory.buildLabel( "Welcome to Waterbowl", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95","left" );	
 
 var get_started = myUiFactory.buildLabel( "Let's get you set up...", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );
@@ -103,6 +105,24 @@ nextBtn.addEventListener('click',  function(){
 	saveUserToDb(user_email.value, user_pwd_1.value, user_pwd_2.value, user_city.value, user_state.value, user_zip.value) 
 });
 
+
+user_state.addEventListener('focus', function(e) {
+	var necessary_args = {
+		_dog_name  : "",
+		_type    	 : "state",
+		_index_val : ""
+	};
+	// this.blur();
+	createWindowController( "uipicker", necessary_args, "slide_left" );
+});
+var fwd_state_pick_btn =  Titanium.UI.createButton({
+	backgroundImage	: ICON_PATH + 'caret.png',
+	width						: myUiFactory._icon_small,
+	height					: myUiFactory._icon_small
+});
+user_state.add( fwd_state_pick_btn );
+
+
 $.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
 $.scrollView.add( title_label );
 $.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
@@ -112,8 +132,10 @@ $.scrollView.add( user_pwd_1 );
 $.scrollView.add( user_pwd_2 );
 $.scrollView.add( user_city );
 $.scrollView.add( sz_row_view );
+
+
 $.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
-$.scrollView.add( nextBtn );
+$.scrollView.add(nextBtn);
 
 /*
 	// regardless of success or error, reactivate Submit button
@@ -121,3 +143,9 @@ $.scrollView.add( nextBtn );
 	$.continueBtn.backgroundColor = "#cccccc";
 	$.continueBtn.opacity = 1;
 */
+
+$.register.addEventListener('focus',function(e){
+	if ( mySesh.user.state!="" ) {
+		user_state.value = mySesh.user.state; 
+	}
+});

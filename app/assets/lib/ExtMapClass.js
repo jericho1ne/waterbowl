@@ -125,7 +125,7 @@ ExtMap.prototype.refreshMarkAnnotations = function(data) {
 //	Purpose:	grab the top X closest places to user position OR center of map view
 //=====================================================================================================
 ExtMap.prototype.getNearbyPoi = function( user_lat, user_lon, view_lat, view_lon ) {
-	// Ti.API.debug(" .... [~] getNearbyPoi() [ "+user_lat+"/"+user_lon+"  ], view [ "+view_lat+"/"+view_lon+" ]");
+	Ti.API.debug(" .... [~] getNearbyPoi() [ "+user_lat+"/"+user_lon+"  ], view [ "+view_lat+"/"+view_lon+" ]");
 	var params = {
 		lat       : user_lat,
 		lon       : user_lon, 
@@ -134,7 +134,7 @@ ExtMap.prototype.getNearbyPoi = function( user_lat, user_lon, view_lat, view_lon
 		owner_ID  : mySesh.user.owner_ID
 	};
 	var self = this;
-	this.loadMapJson(params, "http://waterbowl.net/mobile/get-places-map.php", function(data) {
+	this.loadMapJson(params, "http://waterbowl.net/mobile/pois-mapshow.php", function(data) {
 		self.refreshPoiAnnotations(data)
 	});
 }
@@ -213,18 +213,21 @@ ExtMap.prototype.createMarkAnnotation = function( mark ) {
 //	Purpose:	grab POI/locations from backend php file, order by proximity
 //=========================================================================
 ExtMap.prototype.refreshPoiAnnotations = function(data) {	
+	//Ti.API.debug( "ExtMap.prototype.refreshPoiAnnotations called :: " + JSON.stringify(data.payload) );
 	/////////////////////// REMOVE ANY EXISTING ANNOTATIONS /////////////////
 	Alloy.Globals.wbMap.removeAllAnnotations();
 	var poiAnnoArray = [];
-	mySesh.allPlaces = data;
-	// Ti.API.debug( "ExtMap.prototype.refreshPoiAnnotations called :: " );
+	mySesh.allPlaces = data.payload;
+	//var localPlaces = data.payload;
 	/////////////////////// CREATE ANNOTATION FOR EACH POI IN ARRAY ///////// 
-	for (var i=0; i<mySesh.allPlaces.length; i++) { 			
-		poiAnnoArray.push( this.createPoiAnnotation(mySesh.allPlaces[i]) );		  
+	if (data.payload!="" && data.payload!=null) {
+		for (var i=0; i<data.payload.length; i++) { 			
+			poiAnnoArray.push( this.createPoiAnnotation(data.payload[i]) );		  
+		}
+		Alloy.Globals.placeAnnotations = poiAnnoArray; 
+		/////////////////////// CREATE ANNOTATION FOR EACH POI IN ARRAY ///////////// 
+		Alloy.Globals.wbMap.addAnnotations( poiAnnoArray );
 	}
-	Alloy.Globals.placeAnnotations = poiAnnoArray; 
-	/////////////////////// CREATE ANNOTATION FOR EACH POI IN ARRAY ///////////// 
-	Alloy.Globals.wbMap.addAnnotations( poiAnnoArray );
 	enableAllButtons(); 
 }
 

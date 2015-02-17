@@ -15,7 +15,8 @@ function Session(){
 		owner_ID 	: null,
 		name     	: null,
 		email			:	null,
-		password		: null
+		password	: null,
+		state			: null
 	};
 	this.dog = {
 		dog_ID 			: null,
@@ -44,23 +45,13 @@ function Session(){
 		refresh_interval 	: 1,
 		last_acquired	: 0           // minutes since start of UNIX epoch
 	};
-	this.windowStack				= [];
-	// this.local_icon_path		:	"images/icons",
-	// this.local_banner_path : "images/places",
-	this.allPlaces		      =  [];				// top N places that are near user's location (n=20, 30, etc)
-	this.nearbyMarks		    =  [];
-	this.geofencePlaces     =  []; 				// contains up to N places that are within the geofence
-	// this.placeAnnotations  =  [];
-	this.currentPlace = { 
-		ID				: null,
-		name			: null,
-		mobile_bg	: null,
-		address		: null,
-		city			: null,
-		zip 			: null,
-		distance  : null
-	};
-	this.checkinInProgress	 = null;
+	this.windowStack					= [];
+	this.allPlaces		     	 	= [];				// top N places that are near user's location (n=20, 30, etc)
+	this.nearbyMarks		    	= [];
+	this.geofencePlaces    		= []; 				// contains up to N places that are within the geofence
+	this.currentPlaceInfo 		= [];
+	this.currentPlaceFeatures = [];
+	this.checkinInProgress	 	= null;
 	this.server = {
 		AWS: {
 			access_key_id		: "AKIAILLMVRRDGDBDZ5XQ",

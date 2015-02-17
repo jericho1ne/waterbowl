@@ -3,8 +3,6 @@ function gotoPhotoUpload() {
   createWindowController( "photoupload", "", "slide_left" ); 
 }
 
-
-
 //
 // 				LOGIC FLOW
 //
@@ -15,7 +13,7 @@ function gotoPhotoUpload() {
 $.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "account setup 3/3") );
 
 var dog_name = (mySesh.dog.name==null ? "your dog" : mySesh.dog.name);
-var form_width 		= mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
+var form_width 		= myUiFactory._form_width;
 var title_label	 	= myUiFactory.buildLabel( dog_name + "'s Furry Mug", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95","left" );	
 
 var dog_intro 		= "Last step! All we now is a clear photo of your dog so they are easily identifiable by other Waterbowl members.";
@@ -36,20 +34,19 @@ $.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
 
 $.scrollView.add(galleryBtn);
 $.scrollView.add(cameraBtn);
-
   
 ////////////// PHOTO UPLOAD PROGRESS BAR ///////////////////////////////////////////////////
 var progress_bar = Titanium.UI.createProgressBar({
-	width 		: 200,
-	height 		: 50,
+	width 		: myUiFactory._form_width,
+	height 		: 60,
 	min 			: 0,
 	max 			: 1,
 	value 		: 0,
 	style 		: Titanium.UI.iPhone.ProgressBarStyle.PLAIN,
 	top 			: 10,
 	message 	: 'Uploading Profile Image',
-	font 			: myUiFactory._text_small,
-	color 		: '#888888'
+	font 			: myUiFactory._text_medium,
+	color 		: myUiFactory._color_dkpink
 });
 
 $.scrollView.add(progress_bar);
@@ -79,7 +76,7 @@ galleryBtn.addEventListener('click', function(e) {
 	      	} else {
 	      		cameraBtn.show();
 						galleryBtn.show();
-	      		createSimpleDialog('Login Error', jsonData.message);
+	      		createSimpleDialog('Upload Error', jsonData.message);
 	      	}	
 	      } else {
       		cameraBtn.show();
@@ -97,8 +94,6 @@ galleryBtn.addEventListener('click', function(e) {
 	      'image_type'  : 'banner'  						// TODO: inquire about image type on client?? 
 	    });
 	    Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + image, 'dog', mySesh.dog.dog_ID, + 'banner' +"]");
-	    
-
 		},
 	  /////////		CANCEL
 	  cancel : function() {
@@ -110,10 +105,12 @@ galleryBtn.addEventListener('click', function(e) {
 	});
 });
 
-
 ////////////// CAMERA BUTTON TRIGGER ///////////////////////////////////////////////////
 cameraBtn.addEventListener('click', function(e) {
 	progress_bar.show();
+	cameraBtn.hide();
+	galleryBtn.hide();
+
 	Titanium.Media.showCamera({
 		///////   	SUCCESS
 		success : function(event) {
@@ -133,7 +130,7 @@ cameraBtn.addEventListener('click', function(e) {
 	      	} else {
 	      		cameraBtn.show();
 						galleryBtn.show();
-	      		createSimpleDialog('Login Error', jsonData.message);
+	      		createSimpleDialog('Upload Error', jsonData.message);
 	      	}	
 	      } else {
       		cameraBtn.show();

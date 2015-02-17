@@ -59,7 +59,7 @@ function UiFactory(){
 	this._height_header 	 = 0.66667 * this._height_row ;			// 30px/pt? (small)
 	this._height_subheader = 0.5 * this._height_row ;
 	
-	this._form_width  	= "70%";
+	this._form_width  	= this._device.screenwidth - (2*this._pad_right) - (2*this._pad_left);;
 	this._button_width  = 200;
 	
 	/*  IMAGES AND ICONS      */
@@ -98,7 +98,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 	
 	if (text_align=="left") {
 		align =  Ti.UI.TEXT_ALIGNMENT_LEFT;
-		left_pad = this._pad_left;
+		//left_pad = this._pad_left;
 	}
 	else if (text_align=="right")
 		align =  Ti.UI.TEXT_ALIGNMENT_RIGHT;
@@ -111,7 +111,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		font	:	font_style,
 		width	: width,
 		height: height,
-		left  : left_pad,
+		// left  : left_pad,
 		color	: font_color,
 		//top		: 0,
 		// borderColor : ((this._debug == 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
@@ -223,38 +223,36 @@ UiFactory.prototype.buildHeaderContainer = function(place_name, city, bg_color) 
 ************************************************************/
 UiFactory.prototype.buildProfileThumb = function(id, image, border, size){
 	var borderColor = "";
-	var img_placeholder = 'images/missing/WB-PetProfilePic-Placeholder.png';
-	
-	// if(image=="")	image = 'images/missing/WB-PetProfilePic-Placeholder.png';
 	var borderWidth = 0;
-			
+	var img_placeholder = MISSING_PATH + 'dog-0-iconmed.jpg';
+	//Ti.API.info( "  .... [~] buildProfileThumb image :: [ " + image + " ]" );
 	if (border==1) {
 		borderColor = this._color_dkpink;
 		borderWidth = 2;
-	}
-	else if (border==2) {
+	} else if (border==2) {
 		borderColor = this._color_dkblue;
 		borderWidth = 2;
 	}
-	
-	/*
-	var image_view = Ti.UI.createImageView({ 
+	var profile_img = Ti.UI.createImageView({ 
 		id							: id, 
-		image   				: image,
-		width					  : icon_size,
-		height					: icon_size,
+		image   				: img_placeholder,
+		width					  : size,
+		height					: size,
 		backgroundColor : this._color_ltgray,
 		left						: this._pad_left,
 		top							: this._pad_left,
 		borderColor			: borderColor,
-		borderRadius		: icon_size/2,
+		borderRadius		: size/2,
 		borderWidth			: borderWidth
 	});
-	return image_view; */
-	 
-	var profileBtn 		= Ti.UI.createButton( {
+	loadRemoteImage( "fg", profile_img, image, img_placeholder );
+	profile_img.addEventListener('click', function(){ showProfile(id)} );
+	return profile_img; 
+	
+	/*
+	var profileBtn 		= Ti.UI.createButton({
 		id							: id,	 
-		backgroundImage : (remoteFileExists(image) ? image : img_placeholder),
+		backgroundImage : image,
 		width						: size,
 		height					: size,
 		backgroundColor : this._color_ltgray,
@@ -263,11 +261,10 @@ UiFactory.prototype.buildProfileThumb = function(id, image, border, size){
 		borderColor			: borderColor,
 		borderRadius 		: size/2,
 		borderWidth			: borderWidth
-	} );
-	
-	// loadRemoteImage("bg", profileBtn, image, img_placeholder);
+	});
 	profileBtn.addEventListener('click', function(){ showProfile(id)} );
-	return profileBtn;
+	return profileBtn;	
+	*/
 }
 
 /************************************************************
@@ -818,7 +815,7 @@ UiFactory.prototype.buildButton = function(id, title, type) {
     btn_width = this._device.screenwidth - (2*this._pad_left);
   }
 
-	var borderRadius  = btn_height/2;
+	var borderRadius  = btn_height/6;
  
   var view_container = Ti.UI.createView( { 
 		id							: id, 
@@ -838,7 +835,8 @@ UiFactory.prototype.buildButton = function(id, title, type) {
   	width						: btn_width, 
 		height					: btn_height, 
 		opacity         : 1,
-		borderRadius		: borderRadius 
+		borderRadius		: borderRadius,
+		// borderColor     : "#ffffff", borderWidth     : 2
 	} );
 	
 	view_container.add(button);

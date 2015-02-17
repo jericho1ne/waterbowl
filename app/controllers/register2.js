@@ -7,8 +7,10 @@ function saveDogInfo(data) {
 	enableAllButtons();
 	
 	if (data.status==1) {
-		if (data.dog_ID!="" && data.dog_ID!=null)
+		if (data.dog_ID!="" && data.dog_ID!=null) {
  			mySesh.dog.dog_ID = data.dog_ID;
+ 			Ti.API.debug( "mySesh.dog.dog_ID saved :: [ "+ mySesh.dog.dog_ID +" ]");
+ 		}
  		createWindowController( "register3", "", "slide_left" ); 
   }
   else	
@@ -21,17 +23,17 @@ function saveDogInfo(data) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// 				LOGIC FLOW
+// 		DOG NAME, BREED, WEIGHT, LOGIC FLOW
 //
 //		(0)		Build dog info registration form
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var args = arguments[0] || {};
+var form_width = myUiFactory._form_width;
 
 // 		HEADER
 $.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "account setup 2/3") );
 
-var form_width = mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
 var title_label = myUiFactory.buildLabel( "All about your dog", form_width, myUiFactory._height_header, myUiFactory._text_large, myUiFactory._color_dkpink, "left" );	
 
 //		PAGE INTRO 

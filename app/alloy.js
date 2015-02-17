@@ -17,6 +17,10 @@ function removeAllChildren(obj) {
     }
 }
 
+function  isValidZip ( zipcode ) {
+	return /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(zipcode);
+}
+
 //=====================================================
 //	Name:    clearTextAreaContents ( textarea_object )
 //	Desc:	   clear hint text on focus / click inside
@@ -66,7 +70,6 @@ function wbLogin(email, password) {
 			if (response.status == 1) {
 				var dog_ID = response.dog.dog_ID;
 				
-				
 				// save credentials locally in mySesh global arrays
 				mySesh.user.email 	 = email;
 				Ti.App.Properties.setString('user', email);
@@ -95,9 +98,9 @@ function wbLogin(email, password) {
 				}
 				// USER HAS VALID ACCOUNT + VALID DOG PROFILE  //////////////////////////////////////////////////////
 				else {
-					mySesh.dog.dog_ID  	 = response.dog.dog_ID;
-					mySesh.dog.sex		 = response.dog.sex;
-					mySesh.dog.breed		 = response.dog.breed;
+					mySesh.dog.dog_ID  	  = response.dog.dog_ID;
+					mySesh.dog.sex		 		= response.dog.sex;
+					mySesh.dog.breed		  = response.dog.breed;
 					mySesh.dog.age				=	response.dog.age;
 					mySesh.dog.birthdate 	=	response.dog.birthdate;
 					mySesh.dog.weight			= response.dog.weight;
@@ -139,32 +142,30 @@ function wbLogin(email, password) {
 	Ti.API.debug ( "SENDING >> "+JSON.stringify(params) );
 }
 
-
 //==========================================================================
-//	Name:    loadRemoteImage ( type, img_actual, img_placeholder )
+//	Name:    loadRemoteImage ( type, alloyObject, img_actual, img_placeholder )
 //	Desc:	   if it exists, return actual image, otherwise placeholder
 //==========================================================================
 function loadRemoteImage( type, alloyObject, img_actual, img_placeholder ) {
-	Ti.API.debug( "    << loadRemoteImage >\>> "+ img_actual + " | " +remoteFileExists(img_actual));
-	
+	// Ti.API.debug( "    << loadRemoteImage >\>> "+ img_actual + " [ " +remoteFileExists(img_actual) + " ]");
 	if( remoteFileExists(img_actual) ) {
 		var c = Titanium.Network.createHTTPClient();
 		c.setTimeout(3000);
 		c.onload = function() {
 			if(c.status == 200) {
 				(type=="bg") ? alloyObject.backgroundImage = this.responseData : alloyObject.image = this.responseData;
-		  	Ti.API.debug( "     SUCCESS :: Attached [ "+img_actual+" ] ");
+		  	//Ti.API.debug( "     SUCCESS :: Attached [ "+img_actual+" ] ");
 		  } else {
 		  	(type=="bg") ? alloyObject.backgroundImage = this.img_placeholder : alloyObject.image = img_placeholder;
 		  	// alloyObject.backgroundImage = img_placeholder;
-		  	Ti.API.debug( "     ERROR :: Could not load remote image attaching [ " +img_placeholder +' ] instead' );
+		  	//Ti.API.debug( "     ERROR :: Could not load remote image attaching [ " +img_placeholder +' ] instead' );
 		  }
 		};
 		c.open('GET', img_actual);
 		c.send();
 	}	else {
 		alloyObject.backgroundImage = img_placeholder;
-		Ti.API.debug( "ERROR :: Remote image doesn't exist" );
+		// Ti.API.debug( "ERROR :: Remote image doesn't exist" );
 	}
 }
 
@@ -172,7 +173,7 @@ function loadRemoteImage( type, alloyObject, img_actual, img_placeholder ) {
 //	Name:			countCharacters (textAreaObject, charCountLabel)
 //========================================================================
 function countCharacters(textAreaObject, charCountLabel) {
-	Ti.API.debug(textAreaObject.value.length);
+	// Ti.API.debug(textAreaObject.value.length);
 	charCountLabel.text = textAreaObject.value.length+" / "+mySesh.stringMaxes.poiRemarkMaxLength;
 	if( textAreaObject.value.length > mySesh.stringMaxes.poiRemarkMaxLength ) {
   	textAreaObject.value = textAreaObject.value.substr(0, mySesh.stringMaxes.poiRemarkMaxLength);
@@ -218,7 +219,6 @@ function loadJson ( params, url, callbackFunction ) {
 		}
 	};
 }
-
 
 //===========================================================================================
 //	Name:		 	ucwords ( str )
@@ -282,7 +282,6 @@ function createWindowController ( win_name, args, animation ) {
 	// status checks
 	// if (mySesh.dog.current_place_ID!=0)	Ti.API.info( "  >>> checked in @ place ID #"+ mySesh.dog.current_place_ID+" <<< ");
 }
-
 
 //=============================================================================
 //	Name:			getDistance ( lat1, lon1, lat2, lon2 )
@@ -436,28 +435,11 @@ function addMenubar( parent_object ) {
 	
 	// ADD ALL 3 RIGHT BUTTONS IF ON MAPVIEW
 	if (Ti.App.Properties.current_window == "mapview") {
-		// Only create profile button here
+		////////// BUILD PROFILE BUTTON //////////////////////////////////////////////////
 		var img_actual  = PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg';
-		var img_missing = MISSING_PATH + 'dog-0-iconmed.jpg';
-		var profileBtn 		= Ti.UI.createButton( {
-			id			: "profileBtn",	 
-			left		: myUiFactory._pad_left,
-			top			: myUiFactory._pad_top,
-			width		: myUiFactory._icon_small,
-			height	: myUiFactory._icon_small,
-			backgroundImage : img_actual,
-			borderWidth		: 2,
-			borderColor		: myUiFactory._color_dkpink,
-			borderRadius 	: myUiFactory._icon_small/2,
-			zIndex	: 100
-		} );
-		// PIPE DOG ICON THROUGH PRELOADER
-		// loadRemoteImage("bg", profileBtn, img_actual, img_missing);
-	
+		var profileBtn = myUiFactory.buildProfileThumb(mySesh.dog.dog_ID, img_actual, 1, myUiFactory._icon_small);	// border=1, this means it's ME
 		menuRight0.add(profileBtn);
-		profileBtn.addEventListener('click', function(){ showProfile(mySesh.dog.dog_ID)} );
-		//menuRight0.add(settingsBtn);
-		//settingsBtn.addEventListener('click', showSettings);
+		//////////////////////////////////////////////////////////////////////////////////
 		menuRight1.add(helpBtn);
 		helpBtn.addEventListener('click', showHelp);
 		
