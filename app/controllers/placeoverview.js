@@ -9,24 +9,6 @@
 
 /*
 
- poiDetail {
-    "ID"							: "11",
-    "poi_ID"					: "601000001",
-    "size"						: "Medium",
-    "terrain"					: "Woodchips",
-    "grade"						: "Flat",
-    "water"						: "Yes",
-    "shade"						: "Limited",
-    "waste"						: "Doggie Pot",
-    "offleash"				: "Allowed",
-    "enclosures"			: "Large Dog Area + Small Dog Area",
-    "enclosure_count"	: "2",
-    "benches"					: "A few benches",
-    "fenced"					: "Yes",
-    "managing_org"		: "",
-    "category"				: "601"
-}
-
 poiInfo {
     "place_ID"						: "601000001",
     "name"								: "Oberreider Park",
@@ -49,6 +31,25 @@ poiInfo {
     "icon_color"					: "#986d4f",
     "dist"								: 2.38
 }
+
+ poiFeatures {
+    "ID"							: "11",
+    "poi_ID"					: "601000001",
+    "size"						: "Medium",
+    "terrain"					: "Woodchips",
+    "grade"						: "Flat",
+    "water"						: "Yes",
+    "shade"						: "Limited",
+    "waste"						: "Doggie Pot",
+    "offleash"				: "Allowed",
+    "enclosures"			: "Large Dog Area + Small Dog Area",
+    "enclosure_count"	: "2",
+    "benches"					: "A few benches",
+    "fenced"					: "Yes",
+    "managing_org"		: "",
+    "category"				: "601"
+}
+
 
 */
 
@@ -110,6 +111,22 @@ function displayRemarks(data) {
 	}
 }
 
+//================================================================================
+//		Name:			getRecentEstimates()
+//		Purpose:	get most recent outdoor park estimates, if any
+//================================================================================
+function getRecentEstimates() {
+	Ti.API.info("*** getRecentEstimates() :: "+JSON.stringify(mySesh.currentPlaceFeatures)+" ] ***");
+	//////////////////////		ENCLOSURE ESTIMATES (only if dog park) 	 ////////////////////////////////////
+	if (mySesh.currentPlaceFeatures.category==600 || mySesh.currentPlaceFeatures.category==601) {
+		var params = {
+			place_ID				: mySesh.currentPlaceFeatures.poi_ID, 
+			enclosure_count : mySesh.currentPlaceFeatures.enclosure_count
+		};
+		loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates);	
+		//addEstimatesButton();	
+	} 
+}
 
 //================================================================================
 //		Name:			displayRecentEstimates( data )
@@ -122,17 +139,19 @@ function displayRecentEstimates(data, place_ID) {
 	  	if (data.payload[i].size=="Large" || data.payload[i].size=="Small") {
 	  		area_type = data.payload[i].size+ " Dog";
 	    }
+	    // EG: SMALL DOG AREA
 	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", 3);
 		  $.estimates.add(dog_size_section_header);
 		  
-		  // var photo_url = mySesh.AWS.url_base+ '/' +mySesh.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
+		  // NO RECENT INFO
+		  //  var photo_url = mySesh.AWS.url_base+ '/' +mySesh.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  if(data.payload[i].amount==-1) {
-		  	var activity_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
+		  	// var activity_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
 		  	var latest_estimate = myUiFactory.buildSingleRowInfoBar( "", "No recent information", "");
 		  }
+		  // (photo_icon) 
 		  else {
 		  	var photo_url = PROFILE_PATH + 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
-		  	Ti.API.info( ">>>>>>> PHOTO URL >>>>> "+photo_url);
 		  	var latest_estimate = myUiFactory.buildTableRowHeader(data.payload[i].dog_ID, photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
 		  }
 		  $.estimates.add(latest_estimate);
@@ -144,14 +163,13 @@ function displayRecentEstimates(data, place_ID) {
 		nothing_here_container.add(nothing_here);
 		$.estimates.add(nothing_here_container);
 	}
-	Ti.API.info( ".... [+] >>>>>>> addEstimatesButton :: " + JSON.stringify(data) );
 }
 
 //================================================================================
 //		Name:			addEstimatesButton( )
 //		Purpose:	LIKE THE TITLE SEZ.  I'M DOING STUFF HERE.
 //================================================================================
-function addEstimatesButton(poiDetail) {
+function addEstimatesButton() {
 	//////////		 ONLY ALLOW USER TO PROVIDE ESTIMATE IF CURRENTLY CHECKED IN HERE		 /////////////////////
 	if (	mySesh.dog.current_place_ID == args._place_ID ) {
 		var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "report estimate >"); 
@@ -285,14 +303,14 @@ function hideMiniHeader () {
 }
 
 //================================================================================
-//		Name:			displayBasicInfo( poiInfo )
+//		Name:			displayBasicInfo( )
 //		Purpose:	
 //================================================================================
-function displayBasicInfo(poiInfo) {
+function displayBasicInfo() {
 	// Ti.API.debug("....[~] displayBasicInfo("+JSON.stringify(poiInfo)+") called ");
-	var categories = [ 	poiInfo.category_type_1,
-											poiInfo.category_type_2,
-											poiInfo.category_type_3	 ];
+	var categories = [ 	mySesh.currentPlaceInfo.category_type_1,
+											mySesh.currentPlaceInfo.category_type_2,
+											mySesh.currentPlaceInfo.category_type_3	 ];
 											
 	var categories_text = "";
 	for (var i=0, len=categories.length; i<len; i++) {
@@ -300,17 +318,17 @@ function displayBasicInfo(poiInfo) {
 			categories_text += categories[i]+" + ";
 	}
 	categories_text = categories_text.substring(0, categories_text.length - 2);		// delete last space and comma
-	if ( poiInfo.category>=100 && poiInfo.category<=199 ) {
-		categories_text += " / " + poiInfo.price_range;
+	if ( mySesh.currentPlaceInfo.category>=100 && mySesh.currentPlaceInfo.category<=199 ) {
+		categories_text += " / " + mySesh.currentPlaceInfo.price_range;
 	}
-	var category_icon 		 = ICON_PATH + poiInfo.icon_basic;
+	var category_icon 		 = ICON_PATH + mySesh.currentPlaceInfo.icon_basic;
 	var rating_overall		 = ICON_PATH + "poi-basic-ratingwb.png";
 	var rating_dogfriendly = ICON_PATH + "poi-features-waterbowl.png";
 	$.basics.add( myUiFactory.buildSingleRowInfoBar(category_icon, categories_text, "") );
 	$.basics.add( myUiFactory.buildSeparator() );
-	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_dogfriendly, "Dog-Friendliness: ", poiInfo.rating_dogfriendly+"/5") );
+	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_dogfriendly, "Dog-Friendliness: ", mySesh.currentPlaceInfo.rating_dogfriendly+"/5") );
 	$.basics.add( myUiFactory.buildSeparator() );
-	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_overall, "Overall Rating:", poiInfo.rating_dogfriendly+"/5") );
+	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_overall, "Overall Rating:", mySesh.currentPlaceInfo.rating_dogfriendly+"/5") );
 }
 
 //================================================================================
@@ -458,60 +476,71 @@ function displayHumanFeatures(poiDetail) {
 }
 
 //================================================================================
-//		Name:			getPoiFeatures( data )
+//		Name:			displayPoiFeatures( data )
 //		Purpose:	
 //================================================================================
-function getPoiFeatures(data) {
-	var status = data.status;
-	var poiFeatures = data.payload;
-	mySesh.currentPlaceFeatures = data.payload;
+function displayPoiFeatures() {
+	Ti.API.info("  .... [~] displayPoiFeatures() :: "+JSON.stringify( mySesh.currentPlaceFeatures )+" ***");
+	var poiFeatures = mySesh.currentPlaceFeatures;
 	
-	Ti.API.info("  .... [~] getPoiFeatures() :: "+JSON.stringify(poiFeatures)+" ***");
 	// alert(" mySesh.dog.current_place_ID #" + mySesh.dog.current_place_ID);
 	
-	//////////////////////		ENCLOSURE ESTIMATES (only if dog park) 	 ////////////////////////////////////
-	if (poiFeatures.category==600 || poiFeatures.category==601) {
-		var params = {
-			place_ID				: poiFeatures.poi_ID, 
-			enclosure_count : poiFeatures.enclosure_count
-		};
-		//Ti.API.info("*** getRecentEstimates() for :: "+JSON.stringify(params)+" ] ***");
-		loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates);	
-		addEstimatesButton();	
-	} 
 	//////////////////////		FEATURES ESTIMATES (only if dog park or human place)   	 /////////////////////////
-	if( status == 1) {
+	//if( status == 1) {
 		if ( poiFeatures.category>=600 && poiFeatures.category<=699 ) {
 			displayOutdoorFeatures(poiFeatures);
 		}
 		else if ( poiFeatures.category>=100 && poiFeatures.category<=199 ) {
 			displayHumanFeatures(poiFeatures);
 		}
+	//}
+}
+
+//========================================================================================
+//		Name:			savePlaceInfoThenGetFeatures ( poiInfo )
+//		Purpose:	save poi_common info into mySesh.currentPlaceInfo, then get Features
+//========================================================================================
+function savePlaceInfoThenGetFeatures( poiInfo ) {
+	// TODO: error check for data.status == 1
+	mySesh.currentPlaceInfo = poiInfo;
+	
+ 	//-----------------------------------------------------------------------------------
+	//				FEATURES (only if category == [] )
+	//-----------------------------------------------------------------------------------
+	if (  ( poiInfo.category>=600 && poiInfo.category<=699 ) || 
+				( poiInfo.category>=100 && poiInfo.category<=199 )  ) {
+		var params = {
+			place_ID	  : poiInfo.place_ID,
+			place_cat		: poiInfo.category
+		};
+		loadJson(params, "http://waterbowl.net/mobile/get-poi-features.php", drawEverything);
+		// Ti.API.debug("  >> PLACEOVERVIEW PARAMS :: ID #" + poiInfo.place_ID + " / cat #" +  poiInfo.category);
+	} else {
+		drawEverything();
 	}
 }
 
-
 //================================================================================
-//		Name:			doEverything( poiInfo )
+//		Name:			doEverything( poiFeatures )
 //		Purpose:	literally trigger all the modules that get drawn on this page
 //================================================================================
-function doEverything(poiInfo) {
-	mySesh.currentPlaceInfo = poiInfo;
+function drawEverything( poiFeatures ) {
+	mySesh.currentPlaceFeatures = poiFeatures.payload;
 	
-	Ti.API.debug( " .... >>  doEverything(poiInfo) >> "+ JSON.stringify(poiInfo) );
+	Ti.API.debug( " .... >>  doEverything(poiInfo) >> "+ JSON.stringify(mySesh.currentPlaceFeatures) );
 	var img_fallback = MISSING_PATH + "poi-0-banner.jpg";
-	var img_actual   = POI_PATH + poiInfo.banner;
+	var img_actual   = POI_PATH + mySesh.currentPlaceInfo.banner;
 	
 	//  fill in miniheader information
-	var dist_label_text = poiInfo.dist + " miles away";
+	var dist_label_text = mySesh.currentPlaceInfo.dist + " miles away";
 	// if( args._came_from=="checkin modal" )		dist_label_text 	= "You're right next to it";
 
-	$.mini_place_name_label.text 					= poiInfo.name;
-	$.miniHeaderContainer.backgroundColor = poiInfo.icon_color;
-	$.mini_place_second_label.text				=	poiInfo.city; 
+	$.mini_place_name_label.text 					= mySesh.currentPlaceInfo.name;
+	$.miniHeaderContainer.backgroundColor = mySesh.currentPlaceInfo.icon_color;
+	$.mini_place_second_label.text				=	mySesh.currentPlaceInfo.city; 
 		
-	//$.miniHeaderContainer.add( myUiFactory.buildMiniHeader(poiInfo.name, poiInfo.city, poiInfo.icon_color) );
-	$.headerContainer.add( myUiFactory.buildPageHeader(poiInfo.place_ID, "poi", poiInfo.name, poiInfo.address, poiInfo.city + ' ' + poiInfo.zip, dist_label_text ) );
+	//$.miniHeaderContainer.add( myUiFactory.buildMiniHeader(mySesh.currentPlaceInfo.name, mySesh.currentPlaceInfo.city, mySesh.currentPlaceInfo.icon_color) );
+	$.headerContainer.add( myUiFactory.buildPageHeader(mySesh.currentPlaceInfo.place_ID, "poi", mySesh.currentPlaceInfo.name, mySesh.currentPlaceInfo.address, mySesh.currentPlaceInfo.city + ' ' + mySesh.currentPlaceInfo.zip, dist_label_text ) );
 	$.headerContainer.zIndex 	= 30;
 	$.headerContainer.top 		= 0;
 	
@@ -520,7 +549,7 @@ function doEverything(poiInfo) {
 	//-----------------------------------------------------------------------------------------------------------
 	var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1);
 	$.basics.add(basics_header);
-	displayBasicInfo(poiInfo);
+	displayBasicInfo();
 	
 	//----------------------------------------------------------------------------------------------------------
 	//		 CHECKINS
@@ -538,30 +567,31 @@ function doEverything(poiInfo) {
 	// Ti.API.info( "looking for checkins at place_ID ["+ args._place_ID + "]" );
 	getPlaceCheckins( args._place_ID, mySesh.dog.dog_ID, whos_here_list);	
 	
-	// TODO:  _gradually_ move all code from Line 40-96 to below; change it up to use class stuff
+	//----------------------------------------------------------------------------------------------------------
+	//		 ESTIMATES / BUTTONS
+	//----------------------------------------------------------------------------------------------------------
+	getRecentEstimates();
+	addEstimatesButton();	
+	
+	//----------------------------------------------------------------------------------------------------------
+	//		 FEATURES (HUMAN / OUTDOOR ONLY)
+	//----------------------------------------------------------------------------------------------------------
+	if (  ( mySesh.currentPlaceInfo.category>=600 && mySesh.currentPlaceInfo.category<=699 ) || 
+				( mySesh.currentPlaceInfo.category>=100 && mySesh.currentPlaceInfo.category<=199 )  ) {
+		displayPoiFeatures();
+	}
 	
 	//----------------------------------------------------------------------------
-	//		   REMARKS (OLD SCHOOL NO AUTO REFRESH WAY)
+	//		   REMARKS (OLD SCHOOL / NO AUTO REFRESH WAY)
 	//----------------------------------------------------------------------------
 	/*var params = {
 		place_type : 1, 
 		place_ID   : args._place_ID,
 		dog_id     : mySesh.dog.dog_ID
 	};
-	getRemarks(params, displayRemarks);*/
+	getRemarks(params, displayRemarks);
+	*/	
 	
-	//------------------------------------------------------------------------------------------------
-	//				FEATURES (only if category == [] )
-	//-------------------------------------------------------------------------------------------------
-	if ( ( poiInfo.category>=600 && poiInfo.category<=699 ) || ( poiInfo.category>=100 && poiInfo.category<=199 ) ) {
-		var params = {
-			place_ID	  : poiInfo.place_ID,
-			place_cat		: poiInfo.category
-		};
-		// Ti.API.debug("  >> PLACEOVERVIEW PARAMS :: ID #" + poiInfo.place_ID + " / cat #" +  poiInfo.category);
-		// need poi features detail in order to call getRecentEstimates and getBasicFeatures
-		loadJson(params, "http://waterbowl.net/mobile/get-poi-features.php", getPoiFeatures);
-	}
 }
 
 //---------------------------------------------------------------------------------------------------------------
@@ -572,6 +602,11 @@ function doEverything(poiInfo) {
 //////	( 0 )		Add window to global stack, display menubar	/////////////////////////////	
 var mini_header_display = 0;
 var args = arguments[0] || {};
+
+// BLANK OUT GLOBALS
+mySesh.currentPlaceFeatures = null;
+mySesh.currentPlaceInfo 		= null;
+
 // Ti.API.debug( "PlaceOverview.js :: " + JSON.stringify(args) );
 
 //////	( 2 )		FIGURE OUT WHERE WE CAME FROM ///////////////////////////////////////////
@@ -591,9 +626,9 @@ var params = {
 	user_lat	: mySesh.geo.lat,
 	user_lon	: mySesh.geo.lon
 };
-loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", doEverything);	
+loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", savePlaceInfoThenGetFeatures);	
 // doEverything(poiInfo);
- 
+
 //////	( 4 )	 	GET REMARKS ON WINDOW FOCUS  	//////////////////////////////////////////
 $.placeoverview.addEventListener('focus',function(e){
 	Ti.API.debug (".... [~] Place overview in focus, refreshing marks now.");
@@ -604,14 +639,20 @@ $.placeoverview.addEventListener('focus',function(e){
 	};
 	setTimeout ( function(){ getRemarks(params, displayRemarks); }, 300);
 	
-	/*
-	var params = {
-		place_ID				: args._place_ID, 
-		enclosure_count : mySesh.currentPlaceFeatures.enclosure_count
-	};
-	setTimeout ( function(){ loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates); }, 300);
-	addEstimatesButton();
-	*/
+	if (mySesh.currentPlaceFeatures!=null) {
+		Ti.API.info(" >>>>>>>>>>>>>>> REMOVING + READDING ESTIMATES " + JSON.stringify(mySesh.currentPlaceFeatures) );
+		removeAllChildren($.estimates);
+		// removeAllChildren($.estimates_buttons);
+		getRecentEstimates();
+		/*
+		var params = {
+			place_ID				: args._place_ID, 
+			enclosure_count : mySesh.currentPlaceFeatures.enclosure_count
+		};
+		setTimeout ( function(){ loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", s); }, 300);
+		addEstimatesButton();
+	*/	
+	}
 });
 
 //////	( 5 )	 	ATTACH MINIHEADER  / SCROLLVIEW LISTENER   	/////////////////////////////

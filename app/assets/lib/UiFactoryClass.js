@@ -528,8 +528,8 @@ UiFactory.prototype.buildTableRowHeader = function(id, photo_url, photo_caption,
 	var column_2 = this.buildViewContainer ( "", "vertical", middle_width, div_height, 0 ); 
 	//var column_2_row_1 = this.buildViewContainer ( "", "vertical", "100%", div_height, 0 ); 
 
-	var dog_name_label   		= this.buildLabel( photo_caption,  	"100%", "49%", this._text_medium_bold, "#000000", "left" );		
-	var time_stamp_label 		= this.buildLabel( time_stamp,  	"100%", "49%", this._text_tiny, "#000000", "left");
+	var dog_name_label   		= this.buildLabel( photo_caption, "98%", "49%", this._text_medium_bold, "#000000", "left" );		
+	var time_stamp_label 		= this.buildLabel( time_stamp,  	"98%", "49%", this._text_tiny, "#000000", "left");
 	//
 	column_2.add(dog_name_label);
 	column_2.add(time_stamp_label);

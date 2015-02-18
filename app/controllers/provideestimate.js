@@ -172,7 +172,7 @@ if (enclosure_count==2) {
 }
   
 //  add save estimate button
-var save_est_btn   = myUiFactory.buildButton( "save_est_btn", "save estimate", "medium" );
+var save_est_btn   = myUiFactory.buildButton( "save_est_btn", "save estimate", "large" );
 $.scrollView.add(save_est_btn);
 
 save_est_btn.addEventListener('click', function(e) {
