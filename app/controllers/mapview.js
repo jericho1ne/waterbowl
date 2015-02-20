@@ -174,16 +174,16 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 	checkin_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkin.php");
 	checkin_http_obj.send(params);
 	
-	// Ti.API.debug ( "... sending stuff to place-checkin.php " + JSON.stringify(params) );
 	var response = 0;
-
-	/* response data received */
+	
+	// xhr onload
 	checkin_http_obj.onload = function() {
+		// response retrieved from backend
 		var json = this.responseText;
 		if (json != "") {
 			var response = JSON.parse(json);
 			if (response.status == 1) { 		// success
-				Ti.API.log("  [>]  Checkin added successfully ");
+				Ti.API.log("  [>]  Checkin added successfully ::  ");
 	
 				// in case we want to look up more info on this specific place in the global place array
 			  var place_index = getArrayIndexById( mySesh.geofencePlaces, place_ID );
@@ -191,14 +191,16 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				// checkin now officially complete
 				mySesh.dog.current_place_ID 		= place_ID;
 				
-				// grab place lat
-				mySesh.dog.current_place_lat     = place_lat;
-				mySesh.dog.current_place_lon     = place_lon;
-				mySesh.dog.current_place_name    = place_name;
-				mySesh.dog.current_place_geo_radius = mySesh.geofencePlaces[place_index].geo_radius;
+				// save place lat, lon, and geofence radius
+				mySesh.dog.current_place_lat 		 		= place_lat;
+				mySesh.dog.current_place_lon   		  = place_lon;
+				mySesh.dog.current_place_name    		= place_name;
+				mySesh.dog.current_place_geo_radius = mySesh.geofencePlaces[place_index].geofence_radius;
+				//Ti.API.info(" >>>>> mySesh.dog.current_place_geo_radius " + mySesh.dog.current_place_geo_radius);
+				//Ti.API.info(" >>>>> place_index" + place_index);
+				
 				mySesh.dog.last_checkin_timestamp= new Date().getTime();
 				
-				// Ti.API.debug ( "... mySesh.dog: " + JSON.stringify(mySesh.dog) );
 				// POPULATE NEARBY PLACE TABLE
   		  setTimeout ( function(){ refreshPlaceListData(); }, 300);
   		  // ADD PLACE LIST CLICK EVENT LISTENER
@@ -220,7 +222,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 		}
 		else
 			createSimpleDialog( "Problem", "No data received from server"); 
-	};
+	}; // end xhr onload
 }
 
 //=========================================================================================
@@ -251,20 +253,23 @@ function checkoutFromPlace (place_ID) {
 				// Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
 	
 				/*		 save Place ID, checkin state, and timestamp in mySesh  	*/
-				mySesh.dog.current_place_ID 	= null;
+				mySesh.dog.current_place_ID 				= null;
+				mySesh.dog.current_place_lat 				= null;
+				mySesh.dog.current_place_lon	 			= null;
+				mySesh.dog.current_place_geo_radius	= null;
 				// POPULATE NEARBY PLACE TABLE
-				refreshPlaceListData();
-				// createSimpleDialog( "Checked out from", mySesh.dog.current_place_name);
+				// refreshPlaceListData();
+				createSimpleDialog( "Seems you've left", "Automatically checked you out from " + mySesh.dog.current_place_name);
       } else {
 			 createSimpleDialog( "Uh oh", response.message ); 
 		  }
-		}
-		else
+		}	else {
 			createSimpleDialog( "Problem", "No data received from server"); 
+		}
+		// updateGeofenceTable($.placeListTable);
 	};
 	// return response;
 }
-
 
 //=================================================================================
 //	Name:			updateGeofenceTable()
@@ -273,118 +278,121 @@ function checkoutFromPlace (place_ID) {
 function updateGeofenceTable() {
 	$.placeListTitle.height = myUiFactory._height_header;
 	
-	var array_size = mySesh.geofencePlaces.length;
-	if (array_size == 0) {
-    $.placeListTitle.text = "no nearby places";
-	  $.outerMapContainer.height = '100%';
-  }
-	else if (array_size>1) {
-		$.placeListTitle.text = "here at one of these places? mark your presence!";
-	  $.outerMapContainer.height = mySesh.device.screenheight - ( 2.5 * myUiFactory._height_header );  //  "75%"
-	}
-	else if (array_size==1) {
-		// alert(mySesh.geofencePlaces[0].id+" / "+mySesh.dog.current_place_ID);
-		$.placeListTitle.text = array_size + " place nearby ";
-		if (mySesh.geofencePlaces[0].id == mySesh.dog.current_place_ID ) {
-			$.placeListTitle.text += "- tap to leave current place.";
-		} else {
-		  $.placeListTitle.text += "- tap to mark it.";
-    }
-    $.outerMapContainer.height = mySesh.device.screenheight - ( 2 * myUiFactory._height_header );// '88%';
-  }
-  
-  
-  // (0)	CLEAR PLACE LIST	///////////////////////////////////////////////////////////////////////
+	var array_size = 0;
+	
+	if (mySesh.geofencePlaces!=[])
+		array_size = mySesh.geofencePlaces.length;
+	
+	// Ti.API.info(">>>>>>>>>>>>>>> updateGeofenceTable array_size :: " + array_size  );
+	// (0)	CLEAR PLACE LIST	///////////////////////////////////////////////////////////////////////
   $.placeListTable.data = null;				
+	
+	if (array_size == 0) {
+		Ti.API.info(">>>>>>>>>>>>>>> clearing geofence table");
+		$.outerMapContainer.height = '100%';
+		//$.placeListTable.opacity = 0;
+		//removeAllChildren($.placeListTable);
+	} 
+	else {
+		// (1)  DETERMINE GEOFENCE PLACE LIST TITLE
+		if (array_size>1) {
+			$.placeListTitle.text = "at one of these places?  mark your presence!";
+		  $.outerMapContainer.height = mySesh.device.screenheight - ( 2.7 * myUiFactory._height_header );  //  "75%"
+		}
+		else if (array_size==1) {
+			$.placeListTitle.text = array_size + " place nearby ";
+			if (mySesh.geofencePlaces[0].id == mySesh.dog.current_place_ID ) {
+				$.placeListTitle.text += "- tap to leave current place.";
+			} else {
+			  $.placeListTitle.text += "- tap to mark it.";
+	    }
+	    $.outerMapContainer.height = mySesh.device.screenheight - ( 2 * myUiFactory._height_header );// '88%';
+	  }
+  	  	
+		// (1)  CREATE AN ARRAY TO HOLD THE TABLE VIEW DATA /////////////////////////////////////////////
+		var placeData = new Array();
 		
-	// (1)  CREATE AN ARRAY TO HOLD THE TABLE VIEW DATA /////////////////////////////////////////////
-	var placeData = new Array();
-	
-	// (2)	SORT POIs BASED ON PROXIMITY	///////////////////////////////////////////////////////////
-	var nearby = mySesh.geofencePlaces;
-	nearby.sort(function(a, b) {		// sort by proximity (closest first)
-		return parseFloat(a.dist) - parseFloat(b.dist);
-	});
-
-	// (3)  REORDER LIST TO ACCOMODATE CURRENT CHECK IN AT TOP //////////////////////////////////////
-	var checked_in_index 	= ""; 
-	for (var i = 0; i < nearby.length; i++) {
-		if ( mySesh.dog.current_place_ID == nearby[i].id ) {
-			checked_in_index = i;
-			break;
-		}
-	}
-	
-	if (checked_in_index!="") {	
-		Ti.API.debug( "  >>>> nearby[i]: "+JSON.stringify(nearby[checked_in_index]) );
-		// grab a copy of only that one element, starting at its position (i)
-		var where_at = nearby.slice(checked_in_index, checked_in_index+1);				
-		nearby.splice(checked_in_index,1);		// delete that element
-		nearby.unshift(where_at[0]);					// place the copy at the front of the array	
-	}
-	// (4)  	BUILD EACH TABLE ROW /////////////////////////////////////////////////////////////////
-	for (var i = 0; i < nearby.length; i++) {
-		var dataRow = Ti.UI.createTableViewRow(	{	
-		  // object info that is not exposed to user
-			name 			: nearby[i].name,
-			id 				: nearby[i].id,
-			lat 			: nearby[i].lat,
-			lon 			: nearby[i].lon,
-			distance	: nearby[i].dist,
-			hasChild	: false
+		// (2)	SORT POIs BASED ON PROXIMITY	///////////////////////////////////////////////////////////
+		var nearby = mySesh.geofencePlaces;
+		nearby.sort(function(a, b) {		// sort by proximity (closest first)
+			return parseFloat(a.dist) - parseFloat(b.dist);
 		});
-			
-		// (5)  ADD LEFT SIDE ICON //////////////////////////////////////////////////////////////////
-		var colorBlock	 	 = myUiFactory.createColorBlock(nearby[i].icon_color, nearby[i].icon_basic);
+	
+		// (3)  REORDER LIST TO ACCOMODATE CURRENT CHECK IN AT TOP //////////////////////////////////////
+		var checked_in_index 	= ""; 
+		for (var i = 0; i < nearby.length; i++) {
+			if ( mySesh.dog.current_place_ID == nearby[i].id ) {
+				checked_in_index = i;
+				break;
+			}
+		}
+		
+		if (checked_in_index!="") {	
+			// Ti.API.debug( "  >>>> nearby[i]: "+JSON.stringify(nearby[checked_in_index]) );
+			// grab a copy of only that one element, starting at its position (i)
+			var where_at = nearby.slice(checked_in_index, checked_in_index+1);				
+			nearby.splice(checked_in_index,1);		// delete that element
+			nearby.unshift(where_at[0]);					// place the copy at the front of the array	
+		}
+		// (4)  	BUILD EACH TABLE ROW /////////////////////////////////////////////////////////////////
+		for (var i = 0; i < nearby.length; i++) {
+			var dataRow = Ti.UI.createTableViewRow(	{	
+			  // object info that is not exposed to user
+				name 			: nearby[i].name,
+				id 				: nearby[i].id,
+				lat 			: nearby[i].lat,
+				lon 			: nearby[i].lon,
+				distance	: nearby[i].dist,
+				hasChild	: false
+			});
 				
-		// (6)  ACCOMODATE LONG PLACE NAMES /////////////////////////////////////////////////////////
-		var font_size = 14;
-    if (nearby[i].name.length > 40 && nearby[i].name.length < 60)
-			font_size    = 12;
-		else if (nearby[i].name.length > 60)
-		  font_size    = 10;
-	
-    // (7)	IF CURRENTLY CHECKED IN HERE, DISPLAY ALL FANCY //////////////////////////////////// 
-    // TODO:  createTableView row should be wrapped in a TableRow member function
-    var row_bg_color = "#ffffff";
-    
-		if ( mySesh.dog.current_place_ID == nearby[i].id ) {
-  		row_bg_color="#ec3c95";
-      var placeLabel = Ti.UI.createLabel({
-  			text : nearby[i].name +" -- (currently here)",  height : "100%", width : Ti.UI.FILL,
-  			left : 8, color : "#ffffff", textAlign : 'left',  
-  			font : { fontFamily : 'Raleway-Bold', fontSize : font_size } 
-  		});
-    }
-    else {
-  		var placeLabel = Ti.UI.createLabel({
-  			text : nearby[i].name,  height : "100%", width : Ti.UI.FILL,
-  			left : 10, color : "#000000", textAlign : 'left', 
-  			font : { fontFamily : 'Raleway', fontSize : font_size } 
-  		});
-		}
-		var contentView = Ti.UI.createView({ 
-		  layout : "horizontal", 
-		  height : myUiFactory._height_header, 
-		  width  : "100%", 
-		  backgroundColor: row_bg_color 
-		});
-		contentView.add(colorBlock);
-		contentView.add(placeLabel);
-		// (8)	FINALLY ADD THE *CUSTOM* TABLE ROW TO PARENT VIEW ////////////////////////////////// 
-		dataRow.add(contentView);
-		placeData.push(dataRow);
-		//Ti.API.debug( " >>>>>>> placeData: "+JSON.stringify(dataRow) );
-	}
-	/* populate placeList TableViewRows*/
-	$.placeListTable.data = placeData;
-	addPlaceListClickListeners($.placeListTable);
+			// (5)  ADD LEFT SIDE ICON //////////////////////////////////////////////////////////////////
+			var colorBlock	 	 = myUiFactory.createColorBlock(nearby[i].icon_color, nearby[i].icon_basic);
+					
+			// (6)  ACCOMODATE LONG PLACE NAMES /////////////////////////////////////////////////////////
+			var font_size = 14;
+	    if (nearby[i].name.length > 40 && nearby[i].name.length < 60)
+				font_size    = 12;
+			else if (nearby[i].name.length > 60)
+			  font_size    = 10;
+		
+	    // (7)	IF CURRENTLY CHECKED IN HERE, DISPLAY ALL FANCY //////////////////////////////////// 
+	    // TODO:  createTableView row should be wrapped in a TableRow member function
+	    var row_bg_color = "#ffffff";
+	    
+			if ( mySesh.dog.current_place_ID == nearby[i].id ) {
+	  		row_bg_color="#ec3c95";
+	      var placeLabel = Ti.UI.createLabel({
+	  			text : nearby[i].name +" (HERE)",  height : "100%", width : Ti.UI.FILL,
+	  			left : 8, color : "#ffffff", textAlign : 'left',  
+	  			font : { fontFamily : 'Raleway-Bold', fontSize : font_size } 
+	  		});
+	    }
+	    else {
+	  		var placeLabel = Ti.UI.createLabel({
+	  			text : nearby[i].name,  height : "100%", width : Ti.UI.FILL,
+	  			left : 10, color : "#000000", textAlign : 'left', 
+	  			font : { fontFamily : 'Raleway', fontSize : font_size } 
+	  		});
+			}
+			var contentView = Ti.UI.createView({ 
+			  layout : "horizontal", 
+			  height : myUiFactory._height_header, 
+			  width  : "100%", 
+			  backgroundColor: row_bg_color 
+			});
+			contentView.add(colorBlock);
+			contentView.add(placeLabel);
+			// (8)	FINALLY ADD THE *CUSTOM* TABLE ROW TO PARENT VIEW ////////////////////////////////// 
+			dataRow.add(contentView);
+			placeData.push(dataRow);
+			//Ti.API.debug( " >>>>>>> placeData: "+JSON.stringify(dataRow) );
+		} // end for0
+		/* populate placeList TableViewRows*/
+		$.placeListTable.data = placeData;
+		addPlaceListClickListeners($.placeListTable);
+	} // if (array_size > 0)
 }
-
-function removePlaceListClickListeners () {
-  placeListObject.removeEventListener('click', function (e) {} );
-}
-
 
 //=================================================================================
 //	Name:			addPlaceListClickListeners( placeListObject )
@@ -400,7 +408,7 @@ function addPlaceListClickListeners( placeListObject ) {
 //	Purpose:	allow user to check in or check out depending on current status 
 //=================================================================================
 function presentUserCheckinOptions( place ) {
-	Ti.API.info( "  presentUserCheckinOptions :: " + JSON.stringify(place) + " | checkin? " + mySesh.dog.current_place_ID );
+	// Ti.API.info( "  presentUserCheckinOptions :: " + JSON.stringify(place) + " | checkin? " + mySesh.dog.current_place_ID );
   var modal_title = 'Mark your presence at '+place.name + '?';
   if (mySesh.dog.current_place_ID == place.id) {
     var modal_title = 'Are you leaving '+place.name+"?";
@@ -434,14 +442,8 @@ function presentUserCheckinOptions( place ) {
 //	Purpose:	listen for clicks on nearby place list  
 //=================================================================================
 function placeListListener(e) {
-	Ti.API.debug("...[o] POI list click [ " + JSON.stringify(e.row) + " ]");
-	//Ti.API.debug("...[o] event index [ " + e.index + " ]");
+	// Ti.API.debug("...[o] POI list click [ " + JSON.stringify(e.row) + " ]");
 	myMap.centerMapOnLocation(e.row.lat, e.row.lon, 0.03);
-
-  // figure out which annotation index to trigger
-  // var anno_index = getArrayIndexById( Alloy.Globals.placeAnnotations, e.row.id );
-	// Alloy.Globals.wbMap.selectAnnotation( Alloy.Globals.placeAnnotations[anno_index] );		
-	
 	// pop up a check in or check out dialog box based on current checkin status
 	presentUserCheckinOptions( e.row );
 }
@@ -453,7 +455,8 @@ function refreshPlaceListData() {
  //  Ti.API.debug(".... [~] refreshPlaceListData called ....");
   getPoisInGeofence( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon );   // will affect place list
 	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
-//	setTimeout ( function(){ updateGeofenceTable(); }, 650);
+	setTimeout ( function(){ updateGeofenceTable(); }, 350);
+	
 	// ADD PLACE LIST CLICK EVENT LISTENER
 	// remove( PlaceListClickListeners )
 	// setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 700);
@@ -467,7 +470,6 @@ function refreshRAM() {
 	$.mem_usage.text = Titanium.Platform.availableMemory.toFixed(2)+" MB available";
 }
 
-
 //--------------------------------------------------------------------------------------------------------------
 
 //				G E O F E N C E - R E L A T E D 
@@ -479,13 +481,12 @@ function refreshRAM() {
 //	Purpose:	get places in db, plus a smaller subset of nearby ones
 //=============================================================================
 function getPoisInGeofence( mapObject, user_lat, user_lon ) {
-	//	Ti.API.debug("...[~] getPoisInGeofence() user[ "+user_lat+"/"+user_lon+" ]");
   var params = {
 		lat       : user_lat,
 		lon       : user_lon,
 		owner_ID	: mySesh.user.owner_ID
 	};
-	loadJson(params, "http://waterbowl.net/mobile/get-places-nearby.php", updatePoisInGeofence);
+	loadJson(params, "http://www.waterbowl.net/mobile/get-places-nearby.php", updatePoisInGeofence);
 }
 
 //=============================================================================
@@ -493,57 +494,76 @@ function getPoisInGeofence( mapObject, user_lat, user_lon ) {
 //	Purpose:	
 //=============================================================================
 function updatePoisInGeofence( data ) {
-	Ti.API.debug( ".... .... .... .... POIs in geofence: " + data.length );
-	if (data.length > 0) {
+	if ( data.length > 0 ) {
 		mySesh.geofencePlaces = data;
-			
-		// CHECK #1 - Have we left previous place's geofence?  
-		// If current_place_ID is not null, and looking up existing place's ID in geofencePlaces returns -1
-    if (mySesh.dog.current_place_ID>0 && getArrayIndexById(data, mySesh.dog.current_place_ID)==-1 ) {
-    	checkoutFromPlace( mySesh.dog.current_place_ID );
-   		createSimpleDialog( "Seems you've left", "Automatically checked you out from " + mySesh.dog.current_place_name);
-    }
-    // CHECK #2 - If there a Checkin modal currently up, then check if situation is still valid 
-    //    eg: is the currently displayed place name still part of geofencePlaces
+	} else {
+		mySesh.geofencePlaces = [];
 	}
-	// POPULATE NEARBY PLACE TABLE
 	updateGeofenceTable($.placeListTable);
 }	
 
+//=============================================================================
+//	Name:			testForAutoCheckout ( )
+//	Purpose:	
+//=============================================================================
+function testForAutoCheckout() {
+	if (mySesh.dog.current_place_ID > 0) {  // OLD CHECK
+ 		// see if current user lat/lon is out of the geofence of our stored checkin place lat/lon  	
+		var dist = getDistance(mySesh.geo.lat, mySesh.geo.lon, mySesh.dog.current_place_lat, mySesh.dog.current_place_lon);
+	
+		// Ti.API.debug( "....  :: mySesh.geo [" + mySesh.geo.lat + " / " + mySesh.geo.lon + "]" );
+		// Ti.API.debug( "....  :: dist - geo_radius [" + dist + " (-) " + mySesh.dog.current_place_geo_radius + "]" );
+
+ 		if( (dist - mySesh.dog.current_place_geo_radius) > 0 ) {
+ 	 		// AUTO CHECKOUT - this will also trigger a getPoisInGeofence call
+  		checkoutFromPlace( mySesh.dog.current_place_ID );
+  	} 
+  } 
+}
 
 //=================================================================================
 //	Name:			refreshGeo()
 //	Purpose:	  
 //=================================================================================
 function refreshGeo() {
-	if(Ti.Network.online ) {
-		  //if (mins_elapsed > mySesh.geo.refresh_interval) {   // only if 2 mins have passed since last geo update
-	  // set time last acquired (minutes since start of Unix Epoch)
-	      
-	  Titanium.Geolocation.getCurrentPosition(function(e) {
-	  	if (!e.success || e.error) {
-	  		// Ti.API.debug( "[[[ refreshGeo ]]] ::  X X X  Problems with Geolocation...  "+e.error);
-	  	}
-	  	else {   
-	    	// Ti.API.debug( "[[[ refreshGeo ]]] :: + + + Got location #[" + mySesh.geo.geo_trigger_count + "] "+e.coords.latitude+", "+e.coords.longitude);     	    
-	    	
-	    	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
-			  mySesh.geo.geo_trigger_count++;  
-			  mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
+	if(!Ti.Network.online) {
+		createSimpleDialog("No data connection","The Internets are required to browse the map.");
+	} 
+	else {
+		if( Titanium.Geolocation.locationServicesEnabled === false ) {
+			createSimpleDialog("No data connection","The Internets are required to browse the map.");
+		} 
+		else {	// SUCCESS
+			Titanium.Geolocation.getCurrentPosition(function(e) {
+		  	if (!e.success || e.error) {
+					// Ti.API.debug( "[[[ refreshGeo ]]] ::  X X X  Problems with Geolocation...  "+e.error);
+		  	}
+		  	else {   
+		    	// Ti.API.debug( "[[[ refreshGeo ]]] :: + + + Got location #[" + mySesh.geo.geo_trigger_count + "] "+e.coords.latitude+", "+e.coords.longitude);     	    
+		    	// alert(Ti.Geolocation.distanceFilter);
+		    	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
+				  mySesh.geo.geo_trigger_count++; 
+				  //mySesh.geo.lat = e.coords.latitude; 
+				  //mySesh.geo.lon = e.coords.longitude;
+				  
+				  mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
+	
+					$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
+					$.geo_latlng.text = mySesh.geo.lat.toFixed(4)+"/" +  mySesh.geo.lon.toFixed(4);
+		      // $.current_place_ID.text = "Checked in at : "+mySesh.dog.current_place_ID;
+		      // see if user is still checked in somewhere, and if so, have they left the geofence
+		      // myMap.getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
+		     
+		     	// CALL ALL GEO TRIGGER FUNCTIONS 
+		      testForAutoCheckout();
+		      refreshPlaceListData();
+		  	}
+			}); // end Ti.Geo.getCurrentPos
+		}  // end else case of Ti.Geolocation.locationServicesEnabled 
+	} // end else of Ti.Network.online    
 
-				$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
-				$.geo_latlng.text = e.coords.latitude.toFixed(4)+"/" +e.coords.longitude.toFixed(4);
-	      //$.current_place_ID.text = "Checked in at : "+mySesh.dog.current_place_ID;
-	      // see if user is still checked in somewhere, and if so, have they left the geofence
-	      // myMap.getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
-	      refreshPlaceListData();
-	  	}
-		});
-	}	else {
-	  createSimpleDialog("No data connection","The Internets are required to browse the map.");
-		Ti.API.log("No Internet connection...");
-	}
-}
+}	  
+
 
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -579,7 +599,7 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   } 
   // SUCCESS
   else {		
-  	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
+  	// SAVE GEO LAT / LON + TIME ACQUIRED //////////////
 		mySesh.geo.geo_trigger_count++;  
 		mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
 	}
@@ -595,21 +615,15 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   mySesh.geo.view_lat = mySesh.geo.lat; 
   mySesh.geo.view_lon = mySesh.geo.lon;
   myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
-  refreshPlaceListData();
-  
-  // HACK!
-  /* 	var necessary_args = {
-		_came_from : "checkin modal", 
-	  _place_ID  : 620000001		// pass in array index and placeID so we can hit the backend for more details
-	};
-	createWindowController( "placeoverview", necessary_args, 'slide_left' );	 */
+  //testForAutoCheckout();
+  //refreshPlaceListData();
 });
 	
-/*
 $.mapview.addEventListener('focus',function(e) {
-	Ti.API.info(" Mapview in focus, refreshing Place List. Current Place ID# ["+mySesh.dog.current_place_ID+"]");
+	// Ti.API.info(" Mapview in focus, refreshing Place List. Current Place ID# ["+mySesh.dog.current_place_ID+"]");
+	testForAutoCheckout();
 	refreshPlaceListData();
-}); */
+}); 
 
 //====================================================================================
 // 		Geolocation Change Event Listener
@@ -618,5 +632,5 @@ $.mapview.addEventListener('focus',function(e) {
 //		2) 	Refresh nearby places table
 //		2)  Save latest user location into mySesh.geo.lat, mySesh.geo.lon
 //====================================================================================
-setInterval(refreshGeo, 30000);			// every X milliseconds
+setInterval(refreshGeo, 15000);			// every X milliseconds
 //setInterval(refreshRAM, 2000);			// show RAM usage every 2 seconds

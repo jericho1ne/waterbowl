@@ -48,7 +48,7 @@ function Session(){
 	this.windowStack					= [];
 	this.allPlaces		     	 	= [];				// top N places that are near user's location (n=20, 30, etc)
 	this.nearbyMarks		    	= [];
-	this.geofencePlaces    		= []; 				// contains up to N places that are within the geofence
+	this.geofencePlaces    		= []; 			// contains up to N places that are within the geofence
 	this.currentPlaceInfo 		= [];
 	this.currentPlaceFeatures = [];
 	this.checkinInProgress	 	= null;
@@ -81,10 +81,9 @@ function Session(){
 };
 
 //================================================================================
-//		Name:				xsetGeoLatLon
+//		Name:				clearSavedDogInfo
 //================================================================================
 Session.prototype.clearSavedDogInfo = function (){
-	// Ti.API.debug("  .... [~] Session.prototype.xsetGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
 	this.dog.dog_ID 				= null;
 	this.dog.name						=	null;
 	this.dog.sex						= null;
@@ -106,7 +105,7 @@ Session.prototype.clearSavedDogInfo = function (){
 //		Name:				xsetGeoLatLon
 //================================================================================
 Session.prototype.xsetGeoLatLon = function (lat, lon, how_long_ago){
-	// Ti.API.debug("  .... [~] Session.prototype.xsetGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
+	Ti.API.debug("  .... [~] Session.prototype.xsetGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
 	this.geo.lat = lat;
 	this.geo.lon = lon;
 	this.geo.last_acquired = how_long_ago;

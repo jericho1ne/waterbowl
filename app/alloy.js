@@ -287,18 +287,17 @@ function createWindowController ( win_name, args, animation ) {
 //	Name:			getDistance ( lat1, lon1, lat2, lon2 )
 //=============================================================================
 function getDistance(lat1, lon1, lat2, lon2) {
-  var R = 6371; // Radius of the earth in km
+  var R_km = 6371; 							// Radius of the earth in km
+  var R_mi = 3958.761;					// Radius of the earth in mi
   var dLat = deg2rad(lat2-lat1);  // deg2rad below
   var dLon = deg2rad(lon2-lon1); 
   var a = 
     Math.sin(dLat/2) * Math.sin(dLat/2) +
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2)
-    ; 
+    Math.sin(dLon/2) * Math.sin(dLon/2); 
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  var d = R * c; // Distance in km
-  d = d * 0.621371;
-  return Number ( d.toFixed(2) );		// typecast just in case toFixed returns a string...
+  var d = R_mi * c; 	// Distance in miles
+  return Number ( d.toFixed(4) );		// 4 decimals, in typecast just in case toFixed returns a string...
 }
 
 //=============================================================================
@@ -704,7 +703,7 @@ var myUiFactory = new UiFactoryClass.UiFactory();
  *-----------------------------------------------------------------------*/
 var ExtMapClass = require('lib/ExtMapClass');
 var myMap = new ExtMapClass.ExtMap();
-Alloy.Globals.wbMap = '';
+// Alloy.Globals.wbMap = '';
 
 
 /*----------------------------------------------------------------------
@@ -749,16 +748,16 @@ Alloy.Globals.placeAnnotations = [];
  *  	GEOLOCATION
  *-----------------------------------------------------------------------*/
 // minimum change in location (meters) which triggers the 'location' eventListener
-// 	*** Geolocation Threshhold trigger.  Note:	10m triggers too often ***
-Ti.Geolocation.distanceFilter = 20;			// 10m=33 ft, 20m=65ft, 30m=100 ft
-Ti.Geolocation.accuracy 			= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_BEST doesn't work on iOS
+// 	*** Geolocation Threshhold trigger.  IN METERES.  Note:	10m triggers too often ***
+Ti.Geolocation.distanceFilter = 10;			// 10m=33 ft, 20m=65ft, 30m=100 ft
+Ti.Geolocation.frequency			= 1;
+Ti.Geolocation.accuracy 			= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_NEAREST_TEN_METERS, ACCURACY_BEST doesn't work on iOS
 Ti.Geolocation.purpose 				= "Receive User Location";
 // Ti.API.debug( "Running on an [" + Ti.Platform.osname + "] device");
 
 // TODO: is this still used by mapview.js??
 
 //Alloy.Globals.wbMap 	= "";
-
 
 // var longPress;
 'use strict';

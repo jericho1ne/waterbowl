@@ -32,6 +32,7 @@ function saveUserToDb(email, pwd1, pwd2, city, state, zip) {
 			}	else {
 				// save user's provided email, even though the db call could fail
 				Ti.App.Properties.setString('user', email);
+				Ti.App.Properties.setString('pass', '');
 				var params = {
 					"email" 	: email,
 					"pwd" 		: pwd1,

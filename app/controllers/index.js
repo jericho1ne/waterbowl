@@ -111,16 +111,17 @@ var saved_pwd  = Ti.App.Properties.getString('pass');
 //}
 
 /////// FILL IN USER / EMAIL FIELDS IF INFO IS SAVED LOCALLY //////////
-if( Ti.App.Properties.getString('user')!=""  ) 
+/* if( Ti.App.Properties.getString('user')!=""  ) 
 	email.value = Ti.App.Properties.getString('user');
 if( Ti.App.Properties.getString('pass')!="" ) 
 	password.value = saved_pwd;
+*/
 $.index.addEventListener('focus',function(e) {
 	// if credentials are already saved in mySesh
 	if( Ti.App.Properties.getString('user')!="" )
-		email.value = Ti.App.Properties.getString('user');
+		email.value 		= Ti.App.Properties.getString('user');
 	if( Ti.App.Properties.getString('pass')!="" )
-		password.value = saved_pwd;
+		password.value	= Ti.App.Properties.getString('pass');
 });
 
 

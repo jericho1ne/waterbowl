@@ -125,7 +125,8 @@ cameraBtn.addEventListener('click', function(e) {
 				if ( this.responseText != ''){
 	      	var jsonData = JSON.parse(this.responseText);
 	      	if (jsonData.status>0) {
-	        	createSimpleDialog('Success', jsonData.message);
+	        	// createSimpleDialog('Success', jsonData.message);
+	        	createWindowController('register4','',"slide_left");
 	        	// TODO:  take user to register4 screen where they get to see the fully built profile
 	      	} else {
 	      		cameraBtn.show();
