@@ -533,26 +533,18 @@ function refreshGeo() {
 		if( Titanium.Geolocation.locationServicesEnabled === false ) {
 			createSimpleDialog("No data connection","The Internets are required to browse the map.");
 		} 
-		else {	// SUCCESS
+		else {	// we are online	
 			Titanium.Geolocation.getCurrentPosition(function(e) {
 		  	if (!e.success || e.error) {
 					// Ti.API.debug( "[[[ refreshGeo ]]] ::  X X X  Problems with Geolocation...  "+e.error);
 		  	}
 		  	else {   
-		    	// Ti.API.debug( "[[[ refreshGeo ]]] :: + + + Got location #[" + mySesh.geo.geo_trigger_count + "] "+e.coords.latitude+", "+e.coords.longitude);     	    
-		    	// alert(Ti.Geolocation.distanceFilter);
+		    	// Ti.API.debug( "[[[ refreshGeo ]]] :: + + + Got location #[" + mySesh.geo.geo_trigger_count + "] "+e.coords.latitude+", 
 		    	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
 				  mySesh.geo.geo_trigger_count++; 
-				  //mySesh.geo.lat = e.coords.latitude; 
-				  //mySesh.geo.lon = e.coords.longitude;
-				  
 				  mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
-	
 					$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
 					$.geo_latlng.text = mySesh.geo.lat.toFixed(4)+"/" +  mySesh.geo.lon.toFixed(4);
-		      // $.current_place_ID.text = "Checked in at : "+mySesh.dog.current_place_ID;
-		      // see if user is still checked in somewhere, and if so, have they left the geofence
-		      // myMap.getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
 		     
 		     	// CALL ALL GEO TRIGGER FUNCTIONS 
 		      testForAutoCheckout();
@@ -561,9 +553,27 @@ function refreshGeo() {
 			}); // end Ti.Geo.getCurrentPos
 		}  // end else case of Ti.Geolocation.locationServicesEnabled 
 	} // end else of Ti.Network.online    
-
 }	  
 
+//=================================================================================
+//	Name:			locationCallback()
+//	Purpose:	  
+//=================================================================================
+var locationCallback = function(e) {
+	if (!e.success || e.error) {
+		// avoid alert window, fail silently
+		// createSimpleDialog("Couldn't pinpoint your location", "Error - "+JSON.stringify(e.error) );
+		Ti.API.debug( "Couldn't pinpoint your location", "Error - "+JSON.stringify(e.error) );
+	}
+	else {
+		mySesh.geo.geo_trigger_count++;
+		mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)	
+		$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
+		$.geo_latlng.text = mySesh.geo.lat.toFixed(4)+"/" +  mySesh.geo.lon.toFixed(4);
+		testForAutoCheckout();
+	  refreshPlaceListData();
+	}
+};
 
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -632,5 +642,6 @@ $.mapview.addEventListener('focus',function(e) {
 //		2) 	Refresh nearby places table
 //		2)  Save latest user location into mySesh.geo.lat, mySesh.geo.lon
 //====================================================================================
-setInterval(refreshGeo, 15000);			// every X milliseconds
+// setInterval(refreshGeo, 15000);			// every X milliseconds
+Titanium.Geolocation.addEventListener('location', locationCallback);
 //setInterval(refreshRAM, 2000);			// show RAM usage every 2 seconds

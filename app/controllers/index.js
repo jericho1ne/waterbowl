@@ -62,8 +62,8 @@ var form_width = myUiFactory._form_width;
 //Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);	
 
 // FIRST THINGS FIRST - IF CREDS ARE SAVED, AUTOLOGIN!
-var saved_user = Ti.App.Properties.getString('user');
-var saved_pwd  = Ti.App.Properties.getString('pass');
+//var saved_user = Ti.App.Properties.getString('user');
+//var saved_pwd  = Ti.App.Properties.getString('pass');
 
 //if (saved_user=="" || saved_pwd=="") {
 	// Build 3 vertically stacked View Containers
@@ -111,12 +111,13 @@ var saved_pwd  = Ti.App.Properties.getString('pass');
 //}
 
 /////// FILL IN USER / EMAIL FIELDS IF INFO IS SAVED LOCALLY //////////
-/* if( Ti.App.Properties.getString('user')!=""  ) 
+if( Ti.App.Properties.getString('user')!=""  ) 
 	email.value = Ti.App.Properties.getString('user');
 if( Ti.App.Properties.getString('pass')!="" ) 
-	password.value = saved_pwd;
-*/
-$.index.addEventListener('focus',function(e) {
+	password.value = Ti.App.Properties.getString('pass');
+
+$.index.addEventListener('focus',function(e) {		// only gets after original page load
+	Ti.API.info("!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	// if credentials are already saved in mySesh
 	if( Ti.App.Properties.getString('user')!="" )
 		email.value 		= Ti.App.Properties.getString('user');

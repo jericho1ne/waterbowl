@@ -94,17 +94,71 @@ function disableAddMarkBtn() {
 	addMarkBtn.removeEventListener('click', function(e){ saveRemark(title_input.value, textArea.value, textarea_hint); });
 }
 
-//=================================================================================================================
-//=========================================================================================================================
+function takeMarkImage() {
+	removeAllChildren($.mapContainer);
+	// $.mapContainer.remove( markMapView );
+	// progress_bar.show();
+	// markCameraBtn.hide();
+	
+	Titanium.Media.showCamera({
+		///////   	SUCCESS
+			success : function(event) {
+		    var imageBlob = event.media;
+		    var bannerImage = imageBlob.imageAsResized(750, 750);
+		    var img = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
+        img.write(bannerImage);
+        
+        var snapShotImage = Ti.UI.createImageView({ 
+					height				: Ti.UI.SIZE,
+					width				  : Ti.UI.SIZE,
+					image					: img.nativePath,
+					top						: 0, 
+					left					: 0
+			});
+      $.mapContainer.add(snapShotImage);
+        
+		  },
+		  /////////		CANCEL
+		  cancel : function() {
+			},
+			/////////		ERROR
+			error : function(error) {
+		  },
+		  allowImageEditing : true
+	});
+
+}
+
+
+
 //==============================================================================================================================
+
 var args = arguments[0] || {};		// returns empty array instead of undefined thanks to the ||
 
 // Ti.API.debug(JSON.stringify(data));
 Ti.API.debug(" >>> args in CreateMark: "+JSON.stringify(args));
 
 // (1)  Create + Add map to the appropriate parent view; center on user's current location
-var markMapView = drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.012 );      
+var markMapView 	= drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.012 ); 
 $.mapContainer.add( markMapView );
+
+
+$.createmark.addEventListener('focus',function(e) {
+	var markCameraBtn = Ti.UI.createButton( {
+			id			: "markCameraBtn",	
+			backgroundImage : ICON_PATH + 'button-photoupload.png',
+			// backgroundColor: '#ffffff', 
+			opacity : 1,
+			height	: 70, 
+			width		: 70,
+			top  		: 200,
+			right		: 20,
+	 		zIndex  : 101
+	} );
+	markCameraBtn.addEventListener('click', function(e) { takeMarkImage(); } );
+	$.mapContainer.add( markCameraBtn );
+ });	
+
 
 // (2)  Add original mark section header + first mark
 $.markForm.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
@@ -139,8 +193,10 @@ $.markForm.add(title_input);
 $.markForm.add(textarea_label);
 $.markForm.add(textArea);
 $.markForm.add(addMarkBtn);
-addMarkBtn.addEventListener('click', function(e){ saveRemark(title_input.value, textArea.value, textarea_hint); });
-textArea.addEventListener('focus', function(e){ clearTextAreaContents(textArea); });
+
+
+addMarkBtn.addEventListener	('click', function(e) { saveRemark(title_input.value, textArea.value, textarea_hint); });
+textArea.addEventListener		('focus', function(e) { clearTextAreaContents(textArea); });
 
 
 /* TODO:  

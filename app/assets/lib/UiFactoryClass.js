@@ -76,10 +76,9 @@ function UiFactory(){
 UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_width, view_height, top) {
 	// create the parent view
 	var view_container = Ti.UI.createView( { 
+		//borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 	
 		id							: id, 
 		layout					: layout_orientation,
-		// backgroundColor : this._color_ltblue, 
-		//borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 	
 		top							: top,  
 		width						: view_width,
 		height 					: view_height
@@ -98,7 +97,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 	
 	if (text_align=="left") {
 		align =  Ti.UI.TEXT_ALIGNMENT_LEFT;
-		//left_pad = this._pad_left;
+		left_pad = this._pad_left;
 	}
 	else if (text_align=="right")
 		align =  Ti.UI.TEXT_ALIGNMENT_RIGHT;
@@ -106,15 +105,14 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
 		
 	var label = Ti.UI.createLabel( {	
+		borderColor : ((this._debug == 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
 		//id	: something+"_label", 
 		text	: title,
 		font	:	font_style,
 		width	: width,
 		height: height,
-		// left  : left_pad,
+		left  : left_pad,
 		color	: font_color,
-		//top		: 0,
-		// borderColor : ((this._debug == 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
 		textAlign		: align
 	});
 	return label;
@@ -138,6 +136,7 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	
 	var headerTop 			= this.buildViewContainer("headerTop_"+id, 	"vertical", 	this._device.screenwidth, h_top_height, 0);		// blank div
 	var headerInfo 			= this.buildViewContainer("headerInfo_"+id, "vertical", 	this._device.screenwidth, h_info_height, 0);
+	// headerInfo.left     = this._pad_left;
 	
 	// header stat bar should be separate function
 	var headerStatBar 	= this.buildViewContainer("headerStatBar", 	"horizontal", "100%", h_statbar_height, 0);	
@@ -479,7 +478,7 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
 	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
 	var column_2_row_1 		= this.buildViewContainer ( "", "horizontal", "100%", row1_height, 0 ); 
 	var dog_name_label  	= this.buildLabel( photo_caption, col_2_name_width, row1_height, this._text_medium_bold, "#000000", "left" );		
-	var time_stamp_label	= this.buildLabel( time_stamp, 		col_2_ts_width, 	row1_height, this._text_medium, 			  "#000000", "right");
+	var time_stamp_label	= this.buildLabel( time_stamp, 		col_2_ts_width, 	row1_height, this._text_medium, 		 "#000000", "right");
 	// COLUMN 2 :: BUILD DESCRIPTION CONTAINER
 	var column_2_row_2 		= this.buildViewContainer ( "", "horizontal", column_2_width, row2_height, 0 );
 	var description_label = this.buildLabel( description, column_2_width-(2*this._pad_right), row2_height, this._text_medium, "#000000", "left" );

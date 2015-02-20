@@ -7,7 +7,7 @@
 					<Label id="mini_place_name_label" text="[ Map Header Goes Here ]" class="feed_label_left_lg white text_medium_bold"/>
 					<Label id="mini_place_second_label" text="..." class="feed_label_left white text_medium_medium" />
 				</View> -->
-				<View id="mapContainer" class="absolute" top="0" height="40%" width="100%" />
+				<View id="mapContainer" class="absolute" top="0" height="Ti.Platform.displayCaps.platformWidth" width="100%" />
 				<View id="markForm" width="100%"/>
 			</ScrollView>
 		</View>
