@@ -105,7 +105,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
 		
 	var label = Ti.UI.createLabel( {	
-		borderColor : ((this._debug == 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
+		// borderColor : ((this._debug == 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
 		//id	: something+"_label", 
 		text	: title,
 		font	:	font_style,

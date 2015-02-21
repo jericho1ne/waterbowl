@@ -7,17 +7,17 @@ function saveRemark(title, text_content, textarea_hint) {
 		var query = Ti.Network.createHTTPClient();
 		query.open("POST", SERVER_URL+"mark-create.php");
 		var params = {
-			owner_ID 		: mySesh.user.owner_ID,
+			owner_ID	: mySesh.user.owner_ID,
 			owner_name	: mySesh.user.name,
-			dog_ID 	 		: mySesh.dog.dog_ID,		// mySesh.dog.dog_ID,
-			dog_name 		: mySesh.dog.name, 
-			lat					: mySesh.geo.lat,
+			dog_ID 		: mySesh.dog.dog_ID,		// mySesh.dog.dog_ID,
+			dog_name 	: mySesh.dog.name, 
+			lat			: mySesh.geo.lat,
 			lon         : mySesh.geo.lon,
 			city        : "unknown",
-			zip					: "unknown",
-			country 		: "unknown",
+			zip			: "unknown",
+			country 	: "unknown",
 			mark_name   : title,
-			post_text		: text_content
+			post_text	: text_content
 		};
 		Ti.API.log( "* Sending info to PHP " + JSON.stringify(params) );
 		
@@ -39,9 +39,9 @@ function saveRemark(title, text_content, textarea_hint) {
 					
 					// (5) :::: REFRESH MAP MARKS ON MAPVIEW ::::					
 					myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
-      		//disableAllButtons();
+      			//disableAllButtons();
      		
-      		// (6) :::: CLOSE WINDOW, RETURN TO MAPVIEW ::::
+      			// (6) :::: CLOSE WINDOW, RETURN TO MAPVIEW ::::
 					closeWindowController();				
 				} else {
 					enableAddMarkBtn();
@@ -63,24 +63,24 @@ function saveRemark(title, text_content, textarea_hint) {
 // 	Purpose:	draw default Apple map
 //=================================================================================
 function drawDefaultMap(lat, lon, delta) {
-  Ti.API.log(".... .... .... drawDefaultMap lat/lon/delta: ["+lat+"/"+lon+"/"+delta+"]");
+  Ti.API.log("  .... [~] drawDefaultMap lat/lon/delta: ["+lat+"/"+lon+"/"+delta+"]");
 	var tempMap = myMapFactory.createView({
 		mapType : myMapFactory.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
 		region : {
-			latitude 			: lat,
+			latitude 		: lat,
 			longitude 		: lon,
-			latitudeDelta : delta,
-			longitudeDelta: delta
+			latitudeDelta 	: delta,
+			longitudeDelta	: delta
 		},
 		id : "markMapView",
-		top 					: 0,
-		opacity				: 1,
-		zIndex				: 20,
-		animate 			: false,	
-		maxZoom				: 1,
-		minZoom				: 2,
-		regionFit	 		: true,
-		userLocation 	: true,
+		top 		: 0,
+		opacity		: 1,
+		zIndex		: 20,
+		animate 	: false,	
+		maxZoom		: 1,
+		minZoom		: 2,
+		regionFit	: true,
+		userLocation: true,
 		enableZoomControls : true
 	});
 	Ti.API.log("...[~] Map object built ");
@@ -101,37 +101,44 @@ function takeMarkImage() {
 	// markCameraBtn.hide();
 	
 	Titanium.Media.showCamera({
-		///////   	SUCCESS
+			///////   	SUCCESS
 			success : function(event) {
-		    var imageBlob = event.media;
-		    var bannerImage = imageBlob.imageAsResized(750, 750);
-		    var img = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
-        img.write(bannerImage);
-        
-        var snapShotImage = Ti.UI.createImageView({ 
-					height				: Ti.UI.SIZE,
-					width				  : Ti.UI.SIZE,
-					image					: img.nativePath,
-					top						: 0, 
-					left					: 0
+			var imageBlob = event.media;
+			var bannerImage = imageBlob.imageAsResized(750, 750);
+			var img = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
+	        img.write(bannerImage);
+	        
+	        var snapShotImage = Ti.UI.createImageView({ 
+				height	: Ti.UI.SIZE,
+				width	: Ti.UI.SIZE,
+				image	: img.nativePath,
+				top		: 0, 
+				left	: 0
 			});
-      $.mapContainer.add(snapShotImage);
-        
-		  },
-		  /////////		CANCEL
-		  cancel : function() {
-			},
-			/////////		ERROR
-			error : function(error) {
-		  },
-		  allowImageEditing : true
+	      	$.mapContainer.add(snapShotImage);
+       	},
+		/////////		CANCEL
+		cancel : function() {
+		},
+		/////////		ERROR
+		error : function(error) {
+		},
+		allowImageEditing : true
 	});
-
 }
 
 
 
 //==============================================================================================================================
+/* TODO:  
+	 Full size header 
+
+		"	Terra's Mark #103
+			Mark Title And Stuff...
+			Playa Vista, CA 90094
+			2.2 mi away 	
+
+*/
 
 var args = arguments[0] || {};		// returns empty array instead of undefined thanks to the ||
 
@@ -150,9 +157,9 @@ $.createmark.addEventListener('focus',function(e) {
 			// backgroundColor: '#ffffff', 
 			opacity : 1,
 			height	: 70, 
-			width		: 70,
-			top  		: 200,
-			right		: 20,
+			width	: 70,
+			top  	: 200,
+			right	: 20,
 	 		zIndex  : 101
 	} );
 	markCameraBtn.addEventListener('click', function(e) { takeMarkImage(); } );
@@ -172,18 +179,18 @@ var textarea_label = myUiFactory.buildLabel( "Text", form_width, myUiFactory._he
 var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
 
 var textArea = Ti.UI.createTextArea({
-  borderWidth: 0,
-  borderColor: '#bbb',
-  borderRadius: 5,
-  color: '#888',
-  font: { fontFamily: 'Raleway-Medium', fontSize: 14 },
-  keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
+  borderWidth		: 0,
+  borderColor		: '#bbb',
+  borderRadius		: 5,
+  color 			: '#888',
+  font 				: { fontFamily: 'Raleway-Medium', fontSize: 14 },
+  keyboardType 		: Titanium.UI.KEYBOARD_DEFAULT,
  	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,
-  textAlign: 'left',
-  value: textarea_hint,
-  top: 1,
-  width: form_width, 
-  height : 90
+  textAlign 		: 'left',
+  value  			: textarea_hint,
+  top 				: 1,
+  width 			: form_width, 
+  height 			: 90
 });
 
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "mark", "large" );
@@ -196,19 +203,5 @@ $.markForm.add(addMarkBtn);
 
 
 addMarkBtn.addEventListener	('click', function(e) { saveRemark(title_input.value, textArea.value, textarea_hint); });
-textArea.addEventListener		('focus', function(e) { clearTextAreaContents(textArea); });
+textArea.addEventListener	('focus', function(e) { clearTextAreaContents(textArea); });
 
-
-/* TODO:  
-
-(0) Map base layer, centered on user location (list POIs or other nearby Marks?)
-
-(1) Full size header 
-
-		"	Terra's Mark #103
-			Mark Title And Stuff...
-			Playa Vista, CA 90094
-			2.2 mi away 	
-
-(2)	"MARKING THIS SPOT" section header
-*/

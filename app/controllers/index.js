@@ -72,7 +72,7 @@ var form_width = myUiFactory._form_width;
 	var botView = myUiFactory.buildViewContainer ( "botView", "", 				"100%", Ti.UI.FILL, 0 );
 	
 	// 																		title, 			 w, 		 h,  font_style, 					    color 			text_align
-	var titlebar = myUiFactory.buildLabel("waterbowl", form_width, 60, myUiFactory._text_banner, "#ffffff", "center");
+	var titlebar = myUiFactory.buildLabel("waterbowl", Ti.UI.FILL, 100, myUiFactory._text_banner, "#ffffff", "center");
 	//                                         id,       width,  hint,       is_pwd
 	var email    = myUiFactory.buildTextField("email",   form_width,  "email",    "");
 	var password = myUiFactory.buildTextField("password", form_width, "password", true);
@@ -109,6 +109,8 @@ var form_width = myUiFactory._form_width;
 //} else {  // AUTOLOGIN IF CREDENTIALS ARE SAVED
 //	wbLogin(saved_user, saved_pwd);
 //}
+
+Ti.API.info( "  >>> Ti.App.Properties.getString('user') :: " + Ti.App.Properties.getString('user') );
 
 /////// FILL IN USER / EMAIL FIELDS IF INFO IS SAVED LOCALLY //////////
 if( Ti.App.Properties.getString('user')!=""  ) 

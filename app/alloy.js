@@ -332,7 +332,7 @@ function addMenubar( parent_object ) {
 	var middle_width = mySesh.device.screenwidth - left_width - (2*right_width_1) - right_width_2;
 	
 	// DEBUG
-	Ti.API.debug(" .... [i] addMenubar :: Ti.App.Properties.current_window [ "+ Ti.App.Properties.current_window +"]");
+	Ti.API.debug("  .... [i] addMenubar :: Ti.App.Properties.current_window [[ "+ Ti.App.Properties.current_window +" ]]");
 	
 	// PARENT OBJECT ----------------------------------------->	
 	var menubar = Ti.UI.createView( {

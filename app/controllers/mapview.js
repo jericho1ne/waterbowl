@@ -186,7 +186,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				Ti.API.log("  [>]  Checkin added successfully ::  ");
 	
 				// in case we want to look up more info on this specific place in the global place array
-			  var place_index = getArrayIndexById( mySesh.geofencePlaces, place_ID );
+			  	var place_index = getArrayIndexById( mySesh.geofencePlaces, place_ID );
 				/*		 save Place ID, checkin state, and timestamp in mySesh  	*/
 				// checkin now officially complete
 				mySesh.dog.current_place_ID 		= place_ID;
@@ -202,20 +202,20 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				mySesh.dog.last_checkin_timestamp= new Date().getTime();
 				
 				// POPULATE NEARBY PLACE TABLE
-  		  setTimeout ( function(){ refreshPlaceListData(); }, 300);
-  		  // ADD PLACE LIST CLICK EVENT LISTENER
-  		  setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 310);
+  		  		setTimeout ( function(){ refreshPlaceListData(); }, 300);
+  		  		// ADD PLACE LIST CLICK EVENT LISTENER
+  		  		setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 310);
   		
-  			// center map on user location, get all places in that area
-  			myMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.03);
-  			myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
+  				// center map on user location, get all places in that area
+  				myMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.03);
+  				myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
   			
-			  // instead of success message, bounce user to place overview
-			  var necessary_args = {
+			 	 // instead of success message, bounce user to place overview
+			  	var necessary_args = {
 					_came_from : "checkin modal", 
-		      _place_ID  : place_ID		// pass in array index and placeID so we can hit the backend for more details
-		    };
-        createWindowController( "placeoverview", necessary_args, 'slide_left' );
+		     		_place_ID  : place_ID		// pass in array index and placeID so we can hit the backend for more details
+		    	};
+        		createWindowController( "placeoverview", necessary_args, 'slide_left' );
 			} else {
 			   createSimpleDialog( response.title, response.message );
 			} 

@@ -16,7 +16,7 @@ function getAllEstimates( place_ID, callbackFunction ) {
 		
 		if (jsonResponse != "" ) {
 			var activity = JSON.parse( jsonResponse );
-			Ti.API.debug(" OKAY WTFF " +JSON.stringify(activity) );
+			// Ti.API.debug(" OKAY WTFF " +JSON.stringify(activity) );
 			callbackFunction(activity);	
 		}
 	};
