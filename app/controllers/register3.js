@@ -58,50 +58,51 @@ galleryBtn.addEventListener('click', function(e) {
 	cameraBtn.hide();
 	galleryBtn.hide();
 	Titanium.Media.openPhotoGallery({
-		///////   	SUCCESS
+		///////   	SUCCESS  	////////////
 		success : function(event) {
-	    var image = event.media;
-	    var xhr 	= Titanium.Network.createHTTPClient();
+		    var image 		= event.media;
+			var resized_img = image.imageAsResized(750, 750);
+		    var xhr 	= Titanium.Network.createHTTPClient();
 			xhr.setRequestHeader("contentType", "multipart/form-data");				
-	    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
-	    xhr.onerror = function(e) {
-	        Ti.API.info('IN ERROR ' + e.error);
-	    };
-	    xhr.onload = function(response) {
-				if ( this.responseText != ''){
-	      	var jsonData = JSON.parse(this.responseText);
-	      	if (jsonData.status>0) {
-	        	// createSimpleDialog('Success', jsonData.message);
-	        	createWindowController('register4','',"slide_left");
-	      	} else {
+		    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
+		    xhr.onerror = function(e) {
+		        Ti.API.info('IN ERROR ' + e.error);
+		    };
+		    xhr.onload = function(response) {
+					if ( this.responseText != ''){
+		      	var jsonData = JSON.parse(this.responseText);
+		      	if (jsonData.status>0) {
+		        	// createSimpleDialog('Success', jsonData.message);
+		        	createWindowController('register4','',"slide_left");
+		      	} else {
+		      		cameraBtn.show();
+					galleryBtn.show();
+		      		createSimpleDialog('Upload Error', jsonData.message);
+		      	}	
+		      } else {
 	      		cameraBtn.show();
-						galleryBtn.show();
-	      		createSimpleDialog('Upload Error', jsonData.message);
-	      	}	
-	      } else {
-      		cameraBtn.show();
 					galleryBtn.show();
 					alert( "No response from server" );
-	      }
-	    };
-	    xhr.onsendstream = function(e) {
-	    	progress_bar.value = e.progress;
-	    };
-	    xhr.send({
-				'userfile'		: image,
-				'type'				: 'dog',
-				'type_ID'			: mySesh.dog.dog_ID,		// last dog inserted ID from register2
-	      'image_type'  : 'banner'  						// TODO: inquire about image type on client?? 
-	    });
-	    Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + image, 'dog', mySesh.dog.dog_ID, + 'banner' +"]");
+		      }
+		    };
+		    xhr.onsendstream = function(e) {
+		    	progress_bar.value = e.progress;
+		    };
+		    xhr.send({
+				'userfile'		: resized_img,
+				'type'			: 'dog',
+				'type_ID'		: mySesh.dog.dog_ID,		// last dog inserted ID from register2
+		    	'image_type' 	: 'banner'  						// TODO: inquire about image type on client?? 
+		    });
+		    // Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + resized_img, 'dog', mySesh.dog.dog_ID, + 'banner' +"]");
 		},
-	  /////////		CANCEL
-	  cancel : function() {
+		/////////		CANCEL  	////////////
+	  	cancel : function() {
 		},
-		/////////		ERROR
+		/////////		ERROR  	////////////
 		error : function(error) {
-	  },
-	  allowImageEditing : true
+	  	},
+	  	allowImageEditing : true
 	});
 });
 
@@ -114,9 +115,10 @@ cameraBtn.addEventListener('click', function(e) {
 	Titanium.Media.showCamera({
 		///////   	SUCCESS
 		success : function(event) {
-	    var image = event.media;
-	    var xhr 	= Titanium.Network.createHTTPClient();
-			xhr.setRequestHeader("contentType", "multipart/form-data");				
+	    var image 		= event.media;
+	    var resized_img = image.imageAsResized(750, 750);
+	    var xhr = Titanium.Network.createHTTPClient();
+		xhr.setRequestHeader("contentType", "multipart/form-data");				
 	    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
 	    xhr.onerror = function(e) {
 	        Ti.API.info('IN ERROR ' + e.error);
@@ -130,23 +132,23 @@ cameraBtn.addEventListener('click', function(e) {
 	        	// TODO:  take user to register4 screen where they get to see the fully built profile
 	      	} else {
 	      		cameraBtn.show();
-						galleryBtn.show();
+				galleryBtn.show();
 	      		createSimpleDialog('Upload Error', jsonData.message);
 	      	}	
 	      } else {
       		cameraBtn.show();
-					galleryBtn.show();
-					alert( "No response from server" );
+				galleryBtn.show();
+				alert( "No response from server" );
 	      }
 	    };
 	    xhr.onsendstream = function(e) {
 	    	progress_bar.value = e.progress;
 	    };
 	    xhr.send({
-				'userfile'		: image,
-				'type'				: 'dog',
-				'type_ID'			: mySesh.dog.dog_ID,		// last dog inserted ID from register2
-	      'image_type'  : 'banner'  						// TODO: inquire about image type on client?? 
+			'userfile'	: resized_img,
+			'type'		: 'dog',
+			'type_ID'	: mySesh.dog.dog_ID,		// last dog inserted ID from register2
+	    	'image_type': 'banner'  						// TODO: inquire about image type on client?? 
 	    });
 	    Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + image, mySesh.dog.dog_ID +"]");  
 		},

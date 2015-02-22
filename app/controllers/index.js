@@ -115,8 +115,11 @@ Ti.API.info( "  >>> Ti.App.Properties.getString('user') :: " + Ti.App.Properties
 /////// FILL IN USER / EMAIL FIELDS IF INFO IS SAVED LOCALLY //////////
 if( Ti.App.Properties.getString('user')!=""  ) 
 	email.value = Ti.App.Properties.getString('user');
-if( Ti.App.Properties.getString('pass')!="" ) 
+
+if( Ti.App.Properties.getString('pass')!="" && Ti.App.Properties.getString('pass')!=null) 
 	password.value = Ti.App.Properties.getString('pass');
+else
+	password.value = '';
 
 $.index.addEventListener('focus',function(e) {		// only gets after original page load
 	Ti.API.info("!!!!!!!!!!!!!!!!!!!!!!!!!!");
