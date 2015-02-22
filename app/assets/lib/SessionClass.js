@@ -19,38 +19,43 @@ function Session(){
 		state			: null
 	};
 	this.dog = {
-		dog_ID 			: null,
-		name				:	null,
+		dog_ID 				: null,
+		name				: null,
 		sex					: null,
-		age					:	null,
-		birthdate 	:	null,
-		breed1			:	null,
-		breed2			:	null,
-		weight			: null,
-		marks_made	: null,
-		current_place_ID  				: null,
-		current_place_name 				: null,
+		age					: null,
+		birthdate 			: null,
+		breed1				: null,
+		breed2				: null,
+		weight				: null,
+		marks_made			: null,
+		current_place_ID  	: null,
+		current_place_name 	: null,
 		current_place_geo_radius	: null,
-		current_place_lat 				: null,
-		current_place_lon 				: null,
+		current_place_lat 			: null,
+		current_place_lon 			: null,
 		last_checkin_timestamp 		: null
 	};
 	this.geo = {
-		lat						: null, 
-		lon						: null,
-		view_lat      : null,
-		view_lon      : null,
-		geo_trigger_count : 0,
-		geo_trigger_success: 0,
+		accuracy_threshold 	: Number ( (Ti.Geolocation.distanceFilter * 0.000621371).toFixed(4) ),		// in miles
+		lat					: null, 
+		lon					: null,
+		last_lat			: null,
+		last_lon			: null,
+		last_action_lat		: null,
+		last_action_lon		: null,
+		view_lat      		: null,
+		view_lon     		: null,
+		geo_trigger_count	: 0,
+		geo_trigger_success	: 0,
 		refresh_interval 	: 1,
-		last_acquired	: 0           // minutes since start of UNIX epoch
+		last_acquired		: 0           // minutes since start of UNIX epoch
 	};
-	this.windowStack					= [];
-	this.allPlaces		     	 	= [];				// top N places that are near user's location (n=20, 30, etc)
-	this.nearbyMarks		    	= [];
+	this.windowStack			= [];
+	this.allPlaces		     	= [];				// top N places that are near user's location (n=20, 30, etc)
+	this.nearbyMarks		    = [];
 	this.geofencePlaces    		= []; 			// contains up to N places that are within the geofence
 	this.currentPlaceInfo 		= [];
-	this.currentPlaceFeatures = [];
+	this.currentPlaceFeatures 	= [];
 	this.checkinInProgress	 	= null;
 	this.server = {
 		AWS: {
@@ -105,10 +110,13 @@ Session.prototype.clearSavedDogInfo = function (){
 //		Name:				xsetGeoLatLon
 //================================================================================
 Session.prototype.xsetGeoLatLon = function (lat, lon, how_long_ago){
-	Ti.API.debug("  .... [~] Session.prototype.xsetGeoLatLon :: "+lat+' / '+lon+' / '+how_long_ago)
-	this.geo.lat = lat;
-	this.geo.lon = lon;
+	this.geo.last_lat 	= this.geo.lat;
+	this.geo.last_lon   = this.geo.lon;
+	this.geo.lat 		= lat;
+	this.geo.lon 		= lon;
 	this.geo.last_acquired = how_long_ago;
+	Ti.API.debug("  .... [@] Session.prototype.xsetGeoLatLon (curr) :: "+lat+' / '+lon+' / '+how_long_ago);
+	Ti.API.debug("  .... [@] Session.prototype.xsetGeoLatLon (last) :: "+this.geo.last_lat+' / '+this.geo.last_lon+' / '+how_long_ago);
 }
 //================================================================================
 //		Name:				xsetGeoViewport
@@ -123,7 +131,7 @@ Session.prototype.xsetGeoViewport = function (region_lat, region_lon){
 //		Purpose:		pick between remote-live, remote-dev, and local HTTP requests
 //================================================================================
 Session.prototype.getUrl = function(server_type) {
-	if 			(server_type=="dev")
+	if (server_type=="dev")
 		return this.server.wb_path.url_dev;
 	else if (server_type=="local")
 		return this.server.wb_path.url_local;

@@ -125,7 +125,7 @@ ExtMap.prototype.refreshMarkAnnotations = function(data) {
 //	Purpose:	grab the top X closest places to user position OR center of map view
 //=====================================================================================================
 ExtMap.prototype.getNearbyPoi = function( user_lat, user_lon, view_lat, view_lon ) {
-	Ti.API.debug(" .... [~] getNearbyPoi() [ "+user_lat+"/"+user_lon+"  ], view [ "+view_lat+"/"+view_lon+" ]");
+	Ti.API.debug("  .... [~] getNearbyPoi :: [ "+user_lat+"/"+user_lon+"  ], view [ "+view_lat+"/"+view_lon+" ]");
 	var params = {
 		lat       : user_lat,
 		lon       : user_lon, 

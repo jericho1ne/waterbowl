@@ -124,23 +124,23 @@ cameraBtn.addEventListener('click', function(e) {
 	        Ti.API.info('IN ERROR ' + e.error);
 	    };
 	    xhr.onload = function(response) {
-				if ( this.responseText != ''){
-	      	var jsonData = JSON.parse(this.responseText);
-	      	if (jsonData.status>0) {
-	        	// createSimpleDialog('Success', jsonData.message);
-	        	createWindowController('register4','',"slide_left");
-	        	// TODO:  take user to register4 screen where they get to see the fully built profile
-	      	} else {
-	      		cameraBtn.show();
-				galleryBtn.show();
-	      		createSimpleDialog('Upload Error', jsonData.message);
-	      	}	
-	      } else {
-      		cameraBtn.show();
+			if ( this.responseText != ''){
+	      		var jsonData = JSON.parse(this.responseText);
+		      	if (jsonData.status>0) {
+		        	// createSimpleDialog('Success', jsonData.message);
+		        	createWindowController('register4','',"slide_left");
+		        	// TODO:  take user to register4 screen where they get to see the fully built profile
+		      	} else {
+		      		cameraBtn.show();
+					galleryBtn.show();
+		      		createSimpleDialog('Upload Error', jsonData.message);
+		      	}	
+	     	} else {
+      			cameraBtn.show();
 				galleryBtn.show();
 				alert( "No response from server" );
-	      }
-	    };
+			}
+		};
 	    xhr.onsendstream = function(e) {
 	    	progress_bar.value = e.progress;
 	    };
@@ -152,12 +152,12 @@ cameraBtn.addEventListener('click', function(e) {
 	    });
 	    Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + image, mySesh.dog.dog_ID +"]");  
 		},
-	  /////////		CANCEL
-	  cancel : function() {
+		/////////		CANCEL
+		cancel : function() {
 		},
 		/////////		ERROR
 		error : function(error) {
-	  },
+		},
 	  allowImageEditing : true
 	});
 });

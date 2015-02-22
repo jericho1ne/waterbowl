@@ -91,9 +91,9 @@ var mark_title 	 = "Loading mark title...";
 var mark_text 	 = "Loading mark text...";	
 var mark_subtext = "";							  
 
-mark_title	 = args.mark_name;
-mark_text		 = args.mark_city;
-mark_subtext = args.dist+" miles away";
+mark_title	 	= args.mark_name;
+mark_text		= args.mark_city;
+mark_subtext 	= args.dist+" miles away";
 
 $.header.add( myUiFactory.buildPageHeader(args.ID, "mark", mark_title, mark_text, mark_subtext, "") );
 // (1) 	getMarkOverview gets the mark info from mark_common

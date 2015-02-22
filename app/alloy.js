@@ -236,8 +236,8 @@ function ucwords(str) {
 //	Purpose:	to be the bestest window manager ever
 //===========================================================================================
 function createWindowController ( win_name, args, animation ) {
-	Ti.API.info ( "//===================================== [ "+win_name+" ] ===== win # " +
-		 ( mySesh.windowStack.length+1 ) +" =========//" );
+	Ti.API.info ( "  ===================================== [ "+win_name+" ] === window #" +
+		 ( mySesh.windowStack.length+1 ) +" =====================================" );
 	Ti.API.debug("  :::: createWindowController :::: args ["+JSON.stringify(args) +"] :::: user [ "+JSON.stringify(mySesh.user)+" ] /// "+ 		" [ "+JSON.stringify(mySesh.dog)+" ]");
 
 	var winObject = Alloy.createController(win_name, args).getView();

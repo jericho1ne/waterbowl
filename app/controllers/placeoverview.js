@@ -525,8 +525,6 @@ function savePlaceInfoThenGetFeatures( poiInfo ) {
 //		Purpose:	literally trigger all the modules that get drawn on this page
 //================================================================================
 function drawEverything( poiFeatures ) {
-	mySesh.currentPlaceFeatures = poiFeatures.payload;
-	
 	Ti.API.debug( " .... >>  doEverything(poiInfo) >> "+ JSON.stringify(mySesh.currentPlaceFeatures) );
 	var img_fallback = MISSING_PATH + "poi-0-banner.jpg";
 	var img_actual   = POI_PATH + mySesh.currentPlaceInfo.banner;
@@ -535,9 +533,9 @@ function drawEverything( poiFeatures ) {
 	var dist_label_text = mySesh.currentPlaceInfo.dist + " miles away";
 	// if( args._came_from=="checkin modal" )		dist_label_text 	= "You're right next to it";
 
-	$.mini_place_name_label.text 					= mySesh.currentPlaceInfo.name;
-	$.miniHeaderContainer.backgroundColor = mySesh.currentPlaceInfo.icon_color;
-	$.mini_place_second_label.text				=	mySesh.currentPlaceInfo.city; 
+	$.mini_place_name_label.text 			= mySesh.currentPlaceInfo.name;
+	$.miniHeaderContainer.backgroundColor 	= mySesh.currentPlaceInfo.icon_color;
+	$.mini_place_second_label.text			= mySesh.currentPlaceInfo.city; 
 		
 	//$.miniHeaderContainer.add( myUiFactory.buildMiniHeader(mySesh.currentPlaceInfo.name, mySesh.currentPlaceInfo.city, mySesh.currentPlaceInfo.icon_color) );
 	$.headerContainer.add( myUiFactory.buildPageHeader(mySesh.currentPlaceInfo.place_ID, "poi", mySesh.currentPlaceInfo.name, mySesh.currentPlaceInfo.address, mySesh.currentPlaceInfo.city + ' ' + mySesh.currentPlaceInfo.zip, dist_label_text ) );
@@ -579,6 +577,8 @@ function drawEverything( poiFeatures ) {
 	//----------------------------------------------------------------------------------------------------------
 	if (  ( mySesh.currentPlaceInfo.category>=600 && mySesh.currentPlaceInfo.category<=699 ) || 
 				( mySesh.currentPlaceInfo.category>=100 && mySesh.currentPlaceInfo.category<=199 )  ) {
+		Ti.API.info( "  >>>> poiFeatures.payload :: " + poiFeatures.payload) ;
+		mySesh.currentPlaceFeatures = poiFeatures.payload;
 		displayPoiFeatures();
 	}
 	
