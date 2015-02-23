@@ -2,10 +2,12 @@
 //	Name:			saveRemark ()
 //========================================================================
 function saveRemark(title, text_content, textarea_hint) {
+	// Ti.API.info( 	"  .... [i] snapShotImage.image :: " +" [" + $.mapContainer.snapShot +"] ");
+
 	if ( title!='' && text_content!='' && text_content!=textarea_hint ) {
 		disableAddMarkBtn();
 		var query = Ti.Network.createHTTPClient();
-		query.open("POST", SERVER_URL+"mark-create.php");
+		query.open("POST", SERVER_URL+"mark-create2.php");
 		var params = {
 			owner_ID	: mySesh.user.owner_ID,
 			owner_name	: mySesh.user.name,
@@ -16,10 +18,11 @@ function saveRemark(title, text_content, textarea_hint) {
 			city        : "unknown",
 			zip			: "unknown",
 			country 	: "unknown",
+			mark_photo	: 1,
 			mark_name   : title,
 			post_text	: text_content
 		};
-		Ti.API.log( "* Sending info to PHP " + JSON.stringify(params) );
+		Ti.API.log( "  .... [+]  saveRemark :: " + JSON.stringify(params) );
 		
 		// (1) :::: ATTEMPT TO LOAD REMOTE DATA ::::
 		query.send(params);
@@ -39,9 +42,9 @@ function saveRemark(title, text_content, textarea_hint) {
 					
 					// (5) :::: REFRESH MAP MARKS ON MAPVIEW ::::					
 					myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
-      			//disableAllButtons();
+      				//disableAllButtons();
      		
-      			// (6) :::: CLOSE WINDOW, RETURN TO MAPVIEW ::::
+      				// (6) :::: CLOSE WINDOW, RETURN TO MAPVIEW ::::
 					closeWindowController();				
 				} else {
 					enableAddMarkBtn();
@@ -86,6 +89,7 @@ function drawDefaultMap(lat, lon, delta) {
 	Ti.API.log("...[~] Map object built ");
 	return tempMap;
 }
+
 // ADD / REMOVE LISTENER SHORTCUTS
 function enableAddMarkBtn() {
 	addMarkBtn.addEventListener('click', function(e){ saveRemark(title_input.value, textArea.value, textarea_hint); });
@@ -94,15 +98,18 @@ function disableAddMarkBtn() {
 	addMarkBtn.removeEventListener('click', function(e){ saveRemark(title_input.value, textArea.value, textarea_hint); });
 }
 
+//=================================================================================
+//	Name:  		takeMarkImage ()
+//	Purpose: 	trigger device camera
+//=================================================================================
 function takeMarkImage() {
 	removeAllChildren($.mapContainer);
-	// $.mapContainer.remove( markMapView );
-	// progress_bar.show();
+	progress_bar.show();
 	// markCameraBtn.hide();
 	
 	Titanium.Media.showCamera({
-			///////   	SUCCESS
-			success : function(event) {
+		///////   	SUCCESS
+		success : function(event) {
 			var imageBlob = event.media;
 			var bannerImage = imageBlob.imageAsResized(750, 750);
 			var img = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
@@ -116,6 +123,39 @@ function takeMarkImage() {
 				left	: 0
 			});
 	      	$.mapContainer.add(snapShotImage);
+	      	$.mapContainer.snapShot = snapShotImage;
+	      	//mySesh.temp_image = bannerImage;
+
+	      	// XHR request
+		    var xhr = Titanium.Network.createHTTPClient();
+			xhr.setRequestHeader("contentType", "multipart/form-data");				
+		    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
+		    xhr.onerror = function(e) {
+		        Ti.API.info('IN ERROR ' + e.error);
+		    };
+		    xhr.onload = function(response) {
+				if ( this.responseText != ''){
+		      		var jsonData = JSON.parse(this.responseText);
+			      	if (jsonData.status>0) {
+			        	// createSimpleDialog('Success', jsonData.message);
+			        	Ti.API.log( "   >> MARK IMAGE UPLOADED" );
+			        } else {
+			      		//cameraBtn.show();
+						createSimpleDialog('Upload Error', jsonData.message);
+			      	}	
+		     	} else {
+	      			//cameraBtn.show();
+					alert( "No response from server" );
+				}
+			};
+		    xhr.onsendstream = function(e) {
+		    	progress_bar.value = e.progress;
+		    };
+		    xhr.send({
+				'userfile'	: bannerImage,
+				'type'		: 'temp',
+				'type_ID'	: mySesh.user.owner_ID
+		    });
        	},
 		/////////		CANCEL
 		cancel : function() {
@@ -166,6 +206,9 @@ $.createmark.addEventListener('focus',function(e) {
 	$.mapContainer.add( markCameraBtn );
  });	
 
+// (1.5)  Add progress bar to page
+var progress_bar = myUiFactory.buildProgressBar("Uploading Profile Image");
+$.mapContainer.add(progress_bar);
 
 // (2)  Add original mark section header + first mark
 $.markForm.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
@@ -179,18 +222,18 @@ var textarea_label = myUiFactory.buildLabel( "Text", form_width, myUiFactory._he
 var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
 
 var textArea = Ti.UI.createTextArea({
-  borderWidth		: 0,
-  borderColor		: '#bbb',
-  borderRadius		: 5,
-  color 			: '#888',
-  font 				: { fontFamily: 'Raleway-Medium', fontSize: 14 },
-  keyboardType 		: Titanium.UI.KEYBOARD_DEFAULT,
+	borderWidth		: 0,
+ 	borderColor		: '#bbb',
+ 	borderRadius	: 5,
+ 	color 			: '#888',
+ 	font 			: { fontFamily: 'Raleway-Medium', fontSize: 14 },
+ 	keyboardType 	: Titanium.UI.KEYBOARD_DEFAULT,
  	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,
-  textAlign 		: 'left',
-  value  			: textarea_hint,
-  top 				: 1,
-  width 			: form_width, 
-  height 			: 90
+ 	textAlign 		: 'left',
+ 	value  			: textarea_hint,
+ 	top 			: 1,
+ 	width 			: form_width, 
+ 	height 			: 90
 });
 
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "mark", "large" );

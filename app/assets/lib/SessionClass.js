@@ -11,12 +11,13 @@ function Session(){
 		markRemarkMaxLength : 256,
 		dogNameMax					: 30
 	};
+	this.temp_image = null,
 	this.user = {
 		owner_ID 	: null,
 		name     	: null,
-		email			:	null,
+		email		: null,
 		password	: null,
-		state			: null
+		state		: null
 	};
 	this.dog = {
 		dog_ID 				: null,
@@ -36,7 +37,7 @@ function Session(){
 		last_checkin_timestamp 		: null
 	};
 	this.geo = {
-		accuracy_threshold 	: Number ( (Ti.Geolocation.distanceFilter * 0.000621371).toFixed(4) ),		// in miles
+		accuracy_threshold 	: 0.00621,		// 10m / 30ft (in miles)
 		lat					: null, 
 		lon					: null,
 		last_lat			: null,

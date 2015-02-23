@@ -509,14 +509,14 @@ function updatePoisInGeofence( data ) {
 }	
 
 //=============================================================================
-//	Name:			testForAutoCheckout ( )
+//	Name:		testForAutoCheckout ( )
 //	Purpose:	
 //=============================================================================
 function testForAutoCheckout() {
 	if (mySesh.dog.current_place_ID > 0) {  // OLD CHECK
  		// see if current user lat/lon is out of the geofence of our stored checkin place lat/lon  	
 		var dist = getDistance(mySesh.geo.lat, mySesh.geo.lon, mySesh.dog.current_place_lat, mySesh.dog.current_place_lon);
-		// Ti.API.debug( "....  :: mySesh.geo [" + mySesh.geo.lat + " / " + mySesh.geo.lon + "]" );
+		Ti.API.debug( "....  :: mySesh.dog [" + mySesh.dog.current_place_lat + " / " + mySesh.dog.current_place_lon + "]" );
 		// Ti.API.debug( "....  :: dist - geo_radius [" + dist + " (-) " + mySesh.dog.current_place_geo_radius + "]" );
  		if( (dist - mySesh.dog.current_place_geo_radius) >= 0 ) {
  	 		// AUTO CHECKOUT - this will also trigger a getPoisInGeofence call
@@ -543,6 +543,7 @@ var locationCallback = function(e) {
 		$.geo_latlng.text  = mySesh.geo.lat.toFixed(4)+"/" +  mySesh.geo.lon.toFixed(4);
 		var dist = getDistance(mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.last_action_lat, mySesh.geo.last_action_lon);
 		Ti.API.debug( "  .... [~] locationCallback :: dist [" + dist + " ]"); 
+		Ti.API.debug( "  .... [~] locationCallback :: mySesh.geo [" + JSON.stringify(mySesh.geo) + " ]"); 
 		if( dist>= 0.006 && mySesh.geo.last_action_lat!=null && mySesh.geo.last_action_lon!=null) { 	// 0.006 mi = 31.68 ft
   			refreshPlaceListData();
   		} 
@@ -624,30 +625,8 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 
 // REPEATEDLY TRIGGER ON WINDOW FOCUS //////////////////////////////////////////
 $.mapview.addEventListener('focus',function(e) {
-	// (0)	GET GEOLOCATION
-	Titanium.Geolocation.getCurrentPosition(function(e){
-	 	// ERROR
-	 	if (!e.success || e.error) {
-			if (Titanium.Platform.model!="Simulator") {
-	  			createSimpleDialog("Can't get your location","Please check location services are enabled on your mobile device.");
-	    		//Ti.API.debug( "  .... [x] Could not get location: "+ e.code +" [ "+JSON.stringify(e.error)+" ]");
-	    	}
-	  	} 
-		// SUCCESS
-		else {		
-	 		// SAVE GEO LAT / LON + TIME ACQUIRED //////////////
-	 		mySesh.geo.geo_trigger_count++;  
-			mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
-			Ti.API.debug( "  .... [@] onFocus - Lat/Lon :: "+ e.coords.latitude + "/" + e.coords.longitude );
-	
-			var dist = getDistance(mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.last_action_lat, mySesh.geo.last_action_lon);
-			Ti.API.debug( "  .... [~] mapview.addEventListener('focus') :: dist [" + dist + " ]"); 
-			if( dist>= 0.006) { 	// 0.006 mi = 31.68 ft
-	 			
-	  			// refreshPlaceListData();
-	  		} 
-		}
-	});	
+	refreshPlaceListData();
+	// don't worry about calling testForAutoCheckout, that'll happen eventually
 }); 
 
 //====================================================================================

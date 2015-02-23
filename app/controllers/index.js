@@ -6,7 +6,7 @@ function goToLogin() {
 	Ti.API.log("* Login clicked *");				
 	if(Titanium.Network.networkType==Titanium.Network.NETWORK_NONE) {
 		createSimpleDialog('Uh oh', 'No network connection detected');
-	}	else {
+	} else {
 		email.blur();				// temporarily blur the login fields while awaiting response
 		password.blur();
 				
@@ -122,10 +122,9 @@ else
 	password.value = '';
 
 $.index.addEventListener('focus',function(e) {		// only gets after original page load
-	Ti.API.info("!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	// if credentials are already saved in mySesh
 	if( Ti.App.Properties.getString('user')!="" )
-		email.value 		= Ti.App.Properties.getString('user');
+		email.value 	= Ti.App.Properties.getString('user');
 	if( Ti.App.Properties.getString('pass')!="" )
 		password.value	= Ti.App.Properties.getString('pass');
 });

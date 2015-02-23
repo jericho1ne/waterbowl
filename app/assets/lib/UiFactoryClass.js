@@ -118,11 +118,30 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 	return label;
 }
 
-/*****************************************************************
-*		Name:  		buildPageHeader ( view_id, type, txt_title, txt_1, txt_2, txt_3 ) 
-*		Purpose:  build top of page profile, mark or place headers
-*							type can be:  "mark", "profile", "poi"
-*****************************************************************/
+
+/*****************************************************************************************
+*	Name: 		buildProgressBar ( msg_text ) 
+*	Purpose:  	build a photo upload progress bar that updates while data is sent to server
+*******************************************************************************************/
+UiFactory.prototype.buildProgressBar = function(msg_text) {
+	return Titanium.UI.createProgressBar({
+		width 		: myUiFactory._form_width,
+		height 		: 60,
+		min 		: 0,
+		max 		: 1,
+		value 		: 0,
+		style 		: Titanium.UI.iPhone.ProgressBarStyle.PLAIN,
+		top 		: 10,
+		message 	: msg_text,
+		font 		: myUiFactory._text_medium,
+		color 		: myUiFactory._color_dkpink
+	});
+}
+
+/******************************************************************************************
+*	Name: 		buildPageHeader ( view_id, type, txt_title, txt_1, txt_2, txt_3 ) 
+*	Purpose:  	build top of page profile; type = ("mark", "profile", "poi")
+*******************************************************************************************/
 UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2, txt_3) {
 	// width and height of parent object == this._device.screenwidth
 	var headerContainer = this.buildViewContainer("headerContainer_"+id, "vertical", this._device.screenwidth, this._device.screenwidth, 0);

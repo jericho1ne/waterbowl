@@ -36,19 +36,7 @@ $.scrollView.add(galleryBtn);
 $.scrollView.add(cameraBtn);
   
 ////////////// PHOTO UPLOAD PROGRESS BAR ///////////////////////////////////////////////////
-var progress_bar = Titanium.UI.createProgressBar({
-	width 		: myUiFactory._form_width,
-	height 		: 60,
-	min 			: 0,
-	max 			: 1,
-	value 		: 0,
-	style 		: Titanium.UI.iPhone.ProgressBarStyle.PLAIN,
-	top 			: 10,
-	message 	: 'Uploading Profile Image',
-	font 			: myUiFactory._text_medium,
-	color 		: myUiFactory._color_dkpink
-});
-
+var progress_bar = myUiFactory.buildProgressBar("Uploading Profile Image");
 $.scrollView.add(progress_bar);
 
  
@@ -80,7 +68,7 @@ galleryBtn.addEventListener('click', function(e) {
 		      		createSimpleDialog('Upload Error', jsonData.message);
 		      	}	
 		      } else {
-	      		cameraBtn.show();
+	      			cameraBtn.show();
 					galleryBtn.show();
 					alert( "No response from server" );
 		      }
@@ -91,8 +79,7 @@ galleryBtn.addEventListener('click', function(e) {
 		    xhr.send({
 				'userfile'		: resized_img,
 				'type'			: 'dog',
-				'type_ID'		: mySesh.dog.dog_ID,		// last dog inserted ID from register2
-		    	'image_type' 	: 'banner'  						// TODO: inquire about image type on client?? 
+				'type_ID'		: mySesh.dog.dog_ID		// last dog inserted ID from register2
 		    });
 		    // Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + resized_img, 'dog', mySesh.dog.dog_ID, + 'banner' +"]");
 		},
@@ -117,6 +104,8 @@ cameraBtn.addEventListener('click', function(e) {
 		success : function(event) {
 	    var image 		= event.media;
 	    var resized_img = image.imageAsResized(750, 750);
+	    
+	    // XHR request
 	    var xhr = Titanium.Network.createHTTPClient();
 		xhr.setRequestHeader("contentType", "multipart/form-data");				
 	    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
@@ -147,8 +136,7 @@ cameraBtn.addEventListener('click', function(e) {
 	    xhr.send({
 			'userfile'	: resized_img,
 			'type'		: 'dog',
-			'type_ID'	: mySesh.dog.dog_ID,		// last dog inserted ID from register2
-	    	'image_type': 'banner'  						// TODO: inquire about image type on client?? 
+			'type_ID'	: mySesh.dog.dog_ID	// last dog inserted ID from register2
 	    });
 	    Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + image, mySesh.dog.dog_ID +"]");  
 		},
