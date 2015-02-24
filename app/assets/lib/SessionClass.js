@@ -20,21 +20,24 @@ function Session(){
 		state		: null
 	};
 	this.dog = {
-		dog_ID 				: null,
-		name				: null,
-		sex					: null,
-		age					: null,
-		birthdate 			: null,
-		breed1				: null,
-		breed2				: null,
-		weight				: null,
-		marks_made			: null,
-		current_place_ID  	: null,
-		current_place_name 	: null,
-		current_place_geo_radius	: null,
-		current_place_lat 			: null,
-		current_place_lon 			: null,
-		last_checkin_timestamp 		: null
+		dog_ID 					: null,
+		name					: null,
+		sex						: null,
+		age						: null,
+		birthdate 				: null,
+		breed1					: null,
+		breed2					: null,
+		weight					: null,
+		marks_made				: null,
+		buddies					: [],
+		weight_buddy			: 0.01,		// SNIFF SETTINGS
+		sniff_radius			: 0.20,		// SNIFF SETTINGS 	TODO:  fill this in upon login from backend
+		current_place_ID  		: null,
+		current_place_name 		: null,
+		current_place_geo_radius: null,
+		current_place_lat 		: null,
+		current_place_lon 		: null,
+		last_checkin_timestamp 	: null
 	};
 	this.geo = {
 		accuracy_threshold 	: 0.00621,		// 10m / 30ft (in miles)
@@ -54,6 +57,7 @@ function Session(){
 	this.windowStack			= [];
 	this.allPlaces		     	= [];				// top N places that are near user's location (n=20, 30, etc)
 	this.nearbyMarks		    = [];
+	this.nearbyDogs				= [];
 	this.geofencePlaces    		= []; 			// contains up to N places that are within the geofence
 	this.currentPlaceInfo 		= [];
 	this.currentPlaceFeatures 	= [];
@@ -62,10 +66,10 @@ function Session(){
 		AWS: {
 			access_key_id		: "AKIAILLMVRRDGDBDZ5XQ",
 			secret_access		: "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",
-			url_base 				: "http://s3.amazonaws.com",
+			url_base 			: "http://s3.amazonaws.com",
 			// bucket_icon		: "wb-icon",
 			bucket_place		: "wb-place",
-			bucket_profile	: "wb-profile",
+			bucket_profile		: "wb-profile",
 			bucket_uitext		: "wb-ui-text"
 		},
 		wb_path: {

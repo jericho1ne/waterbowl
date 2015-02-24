@@ -90,18 +90,51 @@ ExtMap.prototype.loadMapJson = function ( params, url, callbackFunction ) {
 //==========================================================================================
 ExtMap.prototype.getMarks =  function ( user_lat, user_lon, sniff_type, sniff_radius, marks_shown ) {
 	Ti.API.info("...[~] getMarks() [ "+user_lat+"/"+user_lon+"  ] :: sniff [type/radius/how many] : [ "+sniff_type+"/"+sniff_radius+"/"+marks_shown+" ]");
-  var params = {
-		lat       					: user_lat,
-		lon       					: user_lon, 
-		sniff_type 					: sniff_type,
-		sniff_radius  			: sniff_radius,
+  	// GET MARKS /////////////////////////////////
+  	var mark_params = {
+		lat       			: user_lat,
+		lon       			: user_lon, 
+		sniff_type 			: sniff_type,
+		sniff_radius		: sniff_radius,
 		number_marks_shown 	: marks_shown
 	};
-	
 	var self = this;
-	this.loadMapJson(params, "http://waterbowl.net/mobile/marks-mapshow.php", function(data) {
+	this.loadMapJson(mark_params, "http://waterbowl.net/mobile/marks-mapshow.php", function(data) {
 		self.refreshMarkAnnotations(data)
 	});
+	// GET NEARBY DOGS /////////////////////////////////
+	var dog_params = {
+		lat       			: user_lat,
+		lon       			: user_lon, 
+		dog_ID 				: mySesh.dog.dog_ID,
+		buddies				: mySesh.dog.buddies,
+		weight_buddy		: mySesh.dog.weight_buddy,
+		sniff_type			: 1, 
+		sniff_radius		: mySesh.dog.sniff_radius,
+		number_dogs_shown 	: 20
+	};
+	Ti.API.info("...[~] dogs-mapshow() [ "+ JSON.stringify(dog_params) +" ]");
+  	
+	var self = this;
+	this.loadMapJson(dog_params, "http://waterbowl.net/mobile/dogs-mapshow.php", function(data) {
+		self.refreshDogAnnotations(data)
+	});
+}
+
+//=========================================================================
+//	Name:			refreshDogAnnotations( map )
+//	Purpose:	
+//=========================================================================
+ExtMap.prototype.refreshDogAnnotations = function(data) {
+	Ti.API.debug("  .... [~] refreshDogAnnotations :: " + JSON.stringify(data) );
+	// Alloy.Globals.wbMap.removeAllAnnotations();
+	mySesh.nearbyDogs = data.payload;
+	var dogsAnnoArray = [];
+	for (var i=0; i<mySesh.nearbyDogs.length; i++) {
+		dogsAnnoArray.push ( this.createDogAnnotation(mySesh.nearbyDogs[i]) );	  
+	}
+	Alloy.Globals.wbMap.addAnnotations( dogsAnnoArray );
+	enableAllButtons();
 }
 
 //=========================================================================
@@ -180,18 +213,18 @@ ExtMap.prototype.createPoiAnnotation = function( poi ) {
 }
 
 //=============================================================
-//	Name:			createMarkAnnotation( mark )
+//	Name:		createMarkAnnotation( mark )
 //	Purpose:	build native maps place marker from incoming array
 //	Return:		annotation object
 //=============================================================
 ExtMap.prototype.createMarkAnnotation = function( mark ) {
 	// Ti.API.info(" annotation marker for MARK:" + JSON.stringify(mark));
 	var anno_mark_button = Ti.UI.createButton({ 
-		id 							: mark.ID,	 
+		id 				: mark.ID,	 
 		backgroundImage : ICON_PATH + 'button-forward.png',
-		zIndex					: 100, 
-		height					: 30, 
-		width						: 30
+		zIndex			: 100, 
+		height			: 30, 
+		width			: 30
 	});
 	anno_mark_button.addEventListener('click', function(e){
 		createWindowController( "markoverview", mark, 'slide_left' );
@@ -205,6 +238,38 @@ ExtMap.prototype.createMarkAnnotation = function( mark ) {
 		animate   : false,
 		image     : ICON_PATH + 'mark-mapmarker-medium.png', 
 		rightView : anno_mark_button
+	});
+}
+
+//=============================================================
+//	Name:		createDogAnnotation( mark )
+//	Purpose:	
+//	Return:		annotation object
+//=============================================================
+ExtMap.prototype.createDogAnnotation = function( dog ) {
+	Ti.API.info( "  .... [+] annotation marker for DOG:" + JSON.stringify(dog) );
+	var anno_dog_button = Ti.UI.createButton({ 
+		dog_id 			: dog.dog_ID,	 
+		backgroundImage : ICON_PATH + 'button-forward.png',
+		zIndex			: 100, 
+		height			: 30, 
+		width			: 30
+	});
+	anno_dog_button.addEventListener('click', function(e){
+		var params = { 
+			dog_id 	: dog.dog_ID
+		};
+		createWindowController( "profile", params, 'slide_left' );
+ 	});
+	return myMapFactory.createAnnotation({
+    	id        : dog.dog_ID, 
+		latitude  : dog.last_lat, 
+		longitude : dog.last_lon,
+		title     : dog.dog_name,
+		subtitle  :	dog.dist + " miles away",
+		animate   : false,
+		image     : ICON_PATH + 'poi-mapmarker-dogstranger.png', 
+		rightView : anno_dog_button
 	});
 }
 

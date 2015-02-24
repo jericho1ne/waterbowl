@@ -125,7 +125,10 @@ function showFavorites(dog, parentObject) {
 	}
 }
 
+
+
 //---------------------------------------------------------------------------------------------------------------
+
 var args = arguments[0] || {};
 //Ti.API.debug( " >>>  Viewing Profile for [ "+args.dog_ID+" ] :: My Dog's ID [ "+mySesh.dog_ID +" ]" );
 

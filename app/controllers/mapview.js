@@ -212,7 +212,7 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
   		
   				// center map on user location, get all places in that area
   				myMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.03);
-  				myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
+  				myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon );
   			
 			 	 // instead of success message, bounce user to place overview
 			  	var necessary_args = {
@@ -552,7 +552,27 @@ var locationCallback = function(e) {
 	}
 };
 
+//=================================================================================
+//	Name:		saveDogLocation()
+//	Purpose:	track dog location intermittently
+//=================================================================================
+function saveDogLocation() {
+	var params = {
+		owner_ID			: mySesh.user.owner_ID,
+		lat  				: mySesh.geo.lat,
+		lon  				: mySesh.geo.lon,
+		dog_name			: mySesh.dog.name,
+		current_place_ID 	: 0,
+		current_place_action: 0,
+		dog_ID 				: mySesh.dog.dog_ID
+	}
+	loadJson(params, "http://www.waterbowl.net/mobile/update-dog-location.php", saveDogResponse);	
+	//$.mem_usage.text = Titanium.Platform.availableMemory.toFixed(2)+" MB available";
+} 
 
+function saveDogResponse(dog_save_location_data) {
+	Ti.API.info ( "  .... [~] saveDogLocation :: " + JSON.stringify(dog_save_location_data) );
+}
 //-----------------------------------------------------------------------------------------------------------------
 //
 //    TO DO UPON WINDOW LOAD
@@ -632,11 +652,11 @@ $.mapview.addEventListener('focus',function(e) {
 //====================================================================================
 // 		Geolocation Change Event Listener
 //		Purpose:  
-//		1) 	Check for stale checkings
+//		1) 	Check for stale checkins
 //		2) 	Refresh nearby places table
 //		2)  Save latest user location into mySesh.geo.lat, mySesh.geo.lon
 //====================================================================================
-// setInterval(refreshGeo, 15000);			// every X milliseconds
+setInterval(saveDogLocation, 60000);			// every X milliseconds
 Titanium.Geolocation.addEventListener('location', locationCallback);
 //setInterval(refreshRAM, 2000);			// show RAM usage every 2 seconds
 
