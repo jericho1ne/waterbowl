@@ -1,3 +1,12 @@
+/*************************************************************************
+						alloy.js  				
+*************************************************************************/
+//	Waterbowl App	
+//	
+//	Created by Mihai Peteu Oct 2014
+//	(c) 2015 waterbowl
+//
+
 //===============================================
 //	Name:    isset ( value )
 //	Desc:	   fail silently if value is undefined
@@ -613,7 +622,9 @@ function logoutUser() {
 	logoutDialog.show();
 	logoutDialog.addEventListener('click', function(e_dialog) {
 		if (e_dialog.index == 0) {  // user clicked OK
-	    closeWindowController();
+			mySesh.clearSavedDogInfo();
+ 			mySesh.clearSavedUserInfo();
+	    	closeWindowController();
 			createWindowController('index', '', 'slide_right');
 		} else {
 		    // CANCEL CASE
@@ -749,10 +760,10 @@ Alloy.Globals.placeAnnotations = [];
  *-----------------------------------------------------------------------*/
 // minimum change in location (meters) which triggers the 'location' eventListener
 // 	*** Geolocation Threshhold trigger.  IN METERES.  Note:	10m triggers too often ***
-Ti.Geolocation.distanceFilter = 10;			// 10m=33 ft, 20m=65ft, 30m=100 ft
-Ti.Geolocation.frequency			= 1;
-Ti.Geolocation.accuracy 			= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_NEAREST_TEN_METERS, ACCURACY_BEST doesn't work on iOS
-Ti.Geolocation.purpose 				= "Receive User Location";
+Ti.Geolocation.distanceFilter 	= 10;			// 10m=33 ft, 20m=65ft, 30m=100 ft
+Ti.Geolocation.frequency		= 1;
+Ti.Geolocation.accuracy 		= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_NEAREST_TEN_METERS, ACCURACY_BEST doesn't work on iOS
+Ti.Geolocation.purpose 			= "Receive User Location";
 // Ti.API.debug( "Running on an [" + Ti.Platform.osname + "] device");
 
 // TODO: is this still used by mapview.js??

@@ -1,3 +1,16 @@
+/*************************************************************************
+						SessionClass.js  				
+*************************************************************************/
+//	Waterbowl App	
+//	
+//	Created by Mihai Peteu Oct 2014
+//	(c) 2015 waterbowl
+//
+
+//================================================================================
+//	Name: 		Session
+//	Purpose: 	Initialize all global vars and arrays
+//================================================================================
 function Session(){
 	this.funcCallCount = 0;
 	this.actionOngoing = false;
@@ -74,13 +87,13 @@ function Session(){
 		},
 		wb_path: {
 			// REMOTE PATHS
-			url_local				: "http://localhost/wb.net/mobile/",
-			url_dev					: "http://www.waterbowl.net/dev/",
-			url_live 				: "http://www.waterbowl.net/mobile/",
-			bucket_poi			: "images/wb-poi/",
-			bucket_mark			: "images/wb-mark/",
+			url_local		: "http://localhost/wb.net/mobile/",
+			url_dev			: "http://www.waterbowl.net/dev/",
+			url_live 		: "http://www.waterbowl.net/mobile/",
+			bucket_poi		: "images/wb-poi/",
+			bucket_mark		: "images/wb-mark/",
 			bucket_profile	: "images/wb-profile/",
-			bucket_uitext		: "images/wb-ui-text/",
+			bucket_uitext	: "images/wb-ui-text/",
 		
 			// LOCAL PATHS ARE INSIDE ALLOY.JS
 			// TODO: Figure out why these aren't working. Hardcoded in alloy.js for now...
@@ -91,28 +104,34 @@ function Session(){
 };
 
 //================================================================================
-//		Name:				clearSavedDogInfo
+//	Name: 		clearSavedDogInfo
+//	Purpose: 	Initialize dog array
 //================================================================================
 Session.prototype.clearSavedDogInfo = function (){
-	this.dog.dog_ID 				= null;
-	this.dog.name						=	null;
-	this.dog.sex						= null;
-	this.dog.age						=	null;
-	this.dog.birthdate  		=	null;
-	this.dog.breed1					=	null;
-	this.dog.breed2					=	null;
-	this.dog.weight					= null;
-	this.dog.marks_made			= null;
-	this.dog.current_place_ID  				= null;
-	this.dog.current_place_name 			= null;
-	this.dog.current_place_geo_radius	= null;
-	this.dog.current_place_lat 				= null;
-	this.dog.current_place_lon 				= null;
-	this.dog.last_checkin_timestamp 	= null;
+	for (key in this.dog) {
+    	if (key == "buddies")
+    		this.dog.buddies = [];
+    	else if (key == "weight_buddy")
+    		this.weight_buddy = 0.01;
+    	else if (key == "sniff_radius")
+    		this.sniff_radius = 0.20;
+    	else
+    		this.key = null;
+    }
 }
 
 //================================================================================
-//		Name:				xsetGeoLatLon
+//	Name: 		clearSavedUserInfo
+//	Purpose: 	Initialize user array
+//================================================================================
+Session.prototype.clearSavedUserInfo = function (){
+	for (key in this.user) {
+    	this.key = null;
+    }
+}
+
+//================================================================================
+//	Name: 	xsetGeoLatLon
 //================================================================================
 Session.prototype.xsetGeoLatLon = function (lat, lon, how_long_ago){
 	this.geo.last_lat 	= this.geo.lat;
@@ -120,8 +139,8 @@ Session.prototype.xsetGeoLatLon = function (lat, lon, how_long_ago){
 	this.geo.lat 		= lat;
 	this.geo.lon 		= lon;
 	this.geo.last_acquired = how_long_ago;
-	Ti.API.debug("  .... [@] Session.prototype.xsetGeoLatLon (curr) :: "+lat+' / '+lon+' / '+how_long_ago);
-	Ti.API.debug("  .... [@] Session.prototype.xsetGeoLatLon (last) :: "+this.geo.last_lat+' / '+this.geo.last_lon+' / '+how_long_ago);
+	//Ti.API.debug("  .... [@] Session.prototype.xsetGeoLatLon (curr) :: "+lat+' / '+lon+' / '+how_long_ago);
+	//Ti.API.debug("  .... [@] Session.prototype.xsetGeoLatLon (last) :: "+this.geo.last_lat+' / '+this.geo.last_lon+' / '+how_long_ago);
 }
 //================================================================================
 //		Name:				xsetGeoViewport

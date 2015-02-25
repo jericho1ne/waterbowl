@@ -1,56 +1,36 @@
-//
-//	Waterbowl App	:: placeoverview.js
+/*************************************************************************
+						placeoverview.js  				
+*************************************************************************/
+//	Waterbowl App	
 //	
 //	Created by Mihai Peteu Oct 2014
-//	(c) 2014 waterbowl
-//
-//		Last update Feb 16 2015
+//	(c) 2015 waterbowl
 //
 
 /*
 
-poiInfo {
-    "place_ID"						: "601000001",
-    "name"								: "Oberreider Park",
-    "geofence_radius"			: 0.0123106,
-    "category"						: "601",
-    "price_range"					: "",
-    "category_type_1"			: "Dog Park",
-    "category_type_2"			: "",
-    "category_type_3"			: "",
-    "rating_wb"						: "4.0",
-    "rating_dogfriendly"	: "5.0",
-    "type"								: "Dog Parks",
-    "lat"									: "33.971995",
-    "lon"									: "-118.420496",
-    "city"								: "Playa Vista",
-    "address"							: "Bluff Creek Dr & Seabluff Dr",
-    "zip"									: "90094",
-    "icon"								: "poi-mapmarker-dogpark.png",
-    "icon_basic"					: "poi-basic-dogpark.png",
-    "icon_color"					: "#986d4f",
-    "dist"								: 2.38
+poiInfo {													poiFeatures {
+    "place_ID"			: "601000001",							"ID"				: "11",
+    "name"				: "Oberreider Park",					"poi_ID"			: "601000001",
+    "geofence_radius"	: 0.0123106,							"size"				: "Medium",
+    "category"			: "601",								"terrain"			: "Woodchips",
+    "price_range"		: "",									"grade"				: "Flat",
+    "category_type_1"	: "Dog Park",							"water"				: "Yes",
+    "category_type_2"	: "",									"shade"				: "Limited",
+	"category_type_3"	: "",									"waste"				: "Doggie Pot",
+	"rating_wb"			: "4.0",								"offleash"			: "Allowed",
+    "rating_dogfriendly": "5.0",								"enclosures"		: "Large Dog Area + Small Dog Area",
+    "type"				: "Dog Parks",							"enclosure_count"	: "2",
+    "lat"				: "33.971995",							"benches"			: "A few benches",
+    "lon"				: "-118.420496",						"fenced"			: "Yes",
+    "city"				: "Playa Vista",						"managing_org"		: "",
+    "address"			: "Bluff Creek Dr & Seabluff Dr",		"category"			: "601"
+    "zip"				: "90094",							}
+    "icon"				: "poi-mapmarker-dogpark.png",
+    "icon_basic"		: "poi-basic-dogpark.png",
+    "icon_color"		: "#986d4f",
+    "dist"				: 2.38
 }
-
- poiFeatures {
-    "ID"							: "11",
-    "poi_ID"					: "601000001",
-    "size"						: "Medium",
-    "terrain"					: "Woodchips",
-    "grade"						: "Flat",
-    "water"						: "Yes",
-    "shade"						: "Limited",
-    "waste"						: "Doggie Pot",
-    "offleash"				: "Allowed",
-    "enclosures"			: "Large Dog Area + Small Dog Area",
-    "enclosure_count"	: "2",
-    "benches"					: "A few benches",
-    "fenced"					: "Yes",
-    "managing_org"		: "",
-    "category"				: "601"
-}
-
-
 */
 
 // getPoiInfo > getPoiDetail > drawEverything
@@ -208,18 +188,18 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 		dog_ID	: dog_ID	
 	};
 	
-	http_query.open("POST", "http://waterbowl.net/mobile/get-place-checkins.php");	
+	http_query.open("POST", "http://waterbowl.net/mobile/get-place-checkins-pdo.php");	
 	http_query.send( params );
 	http_query.onload = function() {
 		var placeJSON = this.responseText;	
-	 
-	 	if (placeJSON != "" && placeJSON !="[]") {
-      var place = JSON.parse( placeJSON );
+		 
+		if (placeJSON != "" && placeJSON !="[]") {
+	    	var place = JSON.parse( placeJSON );
 			/*  use the current checkins to build the activityList  */
-      displayPlaceCheckins(place, parent_view);
+	      	displayPlaceCheckins(place, parent_view);
 		}
 	};
-  return "";	
+	// return "";	
 }
 
 //====================================================================================================

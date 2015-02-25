@@ -1,10 +1,10 @@
-//
-//	Waterbowl App	:: mapview.js
+/*************************************************************************
+					mapview.js  				
+*************************************************************************/
+//	Waterbowl App
 //	
 //	Created by Mihai Peteu Oct 2014
-//	(c) 2014 waterbowl
-//
-//		Last update Feb 16 2015
+//	(c) 2015 waterbowl
 //
 
 //==================================================================================================================
@@ -118,16 +118,20 @@ function buildMapMenubar() {
       if (e.error) {			
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Alloy.Globals.wbMap.removeAllAnnotations();
-      	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
+      	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
+      		 myMap.getNearbyDogs(mySesh.user.lat, mySesh.user.lon);
+      	} );
       	disableAllButtons();
       } else {  // if no errors
         myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.008);
         mySesh.geo.lon = e.coords.longitude;
         mySesh.geo.lat = e.coords.latitude;
         Alloy.Globals.wbMap.removeAllAnnotations();
-        myMap.getMarks( e.coords.latitude, e.coords.longitude, 1, 0.5, 20 );
+        myMap.getMarks( e.coords.latitude, e.coords.longitude, 1, 0.5, 20, function(){
+      		 myMap.getNearbyDogs(e.coords.latitude, e.coords.longitude);
+      	} );
         disableAllButtons();
-	    }
+	  }
     });  
 	});
 }
@@ -165,13 +169,15 @@ function getMapPoi() {
 function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 	var checkin_http_obj = Ti.Network.createHTTPClient();
 	var params = {
-		place_ID	: place_ID,
-		owner_ID	: mySesh.user.owner_ID,
-		dog_ID		: mySesh.dog.dog_ID,
-		lat				:	mySesh.geo.lat,
-		lon				:	mySesh.geo.lon
+		owner_ID			: mySesh.user.owner_ID,
+		dog_ID				: mySesh.dog.dog_ID,
+		dog_name			: mySesh.dog.name,
+		lat					: mySesh.geo.lat,
+		lon					: mySesh.geo.lon,
+		current_place_ID 	: place_ID,
+		current_place_action: 1
 	};
-	checkin_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkin.php");
+	checkin_http_obj.open("POST", "http://waterbowl.net/mobile/update-dog-location.php");  //set-place-checkin.php
 	checkin_http_obj.send(params);
 	
 	var response = 0;
@@ -230,51 +236,50 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 }
 
 //=========================================================================================
-//	Name:			checkoutFromPlace (place_ID)
-//	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
-//						TODO:			Allow selection between multiple dogs
+//	Name:		checkoutFromPlace (place_ID)
+//	Purpose:	Check into a specific place, providing user ID, dog ID, lat, lon to backend
+//	TODO:		Allow selection between multiple dogs
 //=========================================================================================
 function checkoutFromPlace (place_ID) {
-  // Ti.API.debug("  .... [x] checking out from ["+place_ID+"]");
-	var checkout_http_obj = Ti.Network.createHTTPClient();
-	checkout_http_obj.open("POST", "http://waterbowl.net/mobile/set-place-checkout.php");
-	
 	var params = {
-		place_ID	: place_ID,
-		owner_ID	: mySesh.user.owner_ID,
-		dog_ID		: mySesh.dog.dog_ID,
+		owner_ID			: mySesh.user.owner_ID,
+		dog_ID				: mySesh.dog.dog_ID,
+		dog_name			: mySesh.dog.name,
+		lat  				: mySesh.geo.lat,
+		lon  				: mySesh.geo.lon,
+		current_place_ID 	: 0,
+		current_place_action: 0
 	};
-	var response = 0;
-	/* send a request to the HTTP client object; multipart/form-data is the default content-type header */
-	checkout_http_obj.send(params);
-	/* response data received */
-	checkout_http_obj.onload = function() {
-		var json = this.responseText;
-		if (json != "") {
-			// Ti.API.debug("* checkout JSON " + json);
-			var response = JSON.parse(json);
-			if (response.status == 1) { 		// success
-				// Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
-				
-				//	 save last action lat/lon
-				mySesh.geo.last_action_lat = mySesh.geo.lat;
-				mySesh.geo.last_action_lon = mySesh.geo.lon;
+	Ti.API.debug("  .... [x] checkoutFromPlace :: << "+JSON.stringify(params)+" >>");
+	loadJson(params, "http://waterbowl.net/mobile/update-dog-location.php", doClientCheckoutStuff);
+}
 
-				//	 save Place ID, checkin state, and timestamp in mySesh 
-				mySesh.dog.current_place_ID 		= null;
-				mySesh.dog.current_place_lat 		= null;
-				mySesh.dog.current_place_lon	 	= null;
-				mySesh.dog.current_place_geo_radius	= null;
-				createSimpleDialog( "Seems you've left", "Automatically checked you out from " + mySesh.dog.current_place_name);
-      		} else {
-				createSimpleDialog( "Uh oh", response.message ); 
-		 	}
-		} else {
-			createSimpleDialog( "Problem", "No data received from server"); 
-		}
-		// updateGeofenceTable($.placeListTable);
-	};
-	// return response;
+//=========================================================================================
+//	Name:		doClientCheckoutStuff (data)
+//	Purpose:	
+//=========================================================================================
+function doClientCheckoutStuff(data) {
+	if (data!="" && data!=null) {
+		// Ti.API.debug("* checkout JSON " + json);	
+		if (data.status == 1) { 		// success
+			// Ti.API.log("  [>]  Checked out from "+ place_ID + " successfully ");
+			// save as last action taken
+			mySesh.geo.last_action_lat = mySesh.geo.lat;
+			mySesh.geo.last_action_lon = mySesh.geo.lon;
+
+			//	 clear vars in mySesh 
+			mySesh.dog.current_place_ID 		= null;
+			mySesh.dog.current_place_lat 		= null;
+			mySesh.dog.current_place_lon	 	= null;
+			mySesh.dog.current_place_geo_radius	= null;
+			createSimpleDialog( "Seems you've left", "Automatically checked you out from " + mySesh.dog.current_place_name);
+		} 
+		else {
+			createSimpleDialog( "Uh oh", response.message ); 
+	 	}
+	} else {
+		createSimpleDialog( "Whoops", "No data received from server"); 
+	}
 }
 
 //=================================================================================
@@ -430,8 +435,6 @@ function presentUserCheckinOptions( place ) {
 	var checkin_dialog = Ti.UI.createOptionDialog(optns);
 	checkin_dialog.show();
 	
-	// add click listener for "Yes" button 
-	// TODO:  
 	checkin_dialog.addEventListener('click', function(e_dialog) {
 		if (e_dialog.index == 0) {  // user clicked OK
 		    if (mySesh.dog.current_place_ID == place.id)	{
@@ -516,7 +519,7 @@ function testForAutoCheckout() {
 	if (mySesh.dog.current_place_ID > 0) {  // OLD CHECK
  		// see if current user lat/lon is out of the geofence of our stored checkin place lat/lon  	
 		var dist = getDistance(mySesh.geo.lat, mySesh.geo.lon, mySesh.dog.current_place_lat, mySesh.dog.current_place_lon);
-		Ti.API.debug( "....  :: mySesh.dog [" + mySesh.dog.current_place_lat + " / " + mySesh.dog.current_place_lon + "]" );
+		//Ti.API.debug( "  .... [x] testForAutoCheckout :: mySesh.dog [" + mySesh.dog.current_place_lat + " / " + mySesh.dog.current_place_lon + "]" );
 		// Ti.API.debug( "....  :: dist - geo_radius [" + dist + " (-) " + mySesh.dog.current_place_geo_radius + "]" );
  		if( (dist - mySesh.dog.current_place_geo_radius) >= 0 ) {
  	 		// AUTO CHECKOUT - this will also trigger a getPoisInGeofence call
@@ -542,8 +545,9 @@ var locationCallback = function(e) {
 		$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
 		$.geo_latlng.text  = mySesh.geo.lat.toFixed(4)+"/" +  mySesh.geo.lon.toFixed(4);
 		var dist = getDistance(mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.last_action_lat, mySesh.geo.last_action_lon);
-		Ti.API.debug( "  .... [~] locationCallback :: dist [" + dist + " ]"); 
-		Ti.API.debug( "  .... [~] locationCallback :: mySesh.geo [" + JSON.stringify(mySesh.geo) + " ]"); 
+		Ti.API.debug( "  .... [~] locationCallback :: dist [ " + dist + " ]"); 
+		// Ti.API.debug( "  .... [~] locationCallback :: mySesh.geo [" + JSON.stringify(mySesh.geo) + " ]"); 
+		
 		if( dist>= 0.006 && mySesh.geo.last_action_lat!=null && mySesh.geo.last_action_lon!=null) { 	// 0.006 mi = 31.68 ft
   			refreshPlaceListData();
   		} 
@@ -614,7 +618,8 @@ Titanium.Geolocation.getCurrentPosition(function(e){
     	mySesh.geo.view_lon = -118.433;
     	// DRAW THE MAP WITH GENERIC LA COORDINATES
 		initializeMap(mySesh.geo.lat, mySesh.geo.lon);
-		// ZOOM OUT
+		// SAVE DOG LOCATION
+		saveDogLocation();
   	} 
 	// SUCCESS
 	else {		
@@ -640,13 +645,12 @@ Titanium.Geolocation.getCurrentPosition(function(e){
   	myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
 
   	refreshPlaceListData();
-  	testForAutoCheckout();
+  	//testForAutoCheckout();		// not necessary since this is embedded in the locationCallback
 });
 
 // REPEATEDLY TRIGGER ON WINDOW FOCUS //////////////////////////////////////////
 $.mapview.addEventListener('focus',function(e) {
 	refreshPlaceListData();
-	// don't worry about calling testForAutoCheckout, that'll happen eventually
 }); 
 
 //====================================================================================

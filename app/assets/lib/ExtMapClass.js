@@ -1,39 +1,21 @@
+/*************************************************************************
+						ExtMapClass.js  				
+*************************************************************************/
+//	Waterbowl App
+//	
+//	Created by Mihai Peteu Jan 2015
+//	(c) 2015 waterbowl
+//
+
+//=================================================================================
+// 	Name:  		ExtMap ()
+// 	Purpose:	Initialize class members
+//=================================================================================
 function ExtMap(){
   /*		DEBUG MODE!		(Adds borders to stuff)		*/
   this._delta = 0.07;
   Alloy.Globals.wbMap = '';
 };
-
-//=================================================================================
-// 	Name:  		initializeMap ()
-// 	Purpose:	draw default Apple map
-//=================================================================================
-/*
-ExtMap.prototype.initializeMap = function(lat, lon) {
-	// DRAW MAP
-	Alloy.Globals.wbMap = myMapFactory.createView({
-		mapType : myMapFactory.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
-		region : {
-			latitude 			: lat,
-			longitude 		: lon,
-			latitudeDelta : this._delta,
-			longitudeDelta: this._delta,
-		}, 
-		top 					: 0,
-		animate 			: false,
-		maxZoom				: 1,
-		minZoom				: 2,
-		regionFit	 		: true,
-		userLocation 	: true,
-		enableZoomControls : true
-	});
-	Alloy.Globals.wbMap.addEventListener('regionChanged',function(e) {
-		mySesh.xsetGeoViewport(e.source.region.latitude, e.source.region.longitude);
-	});
-	Ti.API.log(".... [~] Map object built ");
-	// return Alloy.Globals.wbMap;
-}
-*/
 
 //=================================================================================
 // 	Name:  		centerMapOnLocation (lat, lon, delta )
@@ -88,7 +70,7 @@ ExtMap.prototype.loadMapJson = function ( params, url, callbackFunction ) {
 //	Name:			getMarks 
 //	Purpose:	display marks nearby user position, or say there are none
 //==========================================================================================
-ExtMap.prototype.getMarks =  function ( user_lat, user_lon, sniff_type, sniff_radius, marks_shown ) {
+ExtMap.prototype.getMarks =  function ( user_lat, user_lon, sniff_type, sniff_radius, marks_shown, callBackFn ) {
 	Ti.API.info("...[~] getMarks() [ "+user_lat+"/"+user_lon+"  ] :: sniff [type/radius/how many] : [ "+sniff_type+"/"+sniff_radius+"/"+marks_shown+" ]");
   	// GET MARKS /////////////////////////////////
   	var mark_params = {
@@ -100,8 +82,16 @@ ExtMap.prototype.getMarks =  function ( user_lat, user_lon, sniff_type, sniff_ra
 	};
 	var self = this;
 	this.loadMapJson(mark_params, "http://waterbowl.net/mobile/marks-mapshow.php", function(data) {
-		self.refreshMarkAnnotations(data)
+		self.refreshMarkAnnotations(data);
+		callBackFn();
 	});
+
+}
+//=========================================================================================
+//	Name:		getNearbyDogs 
+//	Purpose:	
+//==========================================================================================
+ExtMap.prototype.getNearbyDogs = function ( user_lat, user_lon ) {
 	// GET NEARBY DOGS /////////////////////////////////
 	var dog_params = {
 		lat       			: user_lat,
@@ -142,14 +132,13 @@ ExtMap.prototype.refreshDogAnnotations = function(data) {
 //	Purpose:	
 //=========================================================================
 ExtMap.prototype.refreshMarkAnnotations = function(data) {
-	Alloy.Globals.wbMap.removeAllAnnotations();
 	mySesh.nearbyMarks = data;
 	var marksAnnoArray = [];
 	for (var i=0; i<mySesh.nearbyMarks.length; i++) {
 		marksAnnoArray.push ( this.createMarkAnnotation(mySesh.nearbyMarks[i]) );	  
 	}
 	Alloy.Globals.wbMap.addAnnotations( marksAnnoArray );
-	enableAllButtons();
+	// enableAllButtons();
 }
 
 
