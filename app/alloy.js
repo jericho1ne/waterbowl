@@ -107,25 +107,27 @@ function wbLogin(email, password) {
 				}
 				// USER HAS VALID ACCOUNT + VALID DOG PROFILE  //////////////////////////////////////////////////////
 				else {
-					mySesh.dog.dog_ID  	  = response.dog.dog_ID;
-					mySesh.dog.sex		 		= response.dog.sex;
-					mySesh.dog.breed		  = response.dog.breed;
-					mySesh.dog.age				=	response.dog.age;
-					mySesh.dog.birthdate 	=	response.dog.birthdate;
-					mySesh.dog.weight			= response.dog.weight;
+					mySesh.dog.dog_ID  	 = response.dog.dog_ID;
+					mySesh.dog.sex		 = response.dog.sex;
+					mySesh.dog.breed	 = response.dog.breed;
+					mySesh.dog.age		 = response.dog.age;
+					mySesh.dog.birthdate =	response.dog.birthdate;
+					mySesh.dog.weight	 = response.dog.weight;
 					mySesh.dog.marks_made = parseInt(response.dog.marks_made);
-					
+					mySesh.dog.name	 	= response.dog.dog_name;
+
+
 					// GRAB ALL DOG RELATE INFO
-					mySesh.dog.current_place_ID        = response.dog.current_place_ID;
+					/* mySesh.dog.current_place_ID        = response.dog.current_place_ID;
 					if (response.place!=null) {
 					  mySesh.dog.current_place_name    = response.place.name;
 					  mySesh.dog.current_place_lat     = response.place.lat;
 					  mySesh.dog.current_place_lon     = response.place.lon;
 					  mySesh.dog.current_place_geofence_radius = response.place.geofence_radius;
-	        }
+	        		}
 					mySesh.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
-					mySesh.dog.name	 	= response.dog.dog_name;
 				
+					*/
 					// TAKE USER TO MAP
 					createWindowController( "mapview", "", "slide_left" ); 	
 				}
@@ -247,7 +249,9 @@ function ucwords(str) {
 function createWindowController ( win_name, args, animation ) {
 	Ti.API.info ( "  ===================================== [ "+win_name+" ] === window #" +
 		 ( mySesh.windowStack.length+1 ) +" =====================================" );
-	Ti.API.debug("  :::: createWindowController :::: args ["+JSON.stringify(args) +"] :::: user [ "+JSON.stringify(mySesh.user)+" ] /// "+ 		" [ "+JSON.stringify(mySesh.dog)+" ]");
+	Ti.API.debug("  :::: createWindowController :::: args ["+JSON.stringify(args) +"] :::: user [ "+
+					JSON.stringify(mySesh.user)+" ] /// [ "+
+					JSON.stringify(mySesh.dog)+" ]");
 
 	var winObject = Alloy.createController(win_name, args).getView();
 	addToAppWindowStack( winObject, win_name );
@@ -609,8 +613,8 @@ function logoutUser() {
 	Ti.App.Properties.setString('user', null);
 	Ti.App.Properties.setString('pass', null);
 	
+	// modal popup 
 	var modal_title = 'Log out?';
-  // modal popup 
 	var optns = {
 		options : ['Yes', 'Cancel'],
 		cancel        : 1,
@@ -622,8 +626,17 @@ function logoutUser() {
 	logoutDialog.show();
 	logoutDialog.addEventListener('click', function(e_dialog) {
 		if (e_dialog.index == 0) {  // user clicked OK
+			// stop saveDogLocation from sending location to backend
+			clearInterval(mySesh.saveDogLocationInterval);
+			// kill geolocation listener
+			Titanium.Geolocation.removeEventListener('location', function(){} );
+			// clear data on client
 			mySesh.clearSavedDogInfo();
  			mySesh.clearSavedUserInfo();
+ 			// check user out on backend if they're currently checked in (send poiID + zero for action)
+ 			if(mySesh.dog.current_place_ID>0)
+	 			mySesh.saveDogLocation(mySesh.dog.current_place_ID, 0);
+	    	// close map window, go back to login
 	    	closeWindowController();
 			createWindowController('index', '', 'slide_right');
 		} else {

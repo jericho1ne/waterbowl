@@ -12,6 +12,7 @@
 //	Purpose: 	Initialize all global vars and arrays
 //================================================================================
 function Session(){
+	this.saveDogLocationInterval = '';
 	this.funcCallCount = 0;
 	this.actionOngoing = false;
 	this.device = { 
@@ -29,7 +30,6 @@ function Session(){
 		owner_ID 	: null,
 		name     	: null,
 		email		: null,
-		password	: null,
 		state		: null
 	};
 	this.dog = {
@@ -102,22 +102,79 @@ function Session(){
 		}
 	};
 };
+//================================================================================
+//		Name:			loadMapJson
+//		Purpose:	standardize HTTP requests
+//================================================================================
+Session.prototype.loadMapJson = function ( params, url, callbackFunction ) {
+	var query = Ti.Network.createHTTPClient();
+	query.open("POST", url);	
+	query.send( params );
+	query.setTimeout(2000);
+	query.onload = function() {
+		var jsonResponse = this.responseText;
+		if (jsonResponse != "" ) {
+			var data = JSON.parse( jsonResponse );
+			// Ti.API.debug("....[~] UiFactory.loadMapJson ["+JSON.stringify(data)+"]");
+			if (callbackFunction!="")	{		
+				callbackFunction(data);
+			}	else {
+				return data;	
+			}
+		}
+		else {
+			createSimpleDialog('Error', 'No data received');
+			return [];
+		}
+	};
+}
+
+Session.prototype.saveLocationTimer = function() {
+	var self = this;
+	this.saveDogLocationInterval = setInterval( function(){ self.saveDogLocation(0,0)}, 20000);
+}
+
+//=================================================================================
+//	Name:		saveDogLocation()
+//	Purpose:	track dog location intermittently
+//=================================================================================
+Session.prototype.saveDogLocation = function(poi_ID, action) {
+	var params = {
+		owner_ID			: Number(mySesh.user.owner_ID),
+		lat  				: this.geo.lat,
+		lon  				: this.geo.lon,
+		dog_name			: this.dog.name,
+		current_place_ID 	: poi_ID,
+		current_place_action: action,
+		dog_ID 				: this.dog.dog_ID
+	}
+	Ti.API.info ( "  .... [~] saveDogLocation :: " + JSON.stringify(params) );
+	loadJson(params, "http://www.waterbowl.net/mobile/update-dog-location.php", this.saveDogResponse);	
+	//$.mem_usage.text = Titanium.Platform.availableMemory.toFixed(2)+" MB available";
+} 
+
+
+//=================================================================================
+//	Name:		saveDogResponse()
+//	Purpose:	track dog location intermittently
+//=================================================================================
+Session.prototype.saveDogResponse = function (dog_save_location_data) {
+	Ti.API.info ( "  .... [~] saveDogLocation :: " + JSON.stringify(dog_save_location_data) );
+}
 
 //================================================================================
 //	Name: 		clearSavedDogInfo
 //	Purpose: 	Initialize dog array
 //================================================================================
 Session.prototype.clearSavedDogInfo = function (){
+	var key;
 	for (key in this.dog) {
-    	if (key == "buddies")
-    		this.dog.buddies = [];
-    	else if (key == "weight_buddy")
-    		this.weight_buddy = 0.01;
-    	else if (key == "sniff_radius")
-    		this.sniff_radius = 0.20;
-    	else
-    		this.key = null;
+    	this.dog[key] = null;
     }
+    this.dog.buddies = [];
+	this.dog.weight_buddy = 0.01;
+	this.dog.sniff_radius = 0.20;
+    Ti.API.debug("  >>>> dog info :: "+JSON.stringify(this.dog) );
 }
 
 //================================================================================
@@ -125,9 +182,11 @@ Session.prototype.clearSavedDogInfo = function (){
 //	Purpose: 	Initialize user array
 //================================================================================
 Session.prototype.clearSavedUserInfo = function (){
+	var key;
 	for (key in this.user) {
-    	this.key = null;
+    	this.user[key] = null;
     }
+    Ti.API.debug("  >>>> user info :: "+JSON.stringify(this.user) );
 }
 
 //================================================================================

@@ -8,7 +8,6 @@ function getAllEstimates( place_ID, callbackFunction ) {
 	var params = {
 		place_ID	: place_ID
 	};
-	//query.open("POST", "http://waterbowl.net/mobile/get-estimates.php");	
 	query.open("POST", "http://waterbowl.net/mobile/get-place-activity-pdo.php");	
 	query.send( params );
 	query.onload = function() {

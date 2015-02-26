@@ -625,14 +625,6 @@ $.placeoverview.addEventListener('focus',function(e){
 		removeAllChildren($.estimates);
 		// removeAllChildren($.estimates_buttons);
 		getRecentEstimates();
-		/*
-		var params = {
-			place_ID				: args._place_ID, 
-			enclosure_count : mySesh.currentPlaceFeatures.enclosure_count
-		};
-		setTimeout ( function(){ loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", s); }, 300);
-		addEstimatesButton();
-	*/	
 	}
 });
 

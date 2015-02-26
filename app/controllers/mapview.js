@@ -166,7 +166,7 @@ function getMapPoi() {
 //																		( all available globally except for place_ID )
 //						TODO:			Allow selection between multiple dogs
 //=========================================================================================
-function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
+function checkIntoPlace (place_ID, place_name) {
 	var checkin_http_obj = Ti.Network.createHTTPClient();
 	var params = {
 		owner_ID			: mySesh.user.owner_ID,
@@ -202,9 +202,9 @@ function checkIntoPlace (place_ID, place_lat, place_lon, place_name) {
 				mySesh.dog.current_place_ID 		= place_ID;
 				
 				// save place lat, lon, and geofence radius
-				mySesh.dog.current_place_lat 		 		= place_lat;
-				mySesh.dog.current_place_lon   		  = place_lon;
-				mySesh.dog.current_place_name    		= place_name;
+				mySesh.dog.current_place_lat 		= mySesh.geo.lat;
+				mySesh.dog.current_place_lon   		= mySesh.geo.lon;
+				mySesh.dog.current_place_name    	= place_name;
 				mySesh.dog.current_place_geo_radius = mySesh.geofencePlaces[place_index].geofence_radius;
 				//Ti.API.info(" >>>>> mySesh.dog.current_place_geo_radius " + mySesh.dog.current_place_geo_radius);
 				//Ti.API.info(" >>>>> place_index" + place_index);
@@ -247,7 +247,7 @@ function checkoutFromPlace (place_ID) {
 		dog_name			: mySesh.dog.name,
 		lat  				: mySesh.geo.lat,
 		lon  				: mySesh.geo.lon,
-		current_place_ID 	: 0,
+		current_place_ID 	: mySesh.dog.current_place_ID,
 		current_place_action: 0
 	};
 	Ti.API.debug("  .... [x] checkoutFromPlace :: << "+JSON.stringify(params)+" >>");
@@ -272,10 +272,10 @@ function doClientCheckoutStuff(data) {
 			mySesh.dog.current_place_lat 		= null;
 			mySesh.dog.current_place_lon	 	= null;
 			mySesh.dog.current_place_geo_radius	= null;
-			createSimpleDialog( "Seems you've left", "Automatically checked you out from " + mySesh.dog.current_place_name);
+			// createSimpleDialog( "Goodbye!", "Checked you out from " + mySesh.dog.current_place_name);
 		} 
 		else {
-			createSimpleDialog( "Uh oh", response.message ); 
+			createSimpleDialog( "Uh oh", data.message ); 
 	 	}
 	} else {
 		createSimpleDialog( "Whoops", "No data received from server"); 
@@ -419,7 +419,7 @@ function addPlaceListClickListeners( placeListObject ) {
 //	Purpose:	allow user to check in or check out depending on current status 
 //=================================================================================
 function presentUserCheckinOptions( place ) {
-	// Ti.API.info( "  presentUserCheckinOptions :: " + JSON.stringify(place) + " | checkin? " + mySesh.dog.current_place_ID );
+  Ti.API.info( "  >>> presentUserCheckinOptions :: " + JSON.stringify(place) + " | mySesh.dog.current_place_ID " + mySesh.dog.current_place_ID );
   var modal_title = 'Mark your presence at '+place.name + '?';
   if (mySesh.dog.current_place_ID == place.id) {
     var modal_title = 'Are you leaving '+place.name+"?";
@@ -440,7 +440,7 @@ function presentUserCheckinOptions( place ) {
 		    if (mySesh.dog.current_place_ID == place.id)	{
 				checkoutFromPlace (place.id);
 			} else {
-			    checkIntoPlace(place.id, place.lat, place.lon, place.name);
+			    checkIntoPlace(place.id, place.name);
 			}
 		}
 	});
@@ -542,8 +542,10 @@ var locationCallback = function(e) {
 		mySesh.geo.geo_trigger_count++;
 		// save the last geo location plus the newest one
 		mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)	
-		$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
-		$.geo_latlng.text  = mySesh.geo.lat.toFixed(4)+"/" +  mySesh.geo.lon.toFixed(4);
+		
+		// UNCOMMENT HUD DIV IN MAPVIEW.XML FIRST 
+		//$.geo_success.text = "geo try/success #" + mySesh.geo.geo_trigger_count+"/"+mySesh.geo.geo_trigger_success;
+		//$.geo_latlng.text  = mySesh.geo.lat.toFixed(4)+"/" +  mySesh.geo.lon.toFixed(4);
 		var dist = getDistance(mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.last_action_lat, mySesh.geo.last_action_lon);
 		Ti.API.debug( "  .... [~] locationCallback :: dist [ " + dist + " ]"); 
 		// Ti.API.debug( "  .... [~] locationCallback :: mySesh.geo [" + JSON.stringify(mySesh.geo) + " ]"); 
@@ -556,27 +558,7 @@ var locationCallback = function(e) {
 	}
 };
 
-//=================================================================================
-//	Name:		saveDogLocation()
-//	Purpose:	track dog location intermittently
-//=================================================================================
-function saveDogLocation() {
-	var params = {
-		owner_ID			: mySesh.user.owner_ID,
-		lat  				: mySesh.geo.lat,
-		lon  				: mySesh.geo.lon,
-		dog_name			: mySesh.dog.name,
-		current_place_ID 	: 0,
-		current_place_action: 0,
-		dog_ID 				: mySesh.dog.dog_ID
-	}
-	loadJson(params, "http://www.waterbowl.net/mobile/update-dog-location.php", saveDogResponse);	
-	//$.mem_usage.text = Titanium.Platform.availableMemory.toFixed(2)+" MB available";
-} 
 
-function saveDogResponse(dog_save_location_data) {
-	Ti.API.info ( "  .... [~] saveDogLocation :: " + JSON.stringify(dog_save_location_data) );
-}
 //-----------------------------------------------------------------------------------------------------------------
 //
 //    TO DO UPON WINDOW LOAD
@@ -612,14 +594,14 @@ Titanium.Geolocation.getCurrentPosition(function(e){
  	if (!e.success || e.error) {
 		if (Titanium.Platform.model!="Simulator") {
   			createSimpleDialog("Can't get your location","Please check location services are enabled on your mobile device.");
-    		//Ti.API.debug( "  .... [x] Could not get location: "+ e.code +" [ "+JSON.stringify(e.error)+" ]");
+    		Ti.API.debug( "  .... [x] Could not get location: "+ e.code +" [ "+JSON.stringify(e.error)+" ]");
     	}
     	mySesh.geo.view_lat = 34.003;
     	mySesh.geo.view_lon = -118.433;
     	// DRAW THE MAP WITH GENERIC LA COORDINATES
-		initializeMap(mySesh.geo.lat, mySesh.geo.lon);
+		initializeMap(mySesh.geo.view_lat, mySesh.geo.view_lon);
 		// SAVE DOG LOCATION
-		saveDogLocation();
+		//mySesh.saveDogLocation();
   	} 
 	// SUCCESS
 	else {		
@@ -633,6 +615,8 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 
 		// DRAW THE MAP WITH RECENT COORDINATES
 		initializeMap(mySesh.geo.lat, mySesh.geo.lon);
+		// SAVE DOG LOCATION
+		mySesh.saveDogLocation(0,0);
 	}
 
  	// (2)  ATTACH MENU BAR ICONS (MARK + SNIFF + SHOW POI)
@@ -660,7 +644,8 @@ $.mapview.addEventListener('focus',function(e) {
 //		2) 	Refresh nearby places table
 //		2)  Save latest user location into mySesh.geo.lat, mySesh.geo.lon
 //====================================================================================
-setInterval(saveDogLocation, 60000);			// every X milliseconds
+// var saveDogLocationInterval = setInterval( function(){ mySesh.saveDogLocation(0,0)}, 60000);			// every X milliseconds
+mySesh.saveLocationTimer();
 Titanium.Geolocation.addEventListener('location', locationCallback);
 //setInterval(refreshRAM, 2000);			// show RAM usage every 2 seconds
 

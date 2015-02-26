@@ -30,9 +30,12 @@ function saveUserToDb(email, pwd1, pwd2, city, state, zip) {
 			if ( !checkemail(email) ) {
 				createSimpleDialog("Email error","Please enter a valid email");
 			}	else {
-				// save user's provided email, even though the db call could fail
-				Ti.App.Properties.setString('user', email);
-				Ti.App.Properties.setString('pass', null);
+				// clear all saved session data on client, it's gametime now
+				mySesh.clearSavedDogInfo();
+	 			mySesh.clearSavedUserInfo();
+				// do save new user's provided email, even though the db call could fail
+				mySesh.user.email = email;
+				// prep the payload for login script
 				var params = {
 					"email" 	: email,
 					"pwd" 		: pwd1,

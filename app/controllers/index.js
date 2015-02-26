@@ -3,20 +3,18 @@
 //	Purpose: 	determine whether user is already logged in
 //================================================================================
 function goToLogin() {
-	Ti.API.log("* Login clicked *");				
+	var emailText 	= email.value.trim();
+	var pwdText 	= password.value.trim();
+
+	Ti.API.log("  .... [+] goToLogin :: ["+ emailText +'/'+ pwdText +']');				
 	if(Titanium.Network.networkType==Titanium.Network.NETWORK_NONE) {
 		createSimpleDialog('Uh oh', 'No network connection detected');
 	} else {
-		email.blur();				// temporarily blur the login fields while awaiting response
-		password.blur();
-				
-		if (email.value != '' && password.value != '') {
-			wbLogin( email.value.trim(), password.value.trim() );
+		if ( pwdText=='' || emailText=='') {
+			createSimpleDialog('Login Error', 'Please fill in both fields.');	
 		} 
 		else {
-			createSimpleDialog('Login Error', 'Please fill in both fields.');	
-			email.focus();
-			password.focus();
+			wbLogin( emailText, pwdText );
 		}  
 	}  
 }
@@ -28,6 +26,7 @@ function goToLogin() {
 function goToRegister (e) {
 	// Ti.API.log("* Register clicked * ");
  	mySesh.clearSavedDogInfo();
+ 	mySesh.clearSavedUserInfo();
  	createWindowController("register", "", "slide_left"); 
 }
 
@@ -36,6 +35,8 @@ $.index.open();
 addToAppWindowStack( $.index, "index" );
 $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
 
+/* 	LOGIN HACK - skip past login screen  			*/
+//createWindowController("register3","","slide_left");
 
 // DIV HEIGHTS
 var footer_height = 80;
@@ -59,81 +60,61 @@ var form_width = myUiFactory._form_width;
 	else {
 		//Ti.API.debug( " > > > IOS 7 or older *" );
 	} */
-//Titanium.API.debug ('.... [~] Available memory: ' + Titanium.Platform.availableMemory);	
 
-// FIRST THINGS FIRST - IF CREDS ARE SAVED, AUTOLOGIN!
-//var saved_user = Ti.App.Properties.getString('user');
-//var saved_pwd  = Ti.App.Properties.getString('pass');
+// Build 3 vertically stacked View Containers
+var topView = myUiFactory.buildViewContainer ( "topView", "", 				"100%", topView_height, 0 );
+var midView = myUiFactory.buildViewContainer ( "midView", "vertical", "100%", midView_height, 0 );
+var botView = myUiFactory.buildViewContainer ( "botView", "", 				"100%", Ti.UI.FILL, 0 );
 
-//if (saved_user=="" || saved_pwd=="") {
-	// Build 3 vertically stacked View Containers
-	var topView = myUiFactory.buildViewContainer ( "topView", "", 				"100%", topView_height, 0 );
-	var midView = myUiFactory.buildViewContainer ( "midView", "vertical", "100%", midView_height, 0 );
-	var botView = myUiFactory.buildViewContainer ( "botView", "", 				"100%", Ti.UI.FILL, 0 );
-	
-	// 																		title, 			 w, 		 h,  font_style, 					    color 			text_align
-	var titlebar = myUiFactory.buildLabel("waterbowl", Ti.UI.FILL, 100, myUiFactory._text_banner, "#ffffff", "center");
-	//                                         id,       width,  hint,       is_pwd
-	var email    = myUiFactory.buildTextField("email",   form_width,  "email",    "");
-	var password = myUiFactory.buildTextField("password", form_width, "password", true);
-	
-	var loginBtn = myUiFactory.buildButton("loginBtn", "login", "xl");
-	loginBtn.addEventListener('click', function(){ goToLogin(); });
-	
-	var regBtn = myUiFactory.buildButton("regBtn", "register", "xl");
-	regBtn.addEventListener('click', function(){ goToRegister(); });
-	
-	var footer = Ti.UI.createImageView({ 
-		//height				: icon_size,
-		//width				  : icon_size,
-		image						: 'images/WB-FooterBar.png',
-		backgroundColor : '',  //myUiFactory._color_dkblue,
-		bottom					: 0
-	});
+// 																		title, 			 w, 		 h,  font_style, 					    color 			text_align
+var titlebar = myUiFactory.buildLabel("waterbowl", Ti.UI.FILL, 100, myUiFactory._text_banner, "#ffffff", "center");
+//                                         id,       width,  hint,       is_pwd
+var email    = myUiFactory.buildTextField("email",   form_width,  "email",    "");
+var password = myUiFactory.buildTextField("password", form_width, "password", true);
 
-	// add UI elements to containers		
-	//topView.add( myUiFactory.buildSpacer("horz", 0.35*topView_height) ); 
-	topView.add(titlebar);
-	midView.add(email);
-	midView.add(password);
-	midView.add( myUiFactory.buildSpacer("horz", 4) );
-	midView.add(loginBtn);
-	midView.add(regBtn);
-	botView.add(footer);
+var loginBtn = myUiFactory.buildButton("loginBtn", "login", "xl");
+loginBtn.addEventListener('click', function(){ goToLogin(); });
 
-	// add containers to parent view
-	$.content.add(topView);
-	$.content.add(midView);
-	$.content.add(botView);
-		
-//} else {  // AUTOLOGIN IF CREDENTIALS ARE SAVED
-//	wbLogin(saved_user, saved_pwd);
-//}
+var regBtn = myUiFactory.buildButton("regBtn", "register", "xl");
+regBtn.addEventListener('click', function(){ goToRegister(); });
 
-Ti.API.info( "  >>> Ti.App.Properties.getString('user') :: " + Ti.App.Properties.getString('user') );
-
-/////// FILL IN USER / EMAIL FIELDS IF INFO IS SAVED LOCALLY //////////
-if( Ti.App.Properties.getString('user')!=""  ) 
-	email.value = Ti.App.Properties.getString('user');
-
-if( Ti.App.Properties.getString('pass')!="" && Ti.App.Properties.getString('pass')!=null) 
-	password.value = Ti.App.Properties.getString('pass');
-else
-	password.value = '';
-
-$.index.addEventListener('focus',function(e) {		// only gets after original page load
-	// if credentials are already saved in mySesh
-	if( Ti.App.Properties.getString('user')!="" )
-		email.value 	= Ti.App.Properties.getString('user');
-	if( Ti.App.Properties.getString('pass')!="" )
-		password.value	= Ti.App.Properties.getString('pass');
+var footer = Ti.UI.createImageView({ 
+	//height				: icon_size,
+	//width				  : icon_size,
+	image						: 'images/WB-FooterBar.png',
+	backgroundColor : '',  //myUiFactory._color_dkblue,
+	bottom					: 0
 });
 
+// add UI elements to containers		
+//topView.add( myUiFactory.buildSpacer("horz", 0.35*topView_height) ); 
+topView.add(titlebar);
+midView.add(email);
+midView.add(password);
+midView.add( myUiFactory.buildSpacer("horz", 4) );
+midView.add(loginBtn);
+midView.add(regBtn);
+botView.add(footer);
 
-/*  	LOGIN HACK - skip past login screen and go to Map 	*/
-/* 
-//   To skip to a specific window, uncomment block below and change which window name to jump to
-var necessary_args = {  _place_ID    : 601000001, };
-createWindowController("provideestimate",necessary_args,"slide_left");
-*/
-//createWindowController("register3","","slide_left");
+// add containers to parent view
+$.content.add(topView);
+$.content.add(midView);
+$.content.add(botView);	
+
+$.index.addEventListener('focus',function(e) {		// only gets after original page load
+	// if a different email was provide in the setup process, use that
+	if( mySesh.user.email!="" && (Ti.App.Properties.getString('email')!=mySesh.user.email) ) {
+		email.value		= mySesh.user.email;
+		// force user to type in their password.  it's good practice at first!
+		password.value 	= "";	
+	}
+	else {
+		if( Ti.App.Properties.getString('email')!="" && Ti.App.Properties.getString('password')!="" ) {
+			password.value	= Ti.App.Properties.getString('email');
+			password.value	= Ti.App.Properties.getString('password');
+			// AUTOLOGIN IF CREDENTIALS ARE SAVED
+			//	wbLogin(saved_user, saved_pwd);
+		}
+	}
+});
+

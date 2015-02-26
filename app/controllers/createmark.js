@@ -19,8 +19,9 @@ function saveRemark(title, text_content, textarea_hint) {
 			zip			: "unknown",
 			country 	: "unknown",
 			mark_photo	: 1,
-			mark_name   : title,
-			post_text	: text_content
+			mark_name  	: title,
+			post_text	: text_content,
+			post_wbflag	: ((poiSwitch.value==true)?1:0)
 		};
 		Ti.API.log( "  .... [+]  saveRemark :: " + JSON.stringify(params) );
 		
@@ -41,7 +42,9 @@ function saveRemark(title, text_content, textarea_hint) {
 					// TODO: stuff above
 					
 					// (5) :::: REFRESH MAP MARKS ON MAPVIEW ::::					
-					myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20 );
+					myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
+			      		 myMap.getNearbyDogs(mySesh.user.lat, mySesh.user.lon);
+			      	} );
       				//disableAllButtons();
      		
       				// (6) :::: CLOSE WINDOW, RETURN TO MAPVIEW ::::
@@ -210,22 +213,19 @@ $.createmark.addEventListener('focus',function(e) {
 var progress_bar = myUiFactory.buildProgressBar("Uploading Profile Image");
 $.mapContainer.add(progress_bar);
 
-// (2)  Add original mark section header + first mark
-$.markForm.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
-
 var form_width = myUiFactory._form_width;
 
 var title_label = myUiFactory.buildLabel( "Title", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );	
 var title_input = myUiFactory.buildTextField("mark_title", form_width, "Add a memorable title", false);
-var textarea_label = myUiFactory.buildLabel( "Text", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );
+var textarea_label = myUiFactory.buildLabel( "Leave a note", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );
 // used later to ensure the user has actually filled in the Mark textarea
 var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
 
 var textArea = Ti.UI.createTextArea({
 	borderWidth		: 0,
- 	borderColor		: '#bbb',
+ 	borderColor		: '#bbbbbb',
  	borderRadius	: 5,
- 	color 			: '#888',
+ 	color 			: '#888888',
  	font 			: { fontFamily: 'Raleway-Medium', fontSize: 14 },
  	keyboardType 	: Titanium.UI.KEYBOARD_DEFAULT,
  	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,
@@ -238,12 +238,47 @@ var textArea = Ti.UI.createTextArea({
 
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "mark", "large" );
 
+// "IS THIS A POI" SWITCH
+var yesNoContainer  = myUiFactory.buildViewContainer("yesnoContainer", "horizontal", myUiFactory._device.screenwidth, 40, 0);
+var yes_label		= myUiFactory.buildLabel( "Yes", 30, myUiFactory._height_header, myUiFactory._text_small, "#888888","left" );
+var no_label 	 	= myUiFactory.buildLabel( "No", 20, myUiFactory._height_header, myUiFactory._text_small, "#000000","left" );
+var switch_label 	= myUiFactory.buildLabel( "Is this a dog friendly place or business?", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );
+var poiSwitch 		= Ti.UI.createSwitch({
+  value: false, left: myUiFactory._pad_left,
+  width: 60, height:20
+});
+poiSwitch.addEventListener('change',function(e){
+  Ti.API.info('  .... [+] poiSwitch value: ' + poiSwitch.value);
+  if(poiSwitch.value==true) {
+  	yes_label.color = "#000000";
+  	no_label.color = "#888888";
+  } if(poiSwitch.value==false) {
+  	yes_label.color = "#888888";
+  	no_label.color = "#000000";
+  }
+
+});
+
+// ADD EVERYTHING TO WINDOW
+// original mark section header + first mark
+$.markForm.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
+// title of mark
 $.markForm.add(title_label);
 $.markForm.add(title_input);
+
+// mark text
 $.markForm.add(textarea_label);
 $.markForm.add(textArea);
-$.markForm.add(addMarkBtn);
 
+// poi?
+$.markForm.add(switch_label);
+yesNoContainer.add(no_label);
+yesNoContainer.add(poiSwitch);
+yesNoContainer.add(yes_label);
+$.markForm.add(yesNoContainer);
+
+// add Mark button
+$.markForm.add(addMarkBtn);
 
 addMarkBtn.addEventListener	('click', function(e) { saveRemark(title_input.value, textArea.value, textarea_hint); });
 textArea.addEventListener	('focus', function(e) { clearTextAreaContents(textArea); });
