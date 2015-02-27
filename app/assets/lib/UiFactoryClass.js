@@ -423,7 +423,7 @@ UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
   
   // if text is two lines or less
   var min_div_height  = this._icon_small + (2*this._pad_top);
- 	var div_height 			= ( ( Math.round( text_content.length / (col_2_w / 12) ) ) * 10.5 )  + (2*this._pad_top);
+ 	var div_height 			= ( ( Math.round( text_content.length / (col_2_w / 13) ) ) * 10 )  + (2*this._pad_top);
 	
 	if (div_height < min_div_height)	
 		div_height = min_div_height;

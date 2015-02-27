@@ -100,7 +100,7 @@ function getRecentEstimates() {
 	//////////////////////		ENCLOSURE ESTIMATES (only if dog park) 	 ////////////////////////////////////
 	if (mySesh.currentPlaceFeatures.category==600 || mySesh.currentPlaceFeatures.category==601) {
 		var params = {
-			place_ID				: mySesh.currentPlaceFeatures.poi_ID, 
+			place_ID		: mySesh.currentPlaceFeatures.poi_ID, 
 			enclosure_count : mySesh.currentPlaceFeatures.enclosure_count
 		};
 		loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates);	
@@ -155,8 +155,8 @@ function addEstimatesButton() {
 		var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "report estimate >"); 
 		estimate_btn.addEventListener('click', function(){
 		  var necessary_args = {
-			  _poiInfo		 : mySesh.currentPlaceInfo,
-	   		_poiDetail	 : mySesh.currentPlaceFeatures
+			 _poiInfo	: mySesh.currentPlaceInfo,
+	   		_poiDetail	: mySesh.currentPlaceFeatures
 	    };
 			createWindowController( "provideestimate", necessary_args, "slide_left" );
 		});
@@ -467,7 +467,7 @@ function displayPoiFeatures() {
 	
 	//////////////////////		FEATURES ESTIMATES (only if dog park or human place)   	 /////////////////////////
 	//if( status == 1) {
-		if ( poiFeatures.category>=600 && poiFeatures.category<=699 ) {
+		if ( poiFeatures.category>=600 && poiFeatures.category<=698) {
 			displayOutdoorFeatures(poiFeatures);
 		}
 		else if ( poiFeatures.category>=100 && poiFeatures.category<=199 ) {
@@ -488,10 +488,10 @@ function savePlaceInfoThenGetFeatures( poiInfo ) {
 	//				FEATURES (only if category == [] )
 	//-----------------------------------------------------------------------------------
 	if (  ( poiInfo.category>=600 && poiInfo.category<=699 ) || 
-				( poiInfo.category>=100 && poiInfo.category<=199 )  ) {
+		  ( poiInfo.category>=100 && poiInfo.category<=199 )  ) {
 		var params = {
-			place_ID	  : poiInfo.place_ID,
-			place_cat		: poiInfo.category
+			place_ID	: poiInfo.place_ID,
+			place_cat	: poiInfo.category
 		};
 		loadJson(params, "http://waterbowl.net/mobile/get-poi-features.php", drawEverything);
 		// Ti.API.debug("  >> PLACEOVERVIEW PARAMS :: ID #" + poiInfo.place_ID + " / cat #" +  poiInfo.category);
@@ -505,7 +505,16 @@ function savePlaceInfoThenGetFeatures( poiInfo ) {
 //		Purpose:	literally trigger all the modules that get drawn on this page
 //================================================================================
 function drawEverything( poiFeatures ) {
-	Ti.API.debug( " .... >>  doEverything(poiInfo) >> "+ JSON.stringify(mySesh.currentPlaceFeatures) );
+	Ti.API.debug( " .... >>  drawEverything(poiInfo) >> "+ JSON.stringify(poiFeatures) );
+
+	//----------------------------------------------------------------------------------------------------------
+	//		 FEATURES (HUMAN / OUTDOOR ONLY)
+	//----------------------------------------------------------------------------------------------------------
+	if (( mySesh.currentPlaceInfo.category>=600 && mySesh.currentPlaceInfo.category<=698 ) || 
+		( mySesh.currentPlaceInfo.category>=100 && mySesh.currentPlaceInfo.category<=199 )) {
+		mySesh.currentPlaceFeatures = poiFeatures.payload;
+	}
+	
 	var img_fallback = MISSING_PATH + "poi-0-banner.jpg";
 	var img_actual   = POI_PATH + mySesh.currentPlaceInfo.banner;
 	
@@ -548,17 +557,16 @@ function drawEverything( poiFeatures ) {
 	//----------------------------------------------------------------------------------------------------------
 	//		 ESTIMATES / BUTTONS
 	//----------------------------------------------------------------------------------------------------------
-	if (  mySesh.currentPlaceInfo.category>=600 && mySesh.currentPlaceInfo.category<=699 ) {
+	if (  mySesh.currentPlaceInfo.category>=600 && mySesh.currentPlaceInfo.category<=698 ) {
 		getRecentEstimates();
 		addEstimatesButton();	
 	}
 	//----------------------------------------------------------------------------------------------------------
 	//		 FEATURES (HUMAN / OUTDOOR ONLY)
 	//----------------------------------------------------------------------------------------------------------
-	if (  ( mySesh.currentPlaceInfo.category>=600 && mySesh.currentPlaceInfo.category<=699 ) || 
-				( mySesh.currentPlaceInfo.category>=100 && mySesh.currentPlaceInfo.category<=199 )  ) {
+	if (( mySesh.currentPlaceInfo.category>=600 && mySesh.currentPlaceInfo.category<=698 ) || 
+		( mySesh.currentPlaceInfo.category>=100 && mySesh.currentPlaceInfo.category<=199 )) {
 		Ti.API.info( "  >>>> poiFeatures.payload :: " + poiFeatures.payload) ;
-		mySesh.currentPlaceFeatures = poiFeatures.payload;
 		displayPoiFeatures();
 	}
 	
@@ -571,8 +579,7 @@ function drawEverything( poiFeatures ) {
 		dog_id     : mySesh.dog.dog_ID
 	};
 	getRemarks(params, displayRemarks);
-	*/	
-	
+	*/		
 }
 
 //---------------------------------------------------------------------------------------------------------------
@@ -586,7 +593,7 @@ var args = arguments[0] || {};
 
 // BLANK OUT GLOBALS
 mySesh.currentPlaceFeatures = null;
-mySesh.currentPlaceInfo 		= null;
+mySesh.currentPlaceInfo 	= null;
 
 // Ti.API.debug( "PlaceOverview.js :: " + JSON.stringify(args) );
 
@@ -603,10 +610,11 @@ if (args._came_from=="checkin modal") {
 */
 //////	( 3 )	 	BUILD PLACE HEADER, ACTIVITY, REMARKS, SPECIFIC FEATURES 	///////////////
 var params = {	
-	place_ID : args._place_ID,
+	place_ID 	: args._place_ID,
 	user_lat	: mySesh.geo.lat,
 	user_lon	: mySesh.geo.lon
 };
+Ti.API.info(" >>>>>>>>>>>>>>> params " + JSON.stringify(params) );
 loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", savePlaceInfoThenGetFeatures);	
 // doEverything(poiInfo);
 

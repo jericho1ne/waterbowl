@@ -61,11 +61,10 @@ function updateLabel(e, slider_label, slider_value){
 //	TODO:			Allow selection between multiple dogs
 //========================================================================
 function updateEstimates (place_ID, value_1, value_2) {
-	Ti.API.debug(".... [~] updateEstimates: "+value_1+" "+value_2);
 	var grabPlaces = Ti.Network.createHTTPClient();
 	
 	// TODO: change to set-place-estimate-pdo.php
-	grabPlaces.open("POST", "http://waterbowl.net/mobile/set-place-estimate.php");
+	grabPlaces.open("POST", "http://waterbowl.net/mobile/set-place-estimate-pdo.php");
 	
 	var params = {
 		place_ID: place_ID,
@@ -74,10 +73,10 @@ function updateEstimates (place_ID, value_1, value_2) {
 		dog_name: mySesh.dog.name,
 		value_1 : value_1,
 		value_2 : value_2,
-		lat		:	mySesh.geo.lat,
-		lon 	:	mySesh.geo.lon
+		lat		: mySesh.geo.lat,
+		lon 	: mySesh.geo.lon
 	};
-		Ti.API.log( "* Sending info to PHP " + JSON.stringify(params) );
+	Ti.API.debug(".... [~] updateEstimates - params :: "+ JSON.stringify(params) );
 
 	var response = 0;
 	grabPlaces.send(params);

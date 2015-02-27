@@ -59,7 +59,7 @@ var miniHeader = myUiFactory.buildMiniHeader(args._place_name, args._place_city,
 var create_marks_header = myUiFactory.buildSectionHeader("create_marks_header", "ADD REMARK TO THIS SPOT", 1);
 
 // TODO:  display today's date 
-var title 	 = myUiFactory.buildLabel( 'Mark Text', Ti.UI.SIZE, myUiFactory._height_row, myUiFactory._text_medium_bold, "#000000", "left" );	
+var title 	 = myUiFactory.buildLabel( 'Message:', Ti.UI.SIZE, myUiFactory._height_row, myUiFactory._text_medium_bold, "#000000", "left" );	
 var textArea = myUiFactory.buildTextArea( 'What does '+ mySesh.dog.name +' want to say about this place?' );
 var character_count =  myUiFactory.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, "100%", myUiFactory._height_row, myUiFactory._text_tiny, "#000000", "" );
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "add remark", "large" );

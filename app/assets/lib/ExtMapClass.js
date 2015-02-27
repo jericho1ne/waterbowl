@@ -121,7 +121,8 @@ ExtMap.prototype.refreshDogAnnotations = function(data) {
 	mySesh.nearbyDogs = data.payload;
 	var dogsAnnoArray = [];
 	for (var i=0; i<mySesh.nearbyDogs.length; i++) {
-		dogsAnnoArray.push ( this.createDogAnnotation(mySesh.nearbyDogs[i]) );	  
+		if (mySesh.nearbyDogs[i].dog_ID!=mySesh.dog.dog_ID)
+			dogsAnnoArray.push( this.createDogAnnotation(mySesh.nearbyDogs[i]) );	  
 	}
 	Alloy.Globals.wbMap.addAnnotations( dogsAnnoArray );
 	enableAllButtons();
@@ -236,7 +237,12 @@ ExtMap.prototype.createMarkAnnotation = function( mark ) {
 //	Return:		annotation object
 //=============================================================
 ExtMap.prototype.createDogAnnotation = function( dog ) {
-	Ti.API.info( "  .... [+] annotation marker for DOG:" + JSON.stringify(dog) );
+	Ti.API.info( "  .... [~] annotation marker for DOG:" + JSON.stringify(dog) );
+	// 0=stranger, 1=me, 2=buddy
+	var icon_stranger 	= ICON_PATH + "poi-mapmarker-dogstranger.png";
+	var icon_me 		= ICON_PATH + "poi-mapmarker-dogme.png";
+	var icon_buddy 		= ICON_PATH + "poi-mapmarker-dogbuddy.png";
+
 	var anno_dog_button = Ti.UI.createButton({ 
 		dog_id 			: dog.dog_ID,	 
 		backgroundImage : ICON_PATH + 'button-forward.png',
@@ -246,7 +252,7 @@ ExtMap.prototype.createDogAnnotation = function( dog ) {
 	});
 	anno_dog_button.addEventListener('click', function(e){
 		var params = { 
-			dog_id 	: dog.dog_ID
+			dog_ID 	: dog.dog_ID
 		};
 		createWindowController( "profile", params, 'slide_left' );
  	});

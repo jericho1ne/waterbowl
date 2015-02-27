@@ -7,30 +7,28 @@
 //	(c) 2015 waterbowl
 //
 
-//==================================================================================================================
+//==================================================================================================
 //	Name:			buildMapMenubar	
-//==================================================================================================================
+//=================================================================================================
 function buildMapMenubar() {	
 	// mySesh.device.screenwidth
-	var menubar_pad_right  = 20;
-	var	menubar_pad_bottom = 20;
-	var btn_spacing 			 = 10;
-	var main_btn_size 		 = 60; 
-	var secondary_btn_size = 40;
-	var secondary_pad_right 	= ( (main_btn_size-secondary_btn_size)/2 )+menubar_pad_right;
-	var	secondary_pad_bottom 	= main_btn_size + 
-															menubar_pad_bottom + btn_spacing + 
-															( (main_btn_size-secondary_btn_size)/2 ); 
+	var menu_pad_right  	= 20;
+	var	menubar_pad_bottom 	= 20;
+	var btn_spacing 		= 10;
+	var main_btn_size 		= 60; 
+	var second_btn_size 	= 40;
+	var second_pad_right 	 = ( (main_btn_size-second_btn_size)/2 )+menu_pad_right;
+	var	secondary_pad_bottom = main_btn_size + menubar_pad_bottom + btn_spacing + ( (main_btn_size-second_btn_size)/2 ); 
 	////////////////////////////////////////////////// RECENTER BUTTON ///////////////////
 	var recenterBtn = Ti.UI.createButton( {
 		id			: "recenterBtn",	
 		backgroundImage : ICON_PATH + 'button-center.png',
 		// backgroundColor: '#ffffff', 
 		opacity : 1,
-		height	: secondary_btn_size, 
-		width	: secondary_btn_size,
+		height	: second_btn_size, 
+		width	: second_btn_size,
 		bottom	: secondary_pad_bottom,
-		right	: secondary_pad_right,
+		right	: second_pad_right,
 		zIndex  : 100
 	} );
 	////////////////////////////////////////////////// GET POI BUTTON //////////////////////

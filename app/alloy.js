@@ -289,7 +289,7 @@ function createWindowController ( win_name, args, animation ) {
 	// attach menubar to each new Window controller
 	addMenubar(winObject);
 	if (OS_ANDROID) 
-    winObject.getView().open();
+    	winObject.getView().open();
 	else
 	  winObject.open(animStyle);
 	// status checks
@@ -628,14 +628,26 @@ function logoutUser() {
 		if (e_dialog.index == 0) {  // user clicked OK
 			// stop saveDogLocation from sending location to backend
 			clearInterval(mySesh.saveDogLocationInterval);
+			
 			// kill geolocation listener
 			Titanium.Geolocation.removeEventListener('location', function(){} );
+			
+			// clear out backend
+	    	var params = {
+				dog_ID		: mySesh.dog.dog_ID,
+				owner_ID	: mySesh.user.owner_ID
+			};
+	    	loadJson(params, "http://waterbowl.net/mobile/unload-dog-location.php", unloadDogResponse);
+
 			// clear data on client
 			mySesh.clearSavedDogInfo();
  			mySesh.clearSavedUserInfo();
+ 			
  			// check user out on backend if they're currently checked in (send poiID + zero for action)
- 			if(mySesh.dog.current_place_ID>0)
+ 			if(mySesh.dog.current_place_ID>0) {
 	 			mySesh.saveDogLocation(mySesh.dog.current_place_ID, 0);
+	    	}
+	    	
 	    	// close map window, go back to login
 	    	closeWindowController();
 			createWindowController('index', '', 'slide_right');
@@ -645,6 +657,9 @@ function logoutUser() {
 	});
 }
 
+function unloadDogResponse(data) {
+	Ti.API.debug("  .... [~] unloadDogResponse :: "+JSON.stringify(data) );
+}
 //======================================================================
 // 	Name:  		showSettings()
 // 	Purpose:	generic settings for user / app
