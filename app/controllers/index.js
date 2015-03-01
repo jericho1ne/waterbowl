@@ -15,6 +15,10 @@ function goToLogin() {
 		} 
 		else {
 			wbLogin( emailText, pwdText );
+			Alloy.Globals.loadingMask.show('Loading...', true);
+			setTimeout(function(){
+				Alloy.Globals.loadingMask.hide();
+			}, 800);
 		}  
 	}  
 }
@@ -30,13 +34,17 @@ function goToRegister (e) {
  	createWindowController("register", "", "slide_left"); 
 }
 
+//
+//
 //======================== Create and Open top level UI components ==================================== 
+//
+//
 $.index.open();	
 addToAppWindowStack( $.index, "index" );
 $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
 
 /* 	LOGIN HACK - skip past login screen  			*/
-//createWindowController("register3","","slide_left");
+//createWindowController("testview","","slide_left");
 
 // DIV HEIGHTS
 var footer_height = 80;

@@ -7,6 +7,18 @@
 //	(c) 2015 waterbowl
 //
 
+function arraysEqual(arr1, arr2) {
+    if(arr1.length !== arr2.length)
+        return false;
+    for(var i = arr1.length; i--;) {
+    	Ti.API.debug( "  .... >> arraysEqual >> arr1[i] : "+arr1[i].id );
+    	Ti.API.debug( "  .... >> arraysEqual >> arr2[i] : "+arr2[i].id );
+        if(arr1[i].id  !== arr2[i].id )
+            return false;
+    }
+    return true;
+}
+
 //===============================================
 //	Name:    isset ( value )
 //	Desc:	   fail silently if value is undefined
@@ -271,29 +283,60 @@ function createWindowController ( win_name, args, animation ) {
 	 	winObject.top = 0;
  		winObject.opacity = 0.1;
 		animStyle = {	left: 0, opacity: 1,	duration: 120, 
-		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
+			curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}	
 	else if (animation=="slide_right") {
 	 	winObject.left = -1 * mySesh.device.screenwidth;
-	  winObject.top = 0;
+	 	winObject.top = 0;
  		winObject.opacity = 0.1;
-		animStyle = {	left: 0, opacity: 1,	duration: 80, 
-		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
+		animStyle = {	left: 0, opacity: 1, duration: 80, 
+			curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}
 	else {
 		/* default == quick fade-in animation   */
 		winObject.opacity = 0.05;
 		animStyle = {	opacity:1, duration:200, 
-		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT };
+			curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT };
 	}	
 	// attach menubar to each new Window controller
 	addMenubar(winObject);
 	if (OS_ANDROID) 
     	winObject.getView().open();
-	else
-	  winObject.open(animStyle);
+	else {
+	 	winObject.open(animStyle);
+
+	 	if(win_name!="index") {
+	 		var spinner_time = 650;
+	 		if (win_name=="help") {
+				spinner_time = 250;
+	 		}
+			// show loading spinner
+			Alloy.Globals.loadingMask.show('Loading...', true);
+			setTimeout(function(){
+				Alloy.Globals.loadingMask.hide();
+			}, spinner_time);
+		}  
+	}
 	// status checks
 	// if (mySesh.dog.current_place_ID!=0)	Ti.API.info( "  >>> checked in @ place ID #"+ mySesh.dog.current_place_ID+" <<< ");
+}
+
+//=============================================================================
+//	Name:		getCurrentDate ( )
+//=============================================================================
+function getCurrentDate() {
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1; //January is 0!
+	var yyyy = today.getFullYear();
+
+	if(dd<10) {
+	    dd='0'+dd
+	} 
+	if(mm<10) {
+	    mm='0'+mm
+	} 
+	return mm+'/'+dd+'/'+yyyy;
 }
 
 //=============================================================================
@@ -645,7 +688,7 @@ function logoutUser() {
  			
  			// check user out on backend if they're currently checked in (send poiID + zero for action)
  			if(mySesh.dog.current_place_ID>0) {
-	 			mySesh.saveDogLocation(mySesh.dog.current_place_ID, 0);
+	 			mySesh.saveDogLocation(mySesh.dog.current_place_ID, 0, "logout");
 	    	}
 	    	
 	    	// close map window, go back to login
@@ -780,8 +823,10 @@ Ti.App.Properties.current_window = null;
 // Alloy.Globals.AWS.authorize( mySesh.AWS.access_key_id, mySesh.AWS.secret_access );
 
 Alloy.Globals.placeList_clicks 	= 0;
-Alloy.Globals.placeList_ID 			= null;
-Alloy.Globals.placeAnnotations = [];
+Alloy.Globals.placeList_ID 		= null;
+Alloy.Globals.placeAnnotations	= [];
+// Loading screen
+Alloy.Globals.loadingMask = Alloy.createWidget("nl.fokkezb.loading");
 
 /*----------------------------------------------------------------------
  *  	GEOLOCATION

@@ -54,7 +54,7 @@ function buildMapMenubar() {
 		right						: 90
 	});
 	////////////////////////////////////////////////// MARK BUTTON ////////////////////////
-  var markBtn = Ti.UI.createButton({ 
+  	var markBtn = Ti.UI.createButton({ 
 		id 							: "markBtn",	 
 		backgroundImage : ICON_PATH + 'button-mark.png',
 		opacity 				: 1,
@@ -73,18 +73,19 @@ function buildMapMenubar() {
 	recenterBtn.addEventListener('click', function() {			// REFRESH button
     //Ti.API.debug("...[+] RECENTER button clicked on map");
 		Ti.Geolocation.getCurrentPosition(function(e) {
-      if (e.error) {			
-        // check if running in simulator  if (Titanium.Platform.model != "Simulator")
-        // Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
-        createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
-        // myMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.01);
-      } else {  // if no errors, and we're not running in Simulator
-      	// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
-			  mySesh.geo.geo_trigger_count++;  
-			  mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
-				// CENTER MAP ON USER LOCATION
-        myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.02);
-	    }
+     	if (e.error) {			
+      		// check if running in simulator  if (Titanium.Platform.model != "Simulator")
+     		// Ti.API.debug( ">>> Running in ["+Titanium.Platform.model+"]" );
+        	createSimpleDialog( "Can't get your location", "Please make sure location services are enabled." );
+        	// myMap.centerMapOnLocation(mySesh.geo.lat, mySesh.geo.lon, 0.01);
+    	}
+   		else {  // if no errors, and we're not running in Simulator
+    		// SAVE GEO LAT / LON + TIME ACQUIRED /////////////////////////////////////////////////
+			mySesh.geo.geo_trigger_count++;  
+			mySesh.xsetGeoLatLon( e.coords.latitude, e.coords.longitude, Math.round( Date.now() / (1000*60) ) - mySesh.geo.last_acquired)
+			// CENTER MAP ON USER LOCATION
+        	myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.02);
+		}
     });  
   });
   ///////////////////// 	ADD WATERBOWL/POI BTN LISTENER 	////////////////////////
@@ -135,7 +136,7 @@ function buildMapMenubar() {
 }
 
 //===============================================================================================
-//	Name:			getMapPoi()
+//	Name:		getMapPoi()
 //	Purpose:	provide a centralized action for refreshing map POIs
 //===============================================================================================
 function getMapPoi() {
@@ -159,10 +160,10 @@ function getMapPoi() {
 }
 
 //=========================================================================================
-//	Name:			checkIntoPlace ( place_ID, place_lat, place_lon, place_name )
+//	Name:		checkIntoPlace ( place_ID, place_lat, place_lon, place_name )
 //	Purpose:	check into a specific place, providing user ID, dog ID, lat, lon to backend
 //																		( all available globally except for place_ID )
-//						TODO:			Allow selection between multiple dogs
+//	TODO:		Allow selection between multiple dogs
 //=========================================================================================
 function checkIntoPlace (place_ID, place_name) {
 	var checkin_http_obj = Ti.Network.createHTTPClient();
@@ -210,7 +211,7 @@ function checkIntoPlace (place_ID, place_name) {
 				mySesh.dog.last_checkin_timestamp= new Date().getTime();
 				
 				// POPULATE NEARBY PLACE TABLE
-  		  		setTimeout ( function(){ refreshPlaceListData(); }, 300);
+  		  		setTimeout ( function(){ refreshPlaceListData("checkIntoPlace"); }, 300);
   		  		// ADD PLACE LIST CLICK EVENT LISTENER
   		  		setTimeout ( function(){ addPlaceListClickListeners($.placeListTable); }, 310);
   		
@@ -270,7 +271,7 @@ function doClientCheckoutStuff(data) {
 			mySesh.dog.current_place_lat 		= null;
 			mySesh.dog.current_place_lon	 	= null;
 			mySesh.dog.current_place_geo_radius	= null;
-			// createSimpleDialog( "Goodbye!", "Checked you out from " + mySesh.dog.current_place_name);
+			createSimpleDialog( "Goodbye!", "Checked you out from " + mySesh.dog.current_place_name);
 		} 
 		else {
 			createSimpleDialog( "Uh oh", data.message ); 
@@ -456,11 +457,11 @@ function placeListListener(e) {
 }
 
 //=============================================================================
-//	Name:			refreshPlaceListData ()
+//	Name:			refreshPlaceListData (client_action)
 //=============================================================================
-function refreshPlaceListData() {
+function refreshPlaceListData(client_action) {
 	//  Ti.API.debug(".... [~] refreshPlaceListData called ....");
-	getPoisInGeofence( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon );   // will affect place list
+	getPoisInGeofence( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon, client_action );   // will affect place list
 	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
 	setTimeout ( function(){ updateGeofenceTable(); }, 350);
 	
@@ -487,11 +488,13 @@ function refreshRAM() {
 //	Name:			getPoisInGeofence ( mapObject, user_lat, user_lon )
 //	Purpose:	get places in db, plus a smaller subset of nearby ones
 //=============================================================================
-function getPoisInGeofence( mapObject, user_lat, user_lon ) {
+function getPoisInGeofence( mapObject, user_lat, user_lon, client_action ) {
   var params = {
-		lat       : user_lat,
-		lon       : user_lon,
-		owner_ID	: mySesh.user.owner_ID
+		lat      		: user_lat,
+		lon       		: user_lon,
+		owner_ID		: mySesh.user.owner_ID,
+		dog_ID			: mySesh.dog.dog_ID,
+		client_action	: client_action
 	};
 	loadJson(params, "http://www.waterbowl.net/mobile/get-places-nearby.php", updatePoisInGeofence);
 }
@@ -502,11 +505,15 @@ function getPoisInGeofence( mapObject, user_lat, user_lon ) {
 //=============================================================================
 function updatePoisInGeofence( data ) {
 	if ( data.length > 0 ) {
-		mySesh.geofencePlaces = data;
+		if ( !arraysEqual(mySesh.geofencePlaces, data) ) {
+			mySesh.geofencePlaces = data;
+			updateGeofenceTable($.placeListTable);
+		} 
+		// else { don't refresh geofence tables, no change } 
 	} else {
 		mySesh.geofencePlaces = [];
+		updateGeofenceTable($.placeListTable);
 	}
-	updateGeofenceTable($.placeListTable);
 }	
 
 //=============================================================================
@@ -520,7 +527,7 @@ function testForAutoCheckout() {
 		//Ti.API.debug( "  .... [x] testForAutoCheckout :: mySesh.dog [" + mySesh.dog.current_place_lat + " / " + mySesh.dog.current_place_lon + "]" );
 		// Ti.API.debug( "....  :: dist - geo_radius [" + dist + " (-) " + mySesh.dog.current_place_geo_radius + "]" );
  		if( (dist - mySesh.dog.current_place_geo_radius) >= 0 ) {
- 	 		// AUTO CHECKOUT - this will also trigger a getPoisInGeofence call
+ 	 		// Call update-dog-location.php on the backend, and doClientCheckoutStuff on the front end
   			checkoutFromPlace( mySesh.dog.current_place_ID );
   		} 
   	} 
@@ -548,10 +555,10 @@ var locationCallback = function(e) {
 		Ti.API.debug( "  .... [~] locationCallback :: dist [ " + dist + " ]"); 
 		// Ti.API.debug( "  .... [~] locationCallback :: mySesh.geo [" + JSON.stringify(mySesh.geo) + " ]"); 
 		
-		if( dist>= 0.006 && mySesh.geo.last_action_lat!=null && mySesh.geo.last_action_lon!=null) { 	// 0.006 mi = 31.68 ft
-  			refreshPlaceListData();
+		if( dist>= mySesh.geo.accuracy_threshold && mySesh.geo.last_action_lat!=null && mySesh.geo.last_action_lon!=null) { 	// 0.006 mi = 31.68 ft
+  			refreshPlaceListData("locationCallback (moved more than "+mySesh.geo.accuracy_threshold+"mi)");
   		} 
-  		// AUTO CHECKOUT - this will also trigger a getPoisInGeofence call
+  		// AUTO CHECKOUT 
   		testForAutoCheckout();	
 	}
 };
@@ -614,7 +621,7 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 		// DRAW THE MAP WITH RECENT COORDINATES
 		initializeMap(mySesh.geo.lat, mySesh.geo.lon);
 		// SAVE DOG LOCATION
-		mySesh.saveDogLocation(0,0);
+		mySesh.saveDogLocation(0,0,"Mapview Initialization");
 	}
 
  	// (2)  ATTACH MENU BAR ICONS (MARK + SNIFF + SHOW POI)
@@ -626,13 +633,13 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 	mySesh.geo.view_lon = mySesh.geo.lon;
   	myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
 
-  	refreshPlaceListData();
+  	refreshPlaceListData("Map Initialization");
   	//testForAutoCheckout();		// not necessary since this is embedded in the locationCallback
 });
 
 // REPEATEDLY TRIGGER ON WINDOW FOCUS //////////////////////////////////////////
 $.mapview.addEventListener('focus',function(e) {
-	refreshPlaceListData();
+	refreshPlaceListData("Window Focus");
 }); 
 
 //====================================================================================
@@ -642,9 +649,7 @@ $.mapview.addEventListener('focus',function(e) {
 //		2) 	Refresh nearby places table
 //		2)  Save latest user location into mySesh.geo.lat, mySesh.geo.lon
 //====================================================================================
-// var saveDogLocationInterval = setInterval( function(){ mySesh.saveDogLocation(0,0)}, 60000);			// every X milliseconds
 mySesh.saveLocationTimer();
 Titanium.Geolocation.addEventListener('location', locationCallback);
 //setInterval(refreshRAM, 2000);			// show RAM usage every 2 seconds
-
 

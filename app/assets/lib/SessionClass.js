@@ -23,7 +23,7 @@ function Session(){
 		poiRemarkMaxLength  : 1600,
 		markTitleMaxLength	: 30,
 		markRemarkMaxLength : 256,
-		dogNameMax					: 30
+		dogNameMax			: 30
 	};
 	this.temp_image = null,
 	this.user = {
@@ -45,6 +45,7 @@ function Session(){
 		buddies					: [],
 		weight_buddy			: 0.01,		// SNIFF SETTINGS
 		sniff_radius			: 0.20,		// SNIFF SETTINGS 	TODO:  fill this in upon login from backend
+		location_timer			: 60000,	// milliseconds
 		current_place_ID  		: null,
 		current_place_name 		: null,
 		current_place_geo_radius: null,
@@ -130,15 +131,17 @@ Session.prototype.loadMapJson = function ( params, url, callbackFunction ) {
 }
 
 Session.prototype.saveLocationTimer = function() {
+	var timer_ms = this.dog.location_timer;
 	var self = this;
-	this.saveDogLocationInterval = setInterval( function(){ self.saveDogLocation(0,0)}, 20000);
+
+	this.saveDogLocationInterval = setInterval( function(){ self.saveDogLocation(0,0,"auto report ("+timer_ms+" ms)")}, timer_ms );
 }
 
 //=================================================================================
 //	Name:		saveDogLocation()
 //	Purpose:	track dog location intermittently
 //=================================================================================
-Session.prototype.saveDogLocation = function(poi_ID, action) {
+Session.prototype.saveDogLocation = function(poi_ID, action, client_function) {
 	var params = {
 		owner_ID			: Number(mySesh.user.owner_ID),
 		lat  				: this.geo.lat,
@@ -146,7 +149,8 @@ Session.prototype.saveDogLocation = function(poi_ID, action) {
 		dog_name			: this.dog.name,
 		current_place_ID 	: poi_ID,
 		current_place_action: action,
-		dog_ID 				: this.dog.dog_ID
+		dog_ID 				: this.dog.dog_ID,
+		client_action		: client_function
 	}
 	Ti.API.info ( "  .... [~] saveDogLocation :: " + JSON.stringify(params) );
 	loadJson(params, "http://www.waterbowl.net/mobile/update-dog-location.php", this.saveDogResponse);	
