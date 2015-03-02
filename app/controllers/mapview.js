@@ -524,9 +524,10 @@ function testForAutoCheckout() {
 	if (mySesh.dog.current_place_ID > 0) {  // OLD CHECK
  		// see if current user lat/lon is out of the geofence of our stored checkin place lat/lon  	
 		var dist = getDistance(mySesh.geo.lat, mySesh.geo.lon, mySesh.dog.current_place_lat, mySesh.dog.current_place_lon);
-		//Ti.API.debug( "  .... [x] testForAutoCheckout :: mySesh.dog [" + mySesh.dog.current_place_lat + " / " + mySesh.dog.current_place_lon + "]" );
-		// Ti.API.debug( "....  :: dist - geo_radius [" + dist + " (-) " + mySesh.dog.current_place_geo_radius + "]" );
- 		if( (dist - mySesh.dog.current_place_geo_radius) >= 0 ) {
+		Ti.API.debug( "  .... [x] testForAutoCheckout :: mySesh.dog [" + mySesh.dog.current_place_lat + " / " + mySesh.dog.current_place_lon + "]" );
+		var threshold = (dist - mySesh.dog.current_place_geo_radius);
+ 		Ti.API.debug( "....  :: dist - geo_radius [" + dist + "-" + mySesh.dog.current_place_geo_radius + "="+threshold+"]" );
+ 		if( threshold >= 0 ) {
  	 		// Call update-dog-location.php on the backend, and doClientCheckoutStuff on the front end
   			checkoutFromPlace( mySesh.dog.current_place_ID );
   		} 

@@ -13,8 +13,8 @@ function displayDogProfile(dog) {
 	$.scrollView.add(myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1));
 	//var category_icon = ICON_PATH + dogInfo.icon_basic;
 	var icon_home 	= ICON_PATH + "dog-basic-homecity.png";
-	var icon_hf			= ICON_PATH + "dog-basic-humanfriendliness.png";
-	var icon_df			= ICON_PATH +	"dog-basic-dogfriendliness.png";
+	var icon_hf		= ICON_PATH + "dog-basic-humanfriendliness.png";
+	var icon_df		= ICON_PATH +	"dog-basic-dogfriendliness.png";
 	var icon_bone 	= ICON_PATH + "basic-ratingwb.png";
 	var icon_energy = ICON_PATH + "dog-basic-energy.png";
 	var icon_help 	= ICON_PATH + "dog-basic-helpfulness.png";
@@ -22,9 +22,6 @@ function displayDogProfile(dog) {
 	$.scrollView.add( myUiFactory.buildSingleRowInfoBar(icon_home, "Home City:", dog.city) );
 	$.scrollView.add( myUiFactory.buildSeparator() );
 
-	$.scrollView.add( myUiFactory.buildSingleRowInfoBar(icon_help, "Helpfulness:", dog.helpfulness) );
-	$.scrollView.add( myUiFactory.buildSeparator() );
-	
 	$.scrollView.add( myUiFactory.buildSingleRowInfoBar(icon_df, "Dog-Friendliness:", dog.dog_friendliness_ownerans+"/5") );
 	$.scrollView.add( myUiFactory.buildSeparator() );
 	
@@ -32,6 +29,9 @@ function displayDogProfile(dog) {
 	$.scrollView.add( myUiFactory.buildSeparator() );
 	
 	$.scrollView.add( myUiFactory.buildSingleRowInfoBar(icon_energy, "Energy Level:", dog.energy_level_ownerans) );
+	
+	$.scrollView.add( myUiFactory.buildSingleRowInfoBar(icon_help, "Helpfulness:", dog.helpfulness) );
+	$.scrollView.add( myUiFactory.buildSeparator() );
 	
 	//-----------------------------------------------------------------------------------------------------------
 	//			INTRODUCTION

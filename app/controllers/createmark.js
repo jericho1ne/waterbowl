@@ -106,13 +106,13 @@ function disableAddMarkBtn() {
 //	Purpose: 	trigger device camera
 //=================================================================================
 function takeMarkImage() {
-	removeAllChildren($.mapContainer);
-	progress_bar.show();
 	// markCameraBtn.hide();
-	
 	Titanium.Media.showCamera({
 		///////   	SUCCESS
 		success : function(event) {
+			removeAllChildren($.mapContainer);
+			progress_bar.show();
+			
 			var imageBlob = event.media;
 			var bannerImage = imageBlob.imageAsResized(750, 750);
 			var img = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
@@ -192,7 +192,6 @@ Ti.API.debug(" >>> args in CreateMark: "+JSON.stringify(args));
 var markMapView 	= drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.012 ); 
 $.mapContainer.add( markMapView );
 
-
 $.createmark.addEventListener('focus',function(e) {
 	var markCameraBtn = Ti.UI.createButton( {
 			id			: "markCameraBtn",	
@@ -201,7 +200,7 @@ $.createmark.addEventListener('focus',function(e) {
 			opacity : 1,
 			height	: 70, 
 			width	: 70,
-			top  	: 200,
+			top  	: 234,
 			right	: 20,
 	 		zIndex  : 101
 	} );
@@ -213,11 +212,12 @@ $.createmark.addEventListener('focus',function(e) {
 var progress_bar = myUiFactory.buildProgressBar("Uploading Profile Image");
 $.mapContainer.add(progress_bar);
 
+var parentContainer  = myUiFactory.buildViewContainer("markParent", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);
 var form_width = myUiFactory._form_width;
 
-var title_label = myUiFactory.buildLabel( "Title", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );	
+var title_label = myUiFactory.buildLabel( "Title", form_width, myUiFactory._height_row, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );	
 var title_input = myUiFactory.buildTextField("mark_title", form_width, "Add a memorable title", false);
-var textarea_label = myUiFactory.buildLabel( "Message:", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );
+var textarea_label = myUiFactory.buildLabel( "Message:", form_width, myUiFactory._height_row, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
 // used later to ensure the user has actually filled in the Mark textarea
 var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
 
@@ -239,10 +239,10 @@ var textArea = Ti.UI.createTextArea({
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "mark", "large" );
 
 // "IS THIS A POI" SWITCH
-var yesNoContainer  = myUiFactory.buildViewContainer("yesnoContainer", "horizontal", myUiFactory._device.screenwidth, 40, 0);
-var yes_label		= myUiFactory.buildLabel( "Yes", 30, myUiFactory._height_header, myUiFactory._text_small, "#888888","left" );
-var no_label 	 	= myUiFactory.buildLabel( "No", 20, myUiFactory._height_header, myUiFactory._text_small, "#000000","left" );
-var switch_label 	= myUiFactory.buildLabel( "Is this a dog friendly place or business?", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );
+var yesNoContainer  = myUiFactory.buildViewContainer("yesnoContainer", "horizontal", myUiFactory._device.screenwidth, 40, 0, myUiFactory._color_ltblue);
+var yes_label		= myUiFactory.buildLabel( "Yes", 30, myUiFactory._height_header, myUiFactory._text_small, "#888888", myUiFactory._color_ltblue, "left" );
+var no_label 	 	= myUiFactory.buildLabel( "No", 20, myUiFactory._height_header, myUiFactory._text_small, "#000000", myUiFactory._color_ltblue, "left" );
+var switch_label 	= myUiFactory.buildLabel( "Is this a dog friendly place or business?", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
 var poiSwitch 		= Ti.UI.createSwitch({
   value: false, left: myUiFactory._pad_left,
   width: 60, height:20
@@ -261,24 +261,26 @@ poiSwitch.addEventListener('change',function(e){
 
 // ADD EVERYTHING TO WINDOW
 // original mark section header + first mark
-$.markForm.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
+parentContainer.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
 // title of mark
-$.markForm.add(title_label);
-$.markForm.add(title_input);
+parentContainer.add( myUiFactory.buildSpacer("horz", myUiFactory._pad_top, "clear") );
+parentContainer.add(title_label);
+parentContainer.add(title_input);
 
 // mark text
-$.markForm.add(textarea_label);
-$.markForm.add(textArea);
+parentContainer.add(textarea_label);
+parentContainer.add(textArea);
 
 // poi?
-$.markForm.add(switch_label);
+parentContainer.add(switch_label);
 yesNoContainer.add(no_label);
 yesNoContainer.add(poiSwitch);
 yesNoContainer.add(yes_label);
-$.markForm.add(yesNoContainer);
+parentContainer.add(yesNoContainer);
 
 // add Mark button
-$.markForm.add(addMarkBtn);
+parentContainer.add(addMarkBtn);
+$.markForm.add(parentContainer);
 
 addMarkBtn.addEventListener	('click', function(e) { saveRemark(title_input.value, textArea.value, textarea_hint); });
 textArea.addEventListener	('focus', function(e) { clearTextAreaContents(textArea); });

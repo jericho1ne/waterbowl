@@ -14,7 +14,7 @@ $.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "accou
 
 var dog_name = (mySesh.dog.name==null ? "your dog" : mySesh.dog.name);
 var form_width 		= myUiFactory._form_width;
-var title_label	 	= myUiFactory.buildLabel( dog_name + "'s Furry Mug", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95","left" );	
+var title_label	 	= myUiFactory.buildLabel( dog_name + "'s Furry Mug", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95", myUiFactory._color_ltblue,"left" );	
 
 var dog_intro 		= "Last step! All we now is a clear photo of your dog so they are easily identifiable by other Waterbowl members.";
 var warning 			= "Note:  No humans or other dogs allowed.";
@@ -26,9 +26,9 @@ $.scrollView.add( myUiFactory.buildSpacer("horz", 20) );
 $.scrollView.add( title_label );
 $.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
 
-$.scrollView.add( myUiFactory.buildLabel( dog_intro, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000","left" ) );
+$.scrollView.add( myUiFactory.buildLabel( dog_intro, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue,"left" ) );
 $.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
-$.scrollView.add( myUiFactory.buildLabel( warning, form_width, Ti.UI.SIZE, myUiFactory._text_large, "#ec3c95","left" ) );
+$.scrollView.add( myUiFactory.buildLabel( warning, form_width, Ti.UI.SIZE, myUiFactory._text_large, "#ec3c95", myUiFactory._color_ltblue,"left" ) );
 
 $.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
 

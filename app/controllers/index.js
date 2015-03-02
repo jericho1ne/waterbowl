@@ -3,8 +3,9 @@
 //	Purpose: 	determine whether user is already logged in
 //================================================================================
 function goToLogin() {
-	var emailText 	= email.value.trim();
-	var pwdText 	= password.value.trim();
+	var emailText 	= email.value;
+	var pwdText 	= password.value;
+
 
 	Ti.API.log("  .... [+] goToLogin :: ["+ emailText +'/'+ pwdText +']');				
 	if(Titanium.Network.networkType==Titanium.Network.NETWORK_NONE) {
@@ -74,9 +75,8 @@ var topView = myUiFactory.buildViewContainer ( "topView", "", 				"100%", topVie
 var midView = myUiFactory.buildViewContainer ( "midView", "vertical", "100%", midView_height, 0 );
 var botView = myUiFactory.buildViewContainer ( "botView", "", 				"100%", Ti.UI.FILL, 0 );
 
-// 																		title, 			 w, 		 h,  font_style, 					    color 			text_align
-var titlebar = myUiFactory.buildLabel("waterbowl", Ti.UI.FILL, 100, myUiFactory._text_banner, "#ffffff", "center");
-//                                         id,       width,  hint,       is_pwd
+var titlebar = myUiFactory.buildLabel("waterbowl", Ti.UI.FILL, 100, myUiFactory._text_banner, "#ffffff", "", "center");
+//                                    	   id,       width,      hint,       is_pwd
 var email    = myUiFactory.buildTextField("email",   form_width,  "email",    "");
 var password = myUiFactory.buildTextField("password", form_width, "password", true);
 
@@ -87,11 +87,11 @@ var regBtn = myUiFactory.buildButton("regBtn", "register", "xl");
 regBtn.addEventListener('click', function(){ goToRegister(); });
 
 var footer = Ti.UI.createImageView({ 
-	//height				: icon_size,
-	//width				  : icon_size,
-	image						: 'images/WB-FooterBar.png',
+	//height		: icon_size,
+	//width			: icon_size,
+	image			: 'images/WB-FooterBar.png',
 	backgroundColor : '',  //myUiFactory._color_dkblue,
-	bottom					: 0
+	bottom			: 0
 });
 
 // add UI elements to containers		
@@ -99,7 +99,7 @@ var footer = Ti.UI.createImageView({
 topView.add(titlebar);
 midView.add(email);
 midView.add(password);
-midView.add( myUiFactory.buildSpacer("horz", 4) );
+midView.add( myUiFactory.buildSpacer("horz", 4, "clear") );
 midView.add(loginBtn);
 midView.add(regBtn);
 botView.add(footer);
@@ -109,6 +109,14 @@ $.content.add(topView);
 $.content.add(midView);
 $.content.add(botView);	
 
+if( Ti.App.Properties.getString('email')!=="" ) {
+	email.value = Ti.App.Properties.getString('email');
+	if( Ti.App.Properties.getString('password')!=="" ) {
+		password.value = Ti.App.Properties.getString('password');
+	}
+}
+
+/*
 $.index.addEventListener('focus',function(e) {		// only gets after original page load
 	// if a different email was provide in the setup process, use that
 	if( mySesh.user.email!="" && (Ti.App.Properties.getString('email')!=mySesh.user.email) ) {
@@ -118,11 +126,11 @@ $.index.addEventListener('focus',function(e) {		// only gets after original page
 	}
 	else {
 		if( Ti.App.Properties.getString('email')!="" && Ti.App.Properties.getString('password')!="" ) {
-			password.value	= Ti.App.Properties.getString('email');
+			email.value		= Ti.App.Properties.getString('email');
 			password.value	= Ti.App.Properties.getString('password');
 			// AUTOLOGIN IF CREDENTIALS ARE SAVED
 			//	wbLogin(saved_user, saved_pwd);
 		}
 	}
-});
-
+}); 
+*/

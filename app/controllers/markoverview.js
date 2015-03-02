@@ -75,7 +75,7 @@ function displayRemarks(data) {
 		// (5) parent mark is the only one, notify user
 		if (data.length == 1) {
 			var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-			var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", myUiFactory._icon_small + (2* myUiFactory._pad_top), myUiFactory._text_medium, "#000000", "");	
+			var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", myUiFactory._icon_small + (2* myUiFactory._pad_top), myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "");	
 			no_marks_container.add(no_marks_label);
 			$.remarks.add(no_marks_container);
 		}

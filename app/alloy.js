@@ -7,6 +7,11 @@
 //	(c) 2015 waterbowl
 //
 
+//=======================================================================
+//	Name: 		arraysEqual(arr1, arr2)
+//	Desc: 		compare contents of two place array by their poi ID
+//  Return: 	true / false
+//=======================================================================
 function arraysEqual(arr1, arr2) {
     if(arr1.length !== arr2.length)
         return false;
@@ -119,16 +124,19 @@ function wbLogin(email, password) {
 				}
 				// USER HAS VALID ACCOUNT + VALID DOG PROFILE  //////////////////////////////////////////////////////
 				else {
-					mySesh.dog.dog_ID  	 = response.dog.dog_ID;
-					mySesh.dog.sex		 = response.dog.sex;
-					mySesh.dog.breed	 = response.dog.breed;
-					mySesh.dog.age		 = response.dog.age;
-					mySesh.dog.birthdate =	response.dog.birthdate;
-					mySesh.dog.weight	 = response.dog.weight;
-					mySesh.dog.marks_made = parseInt(response.dog.marks_made);
-					mySesh.dog.name	 	= response.dog.dog_name;
-
-
+					mySesh.dog.dog_ID  	 	= response.dog.dog_ID;
+					mySesh.dog.sex		 	= response.dog.sex;
+					mySesh.dog.breed	 	= response.dog.breed;
+					mySesh.dog.age		 	= response.dog.age;
+					mySesh.dog.birthdate 	=	response.dog.birthdate;
+					mySesh.dog.weight	 	= response.dog.weight;
+					mySesh.dog.marks_made 	= parseInt(response.dog.marks_made);
+					mySesh.dog.name	 		= response.dog.dog_name;
+					mySesh.dog.current_place_ID 		= response.dog.current_place_ID;
+					mySesh.dog.current_place_geo_radius = response.dog.geofence_radius;
+					mySesh.dog.current_place_name 		= response.dog.current_place_name;
+					mySesh.dog.current_place_lat		= response.dog.current_place_lat;
+					mySesh.dog.current_place_lon		= response.dog.current_place_lon;
 					// GRAB ALL DOG RELATE INFO
 					/* mySesh.dog.current_place_ID        = response.dog.current_place_ID;
 					if (response.place!=null) {

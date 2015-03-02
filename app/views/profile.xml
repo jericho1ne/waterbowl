@@ -1,7 +1,7 @@
 <Alloy>
 	<Window id="profile" class="absolute">
-		<View id="content" class="window_container bg_white">
-			<ScrollView id="scrollView" class="fill_width" />
+		<View id="content" class="window_container">
+			<ScrollView id="scrollView" class="fill_width bg_lt_gray"/>
 		</View>
 	</Window>
 </Alloy>

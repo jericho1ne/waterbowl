@@ -1,7 +1,7 @@
 <Alloy>
 	<Window id="register4" class="abosolute">
 		<View id="content" class="window_container">
-			<ScrollView id="scrollView" class="fill_width fill_height" />
+			<ScrollView id="scrollView" class="fill_width fill_height bg_lt_blue" />
 		</View>
 	</Window>
 </Alloy>

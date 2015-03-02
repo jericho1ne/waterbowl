@@ -88,9 +88,9 @@ function saveUserInfoLocally(data) {
 $.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "account creation") );
 
 var form_width = myUiFactory._form_width;
-var title_label = myUiFactory.buildLabel( "Welcome to Waterbowl", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95","left" );	
+var title_label = myUiFactory.buildLabel( "Welcome to Waterbowl", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95", myUiFactory._color_ltblue, "left" );	
 
-var get_started = myUiFactory.buildLabel( "Let's get you set up...", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000","left" );
+var get_started = myUiFactory.buildLabel( "Let's get you set up...", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
 var user_email	= myUiFactory.buildTextField("user_email",   	 form_width,  "email",    "");
 var user_pwd_1 	= myUiFactory.buildTextField("user_pwd_1", form_width, "password", true);
 var user_pwd_2 	= myUiFactory.buildTextField("user_pwd_2", form_width, "re-enter password", true);

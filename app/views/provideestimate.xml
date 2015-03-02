@@ -2,7 +2,7 @@
 	<Window id="provideestimate" class="absolute">	
 		<View id="content" class="window_container">
 		
-			<ScrollView id="scrollView" top="0" width="100%" class="fill_height" />
+			<ScrollView id="scrollView" top="0" width="100%" class="fill_height bg_lt_blue" />
 			
 		</View>
  	</Window>

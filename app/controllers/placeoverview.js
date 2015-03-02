@@ -54,8 +54,11 @@ function displayRemarks(data) {
 	
 	var marks_header = myUiFactory.buildSectionHeader("marks", "REMARKS", 1);
 	$.remarks.add(marks_header); 
+
+	var markBtnContainer = myUiFactory.buildViewContainer ( "", "", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue ); 
 	var markBtn = myUiFactory.buildButton( "markBtn", "add remark", "large" );
-	$.remarks.add(markBtn);
+	markBtnContainer.add(markBtn);
+	$.remarks.add(markBtnContainer);
 	
 	var necessary_args = {   
 		_place_ID    		: args._place_ID,
@@ -84,8 +87,8 @@ function displayRemarks(data) {
     }
   }
   else {
-	  var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-		var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", myUiFactory._height_row+(2*myUiFactory._pad_top), myUiFactory._text_medium, "#000000", "" );	
+	  var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);	
+		var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", myUiFactory._height_row+(2*myUiFactory._pad_top), myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "" );	
 		no_marks_container.add(no_marks_label);
 		$.remarks.add(no_marks_container);
 	}
@@ -132,14 +135,14 @@ function displayRecentEstimates(data, place_ID) {
 		  // (photo_icon) 
 		  else {
 		  	var photo_url = PROFILE_PATH + 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
-		  	var latest_estimate = myUiFactory.buildTableRowHeader(data.payload[i].dog_ID, photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
+		  	var latest_estimate = myUiFactory.buildEstimateHeader(data.payload[i].dog_ID, photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
 		  }
 		  $.estimates.add(latest_estimate);
 	  }
 	}
 	else {
-	  var nothing_here_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-		var nothing_here = myUiFactory.buildLabel( data.response, "100%", myUiFactory._icon_small+(2*myUiFactory._pad_top), myUiFactory._text_medium, "#000000", "" );	
+	  var nothing_here_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);	 
+		var nothing_here = myUiFactory.buildLabel( data.response, "100%", myUiFactory._icon_small+(2*myUiFactory._pad_top), myUiFactory._text_medium, "#000000",  myUiFactory._color_ltblue, "" );	
 		nothing_here_container.add(nothing_here);
 		$.estimates.add(nothing_here_container);
 	}
@@ -342,7 +345,7 @@ function displayOutdoorFeatures(poiDetail) {
 	};
 	
 	//Ti.API.debug("....[~] displayOutdoorFeatures :: " + JSON.stringify(features) );
-	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
+	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);
 	var icon_url = ""; 
 	
 	var string_1 = "";
@@ -399,7 +402,7 @@ function displayHumanFeatures(poiDetail) {
 		"Waterbowl" 				  	: poiDetail.waterbowl
 	};
 	// Ti.API.debug("  .... [~] displayHumanFeatures :: " + JSON.stringify(features) );
-	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0);
+	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);
 		
 	if (poiDetail.dogs_inside !="" && poiDetail.dogs_inside!="NULL") {
 		var icon_url = ICON_PATH + "poi-features-dogsallowedinside.png";
@@ -546,7 +549,7 @@ function drawEverything( poiFeatures ) {
 	
 	// the thumbs of dogs have to display inline-block (and wrap) 
 	var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
-	var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", "100%", whos_here_height, 0);	
+	var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", "100%", whos_here_height, 0, myUiFactory._color_ltblue);	
 	$.activity.add(whos_here_list);
 	
 	//	get feed of checkins, including your current checkin status; 

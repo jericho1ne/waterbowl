@@ -7,9 +7,9 @@ function displayDogHeader(dog) {
 	$.scrollView.add( myUiFactory.buildPageHeader(dog.ID, "profile", dog.name, dog_info, breeds_comp, "" ) );
 
 	$.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
-	$.scrollView.add( myUiFactory.buildLabel( "Account created!", form_width, Ti.UI.SIZE, myUiFactory._text_large, "#ec3c95","center" ) );	
+	$.scrollView.add( myUiFactory.buildLabel( "Account created!", form_width, Ti.UI.SIZE, myUiFactory._text_large, "#ec3c95", myUiFactory._color_ltblue,"center" ) );	
 		$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
-	$.scrollView.add( myUiFactory.buildLabel( "You may now log in", form_width, Ti.UI.SIZE, myUiFactory._text_medium_bold, "#000000","center" ) );
+	$.scrollView.add( myUiFactory.buildLabel( "You may now log in", form_width, Ti.UI.SIZE, myUiFactory._text_medium_bold, "#000000", myUiFactory._color_ltblue,"center" ) );
 	$.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
 	
 	var proceedBtn = myUiFactory.buildButton( "proceedBtn", "proceed", "xxl" );

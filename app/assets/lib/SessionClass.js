@@ -176,8 +176,9 @@ Session.prototype.clearSavedDogInfo = function (){
     	this.dog[key] = null;
     }
     this.dog.buddies = [];
-	this.dog.weight_buddy = 0.01;
-	this.dog.sniff_radius = 0.20;
+	this.dog.weight_buddy 	= 0.01;
+	this.dog.sniff_radius 	= 0.20;
+	this.dog.location_timer = 60000;
     Ti.API.debug("  >>>> dog info :: "+JSON.stringify(this.dog) );
 }
 

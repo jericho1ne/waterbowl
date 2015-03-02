@@ -27,7 +27,7 @@ var form_width  = myUiFactory._form_width;
 
 $.content.add( myUiFactory.buildMasterSectionHeader("picker_header", header_title) );
 $.content.add( myUiFactory.buildSpacer("horz", 20) );
-$.content.add( myUiFactory.buildLabel( intro_text, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000","left" ) );	
+$.content.add( myUiFactory.buildLabel( intro_text, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000",  myUiFactory._color_ltblue, "left" ) );	
 
 ////////		BUILD THE APPROPRIATE PICKER BASED ON INPUT TYPE		/////////////////////////////////
 if (args._type=="birthdate" ) {

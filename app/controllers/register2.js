@@ -34,13 +34,13 @@ var form_width = myUiFactory._form_width;
 // 		HEADER
 $.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "account setup 2/3") );
 
-var title_label = myUiFactory.buildLabel( "All about your dog", form_width, myUiFactory._height_header, myUiFactory._text_large, myUiFactory._color_dkpink, "left" );	
+var title_label = myUiFactory.buildLabel( "All about your dog", form_width, myUiFactory._height_header, myUiFactory._text_large, myUiFactory._color_dkpink,  myUiFactory._color_ltblue, "left" );	
 
 //		PAGE INTRO 
 var dog_intro = "Waterbowl is all about your four-legged friend.  We'll need some basic information about him/her to create your dog's profile.";
 
 //   DOG NAME
-var dog_intro = myUiFactory.buildLabel( dog_intro, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000","left" );
+var dog_intro = myUiFactory.buildLabel( dog_intro, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
 var dog_name  = myUiFactory.buildTextField("dog_name",  form_width,  "your dog's name", false)
 
 //   DOG NAME

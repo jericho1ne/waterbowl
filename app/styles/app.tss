@@ -11,24 +11,19 @@
 
 ".bg_dk_blue" : { backgroundColor: "#58c6d5"}     
 ".bg_lt_blue" : { backgroundColor: "#DCF1FC"}
-".bg_lt_gray" : { backgroundColor: "#bab9b9"}
+".bg_lt_gray" : { backgroundColor: "#737375"}  	// technically 727272
 ".bg_dk_gray" : { backgroundColor: "#525252"}
 ".bg_dk_pink" : { backgroundColor: "#ec3c95"}
 ".bg_lt_pink" : { backgroundColor: "#f587e7"}		// TODO:  need current light pink from Herb
 
-".bg_white" : { backgroundColor: "#ffffff" }	
+".bg_white" 	: { backgroundColor: "#ffffff" }	
 ".white" 		: { color: "#ffffff" }	
 
-".poi_park" 	: { backgroundColor: "#986d4f" }
-".poi_retail" : { backgroundColor: "#34b44a" }
-".poi_vet" 		: { backgroundColor: "#ee3d3b" }
-".poi_board" 	: { backgroundColor: "#9a52a0" }
-".poi_care" 	: { backgroundColor: "#9a52a0" }
-".poi_food" 	: { backgroundColor: "#f5851f" }
 
-/*				PREDEFIND   TITANIUM  UI  ELEMENTS  									*/
+
+/*		PREDEFIND   TITANIUM  UI  ELEMENTS  									*/
 "Window":{
-	exitOnClose: "true", fullscreen: "true", horizontalWrap: "true"
+	exitOnClose: "true", fullscreen: "true", horizontalWrap: "true", backgroundColor: "#727272"
 }
 
 "NavigationWindow":{ exitOnClose: "true", fullscreen: "false" }
@@ -43,7 +38,9 @@
 "View" : { layout: 'vertical', height: Ti.UI.SIZE }
 
 "ScrollView": {
-  layout: 'vertical', contentHeight: 'auto',  backgroundColor: "#DCF1FC", 
+  	layout: 'vertical', 
+  	contentHeight: 'auto',  
+	
 	showVerticalScrollIndicator: "true",
 	showHorizontalScrollIndicator: "true"
 }
@@ -80,7 +77,7 @@
 ****************************************************************************************************/
 
 /* SINGLE USE -- height should equal top value of .container!  */
-".window_container" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", backgroundColor: '#737375', width: "100%", exitOnClose: true }  // originally, top: 32
+".window_container" : { top: 0, height: Ti.UI.FILL, zIndex: 1, layout: "vertical", backgroundColor: '#727272', width: "100%", exitOnClose: true }  // originally, top: 32
 
 /********************************************************************************************************
  						ALL OUTER DIVS -- div in each XML view is a .container * Forewarned. *
