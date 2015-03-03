@@ -57,29 +57,29 @@ var gender_tabs = Ti.UI.iOS.createTabbedBar({
 //   FWD ARROW BUTTONS
 var fwd_button_1 =  Titanium.UI.createButton({
 	backgroundImage	: ICON_PATH + 'caret.png',
-	width						: myUiFactory._icon_small,
-	height					: myUiFactory._icon_small
+	width			: myUiFactory._icon_small,
+	height			: myUiFactory._icon_small
 });
 var fwd_button_2 =  Titanium.UI.createButton({
 	backgroundImage	: ICON_PATH + 'caret.png',
-	width						: myUiFactory._icon_small,
-	height					: myUiFactory._icon_small
+	width			: myUiFactory._icon_small,
+	height			: myUiFactory._icon_small
 });
 var fwd_button_3 =  Titanium.UI.createButton({
 	backgroundImage	: ICON_PATH + 'caret.png',
-	width						: myUiFactory._icon_small,
-	height					: myUiFactory._icon_small
+	width			: myUiFactory._icon_small,
+	height			: myUiFactory._icon_small
 });
 var fwd_button_4 =  Titanium.UI.createButton({
 	backgroundImage	: ICON_PATH + 'caret.png',
-	width						: myUiFactory._icon_small,
-	height					: myUiFactory._icon_small
+	width			: myUiFactory._icon_small,
+	height			: myUiFactory._icon_small
 });
 
 var dog_breed1 = myUiFactory.buildTextField("dog_breed1",  form_width, "select your dog's breed", false);
 var dog_breed2 = myUiFactory.buildTextField("dog_breed2",  form_width, "and a second one if you wish", false);
 var dog_weight = myUiFactory.buildTextField("dog_weight",  form_width, "weight (lbs)", 		 false);
-var dog_bdate	 = myUiFactory.buildTextField("dog_bdate",   form_width, "birthdate", false);
+var dog_bdate  = myUiFactory.buildTextField("dog_bdate", form_width, "birthdate", false);
 
 if (mySesh.dog.breed1=="" || mySesh.dog.breed1==null) {
 	dog_breed2.opacity = 0;
@@ -149,9 +149,9 @@ $.scrollView.add( dog_intro );
 $.scrollView.add( myUiFactory.buildSpacer("horz", 20) );
 
 $.scrollView.add( dog_name );
-$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
+$.scrollView.add( myUiFactory.buildSpacer("horz", 8) );
 $.scrollView.add( gender_tabs );
-$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
+$.scrollView.add( myUiFactory.buildSpacer("horz", 4) );
 
 $.scrollView.add( dog_breed1 );
 $.scrollView.add( dog_breed2 );
@@ -160,6 +160,7 @@ $.scrollView.add( dog_bdate );
 
 $.scrollView.add( myUiFactory.buildSpacer("horz", 20) );
 $.scrollView.add(nextBtn);
+$.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
 
 
 ///////////////////// 		EVENT LISTENERS				///////////////////////////////////////////

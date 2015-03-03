@@ -45,13 +45,13 @@ addToAppWindowStack( $.index, "index" );
 $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
 
 /* 	LOGIN HACK - skip past login screen  			*/
-//createWindowController("testview","","slide_left");
+//createWindowController("register","","slide_left");
 
 // DIV HEIGHTS
 var footer_height = 80;
 var content_height = mySesh.device.screenheight - footer_height;
-var topView_height = .35 * content_height;
-var midView_height = .65 * content_height;
+var topView_height = .39 * content_height;
+var midView_height = .61 * content_height;
 var form_width = myUiFactory._form_width;
 
 // Check if the device is running iOS 8 or later, before registering for local notifications
@@ -71,14 +71,17 @@ var form_width = myUiFactory._form_width;
 	} */
 
 // Build 3 vertically stacked View Containers
-var topView = myUiFactory.buildViewContainer ( "topView", "", 				"100%", topView_height, 0 );
+var topView = myUiFactory.buildViewContainer ( "topView", "", "100%", topView_height, 0 );
 var midView = myUiFactory.buildViewContainer ( "midView", "vertical", "100%", midView_height, 0 );
-var botView = myUiFactory.buildViewContainer ( "botView", "", 				"100%", Ti.UI.FILL, 0 );
+var botView = myUiFactory.buildViewContainer ( "botView", "", "100%", Ti.UI.FILL, 0 );
 
-var titlebar = myUiFactory.buildLabel("waterbowl", Ti.UI.FILL, 100, myUiFactory._text_banner, "#ffffff", "", "center");
+var titlebar = myUiFactory.buildLabel("waterbowl", Ti.UI.FILL, 80, myUiFactory._text_banner, "#ffffff", "", "center");
 //                                    	   id,       width,      hint,       is_pwd
-var email    = myUiFactory.buildTextField("email",   form_width,  "email",    "");
+var email    = myUiFactory.buildTextField("email",   form_width,  "email address",    "");
 var password = myUiFactory.buildTextField("password", form_width, "password", true);
+
+email.opacity = 0.8;
+password.opacity = 0.8;
 
 var loginBtn = myUiFactory.buildButton("loginBtn", "login", "xl");
 loginBtn.addEventListener('click', function(){ goToLogin(); });

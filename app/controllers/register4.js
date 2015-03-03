@@ -4,12 +4,14 @@ function displayDogHeader(dog) {
 	var form_width 	= mySesh.device.screenwidth - myUiFactory._pad_right - myUiFactory._pad_left;
 
 
+	var welcome_msg = "Thanks for joining the Waterbowl community!  Log in and connect with other dog owners!";
+
 	$.scrollView.add( myUiFactory.buildPageHeader(dog.ID, "profile", dog.name, dog_info, breeds_comp, "" ) );
 
 	$.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
-	$.scrollView.add( myUiFactory.buildLabel( "Account created!", form_width, Ti.UI.SIZE, myUiFactory._text_large, "#ec3c95", myUiFactory._color_ltblue,"center" ) );	
-		$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
-	$.scrollView.add( myUiFactory.buildLabel( "You may now log in", form_width, Ti.UI.SIZE, myUiFactory._text_medium_bold, "#000000", myUiFactory._color_ltblue,"center" ) );
+	$.scrollView.add( myUiFactory.buildLabel( "Account created!", myUiFactory.form_width, Ti.UI.SIZE, myUiFactory._text_large, "#ec3c95", myUiFactory._color_ltblue, "left" ) );	
+	$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
+	$.scrollView.add( myUiFactory.buildLabel( welcome_msg, myUiFactory.form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" ) );
 	$.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
 	
 	var proceedBtn = myUiFactory.buildButton( "proceedBtn", "proceed", "xxl" );

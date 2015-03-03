@@ -14,7 +14,7 @@ function displayDogProfile(dog) {
 	//var category_icon = ICON_PATH + dogInfo.icon_basic;
 	var icon_home 	= ICON_PATH + "dog-basic-homecity.png";
 	var icon_hf		= ICON_PATH + "dog-basic-humanfriendliness.png";
-	var icon_df		= ICON_PATH +	"dog-basic-dogfriendliness.png";
+	var icon_df		= ICON_PATH + "dog-basic-dogfriendliness.png";
 	var icon_bone 	= ICON_PATH + "basic-ratingwb.png";
 	var icon_energy = ICON_PATH + "dog-basic-energy.png";
 	var icon_help 	= ICON_PATH + "dog-basic-helpfulness.png";
@@ -29,9 +29,10 @@ function displayDogProfile(dog) {
 	$.scrollView.add( myUiFactory.buildSeparator() );
 	
 	$.scrollView.add( myUiFactory.buildSingleRowInfoBar(icon_energy, "Energy Level:", dog.energy_level_ownerans) );
-	
-	$.scrollView.add( myUiFactory.buildSingleRowInfoBar(icon_help, "Helpfulness:", dog.helpfulness) );
 	$.scrollView.add( myUiFactory.buildSeparator() );
+
+	$.scrollView.add( myUiFactory.buildSingleRowInfoBar(icon_help, "Helpfulness:", dog.helpfulness) );
+	//$.scrollView.add( myUiFactory.buildSeparator() );
 	
 	//-----------------------------------------------------------------------------------------------------------
 	//			INTRODUCTION
@@ -40,7 +41,7 @@ function displayDogProfile(dog) {
 		$.scrollView.add(myUiFactory.buildSectionHeader("intro_header", "INTRODUCTION", 1));
 		var icon_intro = ICON_PATH + "dog-intro.png";
 		$.scrollView.add( myUiFactory.buildMultiRowInfoBar(icon_intro, dog.intro) );
-		$.scrollView.add( myUiFactory.buildSeparator() );
+		//$.scrollView.add( myUiFactory.buildSeparator() );
 	}
 	//-----------------------------------------------------------------------------------------------------------
 	//			FAVORITES
@@ -74,13 +75,13 @@ function showInterests(dog, parentObject) {
 	var length = interests.length;
   for (var k in interests){
     if(interests[k]!="" && interests[k]!="NULL" && interests[k]!=0) {
-    	icon_url = ICON_PATH + "poi-features-waterbowl.png";
+    	icon_url = ICON_PATH + "poi-feature-waterbowl.png";
     	
     	if (k == "Buddies (Playdates)")	icon_url = ICON_PATH + "dog-interest-buddy.png";
-    	else if(k == "Groomer")					icon_url = ICON_PATH + "dog-interest-groomer.png";
-    	else if(k == "Walking Group")		icon_url = ICON_PATH + "dog-interest-groupwalk.png";
-    	else if(k == "Sitter")					icon_url = ICON_PATH + "dog-interest-sitter.png";
-    	else if(k == "Veterinarian")		icon_url = ICON_PATH + "dog-interest-vet.png";
+    	else if(k == "Groomer")			icon_url = ICON_PATH + "dog-interest-groomer.png";
+    	else if(k == "Walking Group")	icon_url = ICON_PATH + "dog-interest-groupwalk.png";
+    	else if(k == "Sitter")			icon_url = ICON_PATH + "dog-interest-sitter.png";
+    	else if(k == "Veterinarian")	icon_url = ICON_PATH + "dog-interest-vet.png";
     	
  			interests_list.add(  myUiFactory.buildSingleRowInfoBar(icon_url, k, "") );
 			interests_list.add( myUiFactory.buildSeparator() );
@@ -100,13 +101,13 @@ function showInterests(dog, parentObject) {
 function showFavorites(dog, parentObject) {
 	var favorites = [ 
 		dog.favorite_general_1,
-    dog.favorite_general_2,
-    dog.favorite_general_3,
-    dog.favorite_general_4,
-    dog.favorite_general_5,
-    dog.favorite_general_6, 
-    dog.favorite_general_7,
-    dog.favorite_general_8,
+	    dog.favorite_general_2,
+	    dog.favorite_general_3,
+	    dog.favorite_general_4,
+	    dog.favorite_general_5,
+	    dog.favorite_general_6, 
+	    dog.favorite_general_7,
+	    dog.favorite_general_8,
 		dog.favorite_general_9,
 		dog.favorite_general_10
 	];

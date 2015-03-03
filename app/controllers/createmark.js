@@ -215,9 +215,9 @@ $.mapContainer.add(progress_bar);
 var parentContainer  = myUiFactory.buildViewContainer("markParent", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);
 var form_width = myUiFactory._form_width;
 
-var title_label = myUiFactory.buildLabel( "Title", form_width, myUiFactory._height_row, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );	
+var title_label = myUiFactory.buildLabel( "Title:", form_width, 20, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );	
 var title_input = myUiFactory.buildTextField("mark_title", form_width, "Add a memorable title", false);
-var textarea_label = myUiFactory.buildLabel( "Message:", form_width, myUiFactory._height_row, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
+var textarea_label = myUiFactory.buildLabel( "Message:", form_width, 40, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
 // used later to ensure the user has actually filled in the Mark textarea
 var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
 
@@ -237,12 +237,15 @@ var textArea = Ti.UI.createTextArea({
 });
 
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "mark", "large" );
-
+var createmark_reward_text = "For each new dog-friendly location found, "+ mySesh.dog.name +" will be awarded +10 Helpfulness for being the first to mark it!"
 // "IS THIS A POI" SWITCH
+var createmark_ispoi_text   = "Is this mark for a dog-friendly place/business?  Notify us so we can officially mark it as a Waterbowl location!";
 var yesNoContainer  = myUiFactory.buildViewContainer("yesnoContainer", "horizontal", myUiFactory._device.screenwidth, 40, 0, myUiFactory._color_ltblue);
 var yes_label		= myUiFactory.buildLabel( "Yes", 30, myUiFactory._height_header, myUiFactory._text_small, "#888888", myUiFactory._color_ltblue, "left" );
 var no_label 	 	= myUiFactory.buildLabel( "No", 20, myUiFactory._height_header, myUiFactory._text_small, "#000000", myUiFactory._color_ltblue, "left" );
-var switch_label 	= myUiFactory.buildLabel( "Is this a dog friendly place or business?", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
+var switch_label 	= myUiFactory.buildLabel( createmark_ispoi_text, form_width, 68, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
+var reward_label	= myUiFactory.buildLabel( createmark_reward_text, form_width, 60, myUiFactory._text_small, "#000000", myUiFactory._color_ltpink, "left" );
+
 var poiSwitch 		= Ti.UI.createSwitch({
   value: false, left: myUiFactory._pad_left,
   width: 60, height:20
@@ -280,6 +283,9 @@ parentContainer.add(yesNoContainer);
 
 // add Mark button
 parentContainer.add(addMarkBtn);
+parentContainer.add( myUiFactory.buildSpacer("horz", myUiFactory._pad_top, "clear") );
+parentContainer.add( reward_label );
+parentContainer.add( myUiFactory.buildSpacer("horz", 20, "clear") );
 $.markForm.add(parentContainer);
 
 addMarkBtn.addEventListener	('click', function(e) { saveRemark(title_input.value, textArea.value, textarea_hint); });

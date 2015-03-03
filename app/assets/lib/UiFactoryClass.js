@@ -94,21 +94,20 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 *		Purpose:  create a label given 
 **************************************************************************************************/
 UiFactory.prototype.buildLabel = function(title, width, height, font_style, font_color, bg_color, text_align) {
-	var left_pad = 0;
+	var left_pad  = 2*this._pad_left;
+	var right_pad = 2*this._pad_left;
 	var align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
 	var background_color = "";
 	if (bg_color!=="")
 		background_color = bg_color;
 
-	if (text_align=="left") {
+	if (text_align=="left") 
 		align =  Ti.UI.TEXT_ALIGNMENT_LEFT;
-		left_pad = this._pad_left;
-	}
 	else if (text_align=="right")
 		align =  Ti.UI.TEXT_ALIGNMENT_RIGHT;
-	else
+	else 
 		align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
-		
+	
 	var label = Ti.UI.createLabel( {	
 		// borderColor : ((this._debug == 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
 		//id	: something+"_label", 
@@ -118,6 +117,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		width			: width,
 		height 			: height,
 		left  			: left_pad,
+		right 			: right_pad,
 		color			: font_color,
 		textAlign		: align
 	});
@@ -131,7 +131,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 *******************************************************************************************/
 UiFactory.prototype.buildProgressBar = function(msg_text) {
 	return Titanium.UI.createProgressBar({
-		width 		: myUiFactory._form_width,
+		width 		: this._form_width,
 		height 		: 60,
 		min 		: 0,
 		max 		: 1,
@@ -139,8 +139,8 @@ UiFactory.prototype.buildProgressBar = function(msg_text) {
 		style 		: Titanium.UI.iPhone.ProgressBarStyle.PLAIN,
 		top 		: 10,
 		message 	: msg_text,
-		font 		: myUiFactory._text_medium,
-		color 		: myUiFactory._color_dkpink
+		font 		: this._text_medium,
+		color 		: this._color_dkpink
 	});
 }
 
@@ -168,12 +168,12 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	headerStatBar.backgroundColor = "#222222";
 	headerStatBar.bottom = 0;
 	
-	var title_label	 	= myUiFactory.buildLabel(txt_title, label_width, 24, this._text_large,  "#ffffff", "", "left");
-	var text_label 	 	= myUiFactory.buildLabel(txt_1,	 	label_width, 18, this._text_medium, "#ffffff", "","left");	
-	var subtext1_label 	= myUiFactory.buildLabel(txt_2, 	label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left");
+	var title_label	 	= this.buildLabel(txt_title, label_width, 24, this._text_large,  "#ffffff", "", "left");
+	var text_label 	 	= this.buildLabel(txt_1,	 	label_width, 18, this._text_medium, "#ffffff", "","left");	
+	var subtext1_label 	= this.buildLabel(txt_2, 	label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left");
 	
 	if(txt_3!=null || txt_3!="")	
-		var subtext2_label = myUiFactory.buildLabel(txt_3, 	 label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left");	
+		var subtext2_label = this.buildLabel(txt_3, 	 label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left");	
 			
 	headerInfo.backgroundImage = "images/ui/header-overlay-black.png";
 
@@ -279,8 +279,8 @@ UiFactory.prototype.buildProfileThumb = function(id, image, border, size){
 		width						: size,
 		height					: size,
 		backgroundColor : this._color_ltgray,
-		left						: myUiFactory._pad_left,
-		top							: myUiFactory._pad_top,
+		left						: this._pad_left,
+		top							: this._pad_top,
 		borderColor			: borderColor,
 		borderRadius 		: size/2,
 		borderWidth			: borderWidth
@@ -613,10 +613,10 @@ UiFactory.prototype.getDefaultThumbSize = function() {
 UiFactory.prototype.buildSeparator = function(){
 	var separator = Ti.UI.createView({
  		backgroundColor : this._color_ltgray,
- 		width		: '98%',
-		height	: 1,
-    bottom	: 0,
-    top			: 0
+ 		width			: Ti.UI.FILL,
+		height			: 1,
+   	 	bottom			: 0,
+    	top				: 0
  	});
  	return separator;
 }
@@ -773,57 +773,55 @@ UiFactory.prototype.buildTextField = function(id, width, hint, is_pwd) {
 *		Purpose:  create small test button
 ************************************************************/
 UiFactory.prototype.buildButton = function(id, title, type) {
-  // defaults (small button)
-  var view_height 	= this._icon_medium+10;
-  var btn_height 		= 34; // this._icon_medium;
- 	var btn_width 		= this._button_width;
-  var font   				= this._text_small;
+	// defaults (small button)
+	var view_height 	= this._icon_medium+10;
+	var btn_height 	= 34; // this._icon_medium;
+	var btn_width 	= this._button_width;
+	var font   		= this._text_small;
 
-  if (type == "header") { 
-    font   = this._text_large;
-  }
-  else if (type == "large") {  
-    font   = this._text_large;
-  }
-  else if (type == "medium") {
-    font   = this._text_medium;
-  }
-  else if (type == "xl") {
-    font   = this._text_xl;
-    btn_height += 10;
-  }
-   else if (type == "xxl") {
-    font   = this._text_xl;
-    btn_height += 10;
-    btn_width = this._device.screenwidth - (2*this._pad_left);
-  }
+	if (type == "header") { 
+	    font   = this._text_large;
+	}
+	else if (type == "large") {  
+	    font   = this._text_large;
+	}
+	else if (type == "medium") {
+	    font   = this._text_medium;
+	}
+	else if (type == "xl") {
+	    font   = this._text_xl;
+	    btn_height += 10;
+	}
+	else if (type == "xxl") {
+		font   = this._text_xl;
+	    btn_height += 10;
+	    btn_width = this._form_width;
+	}
 
-	var borderRadius  = btn_height/6;
+	var borderRadius = btn_height/6;
  
-  var view_container = Ti.UI.createView( { 
-		id							: id, 
-		layout					: "",
+  	var view_container = Ti.UI.createView( { 
+		id				: id, 
+		layout			: "",
 		backgroundColor : "none", 
-		// borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth			: ((this._debug == 1) ? 1 : ''), 
-		width						: "100%",
-		height 					: view_height
+		// borderColor  : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth			: ((this._debug == 1) ? 1 : ''), 
+		width			: "100%",
+		height 			: view_height
 	});
-	var button 		= Ti.UI.createButton( {
-		id							: id+"_btn",	 
-		title						: title, 
-		color						: this._color_white, 
+	var button = Ti.UI.createButton( {
+		id				: id+"_btn",	 
+		title			: title, 
+		color			: this._color_white, 
 		backgroundColor : this._color_dkpink, 
-		font						: font, 
+		font			: font, 
 		textAlign       : Ti.UI.TEXT_ALIGNMENT_CENTER,
-  	width						: btn_width, 
-		height					: btn_height, 
+ 	 	width			: btn_width, 
+		height			: btn_height, 
 		opacity         : 1,
-		borderRadius		: borderRadius,
-		// borderColor     : "#ffffff", borderWidth     : 2
+		borderRadius	: borderRadius,
+		// borderColor    : "#ffffff", borderWidth     : 2
 	} );
-	
 	view_container.add(button);
-	
 	return view_container;
 }
 

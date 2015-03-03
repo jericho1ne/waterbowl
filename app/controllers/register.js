@@ -91,7 +91,7 @@ var form_width = myUiFactory._form_width;
 var title_label = myUiFactory.buildLabel( "Welcome to Waterbowl", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95", myUiFactory._color_ltblue, "left" );	
 
 var get_started = myUiFactory.buildLabel( "Let's get you set up...", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
-var user_email	= myUiFactory.buildTextField("user_email",   	 form_width,  "email",    "");
+var user_email	= myUiFactory.buildTextField("user_email",   	 form_width,  "email address",    "");
 var user_pwd_1 	= myUiFactory.buildTextField("user_pwd_1", form_width, "password", true);
 var user_pwd_2 	= myUiFactory.buildTextField("user_pwd_2", form_width, "re-enter password", true);
 var user_city 	= myUiFactory.buildTextField("user_city",  form_width, "home city", false);
@@ -119,12 +119,12 @@ user_state.addEventListener('focus', function(e) {
 	// this.blur();
 	createWindowController( "uipicker", necessary_args, "slide_left" );
 });
-var fwd_state_pick_btn =  Titanium.UI.createButton({
-	backgroundImage	: ICON_PATH + 'caret.png',
-	width						: myUiFactory._icon_small,
-	height					: myUiFactory._icon_small
+var fwd_state_pick_btn = Titanium.UI.createButton({
+	backgroundImage		: ICON_PATH + 'caret.png',
+	width				: myUiFactory._icon_small,
+	height				: myUiFactory._icon_small
 });
-user_state.add( fwd_state_pick_btn );
+user_state.rightButton = fwd_state_pick_btn;
 
 
 $.scrollView.add( myUiFactory.buildSpacer("horz", 30) );

@@ -271,7 +271,7 @@ function doClientCheckoutStuff(data) {
 			mySesh.dog.current_place_lat 		= null;
 			mySesh.dog.current_place_lon	 	= null;
 			mySesh.dog.current_place_geo_radius	= null;
-			createSimpleDialog( "Goodbye!", "Checked you out from " + mySesh.dog.current_place_name);
+			createSimpleDialog( "Goodbye!", "You've left " + mySesh.dog.current_place_name);
 		} 
 		else {
 			createSimpleDialog( "Uh oh", data.message ); 

@@ -306,7 +306,7 @@ function displayBasicInfo() {
 	}
 	var category_icon 		 = ICON_PATH + mySesh.currentPlaceInfo.icon_basic;
 	var rating_overall		 = ICON_PATH + "poi-basic-ratingwb.png";
-	var rating_dogfriendly = ICON_PATH + "poi-features-waterbowl.png";
+	var rating_dogfriendly = ICON_PATH + "poi-feature-waterbowl.png";
 	$.basics.add( myUiFactory.buildSingleRowInfoBar(category_icon, categories_text, "") );
 	$.basics.add( myUiFactory.buildSeparator() );
 	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_dogfriendly, "Dog-Friendliness: ", mySesh.currentPlaceInfo.rating_dogfriendly+"/5") );
@@ -334,13 +334,13 @@ function displayOutdoorFeatures(poiDetail) {
 		"Enclosures"		: poiDetail.enclosures,
 		"Area Size" 		: poiDetail.size, 
 		"Terrain" 			: poiDetail.terrain,
-		"Grade"  				: poiDetail.grade,
+		"Grade"  			: poiDetail.grade,
 		"Off-Leash"			: poiDetail.offleash,
-		"Fenced" 				: poiDetail.fenced,
-		"Water"					: poiDetail.water,
-		"Waste Disposal": poiDetail.waste,
-		"Shade"					: poiDetail.shade,	
-		"Seating"				: poiDetail.benches,
+		// "Fenced" 		: poiDetail.fenced,
+		"Water"				: poiDetail.water,
+		"Waste Disposal"	: poiDetail.waste,
+		"Shade"				: poiDetail.shade,	
+		"Seating"			: poiDetail.benches,
 		"Managed By"		: poiDetail.managing_org
 	};
 	
@@ -352,34 +352,62 @@ function displayOutdoorFeatures(poiDetail) {
 	var string_2 = "";
 	var count = 0;
 	var length = features.length;
-  for (var k in features){
-    if(features[k]!="" && features[k]!="NULL") {
-    	// THIS IS THE ELSE CASE BASICALLY
-    	icon_url = ICON_PATH + "poi-features-waterbowl.png";
+ 	
+ 	for (var k in features){
+    	if(features[k]!="" && features[k]!="NULL") {
+    		// THIS IS THE ELSE CASE BASICALLY
+	    	icon_url = ICON_PATH + "poi-feature-waterbowl.png";
 			string_1 = k+":";
 			string_2 = features[k];
 
-  		// CASES  
+	  		// CASES  
 			if (k=="Enclosures") {
-				icon_url = ICON_PATH + "poi-enclosure-mixed.png";
 				string_1 = "";
 				string_2 = features[k];
+				if  	(poiDetail.enclosures=="Mixed Area")	icon_url = ICON_PATH + "poi-enclosure-mixed.png";
+				else if	(poiDetail.enclosures=="Open Area")		icon_url = ICON_PATH + "poi-feature-enclosure-open.png";
+				else 											icon_url = ICON_PATH + "poi-feature-enclosure-largeandsmall.png";
 			}
 			else if (k=="Area Size") {
-				icon_url = ICON_PATH + "poi-features-sizemedium.png";
+				if (poiDetail.size=="Medium") 		icon_url = ICON_PATH + "poi-feature-sizemedium.png";
+				else if (poiDetail.size=="Large") 	icon_url = ICON_PATH + "poi-feature-sizelarge.png";
+				else if (poiDetail.size=="Vast") 	icon_url = ICON_PATH + "poi-feature-sizelarge.png";
+				else 								icon_url = ICON_PATH + "poi-feature-sizesmall.png";
 			}
 			else if (k=="Terrain") {
-				icon_url = ICON_PATH + "poi-features-dirt.png";
-				if   		(poiDetail.terrain=="Sand")			 icon_url = ICON_PATH + "poi-features-sand.png";
-				else if (poiDetail.terrain=="Grass")		 icon_url = ICON_PATH + "poi-features-grass.png";
-				else if (poiDetail.terrain=="Woodchips") icon_url = ICON_PATH + "poi-features-woodchips.png";
+				if  	(poiDetail.terrain=="Sand")			icon_url = ICON_PATH + "poi-feature-sand.png";
+				else if (poiDetail.terrain=="Grass")		icon_url = ICON_PATH + "poi-feature-grass.png";
+				else if (poiDetail.terrain=="Woodchips")	icon_url = ICON_PATH + "poi-feature-woodchips.png";
+				else  										icon_url = ICON_PATH + "poi-feature-dirt.png";
 			}
-			
+			else if (k=="Grade") {
+				if  	(poiDetail.grade=="Hilly")		icon_url = ICON_PATH + "poi-feature-grade-hilly.png";
+				else if (poiDetail.grade=="Incline")	icon_url = ICON_PATH + "poi-feature-grade-incline.png";
+				else  									icon_url = ICON_PATH + "poi-feature-grade-flat.png";
+			}
+			else if (k=="Off-Leash") {
+				icon_url = ICON_PATH + "poi-feature-offleash.png";
+			}
+			else if (k=="Water") {
+				icon_url = ICON_PATH + "poi-feature-water.png";
+			}
+			else if (k=="Waste Disposal") {
+				icon_url = ICON_PATH + "poi-feature-wastedisposal.png";
+			}
+			else if (k=="Shade") {
+				icon_url = ICON_PATH + "poi-feature-shade.png";
+			}
+			else if (k=="Seating") {
+				icon_url = ICON_PATH + "poi-feature-seating.png";
+			}
+			else if (k=="Seating") {
+				icon_url = ICON_PATH + "poi-feature-seating.png";
+			}			
 			// ADD FEATURES TO LIST
 			features_list.add( myUiFactory.buildSingleRowInfoBar(icon_url, string_1, string_2) );
 			features_list.add( myUiFactory.buildSeparator() );
 			count ++;
-    }
+	    }
 	}
 	if(count > 0) {
 		displayFeaturesHeader();
@@ -396,19 +424,19 @@ function displayHumanFeatures(poiDetail) {
 	var count = 0;
 	
 	var features = { 	
-		"Dogs Allowed Inside"		: poiDetail.dogs_inside,
-		"Outdoor Area" 					: poiDetail.outdoor_area, 
+		"Dogs Allowed Inside"	: poiDetail.dogs_inside,
+		"Outdoor Area" 			: poiDetail.outdoor_area, 
 		"Dogs Allowed Outside"	: poiDetail.dogs_outside,
-		"Waterbowl" 				  	: poiDetail.waterbowl
+		"Waterbowl" 			: poiDetail.waterbowl
 	};
 	// Ti.API.debug("  .... [~] displayHumanFeatures :: " + JSON.stringify(features) );
 	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);
 		
 	if (poiDetail.dogs_inside !="" && poiDetail.dogs_inside!="NULL") {
-		var icon_url = ICON_PATH + "poi-features-dogsallowedinside.png";
+		var icon_url = ICON_PATH + "poi-feature-dogsallowedinside.png";
 		var string_inside = "Dogs Allowed";
 		if (poiDetail.dogs_inside != "Yes") {
-			icon_url = ICON_PATH + "poi-features-dogsnotallowedinside.png";
+			icon_url = ICON_PATH + "poi-feature-dogsnotallowedinside.png";
 			string_inside = "Dogs Not Allowed";	
 		} 
 		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Inside: ", string_inside) );
@@ -423,13 +451,13 @@ function displayHumanFeatures(poiDetail) {
 		} else {
 			var string_1 = "Outdoor Area:";
 			var string_2 = "Dogs Allowed";
-			var icon_url = ICON_PATH + "poi-features-dogsallowedoutside.png";
+			var icon_url = ICON_PATH + "poi-feature-dogsallowedoutside.png";
 			
 			if (poiDetail.outdoor_area!="Yes") {
 				string_1 = poiDetail.outdoor_area+":";
 			}
 			if (poiDetail.dogs_outside != "Yes") {
-				icon_url = ICON_PATH + "poi-features-dogsnotallowedoutside.png";
+				icon_url = ICON_PATH + "poi-feature-dogsnotallowedoutside.png";
 				string_2 = "Dogs Not Allowed";
 			}			
 			features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, string_1, string_2) );
@@ -444,7 +472,7 @@ function displayHumanFeatures(poiDetail) {
 		//features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Waterbowl:", "No") );
 
 		if (poiDetail.waterbowl != "Yes") {
-			icon_url = ICON_PATH + "poi-features-nowaterbowl.png";	
+			icon_url = ICON_PATH + "poi-feature-nowaterbowl.png";	
 			wb_text_string = "No";
 		} 
 		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Waterbowl:", wb_text_string) );

@@ -39,11 +39,11 @@ function getMarkOverview( original_mark ) {
 function displayRemarks(data) {
 	// Ti.API.debug( "*displayRemarks ["+JSON.stringify(data)+"]" );
 	removeAllChildren($.remarks);	
-  // Ti.API.debug( ">>>>>>> displayRemarks :: " + JSON.stringify(data) );
+  	// Ti.API.debug( ">>>>>>> displayRemarks :: " + JSON.stringify(data) );
 	if( data.length>0) {	
 		var last_one = data.length-1;
 		
-  	// (1)  Need to sort POIs based on proximity
+  		// (1)  Need to sort POIs based on proximity
 		data.sort(function(a, b) {		// sort by proximity (closest first)
 			return (b.ID - a.ID);
 		});
@@ -58,9 +58,12 @@ function displayRemarks(data) {
 		var overview_header = myUiFactory.buildSectionHeader("overview_header", "REMARKS", 1);
 		$.remarks.add(overview_header);
 
-    // (4)  Add remark button and link it to addpost.js
+	    // (4)  Add remark button and link it to addpost.js
+		var remarkBtnContainer = myUiFactory.buildViewContainer ( "", "", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue ); 
 		var addRemarkBtn = myUiFactory.buildButton( "addRemarkBtn", "add remark", "large" );
-		$.remarks.add(addRemarkBtn);
+		remarkBtnContainer.add(addRemarkBtn);
+		$.remarks.add(remarkBtnContainer);
+		
 		var necessary_args = {   // 
 			_place_ID    : data[last_one].mark_ID,
 			_place_name	 : args.mark_name,
@@ -80,16 +83,16 @@ function displayRemarks(data) {
 			$.remarks.add(no_marks_container);
 		}
 		// (6) if more than just the parent mark, display all child remarks next
-	  else {
+		else {
 			for (var i=0, len=data.length; i<(len-1); i++) {
-	      var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
-			  var mark = myUiFactory.buildFeedRow ( "mark_"+i, myUiFactory._icon_medium, photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text );
-			  $.remarks.add(mark);
-			  if ( i < (len-2) )
-			    $.remarks.add( myUiFactory.buildSeparator() );
-	    }
+	    		var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
+				var mark = myUiFactory.buildFeedRow ( "mark_"+i, myUiFactory._icon_medium, photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text );
+				$.remarks.add(mark);
+			  	if ( i < (len-2) )
+			    	$.remarks.add( myUiFactory.buildSeparator() );
+	    	}
  		}
-  }
+	}
 }
 
 //================================================================================================
