@@ -11,39 +11,39 @@
 */
 
 function UiFactory(){
-  /*		DEBUG MODE!		(Adds borders to stuff)		*/
- 	this._debug = 0;
+ 	/*		DEBUG MODE!		(Adds borders to stuff)		*/
+ 	// this._debug = 1;
    
-  /*		SPACING & PADDING				*/
-  this._spacer_size = 4;
-  this._pad_left  = 7.5;
-  this._pad_right = 7.5;
-  this._pad_top   = 7.5;
+  	/*		SPACING & PADDING				*/
+  	this._spacer_size = 4;
+  	this._pad_left  = 6;
+  	this._pad_right = 6;
+  	this._pad_top   = 6;
 
-  /*		DEVICE SCREEN WIDTH & HEIGHT			*/
+  	/*		DEVICE SCREEN WIDTH & HEIGHT			*/
  	this._device = { 
 		screenwidth  : Ti.Platform.displayCaps.platformWidth,
 		screenheight : Ti.Platform.displayCaps.platformHeight
 	};
-	
-  /*   COLORS									*/
-  this._color_white  = "#ffffff";
-  this._color_black  = "#000000";
-  this._color_ltblue = "#dcf1fc";
-  this._color_dkblue = "#58c6d5";	
-  this._color_ltgray = "#cccccc"; 	// "#bab9b9";
-  this._color_dkgray = "#525252";
-  this._color_dkpink = "#ec3c95";
-  this._color_ltpink = "#feaaff";
-   
-  /*   TEXT																												*/
-  this._base_font = 14;			// medium(28pt), large(36pt)
 
-  this._text_banner		= { fontFamily: 'Raleway', 			fontSize: 3.000 * this._base_font, color: "#ffffff" };	// large banners
-  this._text_xl			= { fontFamily: 'Raleway-Medium',	fontSize: 2.000 * this._base_font };	// 36 pt
-  this._text_large		= { fontFamily: 'Raleway-Bold', 	fontSize: 1.285 * this._base_font };	// 36 pt
-  this._text_medium		= { fontFamily: 'Raleway-Medium',	fontSize: this._base_font }; 	// 28 pt
-  this._text_medium_bold= { fontFamily: 'Raleway-Bold',		fontSize: this._base_font }; 	// 28 pt
+	/*   COLORS									*/
+  	this._color_white  = "#ffffff";
+  	this._color_black  = "#000000";
+  	this._color_ltblue = "#dcf1fc";
+  	this._color_dkblue = "#58c6d5";	
+  	this._color_ltgray = "#cccccc"; 	// "#bab9b9";
+  	this._color_dkgray = "#525252";
+  	this._color_dkpink = "#ec3c95";
+  	this._color_ltpink = "#feaaff";
+   
+  	/*   TEXT																												*/
+  	this._base_font = 14;			// medium(28pt), large(36pt)
+
+  	this._text_banner		= { fontFamily: 'Raleway', 			fontSize: 3.000 * this._base_font, color: "#ffffff" };	// large banners
+  	this._text_xl			= { fontFamily: 'Raleway-Medium',	fontSize: 2.000 * this._base_font };	// 36 pt
+ 	this._text_large		= { fontFamily: 'Raleway-Bold', 	fontSize: 1.285 * this._base_font };	// 36 pt
+  	this._text_medium		= { fontFamily: 'Raleway-Medium',	fontSize: this._base_font }; 	// 28 pt
+  	this._text_medium_bold= { fontFamily: 'Raleway-Bold',		fontSize: this._base_font }; 	// 28 pt
   
 	this._text_small  	= { fontFamily: 'Raleway', fontSize: 0.900 * this._base_font };
 	this._text_tiny   	= { fontFamily: 'Raleway', fontSize: 0.650 * this._base_font };		// timestamps and small labels
@@ -74,42 +74,62 @@ function UiFactory(){
 *		Purpose:  create dark gray section title/divider
 *******************************************************************************************************************/
 UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_width, view_height, top, bg_color) {
-	// create the parent view
-
-	var view_container = Ti.UI.createView( { 
-		//borderColor     : ((this._debug == 1) ? this._color_ltpink : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 	
-		id			: id, 
-		layout		: layout_orientation,
-		top			: top,  
-		width		: view_width,
-		height 		: view_height,
-		backgroundColor : (bg_color!==""?bg_color:"")
-	});
+	if ( isset(bg_color) && bg_color!="" ) {
+		var view_container = Ti.UI.createView( { 
+			//borderColor     : ((this._debug === 1) ? this._color_ltpink : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 	
+			id			: id, 
+			layout		: layout_orientation,
+			top			: top,  
+			width		: view_width,
+			height 		: view_height,
+			backgroundColor : bg_color
+		});
+	}
+	else {
+		var view_container = Ti.UI.createView( { 
+			//borderColor     : ((this._debug === 1) ? this._color_ltpink : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 	
+			id			: id, 
+			layout		: layout_orientation,
+			top			: top,  
+			width		: view_width,
+			height 		: view_height
+		});
+	}
 	return view_container;
 };
 
 /*************************************************************************************************
-*		Name:  		buildLabel ( title, width, height, font_style, font_color, bg_color, text_align )  
+*		Name:  		buildLabel ( title, width, height, font_style, font_color, bg_color, text_align, horz_pad) )  
 *											     eg: value, width, font_style, text_or_number (affects font used)
 *		Purpose:  create a label given 
 **************************************************************************************************/
-UiFactory.prototype.buildLabel = function(title, width, height, font_style, font_color, bg_color, text_align) {
-	var left_pad  = 2*this._pad_left;
-	var right_pad = 2*this._pad_left;
+UiFactory.prototype.buildLabel = function(title, width, height, font_style, font_color, bg_color, text_align, horz_pad) {
+	if ( isset(horz_pad) && horz_pad!="" ) {
+		var left_pad  = horz_pad;
+	}
+	else {
+		var left_pad  = 2*this._pad_left;
+	}
+
 	var align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
 	var background_color = "";
 	if (bg_color!=="")
 		background_color = bg_color;
 
-	if (text_align=="left") 
+	if (text_align=="left") {
 		align =  Ti.UI.TEXT_ALIGNMENT_LEFT;
-	else if (text_align=="right")
-		align =  Ti.UI.TEXT_ALIGNMENT_RIGHT;
-	else 
+		width = width-left_pad;
+	}
+	else if (text_align=="right") {
+		align = Ti.UI.TEXT_ALIGNMENT_RIGHT;
+		width = width-left_pad;
+	}
+	else {
 		align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
-	
+		pad_left = '';
+	}
 	var label = Ti.UI.createLabel( {	
-		// borderColor : ((this._debug == 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
+		//borderColor : ((this._debug === 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
 		//id	: something+"_label", 
 		text 			: title,
 		font			: font_style,
@@ -117,7 +137,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		width			: width,
 		height 			: height,
 		left  			: left_pad,
-		right 			: right_pad,
+		//right 		: right_pad,		// DONT DO IT IT"LL FUCK THINGS UP
 		color			: font_color,
 		textAlign		: align
 	});
@@ -150,7 +170,7 @@ UiFactory.prototype.buildProgressBar = function(msg_text) {
 *******************************************************************************************/
 UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2, txt_3) {
 	// width and height of parent object == this._device.screenwidth
-	var headerContainer = this.buildViewContainer("headerContainer_"+id, "vertical", this._device.screenwidth, this._device.screenwidth, 0);
+	var headerContainer = this.buildViewContainer("headerContainer_"+id, "vertical", this._device.screenwidth, this._device.screenwidth, 0, "");
 	
 	var label_width = this._device.screenwidth - this._pad_right;
 	
@@ -159,21 +179,22 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	var h_info_height 	= (3*this._height_header);
 	var	h_top_height		= this._device.screenwidth - h_info_height - h_statbar_height;  
 	
-	var headerTop 			= this.buildViewContainer("headerTop_"+id, 	"vertical", 	this._device.screenwidth, h_top_height, 0);		// blank div
-	var headerInfo 			= this.buildViewContainer("headerInfo_"+id, "vertical", 	this._device.screenwidth, h_info_height, 0);
+	var headerTop 			= this.buildViewContainer("headerTop_"+id, 	"vertical", 	this._device.screenwidth, h_top_height, 0, "");		// blank div
+	var headerInfo 			= this.buildViewContainer("headerInfo_"+id, "vertical", 	this._device.screenwidth, h_info_height, 0, "");
 	// headerInfo.left     = this._pad_left;
 	
 	// header stat bar should be separate function
-	var headerStatBar 	= this.buildViewContainer("headerStatBar", 	"horizontal", "100%", h_statbar_height, 0);	
-	headerStatBar.backgroundColor = "#222222";
+	var headerStatBar 	= this.buildViewContainer("headerStatBar", 	"horizontal", "100%", h_statbar_height, 0, "");	
+	headerStatBar.backgroundColor = "#333333";
+	headerStatBar.opacity = 0.95;
 	headerStatBar.bottom = 0;
 	
-	var title_label	 	= this.buildLabel(txt_title, label_width, 24, this._text_large,  "#ffffff", "", "left");
-	var text_label 	 	= this.buildLabel(txt_1,	 	label_width, 18, this._text_medium, "#ffffff", "","left");	
-	var subtext1_label 	= this.buildLabel(txt_2, 	label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left");
+	var title_label	 	= this.buildLabel(txt_title, label_width, 24, this._text_large,  "#ffffff", "", "left", "");
+	var text_label 	 	= this.buildLabel(txt_1,	 	label_width, 18, this._text_medium, "#ffffff", "", "left", "");	
+	var subtext1_label 	= this.buildLabel(txt_2, 	label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left", "");
 	
 	if(txt_3!=null || txt_3!="")	
-		var subtext2_label = this.buildLabel(txt_3, 	 label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left");	
+		var subtext2_label = this.buildLabel(txt_3, 	 label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left", "");	
 			
 	headerInfo.backgroundImage = "images/ui/header-overlay-black.png";
 
@@ -230,8 +251,8 @@ UiFactory.prototype.buildHeaderContainer = function(place_name, city, bg_color) 
 	});
 	
 	column_right.add( this.buildSpacer("horz", "10%") );
-	column_right.add( this.buildLabel(place_name, "100%", "40%", this._text_large, "#000000", "","left") );
-	column_right.add( this.buildLabel(city, "100%", "50%", this._text_medium, "#000000", "", "left") );
+	column_right.add( this.buildLabel(place_name, "100%", "40%", this._text_large, "#000000", "", "left", "" ) );
+	column_right.add( this.buildLabel(city, "100%", "50%", this._text_medium, "#000000", "", "left", "") );
 	
 	view_container.add(column_right);
 	
@@ -348,8 +369,8 @@ UiFactory.prototype.buildSlider = function(id, min_value, max_value, start_value
 UiFactory.prototype.buildMiniHeader = function(place_name, subtitle, bg_color) {
 	var miniHeader = this.buildViewContainer("", "vertical", "100%", this._icon_small+(2*this._pad_top), 0);	
 	miniHeader.backgroundColor = bg_color;
-	var name_label			= this.buildLabel( place_name, "100%", this._height_header, this._text_large, "#ffffff", "center" );
-	var subtitle_label	= this.buildLabel( subtitle, "100%", this._height_header, this._text_medium, "#ffffff", "center" );	
+	var name_label			= this.buildLabel( place_name, "100%", this._height_header, this._text_large, "#ffffff", "center", "" );
+	var subtitle_label	= this.buildLabel( subtitle, "100%", this._height_header, this._text_medium, "#ffffff", "center", "" );	
 	name_label.top = 0;
 	subtitle_label.top = -14;
 	miniHeader.add(name_label);
@@ -391,21 +412,23 @@ UiFactory.prototype.buildSingleRowInfoBar = function(image_url, name, value) {
 	var div_height = this._icon_small + (2* this._pad_top); // this._height_row-10;
 	var view_container = this.buildViewContainer ( "", "horizontal", "100%", div_height, 0, this._color_ltblue); 
   
-  	var column_1 = this.buildViewContainer ( "column_1", "", this._icon_medium+this._pad_left, div_height, 0 ); 
+  	var column_1 = this.buildViewContainer ( "column_1", "", this._icon_medium+this._pad_left, div_height, 0, "" ); 
   	if (image_url!="") {
   		var image = this.buildIcon("", image_url, "small"); 
 		column_1.add(image);
   	}
- 	var column_2 = this.buildViewContainer ( "column_2", "horizontal", Ti.UI.FILL, div_height, 0 );
+  	column_1.left = 2*this._pad_left;
+
+ 	var column_2 = this.buildViewContainer ( "column_2", "horizontal", Ti.UI.FILL, div_height, 0, "" );
   	//column_2.add( this.buildSpacer( "vert", 10, "clear" ) );
 	
 	if (name!="") {
-		var name_label  = this.buildLabel( name, Ti.UI.SIZE, "100%", this._text_medium, "#000000", this._color_ltblue, "left");
+		var name_label  = this.buildLabel( name, Ti.UI.SIZE, "100%", this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left);
 		column_2.add(name_label);
 		column_2.add( this.buildSpacer( "vert", 2, "clear") );
 	}
 	if (value_label!="") {
-		var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold, "#000000", this._color_ltblue, "left" );
+		var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold, "#000000", this._color_ltblue, "left", this._pad_left );
 		column_2.add(value_label);
 	}
 	view_container.add(column_1);
@@ -420,24 +443,25 @@ UiFactory.prototype.buildSingleRowInfoBar = function(image_url, name, value) {
 UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
 	// iphone 5s		~528 pixels available for text label / 40 chars per line = 13.2 px / char
 	// iphone 6			~? pixels available for text label / 40 chars per line = 13 px / char
-	// iphone 6+		~? pixels available for text label / 40 chars per line = 13 px / char
-	  
+
 	// calculate thumbnail and text content view widths
-	var col_1_w = Math.floor(this._icon_medium+this._pad_left);
-	var col_2_w = Math.floor(this._device.screenwidth - col_1_w);
+	var col_1_w = Math.floor(this._icon_medium+(2*this._pad_left) );
+	var col_2_w = Math.floor(this._device.screenwidth - col_1_w - (2*this._pad_left));		// wtf
 	  
 	// if text is two lines or less
 	var min_div_height  = this._icon_small + (2*this._pad_top);
-	var div_height 		= ( ( Math.round( text_content.length / (col_2_w / 13) ) ) * 10 )  + (2*this._pad_top);
+	var div_height 		= ( ( Math.round( text_content.length / (col_2_w / 12) ) ) * 10.75)  + (3*this._pad_top);
 	
 	if (div_height < min_div_height)	
 		div_height = min_div_height;
 		
 	// done with math on dimensions, now build the parent container
+		 								//         id, layout_orientation, view_width, view_height, top, bg_color
 	var view_container = this.buildViewContainer ( "", "horizontal", "100%", div_height, 0, this._color_ltblue); 
 	// semi-square smaller left icon column, multi-row text on the right
-	var column_1 = this.buildViewContainer ( "column_1", "", 					 col_1_w, this._icon_medium+this._pad_top, 0 ); 
-	var column_2 = this.buildViewContainer ( "column_2", "horizontal", col_2_w, Ti.UI.SIZE, 0 );
+	var column_1 = this.buildViewContainer ( "column_1", "", col_1_w, this._icon_medium+this._pad_top, 0, "" ); 
+	var column_2 = this.buildViewContainer ( "column_2", "horizontal", col_2_w, Ti.UI.SIZE, 0, "" );
+	column_1.left = 2*this._pad_left;
 
 	if (image_url!="") {
 		var image = this.buildIcon("", image_url, "small"); 
@@ -445,7 +469,7 @@ UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
 	}
 	//column_2.add( this.buildSpacer( "vert", 10, "clear" ) );
 		
-	var text_box = this.buildLabel( text_content, col_2_w-(2*this._pad_right), "100%", this._text_medium, "#000000", this._color_ltblue, "left");
+	var text_box = this.buildLabel( text_content, col_2_w-(2*this._pad_right), "100%", this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left);
 	//	column_2.add( this.buildSpacer( "vert", 2, "clear" ) );
 	column_2.add(text_box);
 
@@ -474,10 +498,10 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
  	var row1_height = this._height_header; 
   	var row2_height = thumb_size - this._pad_top;
 	// DETERMINE VIEW CONTAINER WIDTHS
-  	var column_1_width 	= Math.floor( thumb_size + this._pad_left + this._pad_right );		
+  	var column_1_width 	= Math.floor( thumb_size + this._pad_left );		
 	var column_2_width 	= Math.floor( this._device.screenwidth - column_1_width );
 	var col_2_name_width= Math.floor( (0.55 * column_2_width)-this._pad_left );
-	var col_2_ts_width  = Math.floor( (0.45 * column_2_width)-this._pad_left );
+	var col_2_ts_width  = Math.floor( (0.45 * column_2_width));
 
 	var multiline_row2_height = Math.round(description.length / (column_2_width / 13.3) * 11)+this._pad_top;
 	
@@ -485,14 +509,9 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
  		row2_height = multiline_row2_height;
 	}
 	var total_height = row1_height + row2_height;
-	
-	/*
-	Ti.API.info("SCREEN SIZE :: "+this._device.screenwidth +"x"+this._device.screenheight);
-	Ti.API.info("COLUMNS :: C1="+column_1_width +" C2="+column_2_width+"[ "+col_2_name_width+","+col_2_ts_width+" ]");
-	Ti.API.info("ROW HEIGHTS [1 / 2 / TOTAL] :: [ "+row1_height+" / "+row2_height+" / "+total_height+" ]");
-	*/	
+		
   	// BUILD VIEWS (COLUMN 3 is a spacer)    id,     orientation  	view_width      view_height  top)
-	var view_container = this.buildViewContainer ( "feedRow_"+id, "horizontal", "100%", total_height, 0 ); 
+	var view_container = this.buildViewContainer ( "feedRow_"+id, "horizontal", "100%", total_height, 0, "" ); 
   
 	var column_1 = this.buildViewContainer ( "col_1", "horizontal", column_1_width, total_height,  0, this._color_ltblue ); 
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", 	column_2_width, total_height,  0, this._color_ltblue );
@@ -502,11 +521,11 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
 		
 	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
 	var column_2_row_1 		= this.buildViewContainer ( "", "horizontal", "100%", row1_height, 0, this._color_ltblue ); 
-	var dog_name_label  	= this.buildLabel( photo_caption, col_2_name_width, row1_height, this._text_medium_bold, "#000000", this._color_ltblue, "left" );		
-	var time_stamp_label	= this.buildLabel( time_stamp, 	  col_2_ts_width, 	row1_height, this._text_medium,  "#000000", this._color_ltblue, "right");
+	var dog_name_label  	= this.buildLabel( photo_caption, col_2_name_width, row1_height, this._text_medium_bold, "#000000", this._color_ltblue, "left", this._pad_left );		
+	var time_stamp_label	= this.buildLabel( time_stamp, 	  col_2_ts_width, 	row1_height, this._text_medium,  "#000000", this._color_ltblue, "right", this._pad_left);
 	// COLUMN 2 :: BUILD DESCRIPTION CONTAINER
 	var column_2_row_2 		= this.buildViewContainer ( "", "horizontal", column_2_width, row2_height, 0, this._color_ltblue );
-	var description_label 	= this.buildLabel( description, column_2_width-(2*this._pad_right), row2_height, this._text_medium, "#000000", this._color_ltblue, "left" );
+	var description_label 	= this.buildLabel( description, column_2_width-this._pad_right, row2_height, this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left );
 	
 	// ADJUST VERTICAL SPACING
 	//dog_name_label.top = 2;
@@ -552,8 +571,8 @@ UiFactory.prototype.buildEstimateHeader = function(id, photo_url, photo_caption,
 	var column_2 = this.buildViewContainer ( "", "vertical", middle_width, div_height, 0, this._color_ltblue ); 
 	//var column_2_row_1 = this.buildViewContainer ( "", "vertical", "100%", div_height, 0 ); 
 
-	var dog_name_label   		= this.buildLabel( photo_caption, "98%", "49%", this._text_medium_bold, "#000000", "", "left" );		
-	var time_stamp_label 		= this.buildLabel( time_stamp,  	"98%", "49%", this._text_tiny, "#000000", "", "left");
+	var dog_name_label   		= this.buildLabel( photo_caption, "98%", "49%", this._text_medium_bold, "#000000", "", "left", "" );		
+	var time_stamp_label 		= this.buildLabel( time_stamp,  	"98%", "49%", this._text_tiny, "#000000", "", "left", "");
 	//
 	column_2.add(dog_name_label);
 	column_2.add(time_stamp_label);
@@ -562,8 +581,9 @@ UiFactory.prototype.buildEstimateHeader = function(id, photo_url, photo_caption,
 	//column_2.add(column_2_row_1);
 	
 	var column_3 = this.buildViewContainer ( "", "vertical", right_width, div_height, 0, this._color_ltblue  ); 
-  	var amount_label 		 = this.buildLabel( amount, 	 "100%", "49%", this._number_large, "#000000", "", "" );   // number!
-	var amount_suffix_label	 = this.buildLabel( amount_suffix, "100%", "49%", this._text_medium, "#000000", "", "" );
+												// (title, width, height, font_style, font_color, bg_color, text_align, horz_pad)
+  	var amount_label 		 = this.buildLabel( amount, 	 "100%", "49%", this._number_large, "#000000", "", "", "");   // number!
+	var amount_suffix_label	 = this.buildLabel( amount_suffix, "100%", "49%", this._text_medium, "#000000", "", "", "" );
 	column_3.add(amount_label);
 	column_3.add(amount_suffix_label);
 	
@@ -588,15 +608,15 @@ UiFactory.prototype.getDefaultRowHeight = function() {
 *		Purpose:  
 ************************************************************/
 UiFactory.prototype.buildScrollView = function(id){ 
-  return Ti.UI.createScrollView( {
-    id               : id,
-    backgroundColor  : this._color_ltblue,
-	  layout           : 'vertical', 
-	  width						 : Ti.UI.SIZE,
-	  contentHeight    : 'auto',
-	  showVerticalScrollIndicator: "true",
-	  showHorizontalScrollIndicator: "true" } 
-  );
+  	return Ti.UI.createScrollView( {
+    	id               : id,
+    	backgroundColor  : this._color_ltblue,
+		layout           : 'vertical', 
+		width						 : Ti.UI.SIZE,
+		contentHeight    : 'auto',
+		showVerticalScrollIndicator: "true",
+		showHorizontalScrollIndicator: "true" } 
+	);
 }
 /***********************************************************************
 *		Name:  		getDefaultThumbSize()
@@ -665,34 +685,34 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 	//Ti.API.debug( " >>> SECTION HEADER >>> id, title, size [ "+ view_id+", "+title+", "+size+" ]");
 	
 	/*  sub section header      */
-	var label_text_color = this._color_black;
-	var view_bg_color 	 = this._color_ltblue;
-	var font 						 = this._text_medium;
-	var view_height 		 = this._height_header;
+	var label_text_color= this._color_black;
+	var view_bg_color 	= this._color_ltblue;
+	var font 			= this._text_medium;
+	var view_height		= this._height_header;
 	
 	/*  ADD/CREATE dk pink section header  */
 	if (size == 0) {        
-	  label_text_color = this._color_white;
-		view_bg_color    = this._color_dkpink;
-		font             = this._text_medium_bold;
+	  label_text_color	= this._color_white;
+		view_bg_color	= this._color_dkpink;
+		font            = this._text_medium_bold;
 	}
 	/*  DISPLAY dk blue section header  */
 	else if (size == 1) {        
-	  label_text_color = this._color_white;
-		view_bg_color    = this._color_dkblue;
-		font             = this._text_medium_bold;
+	  label_text_color	= this._color_white;
+		view_bg_color   = this._color_dkblue;
+		font            = this._text_medium_bold;
 	}
 	/*  supa large banner      */
 	else if (size == 2) {  
-		label_text_color = this._color_black;
-		view_bg_color 	 = this._color_ltblue;
-		font             = this._text_large;
+		label_text_color= this._color_black;
+		view_bg_color 	= this._color_ltblue;
+		font            = this._text_large;
 	}
 	else if (size == 3) {  			// Subheader, slimmest one possible
-		label_text_color = this._color_black;
-		view_bg_color 	 = this._color_ltgray;
-		font             = this._text_medium;
-		view_height			 = this._height_subheader;
+		label_text_color= this._color_black;
+		view_bg_color 	= this._color_ltgray;
+		font            = this._text_medium;
+		view_height		= this._height_subheader;
 	}
 
 	var view_container = Ti.UI.createView( { 
@@ -704,8 +724,8 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 	var section_label = Ti.UI.createLabel( {	
 		id		: view_id+"_label", 
 		text	: title,
-		left  : this._pad_left,
-		height: Ti.UI.SIZE,     
+		left  	: 2*this._pad_left,
+		height  : Ti.UI.SIZE,     
 		font	: font,
 		color	: label_text_color
 	});
@@ -860,7 +880,6 @@ UiFactory.prototype.buildFullRowButton = function(id, title) {
 		textAlign       : "right",
 		width			: "100%", 
 		right			: this._pad_right,				
-		borderColor     : ((this._debug == 1) ? this._color_black : ''), borderWidth : ((this._debug == 1) ? 1 : ''), 
 	} );
 	
 	column_2.add(button);

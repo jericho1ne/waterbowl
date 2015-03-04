@@ -237,11 +237,12 @@ ExtMap.prototype.createMarkAnnotation = function( mark ) {
 //	Return:		annotation object
 //=============================================================
 ExtMap.prototype.createDogAnnotation = function( dog ) {
-	Ti.API.info( "  .... [~] annotation marker for DOG:" + JSON.stringify(dog) );
 	// 0=stranger, 1=me, 2=buddy
-	var icon_stranger 	= ICON_PATH + "poi-mapmarker-dogstranger.png";
-	var icon_me 		= ICON_PATH + "poi-mapmarker-dogme.png";
-	var icon_buddy 		= ICON_PATH + "poi-mapmarker-dogbuddy.png";
+	var icon_stranger 	= ICON_PATH + "dog2-mapmarker-stranger.png";
+	var icon_me 		= ICON_PATH + "dog2-mapmarker-me.png";
+	var icon_buddy 		= ICON_PATH + "dog2-mapmarker-buddy.png";
+
+	Ti.API.info( "  .... [~] createDogAnnotation :: dog icons :: " + icon_stranger + ' / ' + icon_me );
 
 	var anno_dog_button = Ti.UI.createButton({ 
 		dog_id 			: dog.dog_ID,	 
