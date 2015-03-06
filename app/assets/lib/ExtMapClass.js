@@ -91,11 +91,11 @@ ExtMap.prototype.getMarks =  function ( user_lat, user_lon, sniff_type, sniff_ra
 //	Name:		getNearbyDogs 
 //	Purpose:	
 //==========================================================================================
-ExtMap.prototype.getNearbyDogs = function ( user_lat, user_lon ) {
+ExtMap.prototype.getNearbyDogs = function () {
 	// GET NEARBY DOGS /////////////////////////////////
 	var dog_params = {
-		lat       			: user_lat,
-		lon       			: user_lon, 
+		lat       			: mySesh.geo.lat,
+		lon       			: mySesh.geo.lon, 
 		dog_ID 				: mySesh.dog.dog_ID,
 		buddies				: mySesh.dog.buddies,
 		weight_buddy		: mySesh.dog.weight_buddy,
@@ -120,6 +120,7 @@ ExtMap.prototype.refreshDogAnnotations = function(data) {
 	// Alloy.Globals.wbMap.removeAllAnnotations();
 	mySesh.nearbyDogs = data.payload;
 	var dogsAnnoArray = [];
+
 	for (var i=0; i<mySesh.nearbyDogs.length; i++) {
 		if (mySesh.nearbyDogs[i].dog_ID!=mySesh.dog.dog_ID)
 			dogsAnnoArray.push( this.createDogAnnotation(mySesh.nearbyDogs[i]) );	  
@@ -238,16 +239,16 @@ ExtMap.prototype.createMarkAnnotation = function( mark ) {
 //=============================================================
 ExtMap.prototype.createDogAnnotation = function( dog ) {
 	// 0=stranger, 1=me, 2=buddy
-	var icon_stranger 	= ICON_PATH + "dog2-mapmarker-stranger.png";
-	var icon_me 		= ICON_PATH + "dog2-mapmarker-me.png";
-	var icon_buddy 		= ICON_PATH + "dog2-mapmarker-buddy.png";
+	var icon_stranger 	= ICON_PATH + 'dog1-mapmarker-stranger.png';
+	var icon_me 		= ICON_PATH + 'dog1-mapmarker-me.png';
+	var icon_buddy 		= ICON_PATH + 'dog1-mapmarker-buddy.png';
 
 	Ti.API.info( "  .... [~] createDogAnnotation :: dog icons :: " + icon_stranger + ' / ' + icon_me );
 
 	var anno_dog_button = Ti.UI.createButton({ 
 		dog_id 			: dog.dog_ID,	 
 		backgroundImage : ICON_PATH + 'button-forward.png',
-		zIndex			: 100, 
+		zIndex			: 110, 
 		height			: 30, 
 		width			: 30
 	});
@@ -258,14 +259,15 @@ ExtMap.prototype.createDogAnnotation = function( dog ) {
 		createWindowController( "profile", params, 'slide_left' );
  	});
 	return myMapFactory.createAnnotation({
-    	id        : dog.dog_ID, 
-		latitude  : dog.last_lat, 
-		longitude : dog.last_lon,
-		title     : dog.dog_name,
-		subtitle  :	dog.dist + " miles away",
-		animate   : false,
-		image     : ICON_PATH + 'poi-mapmarker-dogstranger.png', 
-		rightView : anno_dog_button
+    	id        	: dog.dog_ID, 
+		latitude  	: dog.last_lat, 
+		longitude 	: dog.last_lon,
+		title     	: dog.dog_name,
+		subtitle  	: dog.dist + " miles away",
+		animate   	: false,
+		image     	: icon_stranger, 
+		zIndex		: 999,
+		rightView 	: anno_dog_button
 	});
 }
 

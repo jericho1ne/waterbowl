@@ -12,7 +12,7 @@
 
 function UiFactory(){
  	/*		DEBUG MODE!		(Adds borders to stuff)		*/
- 	// this._debug = 1;
+ 	//this._debug = 1;
    
   	/*		SPACING & PADDING				*/
   	this._spacer_size = 4;
@@ -34,7 +34,7 @@ function UiFactory(){
   	this._color_ltgray = "#cccccc"; 	// "#bab9b9";
   	this._color_dkgray = "#525252";
   	this._color_dkpink = "#ec3c95";
-  	this._color_ltpink = "#feaaff";
+  	this._color_ltpink = "#f7bdd7";
    
   	/*   TEXT																												*/
   	this._base_font = 14;			// medium(28pt), large(36pt)
@@ -104,11 +104,8 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 *		Purpose:  create a label given 
 **************************************************************************************************/
 UiFactory.prototype.buildLabel = function(title, width, height, font_style, font_color, bg_color, text_align, horz_pad) {
-	if ( isset(horz_pad) && horz_pad!="" ) {
-		var left_pad  = horz_pad;
-	}
-	else {
-		var left_pad  = 2*this._pad_left;
+	if ( !isset(horz_pad) || horz_pad=="" ) {
+		horz_pad = 2*this._pad_left;
 	}
 
 	var align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
@@ -118,29 +115,41 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 
 	if (text_align=="left") {
 		align =  Ti.UI.TEXT_ALIGNMENT_LEFT;
-		width = width-left_pad;
+		width = width-(2*horz_pad);
 	}
 	else if (text_align=="right") {
 		align = Ti.UI.TEXT_ALIGNMENT_RIGHT;
-		width = width-left_pad;
+		width = width-(2*horz_pad);
 	}
 	else {
 		align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
-		pad_left = '';
 	}
-	var label = Ti.UI.createLabel( {	
-		//borderColor : ((this._debug === 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
-		//id	: something+"_label", 
-		text 			: title,
-		font			: font_style,
-		backgroundColor : background_color,
-		width			: width,
-		height 			: height,
-		left  			: left_pad,
-		//right 		: right_pad,		// DONT DO IT IT"LL FUCK THINGS UP
-		color			: font_color,
-		textAlign		: align
-	});
+
+	if (text_align=="center") {
+		var label = Ti.UI.createLabel( {	
+			//borderColor : ((this._debug === 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
+			text 			: title,
+			font			: font_style,
+			backgroundColor : background_color,
+			width			: width,
+			height 			: height,
+			color			: font_color,
+			textAlign		: align
+		});
+	} else {
+		var label = Ti.UI.createLabel( {	
+			//borderColor : ((this._debug === 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
+			text 			: title,
+			font			: font_style,
+			backgroundColor : background_color,
+			width			: width,
+			height 			: height,
+			left  			: horz_pad,
+			right 			: horz_pad,		// DONT DO IT IT"LL FUCK THINGS UP
+			color			: font_color,
+			textAlign		: align
+		});
+	}
 	return label;
 }
 
@@ -278,16 +287,16 @@ UiFactory.prototype.buildProfileThumb = function(id, image, border, size){
 		borderWidth = 2;
 	}
 	var profile_img = Ti.UI.createImageView({ 
-		id							: id, 
-		image   				: img_placeholder,
-		width					  : size,
-		height					: size,
+		id				: id, 
+		image   		: img_placeholder,
+		width			: size,
+		height			: size,
 		backgroundColor : this._color_ltgray,
-		left						: this._pad_left,
-		top							: this._pad_left,
-		borderColor			: borderColor,
-		borderRadius		: size/2,
-		borderWidth			: borderWidth
+		left			: this._pad_left,
+		top				: this._pad_top,
+		borderColor		: borderColor,
+		borderRadius	: size/2,
+		borderWidth		: borderWidth
 	});
 	loadRemoteImage( "fg", profile_img, image, img_placeholder );
 	profile_img.addEventListener('click', function(){ showProfile(id)} );
@@ -367,12 +376,13 @@ UiFactory.prototype.buildSlider = function(id, min_value, max_value, start_value
 *		Purpose:  
 ************************************************************************************/
 UiFactory.prototype.buildMiniHeader = function(place_name, subtitle, bg_color) {
-	var miniHeader = this.buildViewContainer("", "vertical", "100%", this._icon_small+(2*this._pad_top), 0);	
-	miniHeader.backgroundColor = bg_color;
-	var name_label			= this.buildLabel( place_name, "100%", this._height_header, this._text_large, "#ffffff", "center", "" );
-	var subtitle_label	= this.buildLabel( subtitle, "100%", this._height_header, this._text_medium, "#ffffff", "center", "" );	
-	name_label.top = 0;
-	subtitle_label.top = -14;
+	var miniHeader 				= this.buildViewContainer("", "vertical", "100%", this._icon_small+(3*this._pad_top), 0);	
+	miniHeader.backgroundColor 	= bg_color;		
+											//	 ( title, 		width, height, 				font_style, font_color, bg_color, text_align, horz_pad
+	var name_label				= this.buildLabel( place_name, "100%", this._height_header, this._text_large, "#ffffff", "center", 0 );
+	var subtitle_label			= this.buildLabel( subtitle, "100%", this._height_header, this._text_medium, "#ffffff", "center", 0 );	
+	name_label.top 				= 0;
+	subtitle_label.top 			= -14;
 	miniHeader.add(name_label);
 	miniHeader.add(subtitle_label);
 	return miniHeader;
@@ -382,22 +392,19 @@ UiFactory.prototype.buildMiniHeader = function(place_name, subtitle, bg_color) {
 *		Name:  		buildTextArea ( title, hint_text )  
 *		Purpose:  
 ************************************************************************************/
-UiFactory.prototype.buildTextArea = function( hint_text ) {
+UiFactory.prototype.buildTextArea = function( hint_text, height ) {
 	//var textAreaView = this.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0);	
-	var text_area_width = this._device.screenwidth-(2*this._pad_left);
+	var text_area_width = this._device.screenwidth-(4*this._pad_left);
 	var textArea = Ti.UI.createTextArea({
-		id						: "actual_text_area",
-	  borderWidth		: 1,
-	  borderColor		: '#bbbbbb',
-	  borderRadius	: 5,
-	  color					: '#888888',
-	  textAlign			: 'left',
-	  value					: hint_text,
-	  left					: this._pad_left,
-	  width					: text_area_width, 
-	  height 				: 90,
-	  font: { fontFamily: 'Raleway-Medium', fontSize: 14 },
-	  keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
+		id				: "actual_text_area",
+	  	color			: '#888888',
+	  	textAlign		: 'left',
+	 	value			: hint_text,
+	  	left			: 2*this._pad_left,
+	  	width			: text_area_width, 
+	  	height 			: height,
+	  	font 			: { fontFamily: 'Raleway-Medium', fontSize: 14 },
+	  	keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,
 	 	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT
 	});
 	return textArea;
@@ -479,7 +486,7 @@ UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
 }
 
 /*
-	+=== buildFeedRow ========================+
+	+=== buildTextFieldRow ========================+
 	|	 column_1        column_2             | 
 	|  +-thumb--+ +--_row_1----------------+  |
 	|  |        | |   name	  |	timestamp  |  |
@@ -489,16 +496,16 @@ UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
 	+=========================================+  
  */
 /****************************************************************************************************************
-*		Name:  		buildFeedRow ( id, thumb_size, photo_url, photo_caption, time_stamp, description ) 
-*		Purpose:  modified format for feed items (marks, estimates, etc)
-*   Used by:  Marks display, etc
+*	Name:  		buildFeedRow ( id, thumb_size, photo_url, photo_caption, time_stamp, description ) 
+*	Purpose:  	modified format for feed items (marks, estimates, etc)
+*   Used by:  	Marks display, etc
 ****************************************************************************************************************/
 UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_caption, time_stamp, description) {
   	//Ti.API.debug( ">>>>> buildFeedRow time_stamp:"+ time_stamp); 
  	var row1_height = this._height_header; 
   	var row2_height = thumb_size - this._pad_top;
 	// DETERMINE VIEW CONTAINER WIDTHS
-  	var column_1_width 	= Math.floor( thumb_size + this._pad_left );		
+  	var column_1_width 	= Math.floor( thumb_size + (2*this._pad_left) );		
 	var column_2_width 	= Math.floor( this._device.screenwidth - column_1_width );
 	var col_2_name_width= Math.floor( (0.55 * column_2_width)-this._pad_left );
 	var col_2_ts_width  = Math.floor( (0.45 * column_2_width));
@@ -716,9 +723,10 @@ UiFactory.prototype.buildSectionHeader = function(view_id, title, size) {
 	}
 
 	var view_container = Ti.UI.createView( { 
-		id							: view_id, 
+		id				: view_id, 
 		backgroundColor : view_bg_color, 
-		height			   	: view_height
+		height			: view_height,
+		width  			: Ti.UI.FILL
 	});
 	// build a sexy label
 	var section_label = Ti.UI.createLabel( {	

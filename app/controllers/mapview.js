@@ -118,7 +118,7 @@ function buildMapMenubar() {
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Alloy.Globals.wbMap.removeAllAnnotations();
       	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
-      		 myMap.getNearbyDogs(mySesh.user.lat, mySesh.user.lon);
+      		 myMap.getNearbyDogs();
       	} );
       	disableAllButtons();
       } else {  // if no errors
@@ -127,7 +127,7 @@ function buildMapMenubar() {
         mySesh.geo.lat = e.coords.latitude;
         Alloy.Globals.wbMap.removeAllAnnotations();
         myMap.getMarks( e.coords.latitude, e.coords.longitude, 1, 0.5, 20, function(){
-      		 myMap.getNearbyDogs(e.coords.latitude, e.coords.longitude);
+      		 myMap.getNearbyDogs();
       	} );
         disableAllButtons();
 	  }
@@ -460,7 +460,7 @@ function placeListListener(e) {
 //	Name:			refreshPlaceListData (client_action)
 //=============================================================================
 function refreshPlaceListData(client_action) {
-	//  Ti.API.debug(".... [~] refreshPlaceListData called ....");
+	Ti.API.debug(".... [~] refreshPlaceListData called from :: " + client_action);
 	getPoisInGeofence( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon, client_action );   // will affect place list
 	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
 	setTimeout ( function(){ updateGeofenceTable(); }, 350);
@@ -640,7 +640,17 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 
 // REPEATEDLY TRIGGER ON WINDOW FOCUS //////////////////////////////////////////
 $.mapview.addEventListener('focus',function(e) {
-	refreshPlaceListData("Window Focus");
+	//if(myUiFactory.refreshPlaceList) {
+		refreshPlaceListData("Window Focus");
+	//}
+	if(mySesh.refreshNearbyDogs) {	// if true, then get us the newest marks + nearby pups
+		Ti.API.debug("  .... [i] mapview.focus called");
+		Alloy.Globals.wbMap.removeAllAnnotations();
+      	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
+      		 myMap.getNearbyDogs();
+      	} );
+      	mySesh.refreshNearbyDogs = false;
+	}
 }); 
 
 //====================================================================================

@@ -212,37 +212,39 @@ function getPlaceCheckins( place_ID, dog_ID, parent_view ) {
 function displayPlaceCheckins(data, parentObject) {
 	Ti.API.debug(".... [~] displayPlaceCheckins:: ["+ data.checkins.length +"] ");
  	if ( data.you_are_here==1 ) {
-    mySesh.dog.current_place_ID = data.checkins.current_place_ID;
-  }
+    	mySesh.dog.current_place_ID = data.checkins.current_place_ID;
+  	}
   
  	/* got stuff to show!  */
-  if( data.checkins.length > 0) {
-  	var gray_dog_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
-  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( gray_dog_icon, "Members Here Now: ",  data.checkins.length );;
-    parentObject.add(how_many_bar);
-   
-	 	if( data.checkins.length > 4) {
-  		// size up parent container so that we can fit two rows, up to 8 thumbnails
-  		parentObject.height = (2*myUiFactory._icon_large) + (4*myUiFactory._pad_top) + myUiFactory._icon_medium;  	
-  	}
-  	else if (data.checkins.length <= 4 ) {
-      parentObject.height = (1*myUiFactory._icon_large) + (3*myUiFactory._pad_top) + myUiFactory._icon_medium;
-    }
-  	
-    for (var i=0, len=data.checkins.length; i<len; i++) {		// only calculate array size once
-		 	/* only show first 7 elements, leave space for "+ {__} more" cell */
+  	if( data.checkins.length > 0) {
+	  	var gray_dog_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
+	  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( gray_dog_icon, "Members Here Now: ",  data.checkins.length );
+	    parentObject.add(how_many_bar);
+
+	  	var thumbs_width = myUiFactory._device.screenwidth - (4*myUiFactory._pad_left);
+	  	 if( data.checkins.length > 4) {
+	  		// size up parent container so that we can fit two rows, up to 8 thumbnails
+	  		var thumbs_height = (2*myUiFactory._icon_large) + (4*myUiFactory._pad_top) + myUiFactory._icon_medium;  	
+	  	}
+	  	else if (data.checkins.length <= 4 ) {
+	    	var thumbs_height = (1*myUiFactory._icon_large) + (3*myUiFactory._pad_top) + myUiFactory._icon_medium;
+	    }
+	  	var thumbs_container = myUiFactory.buildViewContainer("", "horizontal", thumbs_width, thumbs_height, 0);
+
+	    for (var i=0, len=data.checkins.length; i<len; i++) {		// only calculate array size once
+			/* only show first 7 elements, leave space for "+ {__} more" cell */
 			if (i>=7 && data.checkins.length>8)		
 				break;
-		  
-		  /*  this is my pup, his is checked in at this POI!  Give'im a border!   */
-		  var border = 0; 			// this is nobody we know by default (0=other, 1=me, 2=friends)
-		  if(data.checkins[i].dog_ID == mySesh.dog.dog_ID)
-		  	border = 1;
-		  	
-		  var dog_image = PROFILE_PATH + 'dog-'+data.checkins[i].dog_ID+'-iconmed.jpg';
-		  // Ti.API.debug( "> > > " + dog_image);		 
-		  var dog_thumb = myUiFactory.buildProfileThumb(data.checkins[i].dog_ID, dog_image, border, myUiFactory._icon_large);
-		  parentObject.add(dog_thumb);
+			  
+			/*  this is my pup, his is checked in at this POI!  Give'im a border!   */
+			var border = 0; 			// this is nobody we know by default (0=other, 1=me, 2=friends)
+			if(data.checkins[i].dog_ID == mySesh.dog.dog_ID)
+			  	border = 1;
+			  	
+			var dog_image = PROFILE_PATH + 'dog-'+data.checkins[i].dog_ID+'-iconmed.jpg';
+			// Ti.API.debug( "> > > " + dog_image);		 
+			var dog_thumb = myUiFactory.buildProfileThumb(data.checkins[i].dog_ID, dog_image, border, myUiFactory._icon_large);
+			thumbs_container.add(dog_thumb);
 		}
 		/*  only if more than 8 checkins here */
 		if(data.checkins.length > 8 ) {
@@ -254,15 +256,17 @@ function displayPlaceCheckins(data, parentObject) {
 			);
 			$.addClass(how_many_more, "thumbnail");
 			how_many_more.image = "";
-			parentObject.add(how_many_more);
-		}				
-  }
-  /*  got nathin' */
-  else {
-  	parentObject.height = myUiFactory._icon_small + (2*myUiFactory._pad_top);
-    var how_many_bar = myUiFactory.buildSingleRowInfoBar( "", "No members currently here", "" );;
-    parentObject.add(how_many_bar);  
-  }
+			thumbs_container.add(how_many_more);
+		}
+		parentObject.add(myUiFactory.buildSpacer("vert", 2*myUiFactory._pad_left, "clear"));
+		parentObject.add(thumbs_container);			
+  	}
+  	/*  got nathin' */
+  	else {
+  		parentObject.height = myUiFactory._icon_small + (2*myUiFactory._pad_top);
+   	 	var how_many_bar = myUiFactory.buildSingleRowInfoBar( "", "No members currently here", "" );;
+   		parentObject.add(how_many_bar);  
+  	}
 }
 
 //=================================================================================
@@ -576,8 +580,9 @@ function drawEverything( poiFeatures ) {
 	$.activity.add(activity_header);
 	
 	// the thumbs of dogs have to display inline-block (and wrap) 
+	var whos_here_width = myUiFactory._device.screenwidth;
 	var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
-	var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", "100%", whos_here_height, 0, myUiFactory._color_ltblue);	
+	var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", whos_here_width, "", 0, myUiFactory._color_ltblue);	
 	$.activity.add(whos_here_list);
 	
 	//	get feed of checkins, including your current checkin status; 

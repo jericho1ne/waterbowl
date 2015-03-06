@@ -26,30 +26,42 @@ function getAllEstimates( place_ID, callbackFunction ) {
 //		Purpose:		
 //================================================================================
 function displayAllEstimates(payload) {
-	var estimate_list = myUiFactory.buildViewContainer("estimate_list", "vertical", "100%", Ti.UI.SIZE, 0);	
+	var estimate_list = myUiFactory.buildViewContainer("estimate_list", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);	
+	// 	Ti.API.info(" >> payload :: "+JSON.stringify(payload) );
 	
-	if(payload.status>0) {
+	if(payload.status > 0 && payload.data.length>0) {
 	  // generate table rows for each item in activity array   
-	  for (var i=0, len=payload.data.length; i<len; i++) {			// optimize loop to only calculate array size once
-	  	var photo_url = PROFILE_PATH + 'dog-'+payload.data[i].dog_ID+'-iconmed.jpg';	
-	  	var message = "";
-	  	// Create latest estimate: dog's photo, name, timestamp, and message type (checkin / estimate / etc)
-	  	if (payload.data[i].activity_type=="estimate") {
-	  		var message = "Saw " + payload.data[i].amount + " dogs in "+payload.data[i].enclosure_type+" Dog area";
-	  		if(payload.data[i].amount == 1) 
-		 	 		message	 = "Saw " + payload.data[i].amount + " dog in "+payload.data[i].enclosure_type+" Dog area";
-		 	} else if (payload.data[i].activity_type=="checkin") {
-		  	var message = "Decided to check in here";
-		  } 
-	  	var est_view = myUiFactory.buildFeedRow(payload.data[i].dog_ID, myUiFactory._icon_medium, photo_url, payload.data[i].dog_name, payload.data[i].time_elapsed.fmt_time, message);
-	  	estimate_list.add(est_view);
-	  	// THROW IN A SEPARATOR AFTER EACH ROW	
-	  	if ( i < (len-1) )
-			   estimate_list.add( myUiFactory.buildSeparator() );
-	  }
-  } else {		// NO ACTIVITY TO DISPLAY
-  	estimate_list.add( myUiFactory.buildSingleRowInfoBar( "", "No recent information", "") );
-  }
+	  	for (var i=0, len=payload.data.length; i<len; i++) {			// optimize loop to only calculate array size once
+		  	var photo_url = PROFILE_PATH + 'dog-'+payload.data[i].dog_ID+'-iconmed.jpg';	
+		  	var message = "";
+		  	// Create latest estimate: dog's photo, name, timestamp, and message type (checkin / estimate / etc)
+		  	if (payload.data[i].activity_type=="estimate") {
+		  		var enc_type = payload.data[i].enclosure_type;
+		  		// mixed vs large/small area message suffix
+		  		if (enc_type=="mixed")
+			  		var message_suffix = 'playing here';
+			  	else
+			  		var message_suffix = 'in '+enc_type+' dog area';
+			  	// build full message
+		  		var message = "Saw " + payload.data[i].amount + " dogs "+ message_suffix;
+		  		if(payload.data[i].amount == 1) {
+			 	 	message	= "Saw " + payload.data[i].amount + " dog "+ message_suffix;
+			 	}
+			}// End if (payload)
+			else if (payload.data[i].activity_type=="checkin") {
+				var message = "Arrived here";
+			} 
+			var est_view = myUiFactory.buildFeedRow(payload.data[i].dog_ID, myUiFactory._icon_medium, photo_url, payload.data[i].dog_name, payload.data[i].time_elapsed.fmt_time, message);
+			estimate_list.add(est_view);
+			// THROW IN A SEPARATOR AFTER EACH ROW	
+			if ( i < (len-1) ) {
+				estimate_list.add( myUiFactory.buildSeparator() );
+			}
+		}// End for loop
+  	}// End (payload.status) 
+  	else {		// NO ACTIVITY TO DISPLAY
+  		estimate_list.add( myUiFactory.buildSingleRowInfoBar( "", "No recent information", "") );
+  	}
   $.scrollView.add( estimate_list );
 }
 

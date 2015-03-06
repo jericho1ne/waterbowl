@@ -15,6 +15,7 @@ function Session(){
 	this.saveDogLocationInterval = '';
 	this.funcCallCount = 0;
 	this.actionOngoing = false;
+	this.refreshNearbyDogs = false;
 	this.device = { 
 		screenwidth  : Ti.Platform.displayCaps.platformWidth,
 		screenheight : Ti.Platform.displayCaps.platformHeight

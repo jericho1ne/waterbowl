@@ -59,8 +59,9 @@ var miniHeader = myUiFactory.buildMiniHeader(args._place_name, args._place_city,
 var create_marks_header = myUiFactory.buildSectionHeader("create_marks_header", "ADD REMARK TO THIS SPOT", 1);
 
 // TODO:  display today's date 
-var title 	 = myUiFactory.buildLabel( 'Message:', Ti.UI.SIZE, Ti.UI.SIZE, myUiFactory._text_medium_bold, "#000000", myUiFactory._color_ltblue, "left" );	
-var textArea = myUiFactory.buildTextArea( 'What does '+ mySesh.dog.name +' want to say about this place?' );
+var title 	= myUiFactory.buildLabel( 'Message:', Ti.UI.SIZE, Ti.UI.SIZE, myUiFactory._text_medium_bold, "#000000", myUiFactory._color_ltblue, "left" );	
+var text_area_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
+var textArea = myUiFactory.buildTextArea( text_area_hint, 90 );
 var character_count =  myUiFactory.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, "100%", myUiFactory._height_row, myUiFactory._text_tiny, "#000000", myUiFactory._color_ltblue, "" );
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "add remark", "large" );
 
@@ -72,6 +73,6 @@ $.scrollView.add(textArea);
 $.scrollView.add(character_count);
 $.scrollView.add(addMarkBtn);
 
-textArea.addEventListener('focus',  function(e) { clearTextAreaContents(textArea); });
+textArea.addEventListener('focus',  function(e) { clearTextAreaContents(textArea, text_area_hint); });
 textArea.addEventListener('change', function(e) { countCharacters(textArea, character_count); });
 addMarkBtn.addEventListener('click', function(e){ saveRemark(args._place_ID, args._place_type, textArea.value); });

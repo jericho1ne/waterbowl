@@ -45,7 +45,17 @@ addToAppWindowStack( $.index, "index" );
 $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
 
 /* 	LOGIN HACK - skip past login screen  			*/
-//createWindowController("profile", {dog_ID: 2},"slide_left");
+/*var params = {
+	_dog_ID: 2,
+	_poiInfo: {
+		name : "Oberreider",
+		place_ID:601000001
+	},
+	_place_ID:601000001
+}
+createWindowController("activityhistory", params, "slide_left");
+*/
+
 
 // DIV HEIGHTS
 var footer_height = 80;

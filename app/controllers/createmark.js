@@ -41,11 +41,13 @@ function saveRemark(title, text_content, textarea_hint) {
 					// (4) :::: INCREMENT THE  dog.marks_made GLOBAL VARIABLE, HIT BACKEND SCRIPT ::::
 					// TODO: stuff above
 					
-					// (5) :::: REFRESH MAP MARKS ON MAPVIEW ::::					
+					// (5) :::: REFRESH MAP MARKS ON MAPVIEW ::::	
+					mySesh.refreshNearbyDogs = true;
+					
+					/* Alloy.Globals.wbMap.removeAllAnnotations();			
 					myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
-			      		 myMap.getNearbyDogs(mySesh.user.lat, mySesh.user.lon);
-			      	} );
-      				//disableAllButtons();
+			      		myMap.getNearbyDogs();
+			      	} ); */
      		
       				// (6) :::: CLOSE WINDOW, RETURN TO MAPVIEW ::::
 					closeWindowController();				
@@ -220,31 +222,21 @@ var title_input = myUiFactory.buildTextField("mark_title", form_width, "Add a me
 var textarea_label = myUiFactory.buildLabel( "Message:", form_width, 40, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
 // used later to ensure the user has actually filled in the Mark textarea
 var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
-
-var textArea = Ti.UI.createTextArea({
-	borderWidth		: 0,
- 	borderColor		: '#bbbbbb',
- 	borderRadius	: 5,
- 	color 			: '#888888',
- 	font 			: { fontFamily: 'Raleway-Medium', fontSize: 14 },
- 	keyboardType 	: Titanium.UI.KEYBOARD_DEFAULT,
- 	returnKeyType   : Titanium.UI.RETURNKEY_DEFAULT,
- 	textAlign 		: 'left',
- 	value  			: textarea_hint,
- 	top 			: 1,
- 	width 			: form_width, 
- 	height 			: 90
-});
+var textArea = myUiFactory.buildTextArea(textarea_hint, 90);
 
 var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "mark", "large" );
 var createmark_reward_text = "For each new dog-friendly location found, "+ mySesh.dog.name +" will be awarded +10 Helpfulness for being the first to mark it!"
 // "IS THIS A POI" SWITCH
 var createmark_ispoi_text   = "Is this mark for a dog-friendly place/business?  Notify us so we can officially mark it as a Waterbowl location!";
 var yesNoContainer  = myUiFactory.buildViewContainer("yesnoContainer", "horizontal", myUiFactory._device.screenwidth, 40, 0, myUiFactory._color_ltblue);
-var yes_label		= myUiFactory.buildLabel( "Yes", 30, myUiFactory._height_header, myUiFactory._text_small, "#888888", myUiFactory._color_ltblue, "left" );
-var no_label 	 	= myUiFactory.buildLabel( "No", 20, myUiFactory._height_header, myUiFactory._text_small, "#000000", myUiFactory._color_ltblue, "left" );
-var switch_label 	= myUiFactory.buildLabel( createmark_ispoi_text, form_width, 68, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
-var reward_label	= myUiFactory.buildLabel( createmark_reward_text, form_width, 60, myUiFactory._text_small, "#000000", myUiFactory._color_ltpink, "left" );
+var yes_label		= myUiFactory.buildLabel( "Yes", 60, myUiFactory._height_header, myUiFactory._text_small, "#888888", myUiFactory._color_ltblue, "center", 0);
+var no_label 	 	= myUiFactory.buildLabel( "No", 40, myUiFactory._height_header, myUiFactory._text_small, "#000000", myUiFactory._color_ltblue, "center", 0);
+var switch_label 	= myUiFactory.buildLabel( createmark_ispoi_text, form_width, 68, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left", "");
+
+var rewardContainer = myUiFactory.buildViewContainer("rewardContainer", "horizontal", myUiFactory._device.screenwidth, 60, 10, '');
+var reward_label	= myUiFactory.buildLabel( createmark_reward_text, form_width-(2*myUiFactory._pad_left), Ti.UI.SIZE, myUiFactory._text_small, myUiFactory._color_dkpink, "", "center",  "");
+
+rewardContainer.add(reward_label);
 
 var poiSwitch 		= Ti.UI.createSwitch({
   value: false, left: myUiFactory._pad_left,
@@ -284,10 +276,10 @@ parentContainer.add(yesNoContainer);
 // add Mark button
 parentContainer.add(addMarkBtn);
 parentContainer.add( myUiFactory.buildSpacer("horz", myUiFactory._pad_top, "clear") );
-parentContainer.add( reward_label );
-parentContainer.add( myUiFactory.buildSpacer("horz", 20, "clear") );
+parentContainer.add( rewardContainer );
+parentContainer.add( myUiFactory.buildSpacer("horz", 40, "clear") );
 $.markForm.add(parentContainer);
 
 addMarkBtn.addEventListener	('click', function(e) { saveRemark(title_input.value, textArea.value, textarea_hint); });
-textArea.addEventListener	('focus', function(e) { clearTextAreaContents(textArea); });
+textArea.addEventListener	('focus', function(e) { clearTextAreaContents(textArea, textarea_hint); });
 

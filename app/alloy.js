@@ -51,8 +51,9 @@ function  isValidZip ( zipcode ) {
 //	Name:    clearTextAreaContents ( textarea_object )
 //	Desc:	   clear hint text on focus / click inside
 //=====================================================
-function clearTextAreaContents(textarea_object) {
-	textarea_object.value = ""; 
+function clearTextAreaContents(textarea_object, default_text) {
+	if(textarea_object.value == default_text)
+		textarea_object.value = ""; 
 }
 
 //=====================================================
