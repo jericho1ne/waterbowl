@@ -10,33 +10,33 @@ function gotoPhotoUpload() {
 //		(0)		Build dog info registration form
 //-----------------------------------------------------------------------
 // 		(1)  Add section header
-$.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "account setup 3/3") );
+$.scrollView.add( myUi.buildMasterSectionHeader("register_header", "account setup 3/3") );
 
 var dog_name = (mySesh.dog.name==null ? "your dog" : mySesh.dog.name);
-var form_width 		= myUiFactory._form_width;
-var title_label	 	= myUiFactory.buildLabel( (dog_name=="your dog" ? ucwords(dog_name) : dog_name) + "'s Furry Mug", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95", myUiFactory._color_ltblue,"left" );	
+var form_width 		= myUi._form_width;
+var title_label	 	= myUi.buildLabel( (dog_name=="your dog" ? ucwords(dog_name) : dog_name) + "'s Furry Mug", form_width, myUi._height_header, myUi._text_large, "#ec3c95", myUi._color_ltblue,"left" );	
 
 var dog_intro 		= "Last step! All we now is a clear photo of your dog so they are easily identifiable by other Waterbowl members.";
 var warning 		= "Note:  No humans or other dogs allowed in your pet's profile photo...  This one is just for "+dog_name+".";
 
-var galleryBtn 		= myUiFactory.buildButton( "galleryBtn", "upload from gallery", "xxl" );
-var cameraBtn 		= myUiFactory.buildButton( "cameraBtn", "use camera", "xxl" );
+var galleryBtn 		= myUi.buildButton( "galleryBtn", "upload from gallery", "xxl" );
+var cameraBtn 		= myUi.buildButton( "cameraBtn", "use camera", "xxl" );
 
-$.scrollView.add( myUiFactory.buildSpacer("horz", 20) );
+$.scrollView.add( myUi.buildSpacer("horz", 20) );
 $.scrollView.add( title_label );
-$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
+$.scrollView.add( myUi.buildSpacer("horz", 10) );
 
-$.scrollView.add( myUiFactory.buildLabel( dog_intro, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue,"left" ) );
-$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
-$.scrollView.add( myUiFactory.buildLabel( warning, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#ec3c95", myUiFactory._color_ltblue,"left" ) );
+$.scrollView.add( myUi.buildLabel( dog_intro, form_width, Ti.UI.SIZE, myUi._text_medium, "#000000", myUi._color_ltblue,"left" ) );
+$.scrollView.add( myUi.buildSpacer("horz", 10) );
+$.scrollView.add( myUi.buildLabel( warning, form_width, Ti.UI.SIZE, myUi._text_medium, "#ec3c95", myUi._color_ltblue,"left" ) );
 
-$.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
+$.scrollView.add( myUi.buildSpacer("horz", 30) );
 
 $.scrollView.add(galleryBtn);
 $.scrollView.add(cameraBtn);
   
 ////////////// PHOTO UPLOAD PROGRESS BAR ///////////////////////////////////////////////////
-var progress_bar = myUiFactory.buildProgressBar("Uploading Profile Image");
+var progress_bar = myUi.buildProgressBar("Uploading Profile Image");
 $.scrollView.add(progress_bar);
 
  

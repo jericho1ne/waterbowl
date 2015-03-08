@@ -49,18 +49,18 @@ function displayRemarks(data) {
 		});
 		
 		// (2)  Add original mark section header + first mark
-		$.remarks.add( myUiFactory.buildSectionHeader("mark_header", "ORIGINAL MARK", 1) );
+		$.remarks.add( myUi.buildSectionHeader("mark_header", "ORIGINAL MARK", 1) );
 		var photo = PROFILE_PATH + 'dog-'+data[last_one].marking_dog_ID+'-iconmed.jpg';		
- 		var original_mark = myUiFactory.buildFeedRow( data[last_one].marking_dog_ID, myUiFactory._icon_large, photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text );		
+ 		var original_mark = myUi.buildFeedRow( data[last_one].marking_dog_ID, myUi._icon_large, photo, data[last_one].marking_dog_name, data[last_one].time_elapsed, data[last_one].post_text );		
 		$.remarks.add(original_mark);
 		
 		// (3)  Add the remarks section header to the parent view
-		var overview_header = myUiFactory.buildSectionHeader("overview_header", "REMARKS", 1);
+		var overview_header = myUi.buildSectionHeader("overview_header", "REMARKS", 1);
 		$.remarks.add(overview_header);
 
 	    // (4)  Add remark button and link it to addpost.js
-		var remarkBtnContainer = myUiFactory.buildViewContainer ( "", "", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue ); 
-		var addRemarkBtn = myUiFactory.buildButton( "addRemarkBtn", "add remark", "large" );
+		var remarkBtnContainer = myUi.buildViewContainer ( "", "", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue ); 
+		var addRemarkBtn = myUi.buildButton( "addRemarkBtn", "add remark", "large" );
 		remarkBtnContainer.add(addRemarkBtn);
 		$.remarks.add(remarkBtnContainer);
 		
@@ -77,8 +77,8 @@ function displayRemarks(data) {
 		});
 		// (5) parent mark is the only one, notify user
 		if (data.length == 1) {
-			var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);	
-			var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", myUiFactory._icon_small + (2* myUiFactory._pad_top), myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "", 0);	
+			var no_marks_container = myUi.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue);	
+			var no_marks_label = myUi.buildLabel( "No remarks yet.  Be the first!", "100%", myUi._icon_small + (2* myUi._pad_top), myUi._text_medium, "#000000", myUi._color_ltblue, "", 0);	
 			no_marks_container.add(no_marks_label);
 			$.remarks.add(no_marks_container);
 		}
@@ -86,10 +86,10 @@ function displayRemarks(data) {
 		else {
 			for (var i=0, len=data.length; i<(len-1); i++) {
 	    		var photo = PROFILE_PATH + 'dog-'+data[i].marking_dog_ID+'-iconmed.jpg';		
-				var mark = myUiFactory.buildFeedRow ( "mark_"+i, myUiFactory._icon_medium, photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text );
+				var mark = myUi.buildFeedRow ( "mark_"+i, myUi._icon_medium, photo, data[i].marking_dog_name, data[i].time_elapsed, data[i].post_text );
 				$.remarks.add(mark);
 			  	if ( i < (len-2) )
-			    	$.remarks.add( myUiFactory.buildSeparator() );
+			    	$.remarks.add( myUi.buildSeparator() );
 	    	}
  		}
 	}
@@ -107,7 +107,7 @@ mark_title	 	= args.mark_name;
 mark_text		= args.mark_city;
 mark_subtext 	= args.dist+" miles away";
 
-$.header.add( myUiFactory.buildPageHeader(args.ID, "mark", mark_title, mark_text, mark_subtext, "") );
+$.header.add( myUi.buildPageHeader(args.ID, "mark", mark_title, mark_text, mark_subtext, "") );
 // (1) 	getMarkOverview gets the mark info from mark_common
 // (2) 	then it calls getRemarks, which populates the table below original mark
 

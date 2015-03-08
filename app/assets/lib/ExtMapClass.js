@@ -196,7 +196,7 @@ ExtMap.prototype.createPoiAnnotation = function( poi ) {
 		latitude  : poi.lat, 
 		longitude : poi.lon,
 		title     : poi.name,
-		subtitle  : poi.city + " (" + poi.dist + " mi)",
+		subtitle  : poi.city + " (" + poi.dist.toFixed(1) + " mi)",
 		animate   : false,
 		image     : ICON_PATH + poi.icon, 	// or pull icon from AWS: mySesh.AWS.base_icon_url
 		rightView : anno_button

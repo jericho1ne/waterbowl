@@ -153,7 +153,7 @@ Session.prototype.saveDogLocation = function(poi_ID, action, client_function) {
 		dog_ID 				: this.dog.dog_ID,
 		client_action		: client_function
 	}
-	Ti.API.info ( "  .... [~] saveDogLocation :: " + JSON.stringify(params) );
+	Ti.API.info ( "  .... [~] saveDogLocation / Call :: " + JSON.stringify(params) );
 	loadJson(params, "http://www.waterbowl.net/mobile/update-dog-location.php", this.saveDogResponse);	
 	//$.mem_usage.text = Titanium.Platform.availableMemory.toFixed(2)+" MB available";
 } 
@@ -164,7 +164,7 @@ Session.prototype.saveDogLocation = function(poi_ID, action, client_function) {
 //	Purpose:	track dog location intermittently
 //=================================================================================
 Session.prototype.saveDogResponse = function (dog_save_location_data) {
-	Ti.API.info ( "  .... [~] saveDogLocation :: " + JSON.stringify(dog_save_location_data) );
+	Ti.API.info ( "  .... [~] saveDogLocation / Response :: " + JSON.stringify(dog_save_location_data) );
 }
 
 //================================================================================

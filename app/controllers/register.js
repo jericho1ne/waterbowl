@@ -53,8 +53,8 @@ function saveUserToDb(email, pwd1, pwd2, city, state, zip) {
 }
 
 //================================================================================
-//		Name: 			saveUserInfoLocally ()
-//		Purpose:  add new user to database
+//		Name: 		saveUserInfoLocally ()
+//		Purpose:  	save user info locally after successful new user db insert
 //================================================================================
 function saveUserInfoLocally(data) {
 	Ti.API.debug( "  .... [~] saveUserInfoLocally :: " + JSON.stringify(data) );
@@ -62,17 +62,13 @@ function saveUserInfoLocally(data) {
 	
 	if (data.status==1) {
 		mySesh.user.owner_ID = data.owner_ID;
-		
-		Ti.API.debug( "  >>> Ti.App.Properties.setString('user') :: "+data.email);
-		// Ti.App.Properties.setString('pass', data.pwd);
-		/* var params = {
-			"_owner_ID" 	: data.owner_ID,
-		}; */
- 		createWindowController( "register2", "", "slide_left" ); 
+		Ti.API.debug( "  >>> saveUserInfoLocally :: "+data.email);
+		// Ti.App.Properties.setString('email', mySesh.user.email);
+		// Ti.App.Properties.setString('password', '');
+		createWindowController( "register2", "", "slide_left" ); 
  	}
   else {
   	// clear presaved user email
-  	Ti.App.Properties.setString('user', data.email);
   	createSimpleDialog("Error", data.message);
   }
 }
@@ -85,27 +81,27 @@ function saveUserInfoLocally(data) {
 //-----------------------------------------------------------------------
 
 // 		(1)  Add section header
-$.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "account creation") );
+$.scrollView.add( myUi.buildMasterSectionHeader("register_header", "account creation") );
 
-var form_width = myUiFactory._form_width;
+var form_width = myUi._form_width;
 												//		title, width, height, font_style, font_color, bg_color, text_align, horz_pad)
-var title_label = myUiFactory.buildLabel( "Welcome to Waterbowl", form_width, myUiFactory._height_header, myUiFactory._text_large, "#ec3c95", myUiFactory._color_ltblue, "left",  0);	
+var title_label = myUi.buildLabel( "Welcome to Waterbowl", form_width, myUi._height_header, myUi._text_large, "#ec3c95", myUi._color_ltblue, "left",  0);	
 
-var get_started = myUiFactory.buildLabel( "Let's get you set up...", form_width, myUiFactory._height_header, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left", 0 );
-var user_email	= myUiFactory.buildTextField("user_email", form_width,  "email address",    "");
-var user_pwd_1 	= myUiFactory.buildTextField("user_pwd_1", form_width, "password", true);
-var user_pwd_2 	= myUiFactory.buildTextField("user_pwd_2", form_width, "re-enter password", true);
-var user_city 	= myUiFactory.buildTextField("user_city",  form_width, "home city", false);
+var get_started = myUi.buildLabel( "Let's get you set up...", form_width, myUi._height_header, myUi._text_medium, "#000000", myUi._color_ltblue, "left", 0 );
+var user_email	= myUi.buildTextField("user_email", form_width,  "email address",    "");
+var user_pwd_1 	= myUi.buildTextField("user_pwd_1", form_width, "password", true);
+var user_pwd_2 	= myUi.buildTextField("user_pwd_2", form_width, "re-enter password", true);
+var user_city 	= myUi.buildTextField("user_city",  form_width, "home city", false);
 
-var col_width   = (form_width / 2) - (myUiFactory._pad_left + myUiFactory._pad_right);
-var sz_row_view = myUiFactory.buildViewContainer ( "sz_row_view", "horizontal", form_width, myUiFactory._height_row+myUiFactory._pad_top, 0 ); 
-var user_state	= myUiFactory.buildTextField("user_state", col_width,  "state", false);
-var user_zip		= myUiFactory.buildTextField("user_zip",   Ti.UI.FILL, "zip",   false);
+var col_width   = (form_width / 2) - (myUi._pad_left + myUi._pad_right);
+var sz_row_view = myUi.buildViewContainer ( "sz_row_view", "horizontal", form_width, myUi._height_row+myUi._pad_top, 0 ); 
+var user_state	= myUi.buildTextField("user_state", col_width,  "state", false);
+var user_zip		= myUi.buildTextField("user_zip",   Ti.UI.FILL, "zip",   false);
 sz_row_view.add( user_state );
-sz_row_view.add( myUiFactory.buildSpacer("vert", myUiFactory._pad_left) );
+sz_row_view.add( myUi.buildSpacer("vert", myUi._pad_left) );
 sz_row_view.add( user_zip );
 
-var nextBtn = myUiFactory.buildButton( "nextBtn", "next", "xl" );
+var nextBtn = myUi.buildButton( "nextBtn", "next", "xl" );
 nextBtn.addEventListener('click',  function(){ 
 	saveUserToDb(user_email.value, user_pwd_1.value, user_pwd_2.value, user_city.value, user_state.value, user_zip.value) 
 });
@@ -122,15 +118,15 @@ user_state.addEventListener('focus', function(e) {
 });
 var fwd_state_pick_btn = Titanium.UI.createButton({
 	backgroundImage		: ICON_PATH + 'caret.png',
-	width				: myUiFactory._icon_small,
-	height				: myUiFactory._icon_small
+	width				: myUi._icon_small,
+	height				: myUi._icon_small
 });
 user_state.rightButton = fwd_state_pick_btn;
 
 
-$.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
+$.scrollView.add( myUi.buildSpacer("horz", 30) );
 $.scrollView.add( title_label );
-$.scrollView.add( myUiFactory.buildSpacer("horz", 10) );
+$.scrollView.add( myUi.buildSpacer("horz", 10) );
 $.scrollView.add( get_started );
 $.scrollView.add( user_email );
 $.scrollView.add( user_pwd_1 );
@@ -139,7 +135,7 @@ $.scrollView.add( user_city );
 $.scrollView.add( sz_row_view );
 
 
-$.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
+$.scrollView.add( myUi.buildSpacer("horz", 30) );
 $.scrollView.add(nextBtn);
 
 /*

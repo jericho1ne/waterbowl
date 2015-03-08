@@ -29,57 +29,57 @@ function saveDogInfo(data) {
 //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var args = arguments[0] || {};
-var form_width = myUiFactory._form_width;
+var form_width = myUi._form_width;
 
 // 		HEADER
-$.scrollView.add( myUiFactory.buildMasterSectionHeader("register_header", "account setup 2/3") );
+$.scrollView.add( myUi.buildMasterSectionHeader("register_header", "account setup 2/3") );
 
-var title_label = myUiFactory.buildLabel( "All about your dog", form_width, myUiFactory._height_header, myUiFactory._text_large, myUiFactory._color_dkpink,  myUiFactory._color_ltblue, "left" );	
+var title_label = myUi.buildLabel( "All about your dog", form_width, myUi._height_header, myUi._text_large, myUi._color_dkpink,  myUi._color_ltblue, "left" );	
 
 //		PAGE INTRO 
 var dog_intro = "Waterbowl is all about your four-legged friend.  We'll need some basic information about him/her to create your dog's profile.";
 
 //   DOG NAME
-var dog_intro = myUiFactory.buildLabel( dog_intro, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
-var dog_name  = myUiFactory.buildTextField("dog_name",  form_width,  "your dog's name", false)
+var dog_intro = myUi.buildLabel( dog_intro, form_width, Ti.UI.SIZE, myUi._text_medium, "#000000", myUi._color_ltblue, "left" );
+var dog_name  = myUi.buildTextField("dog_name",  form_width,  "your dog's name", false)
 
 //   DOG NAME
 var gender_tabs = Ti.UI.iOS.createTabbedBar({
     labels					: ['Male', 'Female'],   
-    backgroundColor	: myUiFactory._color_dkpink,       
-    height					: myUiFactory._height_row,  
+    backgroundColor	: myUi._color_dkpink,       
+    height					: myUi._height_row,  
     indexOf         : 1, 
-    width						: form_width // (0.6*form_width) - (2* myUiFactory._pad_left)
+    width						: form_width // (0.6*form_width) - (2* myUi._pad_left)
 });
-//sex_row_view.add( myUiFactory.buildSpacer("vert", myUiFactory._pad_left) );
+//sex_row_view.add( myUi.buildSpacer("vert", myUi._pad_left) );
 
 
 //   FWD ARROW BUTTONS
 var fwd_button_1 =  Titanium.UI.createButton({
 	backgroundImage	: ICON_PATH + 'caret.png',
-	width			: myUiFactory._icon_small,
-	height			: myUiFactory._icon_small
+	width			: myUi._icon_small,
+	height			: myUi._icon_small
 });
 var fwd_button_2 =  Titanium.UI.createButton({
 	backgroundImage	: ICON_PATH + 'caret.png',
-	width			: myUiFactory._icon_small,
-	height			: myUiFactory._icon_small
+	width			: myUi._icon_small,
+	height			: myUi._icon_small
 });
 var fwd_button_3 =  Titanium.UI.createButton({
 	backgroundImage	: ICON_PATH + 'caret.png',
-	width			: myUiFactory._icon_small,
-	height			: myUiFactory._icon_small
+	width			: myUi._icon_small,
+	height			: myUi._icon_small
 });
 var fwd_button_4 =  Titanium.UI.createButton({
 	backgroundImage	: ICON_PATH + 'caret.png',
-	width			: myUiFactory._icon_small,
-	height			: myUiFactory._icon_small
+	width			: myUi._icon_small,
+	height			: myUi._icon_small
 });
 
-var dog_breed1 = myUiFactory.buildTextField("dog_breed1",  form_width, "select your dog's breed", false);
-var dog_breed2 = myUiFactory.buildTextField("dog_breed2",  form_width, "and a second one if you wish", false);
-var dog_weight = myUiFactory.buildTextField("dog_weight",  form_width, "weight (lbs)", 		 false);
-var dog_bdate  = myUiFactory.buildTextField("dog_bdate", form_width, "birthdate", false);
+var dog_breed1 = myUi.buildTextField("dog_breed1",  form_width, "select your dog's breed", false);
+var dog_breed2 = myUi.buildTextField("dog_breed2",  form_width, "and a second one if you wish", false);
+var dog_weight = myUi.buildTextField("dog_weight",  form_width, "weight (lbs)", 		 false);
+var dog_bdate  = myUi.buildTextField("dog_bdate", form_width, "birthdate", false);
 
 if (mySesh.dog.breed1=="" || mySesh.dog.breed1==null) {
 	dog_breed2.opacity = 0;
@@ -97,7 +97,7 @@ dog_bdate.rightButton 	= fwd_button_4;
 
 // var owner_ID = (args._owner_ID=="")
 
-var nextBtn = myUiFactory.buildButton( "nextBtn", "next", "xl" );
+var nextBtn = myUi.buildButton( "nextBtn", "next", "xl" );
 	nextBtn.addEventListener('click',  function(dog){ 
 		disableAllButtons();	
 		
@@ -142,25 +142,25 @@ var nextBtn = myUiFactory.buildButton( "nextBtn", "next", "xl" );
 });
 
 /////////////////// ADD UI ELEMENTS TO PAGE ///////////////////////
-$.scrollView.add( myUiFactory.buildSpacer("horz", 20) );
+$.scrollView.add( myUi.buildSpacer("horz", 20) );
 $.scrollView.add(title_label);
-$.scrollView.add( myUiFactory.buildSpacer("horz", 20) );
+$.scrollView.add( myUi.buildSpacer("horz", 20) );
 $.scrollView.add( dog_intro );
-$.scrollView.add( myUiFactory.buildSpacer("horz", 20) );
+$.scrollView.add( myUi.buildSpacer("horz", 20) );
 
 $.scrollView.add( dog_name );
-$.scrollView.add( myUiFactory.buildSpacer("horz", 8) );
+$.scrollView.add( myUi.buildSpacer("horz", 8) );
 $.scrollView.add( gender_tabs );
-$.scrollView.add( myUiFactory.buildSpacer("horz", 4) );
+$.scrollView.add( myUi.buildSpacer("horz", 4) );
 
 $.scrollView.add( dog_breed1 );
 $.scrollView.add( dog_breed2 );
 $.scrollView.add( dog_weight );
 $.scrollView.add( dog_bdate );
 
-$.scrollView.add( myUiFactory.buildSpacer("horz", 20) );
+$.scrollView.add( myUi.buildSpacer("horz", 20) );
 $.scrollView.add(nextBtn);
-$.scrollView.add( myUiFactory.buildSpacer("horz", 30) );
+$.scrollView.add( myUi.buildSpacer("horz", 30) );
 
 
 ///////////////////// 		EVENT LISTENERS				///////////////////////////////////////////
@@ -219,7 +219,7 @@ $.register2.addEventListener('focus',function(e){
 		// 	DON'T POPULATE 2ND BREED LIST IF THE DOG IS A MUTT
 		if(mySesh.dog.breed1!="A Beautiful Mix") {
 			dog_breed2.opacity = 1;
-			dog_breed2.height  = myUiFactory._height_row;
+			dog_breed2.height  = myUi._height_row;
 		}
 	} 
 	if (dog_breed2.value=="" || mySesh.dog.breed2!=dog_breed2.value)

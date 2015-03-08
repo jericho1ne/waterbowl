@@ -26,7 +26,7 @@ function getAllEstimates( place_ID, callbackFunction ) {
 //		Purpose:		
 //================================================================================
 function displayAllEstimates(payload) {
-	var estimate_list = myUiFactory.buildViewContainer("estimate_list", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);	
+	var estimate_list = myUi.buildViewContainer("estimate_list", "vertical", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue);	
 	// 	Ti.API.info(" >> payload :: "+JSON.stringify(payload) );
 	
 	if(payload.status > 0 && payload.data.length>0) {
@@ -51,16 +51,16 @@ function displayAllEstimates(payload) {
 			else if (payload.data[i].activity_type=="checkin") {
 				var message = "Arrived here";
 			} 
-			var est_view = myUiFactory.buildFeedRow(payload.data[i].dog_ID, myUiFactory._icon_medium, photo_url, payload.data[i].dog_name, payload.data[i].time_elapsed.fmt_time, message);
+			var est_view = myUi.buildFeedRow(payload.data[i].dog_ID, myUi._icon_medium, photo_url, payload.data[i].dog_name, payload.data[i].time_elapsed.fmt_time, message);
 			estimate_list.add(est_view);
 			// THROW IN A SEPARATOR AFTER EACH ROW	
 			if ( i < (len-1) ) {
-				estimate_list.add( myUiFactory.buildSeparator() );
+				estimate_list.add( myUi.buildSeparator() );
 			}
 		}// End for loop
   	}// End (payload.status) 
   	else {		// NO ACTIVITY TO DISPLAY
-  		estimate_list.add( myUiFactory.buildSingleRowInfoBar( "", "No recent information", "") );
+  		estimate_list.add( myUi.buildSingleRowInfoBar( "", "No recent information", "") );
   	}
   $.scrollView.add( estimate_list );
 }
@@ -68,9 +68,9 @@ function displayAllEstimates(payload) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var args = arguments[0] || {};
-var miniHeader = myUiFactory.buildMiniHeader(args._poiInfo.name, args._poiInfo.city, args._poiInfo.icon_color);
+var miniHeader = myUi.buildMiniHeader(args._poiInfo.name, args._poiInfo.city, args._poiInfo.icon_color);
 // TODO:  Add park name at top of page, text only, super large
-var section_header = myUiFactory.buildSectionHeader("recent_estimates", "Recent Activity", 1);
+var section_header = myUi.buildSectionHeader("recent_estimates", "Recent Activity", 1);
 
 $.scrollView.add(miniHeader);
 $.scrollView.add(section_header);

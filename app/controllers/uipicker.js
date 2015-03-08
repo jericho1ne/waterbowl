@@ -6,7 +6,7 @@ Ti.API.debug(JSON.stringify(args));
 // 				LOGIC FLOW
 //
 //-----------------------------------------------------------------------
-$.content.backgroundColor = myUiFactory._color_ltblue;
+$.content.backgroundColor = myUi._color_ltblue;
 var intro_text = "";
 var header_title = "";
 
@@ -23,11 +23,11 @@ else if (args._type=="weight") {
 	intro_text	 = "How much does "+(args._dog_name!=""?args._dog_name:"your dog") + " weigh in lbs?";
 }
 
-var form_width  = myUiFactory._form_width;
+var form_width  = myUi._form_width;
 
-$.content.add( myUiFactory.buildMasterSectionHeader("picker_header", header_title) );
-$.content.add( myUiFactory.buildSpacer("horz", 20) );
-$.content.add( myUiFactory.buildLabel( intro_text, form_width, Ti.UI.SIZE, myUiFactory._text_medium, "#000000",  myUiFactory._color_ltblue, "left" ) );	
+$.content.add( myUi.buildMasterSectionHeader("picker_header", header_title) );
+$.content.add( myUi.buildSpacer("horz", 20) );
+$.content.add( myUi.buildLabel( intro_text, form_width, Ti.UI.SIZE, myUi._text_medium, "#000000",  myUi._color_ltblue, "left" ) );	
 
 ////////		BUILD THE APPROPRIATE PICKER BASED ON INPUT TYPE		/////////////////////////////////
 if (args._type=="birthdate" ) {
@@ -41,7 +41,7 @@ if (args._type=="birthdate" ) {
 	 	value		  : new Date(2015,1,1),
 		opacity 	: 1,
 	 	borderRadius 	: 4, 	
-		borderColor		: myUiFactory._color_dkpink,
+		borderColor		: myUi._color_dkpink,
 		borderWidth		: 1	
 	} );
 } else {
@@ -51,7 +51,7 @@ if (args._type=="birthdate" ) {
 	  width			: form_width,
 	  opacity 	: 1,
 	  borderRadius  : 4, 	
-		borderColor		: myUiFactory._color_dkpink,
+		borderColor		: myUi._color_dkpink,
 		borderWidth		: 1	
 		// borderRadius : 10,
 	} );
@@ -92,7 +92,7 @@ if (args._type == "breed" || args._type == "weight" ) {
 } else if (	args._type == "state") {
 	var dataRows = [];
 	var data_length = data.length;
-	Ti.API.log( JSON.stringify(data) );
+	// Ti.API.log( JSON.stringify(data) );
 	for (var i=0; i<data_length; i++) {
 		var tableRow = Ti.UI.createPickerRow( { "title": data[i].name, "value": data[i].abbr } );	
 		dataRows.push(  tableRow  );
@@ -102,7 +102,7 @@ if (args._type == "breed" || args._type == "weight" ) {
 	// Birthdate picker is auto populated with Start > End date, so it doesn't need a case
 }
 
-var saveBtn = myUiFactory.buildButton( "saveBtn", "save", "xl" );
+var saveBtn = myUi.buildButton( "saveBtn", "save", "xl" );
 ////////		SAVE BUTTON CLICK 	//////////////////////////////////////////////////////////////////
 saveBtn.addEventListener('click', function(e) {
 	if (args._type=="birthdate")
@@ -153,6 +153,6 @@ saveBtn.addEventListener('click', function(e) {
 
 ////////		ADD UI ELEMENTS TO PAGE			//////////////////////////////////////////////////////////////////
 $.content.add( value_picker );
-$.content.add( myUiFactory.buildSpacer("horz", 30) );
+$.content.add( myUi.buildSpacer("horz", 30) );
 $.content.add( saveBtn );
 

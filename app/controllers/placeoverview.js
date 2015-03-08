@@ -52,11 +52,11 @@ function displayRemarks(data) {
 	var remarks = data;
 	removeAllChildren($.remarks);	
 	
-	var marks_header = myUiFactory.buildSectionHeader("marks", "REMARKS", 1);
+	var marks_header = myUi.buildSectionHeader("marks", "REMARKS", 1);
 	$.remarks.add(marks_header); 
 
-	var markBtnContainer = myUiFactory.buildViewContainer ( "", "", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue ); 
-	var markBtn = myUiFactory.buildButton( "markBtn", "add remark", "large" );
+	var markBtnContainer = myUi.buildViewContainer ( "", "", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue ); 
+	var markBtn = myUi.buildButton( "markBtn", "add remark", "large" );
 	markBtnContainer.add(markBtn);
 	$.remarks.add(markBtnContainer);
 	
@@ -80,15 +80,15 @@ function displayRemarks(data) {
     for (var i=0, len=remarks.length; i<len; i++) {
       var photo = PROFILE_PATH + 'dog-'+remarks[i].marking_dog_ID+'-iconmed.jpg';		
       																				// (id, photo_url, photo_caption, time_stamp, description)
-		  var mark = myUiFactory.buildFeedRow( remarks[i].marking_dog_ID, myUiFactory._icon_medium, photo, remarks[i].marking_dog_name, remarks[i].time_elapsed, remarks[i].post_text  );
+		  var mark = myUi.buildFeedRow( remarks[i].marking_dog_ID, myUi._icon_medium, photo, remarks[i].marking_dog_name, remarks[i].time_elapsed, remarks[i].post_text  );
 		  $.remarks.add(mark);
 		  if ( i < (len-1) )
-		   $.remarks.add( myUiFactory.buildSeparator() );
+		   $.remarks.add( myUi.buildSeparator() );
     }
   }
   else {
-	  var no_marks_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);	
-		var no_marks_label = myUiFactory.buildLabel( "No remarks yet.  Be the first!", "100%", myUiFactory._height_row+(2*myUiFactory._pad_top), myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "" );	
+	  var no_marks_container = myUi.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue);	
+		var no_marks_label = myUi.buildLabel( "No remarks yet.  Be the first!", "100%", myUi._height_row+(2*myUi._pad_top), myUi._text_medium, "#000000", myUi._color_ltblue, "" );	
 		no_marks_container.add(no_marks_label);
 		$.remarks.add(no_marks_container);
 	}
@@ -123,26 +123,26 @@ function displayRecentEstimates(data, place_ID) {
 	  		area_type = data.payload[i].size+ " Dog";
 	    }
 	    // EG: SMALL DOG AREA
-	    var dog_size_section_header = myUiFactory.buildSectionHeader("", area_type+" Area", 3);
+	    var dog_size_section_header = myUi.buildSectionHeader("", area_type+" Area", 3);
 		  $.estimates.add(dog_size_section_header);
 		  
 		  // NO RECENT INFO
 		  //  var photo_url = mySesh.AWS.url_base+ '/' +mySesh.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  if(data.payload[i].amount==-1) {
 		  	// var activity_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
-		  	var latest_estimate = myUiFactory.buildSingleRowInfoBar( "", "No recent information", "");
+		  	var latest_estimate = myUi.buildSingleRowInfoBar( "", "No recent information", "");
 		  }
 		  // (photo_icon) 
 		  else {
 		  	var photo_url = PROFILE_PATH + 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
-		  	var latest_estimate = myUiFactory.buildEstimateHeader(data.payload[i].dog_ID, photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
+		  	var latest_estimate = myUi.buildEstimateHeader(data.payload[i].dog_ID, photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
 		  }
 		  $.estimates.add(latest_estimate);
 	  }
 	}
 	else {
-	  var nothing_here_container = myUiFactory.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);	 
-		var nothing_here = myUiFactory.buildLabel( data.response, "100%", myUiFactory._icon_small+(2*myUiFactory._pad_top), myUiFactory._text_medium, "#000000",  myUiFactory._color_ltblue, "" );	
+	  var nothing_here_container = myUi.buildViewContainer("", "vertical", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue);	 
+		var nothing_here = myUi.buildLabel( data.response, "100%", myUi._icon_small+(2*myUi._pad_top), myUi._text_medium, "#000000",  myUi._color_ltblue, "" );	
 		nothing_here_container.add(nothing_here);
 		$.estimates.add(nothing_here_container);
 	}
@@ -155,7 +155,7 @@ function displayRecentEstimates(data, place_ID) {
 function addEstimatesButton() {
 	//////////		 ONLY ALLOW USER TO PROVIDE ESTIMATE IF CURRENTLY CHECKED IN HERE		 /////////////////////
 	if (	mySesh.dog.current_place_ID == args._place_ID ) {
-		var estimate_btn = myUiFactory.buildFullRowButton("estimate_btn", "report estimate >"); 
+		var estimate_btn = myUi.buildFullRowButton("estimate_btn", "report estimate >"); 
 		estimate_btn.addEventListener('click', function(){
 		  var necessary_args = {
 			 _poiInfo	: mySesh.currentPlaceInfo,
@@ -165,7 +165,7 @@ function addEstimatesButton() {
 		});
 	}
 	// if there are multiple estimates to be seen at this park
-	var more_btn = myUiFactory.buildFullRowButton("more_btn", "see history >"); 
+	var more_btn = myUi.buildFullRowButton("more_btn", "see history >"); 
 	more_btn.addEventListener('click', function(){
 		Ti.API.info("...[+] Estimate History button clicked");
 		// TODO:  Create gray "see more >" button 
@@ -218,18 +218,18 @@ function displayPlaceCheckins(data, parentObject) {
  	/* got stuff to show!  */
   	if( data.checkins.length > 0) {
 	  	var gray_dog_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
-	  	var how_many_bar = myUiFactory.buildSingleRowInfoBar( gray_dog_icon, "Members Here Now: ",  data.checkins.length );
+	  	var how_many_bar = myUi.buildSingleRowInfoBar( gray_dog_icon, "Members Here Now: ",  data.checkins.length );
 	    parentObject.add(how_many_bar);
 
-	  	var thumbs_width = myUiFactory._device.screenwidth - (4*myUiFactory._pad_left);
+	  	var thumbs_width = myUi._device.screenwidth - (4*myUi._pad_left);
 	  	 if( data.checkins.length > 4) {
 	  		// size up parent container so that we can fit two rows, up to 8 thumbnails
-	  		var thumbs_height = (2*myUiFactory._icon_large) + (4*myUiFactory._pad_top) + myUiFactory._icon_medium;  	
+	  		var thumbs_height = (2*myUi._icon_large) + (4*myUi._pad_top) + myUi._icon_medium;  	
 	  	}
 	  	else if (data.checkins.length <= 4 ) {
-	    	var thumbs_height = (1*myUiFactory._icon_large) + (3*myUiFactory._pad_top) + myUiFactory._icon_medium;
+	    	var thumbs_height = (1*myUi._icon_large) + (3*myUi._pad_top) + myUi._icon_medium;
 	    }
-	  	var thumbs_container = myUiFactory.buildViewContainer("", "horizontal", thumbs_width, thumbs_height, 0);
+	  	var thumbs_container = myUi.buildViewContainer("", "horizontal", thumbs_width, thumbs_height, 0);
 
 	    for (var i=0, len=data.checkins.length; i<len; i++) {		// only calculate array size once
 			/* only show first 7 elements, leave space for "+ {__} more" cell */
@@ -243,7 +243,7 @@ function displayPlaceCheckins(data, parentObject) {
 			  	
 			var dog_image = PROFILE_PATH + 'dog-'+data.checkins[i].dog_ID+'-iconmed.jpg';
 			// Ti.API.debug( "> > > " + dog_image);		 
-			var dog_thumb = myUiFactory.buildProfileThumb(data.checkins[i].dog_ID, dog_image, border, myUiFactory._icon_large);
+			var dog_thumb = myUi.buildProfileThumb(data.checkins[i].dog_ID, dog_image, border, myUi._icon_large);
 			thumbs_container.add(dog_thumb);
 		}
 		/*  only if more than 8 checkins here */
@@ -258,13 +258,13 @@ function displayPlaceCheckins(data, parentObject) {
 			how_many_more.image = "";
 			thumbs_container.add(how_many_more);
 		}
-		parentObject.add(myUiFactory.buildSpacer("vert", 2*myUiFactory._pad_left, "clear"));
+		parentObject.add(myUi.buildSpacer("vert", 2*myUi._pad_left, "clear"));
 		parentObject.add(thumbs_container);			
   	}
   	/*  got nathin' */
   	else {
-  		parentObject.height = myUiFactory._icon_small + (2*myUiFactory._pad_top);
-   	 	var how_many_bar = myUiFactory.buildSingleRowInfoBar( "", "No members currently here", "" );;
+  		parentObject.height = myUi._icon_small + (2*myUi._pad_top);
+   	 	var how_many_bar = myUi.buildSingleRowInfoBar( "", "No members currently here", "" );;
    		parentObject.add(how_many_bar);  
   	}
 }
@@ -311,11 +311,11 @@ function displayBasicInfo() {
 	var category_icon 		 = ICON_PATH + mySesh.currentPlaceInfo.icon_basic;
 	var rating_overall		 = ICON_PATH + "poi-basic-ratingwb.png";
 	var rating_dogfriendly = ICON_PATH + "poi-feature-waterbowl.png";
-	$.basics.add( myUiFactory.buildSingleRowInfoBar(category_icon, categories_text, "") );
-	$.basics.add( myUiFactory.buildSeparator() );
-	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_dogfriendly, "Dog-Friendliness: ", mySesh.currentPlaceInfo.rating_dogfriendly+"/5") );
-	$.basics.add( myUiFactory.buildSeparator() );
-	$.basics.add( myUiFactory.buildSingleRowInfoBar(rating_overall, "Overall Rating:", mySesh.currentPlaceInfo.rating_dogfriendly+"/5") );
+	$.basics.add( myUi.buildSingleRowInfoBar(category_icon, categories_text, "") );
+	$.basics.add( myUi.buildSeparator() );
+	$.basics.add( myUi.buildSingleRowInfoBar(rating_dogfriendly, "Dog-Friendliness:", mySesh.currentPlaceInfo.rating_dogfriendly+"/5") );
+	$.basics.add( myUi.buildSeparator() );
+	$.basics.add( myUi.buildSingleRowInfoBar(rating_overall, "Overall Rating:", mySesh.currentPlaceInfo.rating_dogfriendly+"/5") );
 }
 
 //================================================================================
@@ -323,7 +323,7 @@ function displayBasicInfo() {
 //		Purpose:	only show header if there is at least one features to list
 //================================================================================
 function displayFeaturesHeader() {
-	var features_header = myUiFactory.buildSectionHeader("features_header", "FEATURES", 1);
+	var features_header = myUi.buildSectionHeader("features_header", "FEATURES", 1);
 	$.features.add(features_header);
 }
 
@@ -349,7 +349,7 @@ function displayOutdoorFeatures(poiDetail) {
 	};
 	
 	//Ti.API.debug("....[~] displayOutdoorFeatures :: " + JSON.stringify(features) );
-	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);
+	var features_list = myUi.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue);
 	var icon_url = ""; 
 	
 	var string_1 = "";
@@ -408,8 +408,8 @@ function displayOutdoorFeatures(poiDetail) {
 				icon_url = ICON_PATH + "poi-feature-seating.png";
 			}			
 			// ADD FEATURES TO LIST
-			features_list.add( myUiFactory.buildSingleRowInfoBar(icon_url, string_1, string_2) );
-			features_list.add( myUiFactory.buildSeparator() );
+			features_list.add( myUi.buildSingleRowInfoBar(icon_url, string_1, string_2) );
+			features_list.add( myUi.buildSeparator() );
 			count ++;
 	    }
 	}
@@ -434,7 +434,7 @@ function displayHumanFeatures(poiDetail) {
 		"Waterbowl" 			: poiDetail.waterbowl
 	};
 	// Ti.API.debug("  .... [~] displayHumanFeatures :: " + JSON.stringify(features) );
-	var features_list = myUiFactory.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);
+	var features_list = myUi.buildViewContainer("features_list", "vertical", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue);
 		
 	if (poiDetail.dogs_inside !="" && poiDetail.dogs_inside!="NULL") {
 		var icon_url = ICON_PATH + "poi-feature-dogsallowedinside.png";
@@ -443,15 +443,15 @@ function displayHumanFeatures(poiDetail) {
 			icon_url = ICON_PATH + "poi-feature-dogsnotallowedinside.png";
 			string_inside = "Dogs Not Allowed";	
 		} 
-		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Inside: ", string_inside) );
-		features_list.add( myUiFactory.buildSeparator() );
+		features_list.add(myUi.buildSingleRowInfoBar(icon_url, "Inside:", string_inside) );
+		features_list.add( myUi.buildSeparator() );
 		count ++;
 	}
 	
 	if (poiDetail.outdoor_area !="" && poiDetail.outdoor_area!="NULL") {
 		if (poiDetail.outdoor_area == "No") {
-			var icon_url = ICON_PATH + "poi-basic-dogfriendliness.png";
-			features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "No Outdoor Area", "") );
+			var icon_url = ICON_PATH + "poi-feature-nooutsidearea.png";
+			features_list.add(myUi.buildSingleRowInfoBar(icon_url, "No Outdoor Area", "") );
 		} else {
 			var string_1 = "Outdoor Area:";
 			var string_2 = "Dogs Allowed";
@@ -464,23 +464,23 @@ function displayHumanFeatures(poiDetail) {
 				icon_url = ICON_PATH + "poi-feature-dogsnotallowedoutside.png";
 				string_2 = "Dogs Not Allowed";
 			}			
-			features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, string_1, string_2) );
+			features_list.add(myUi.buildSingleRowInfoBar(icon_url, string_1, string_2) );
 		}
-		features_list.add( myUiFactory.buildSeparator() );
+		features_list.add( myUi.buildSeparator() );
 		count ++;
 	}
 	
 	if ( poiDetail.waterbowl!="" && poiDetail.waterbowl!="NULL" ) {
 		var icon_url = ICON_PATH + "poi-basic-dogfriendliness.png";
 		var wb_text_string = "Yes";
-		//features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Waterbowl:", "No") );
+		//features_list.add(myUi.buildSingleRowInfoBar(icon_url, "Waterbowl:", "No") );
 
 		if (poiDetail.waterbowl != "Yes") {
 			icon_url = ICON_PATH + "poi-feature-nowaterbowl.png";	
 			wb_text_string = "No";
 		} 
-		features_list.add(myUiFactory.buildSingleRowInfoBar(icon_url, "Waterbowl:", wb_text_string) );
-		//features_list.add( myUiFactory.buildSeparator() );
+		features_list.add(myUi.buildSingleRowInfoBar(icon_url, "Waterbowl:", wb_text_string) );
+		//features_list.add( myUi.buildSeparator() );
 		count++;
 	}
 	
@@ -554,35 +554,35 @@ function drawEverything( poiFeatures ) {
 	var img_actual   = POI_PATH + mySesh.currentPlaceInfo.banner;
 	
 	//  fill in miniheader information
-	var dist_label_text = mySesh.currentPlaceInfo.dist + " miles away";
+	var dist_label_text = mySesh.currentPlaceInfo.dist.toFixed(1) + " miles away";
 	// if( args._came_from=="checkin modal" )		dist_label_text 	= "You're right next to it";
 
 	$.mini_place_name_label.text 			= mySesh.currentPlaceInfo.name;
 	$.miniHeaderContainer.backgroundColor 	= mySesh.currentPlaceInfo.icon_color;
 	$.mini_place_second_label.text			= mySesh.currentPlaceInfo.city; 
 		
-	//$.miniHeaderContainer.add( myUiFactory.buildMiniHeader(mySesh.currentPlaceInfo.name, mySesh.currentPlaceInfo.city, mySesh.currentPlaceInfo.icon_color) );
-	$.headerContainer.add( myUiFactory.buildPageHeader(mySesh.currentPlaceInfo.place_ID, "poi", mySesh.currentPlaceInfo.name, mySesh.currentPlaceInfo.address, mySesh.currentPlaceInfo.city + ' ' + mySesh.currentPlaceInfo.zip, dist_label_text ) );
+	//$.miniHeaderContainer.add( myUi.buildMiniHeader(mySesh.currentPlaceInfo.name, mySesh.currentPlaceInfo.city, mySesh.currentPlaceInfo.icon_color) );
+	$.headerContainer.add( myUi.buildPageHeader(mySesh.currentPlaceInfo.place_ID, "poi", mySesh.currentPlaceInfo.name, mySesh.currentPlaceInfo.address, mySesh.currentPlaceInfo.city + ' ' + mySesh.currentPlaceInfo.zip, dist_label_text ) );
 	$.headerContainer.zIndex 	= 30;
 	$.headerContainer.top 		= 0;
 	
 	//-----------------------------------------------------------------------------------------------------------
 	//			BASIC INFO
 	//-----------------------------------------------------------------------------------------------------------
-	var basics_header = myUiFactory.buildSectionHeader("basics_header", "BASIC INFO", 1);
+	var basics_header = myUi.buildSectionHeader("basics_header", "BASIC INFO", 1);
 	$.basics.add(basics_header);
 	displayBasicInfo();
 	
 	//----------------------------------------------------------------------------------------------------------
 	//		 CHECKINS
 	//----------------------------------------------------------------------------------------------------------
-	var activity_header = myUiFactory.buildSectionHeader("activity_header", "ACTIVITY", 1);
+	var activity_header = myUi.buildSectionHeader("activity_header", "ACTIVITY", 1);
 	$.activity.add(activity_header);
 	
 	// the thumbs of dogs have to display inline-block (and wrap) 
-	var whos_here_width = myUiFactory._device.screenwidth;
-	var whos_here_height = (myUiFactory.getDefaultRowHeight()*2) + 10;
-	var whos_here_list = myUiFactory.buildViewContainer("whos_here_list", "horizontal", whos_here_width, "", 0, myUiFactory._color_ltblue);	
+	var whos_here_width = myUi._device.screenwidth;
+	var whos_here_height = (myUi.getDefaultRowHeight()*2) + 10;
+	var whos_here_list = myUi.buildViewContainer("whos_here_list", "horizontal", whos_here_width, "", 0, myUi._color_ltblue);	
 	$.activity.add(whos_here_list);
 	
 	//	get feed of checkins, including your current checkin status; 

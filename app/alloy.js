@@ -99,8 +99,8 @@ function wbLogin(email, password) {
 				
 				// save credentials locally in mySesh global arrays
 				mySesh.user.email 	 = email;
-				Ti.App.Properties.setString('user', email);
-				Ti.App.Properties.setString('pass', password);
+				Ti.App.Properties.setString('email', email);
+				Ti.App.Properties.setString('password', password);
 				mySesh.user.owner_ID = response.human.owner_ID;
 				mySesh.user.name 		 = response.human.owner_name;
 	
@@ -116,7 +116,8 @@ function wbLogin(email, password) {
 					gotoRegPage2.show();
 					gotoRegPage2.addEventListener('click', function(e_dialog) {
 						if (e_dialog.index == 0) {  // user clicked OK
-					    closeWindowController();
+							
+					    	closeWindowController();
 							createWindowController("register2","","slide_left");
 						} else {
 						    // TODO: figure out if cancel case is necessary
@@ -391,9 +392,9 @@ function getArrayIndexById( array, value ) {
 //						which is already positioned in the parent Window
 //=============================================================================
 function addMenubar( parent_object ) {
-	var left_width = myUiFactory._icon_small + (2 * myUiFactory._pad_left);
-	var right_width_1 = myUiFactory._icon_small + myUiFactory._pad_left;
-	var right_width_2 = myUiFactory._icon_small + myUiFactory._pad_left + myUiFactory._pad_right;
+	var left_width = myUi._icon_small + (2 * myUi._pad_left);
+	var right_width_1 = myUi._icon_small + myUi._pad_left;
+	var right_width_2 = myUi._icon_small + myUi._pad_left + myUi._pad_right;
 	var middle_width = mySesh.device.screenwidth - left_width - (2*right_width_1) - right_width_2;
 	
 	// DEBUG
@@ -403,7 +404,7 @@ function addMenubar( parent_object ) {
 	var menubar = Ti.UI.createView( {
 	  id: "menubar", width: "100%", layout: "horizontal", 
 	  top: 0, 
-	  height: myUiFactory._icon_small + (2 * myUiFactory._pad_top),
+	  height: myUi._icon_small + (2 * myUi._pad_top),
    	// backgroundColor: "#58c6d5", 
     opacity: 0.94, zIndex: 99 
    }); 
@@ -434,38 +435,38 @@ function addMenubar( parent_object ) {
 	
 	// BUTTONS ---------------------------------------------->
 	var blankBtn 		= Ti.UI.createButton( {	 
-		left: myUiFactory._pad_left,
-		top: myUiFactory._pad_top,
-		width: myUiFactory._icon_small,
-		height: myUiFactory._icon_small,
+		left: myUi._pad_left,
+		top: myUi._pad_top,
+		width: myUi._icon_small,
+		height: myUi._icon_small,
 	} );
 	
 	var backBtn 		= Ti.UI.createButton( {
 		id: "backBtn",	 
-		left: myUiFactory._pad_left,
-		top: myUiFactory._pad_top,
-		width: myUiFactory._icon_small,
-		height: myUiFactory._icon_small,
+		left: myUi._pad_left,
+		top: myUi._pad_top,
+		width: myUi._icon_small,
+		height: myUi._icon_small,
 		backgroundImage : ICON_PATH +'mainnav-back.png',
 		zIndex	: 100
 	} );
 	
 	var	helpBtn 		= Ti.UI.createButton( {
 		id: "helpBtn",
-		left: myUiFactory._pad_left,
-		top: myUiFactory._pad_top,
-		width: myUiFactory._icon_small,
-		height: myUiFactory._icon_small,
+		left: myUi._pad_left,
+		top: myUi._pad_top,
+		width: myUi._icon_small,
+		height: myUi._icon_small,
 		backgroundImage : ICON_PATH +'button-info.png',  
 		zIndex: 100
 	});
 	
 	var	settingsBtn	= Ti.UI.createButton( {
 		id: "settingsBtn", 
-		left: myUiFactory._pad_left,
-		top: myUiFactory._pad_top,
-		width: myUiFactory._icon_small,
-		height: myUiFactory._icon_small,
+		left: myUi._pad_left,
+		top: myUi._pad_top,
+		width: myUi._icon_small,
+		height: myUi._icon_small,
 		backgroundImage : ICON_PATH +'mainnav-settings.png',
 		zIndex: 100,
 		opacity: 1
@@ -473,10 +474,10 @@ function addMenubar( parent_object ) {
 	
 	var	logoutBtn	= Ti.UI.createButton( {
 		id: "logoutBtn", 
-		left: myUiFactory._pad_left,
-		top: myUiFactory._pad_top,
-		width: myUiFactory._icon_small,
-		height: myUiFactory._icon_small,
+		left: myUi._pad_left,
+		top: myUi._pad_top,
+		width: myUi._icon_small,
+		height: myUi._icon_small,
 		backgroundImage : ICON_PATH + "mainnav-back.png",
 		zIndex: 100,
 		opacity: 1
@@ -501,7 +502,7 @@ function addMenubar( parent_object ) {
 	if (Ti.App.Properties.current_window == "mapview") {
 		////////// BUILD PROFILE BUTTON //////////////////////////////////////////////////
 		var img_actual  = PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg';
-		var profileBtn = myUiFactory.buildProfileThumb(mySesh.dog.dog_ID, img_actual, 1, myUiFactory._icon_small);	// border=1, this means it's ME
+		var profileBtn = myUi.buildProfileThumb(mySesh.dog.dog_ID, img_actual, 1, myUi._icon_small);	// border=1, this means it's ME
 		menuRight0.add(profileBtn);
 		//////////////////////////////////////////////////////////////////////////////////
 		menuRight1.add(helpBtn);
@@ -662,8 +663,8 @@ function showHelp() {
 //================================================================
 function logoutUser() {
 	// clear username/pass
-	Ti.App.Properties.setString('user', null);
-	Ti.App.Properties.setString('pass', null);
+	// Ti.App.Properties.setString('email', null);
+	// Ti.App.Properties.setString('password', null);
 	
 	// modal popup 
 	var modal_title = 'Log out?';
@@ -786,7 +787,7 @@ if(Ti.Platform.osname === 'android'){
  *  	Instantiate UiFactory
  *-----------------------------------------------------------------------*/
 var UiFactoryClass = require('lib/UiFactoryClass');
-var myUiFactory = new UiFactoryClass.UiFactory();
+var myUi = new UiFactoryClass.UiFactory();
 
 
 /*----------------------------------------------------------------------
@@ -841,7 +842,7 @@ Alloy.Globals.loadingMask = Alloy.createWidget("nl.fokkezb.loading");
  *  	GEOLOCATION
  *-----------------------------------------------------------------------*/
 // minimum change in location (meters) which triggers the 'location' eventListener
-// 	*** Geolocation Threshhold trigger.  IN METERES.  Note:	10m triggers too often ***
+// 	*** Geolocation Threshhold trigger.  IN METRES.  Note:	10m triggers too often ***
 Ti.Geolocation.distanceFilter 	= 10;			// 10m=33 ft, 20m=65ft, 30m=100 ft
 Ti.Geolocation.frequency		= 1;
 Ti.Geolocation.accuracy 		= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_NEAREST_TEN_METERS, ACCURACY_BEST doesn't work on iOS
@@ -849,7 +850,6 @@ Ti.Geolocation.purpose 			= "Receive User Location";
 // Ti.API.debug( "Running on an [" + Ti.Platform.osname + "] device");
 
 // TODO: is this still used by mapview.js??
-
 //Alloy.Globals.wbMap 	= "";
 
 // var longPress;

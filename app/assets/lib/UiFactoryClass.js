@@ -76,7 +76,7 @@ function UiFactory(){
 UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_width, view_height, top, bg_color) {
 	if ( isset(bg_color) && bg_color!="" ) {
 		var view_container = Ti.UI.createView( { 
-			//borderColor     : ((this._debug === 1) ? this._color_ltpink : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 	
+			borderColor 	: this._color_ltpink, 	borderWidth	: 1, 	
 			id			: id, 
 			layout		: layout_orientation,
 			top			: top,  
@@ -87,7 +87,7 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 	}
 	else {
 		var view_container = Ti.UI.createView( { 
-			//borderColor     : ((this._debug === 1) ? this._color_ltpink : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 	
+			borderColor 	: this._color_ltpink, 	borderWidth	: 1, 
 			id			: id, 
 			layout		: layout_orientation,
 			top			: top,  
@@ -101,25 +101,20 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 /*************************************************************************************************
 *		Name:  		buildLabel ( title, width, height, font_style, font_color, bg_color, text_align, horz_pad) )  
 *											     eg: value, width, font_style, text_or_number (affects font used)
-*		Purpose:  create a label given 
+*		Purpose:  	create a label given 
 **************************************************************************************************/
 UiFactory.prototype.buildLabel = function(title, width, height, font_style, font_color, bg_color, text_align, horz_pad) {
-	if ( !isset(horz_pad) || horz_pad=="" ) {
-		horz_pad = 2*this._pad_left;
-	}
-
 	var align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
 	var background_color = "";
+	
 	if (bg_color!=="")
 		background_color = bg_color;
 
 	if (text_align=="left") {
-		align =  Ti.UI.TEXT_ALIGNMENT_LEFT;
-		width = width-(2*horz_pad);
+		align = Ti.UI.TEXT_ALIGNMENT_LEFT;		
 	}
 	else if (text_align=="right") {
 		align = Ti.UI.TEXT_ALIGNMENT_RIGHT;
-		width = width-(2*horz_pad);
 	}
 	else {
 		align =  Ti.UI.TEXT_ALIGNMENT_CENTER;
@@ -127,7 +122,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 
 	if (text_align=="center") {
 		var label = Ti.UI.createLabel( {	
-			//borderColor : ((this._debug === 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
+			borderColor : "#000000", borderWidth	: 1, 
 			text 			: title,
 			font			: font_style,
 			backgroundColor : background_color,
@@ -136,15 +131,26 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 			color			: font_color,
 			textAlign		: align
 		});
-	} else {
+	} else if (text_align=="left") {
 		var label = Ti.UI.createLabel( {	
-			//borderColor : ((this._debug === 1) ? this._color_black : ''), borderWidth	: ((this._debug == 1) ? 1 : ''), 
+			borderColor : "#000000", borderWidth	: 1, 
 			text 			: title,
 			font			: font_style,
 			backgroundColor : background_color,
 			width			: width,
 			height 			: height,
 			left  			: horz_pad,
+			color			: font_color,
+			textAlign		: align
+		});
+	} else {
+		var label = Ti.UI.createLabel( {	
+			borderColor : "#000000", borderWidth	: 1, 
+			text 			: title,
+			font			: font_style,
+			backgroundColor : background_color,
+			width			: width,
+			height 			: height,
 			right 			: horz_pad,		// DONT DO IT IT"LL FUCK THINGS UP
 			color			: font_color,
 			textAlign		: align
@@ -153,6 +159,38 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 	return label;
 }
 
+/************************************************************
+*		Name:  		buildSpacer ( orientation, size, bg_color [optional] ) 
+*		Purpose:  horizontal rule lookalike
+************************************************************/
+UiFactory.prototype.buildSpacer = function( orientation, size, bg_color ){
+	var width = '100%';
+	var height = 10;
+	var background_color = this._color_ltblue;
+	if (bg_color=="clear")
+		background_color = "";
+
+	if (size=="")
+		size = this._spacer_size;
+	
+	if (orientation=="vert") {
+		width = size;
+		height = Ti.UI.SIZE;
+	}
+	else if (orientation=="horz") {
+		width = Ti.UI.SIZE;
+		height = size;
+	}
+	
+	var spacer = Ti.UI.createView({
+ 		width	: width,
+		height	: height,
+    	top		: 0,
+    	left    : 0, 
+    	backgroundColor : background_color
+ 	});
+ 	return spacer;
+}
 
 /*****************************************************************************************
 *	Name: 		buildProgressBar ( msg_text ) 
@@ -180,17 +218,17 @@ UiFactory.prototype.buildProgressBar = function(msg_text) {
 UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2, txt_3) {
 	// width and height of parent object == this._device.screenwidth
 	var headerContainer = this.buildViewContainer("headerContainer_"+id, "vertical", this._device.screenwidth, this._device.screenwidth, 0, "");
-	
-	var label_width = this._device.screenwidth - this._pad_right;
+	var leftPad = 2*this._pad_left;
+	var labelWidth = this._device.screenwidth - 2*leftPad;
 	
 	// determine heights of child containers
-	var h_statbar_height= this._icon_small + this._pad_top;
-	var h_info_height 	= (3*this._height_header);
+	var h_statbar_height	= this._icon_small + this._pad_top;
+	var h_info_height 		= (3*this._height_header);
 	var	h_top_height		= this._device.screenwidth - h_info_height - h_statbar_height;  
 	
 	var headerTop 			= this.buildViewContainer("headerTop_"+id, 	"vertical", 	this._device.screenwidth, h_top_height, 0, "");		// blank div
 	var headerInfo 			= this.buildViewContainer("headerInfo_"+id, "vertical", 	this._device.screenwidth, h_info_height, 0, "");
-	// headerInfo.left     = this._pad_left;
+	// headerInfo.left     	= this._pad_left;
 	
 	// header stat bar should be separate function
 	var headerStatBar 	= this.buildViewContainer("headerStatBar", 	"horizontal", "100%", h_statbar_height, 0, "");	
@@ -198,12 +236,11 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	headerStatBar.opacity = 0.95;
 	headerStatBar.bottom = 0;
 	
-	var title_label	 	= this.buildLabel(txt_title, label_width, 24, this._text_large,  "#ffffff", "", "left", "");
-	var text_label 	 	= this.buildLabel(txt_1,	 	label_width, 18, this._text_medium, "#ffffff", "", "left", "");	
-	var subtext1_label 	= this.buildLabel(txt_2, 	label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left", "");
-	
+	var title_label	 	= this.buildLabel(txt_title,labelWidth, 24, this._text_large,  "#ffffff", "", "left", "");
+	var text_label 	 	= this.buildLabel(txt_1,	labelWidth, 18, this._text_medium, "#ffffff", "", "left", "");	
+	var subtext1_label 	= this.buildLabel(txt_2,	labelWidth, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left", "");
 	if(txt_3!=null || txt_3!="")	
-		var subtext2_label = this.buildLabel(txt_3, 	 label_width, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left", "");	
+		var subtext2_label = this.buildLabel(txt_3, labelWidth, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left", "");	
 			
 	headerInfo.backgroundImage = "images/ui/header-overlay-black.png";
 
@@ -213,30 +250,38 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	
 	if (type == "profile")	{
 		img_placeholder = MISSING_PATH + "dog-0-banner.jpg";
-		img_actual   	  = PROFILE_PATH + "dog-"+ id +"-banner.jpg";
+		img_actual   	= PROFILE_PATH + "dog-"+ id +"-banner.jpg";
 	}
 	else if (type == "mark") { 
 		img_placeholder = MISSING_PATH + "mark-0-banner.jpg";
-		img_actual   	  = MARK_PATH 	 + "mark-"+ id +"-banner.jpg";
+		img_actual   	= MARK_PATH 	 + "mark-"+ id +"-banner.jpg";
 	}
 	else  { //  (type == "poi") {
 		img_placeholder = MISSING_PATH + "poi-0-banner.jpg";
-	  img_actual   	  = POI_PATH 		 + "poi-"+ id +"-banner.jpg";
+		img_actual   	= POI_PATH 		 + "poi-"+ id +"-banner.jpg";
 	}
 	
 	loadRemoteImage("bg", headerContainer, img_actual, img_placeholder);   // pass in actual + fallback image
 	// TODO: MAKES SURE bg_image IS NOT BLANK / SET TIME OUT / PROMISE ??
 	// headerContainer.backgroundImage = img_placeholder;
-		
-	headerInfo.add( this.buildSpacer("horz", this._pad_top, "clear") );
-	headerInfo.add(title_label);
-	headerInfo.add(text_label);
-	headerInfo.add(subtext1_label);
-	if(txt_3!=null || txt_3!="")	
-		headerInfo.add(subtext2_label);
 	
+	// center content column, leave padding on both sides
+	var headerContent = this.buildViewContainer("hRight", "vertical", labelWidth, Ti.UI.SIZE, 0, "");	
+	headerContent.add( this.buildSpacer("horz", this._pad_top, "clear") );
+	headerContent.add(title_label);
+	headerContent.add(text_label);
+	headerContent.add(subtext1_label);
+	if(txt_3!=null || txt_3!="")	
+		headerContent.add(subtext2_label);
+	
+	// add right column
+	headerInfo.add(headerContent);
+
+	// blank top space
 	headerContainer.add(headerTop);
+	// all the text content
 	headerContainer.add(headerInfo);
+	// statistics bar
 	headerContainer.add(headerStatBar);
 	return headerContainer;
 }
@@ -410,36 +455,55 @@ UiFactory.prototype.buildTextArea = function( hint_text, height ) {
 	return textArea;
 }
 
+/*
 
+.. +---+ +------------------+  ..
+.. | T | |   L1   |   L2    |  ..
+.. +---+ +------------------+  ..
+
+*/
 /***********************************************************************************
 *		Name:  		buildSingleRowInfoBar ( image_url, name, value )  
 *		Purpose:  generic single row bar with photo or icon / thing name  / thing value
 ************************************************************************************/
 UiFactory.prototype.buildSingleRowInfoBar = function(image_url, name, value) {
-	var div_height = this._icon_small + (2* this._pad_top); // this._height_row-10;
-	var view_container = this.buildViewContainer ( "", "horizontal", "100%", div_height, 0, this._color_ltblue); 
+	var div_height 		= this._icon_small + (2* this._pad_top); 	
+	var col_1_width 	= this._icon_medium;
+	var spacer_width 	= 2 * this._pad_left;
+	// if both L and R labels are not blank, subtract the extra padding amount. 
+	// always subtract padding before 
+	var col_2_width = this._device.screenwidth - col_1_width - (3*spacer_width);
+	
+	var view_container 	= this.buildViewContainer ( "", "horizontal", this._device.screenwidth, div_height, 0, this._color_ltblue); 
   
-  	var column_1 = this.buildViewContainer ( "column_1", "", this._icon_medium+this._pad_left, div_height, 0, "" ); 
+  	var column_1 = this.buildViewContainer ( "column_1", "", 			col_1_width, div_height, 0, "" ); 
+  	var column_2 = this.buildViewContainer ( "column_2", "horizontal", 	col_2_width, div_height, 0, "" );
+  	
   	if (image_url!="") {
   		var image = this.buildIcon("", image_url, "small"); 
 		column_1.add(image);
   	}
-  	column_1.left = 2*this._pad_left;
 
- 	var column_2 = this.buildViewContainer ( "column_2", "horizontal", Ti.UI.FILL, div_height, 0, "" );
-  	//column_2.add( this.buildSpacer( "vert", 10, "clear" ) );
-	
-	if (name!="") {
-		var name_label  = this.buildLabel( name, Ti.UI.SIZE, "100%", this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left);
+	if (name!="") {						// title, width, height, font_style, font_color, bg_color, text_align, horz_pad
+		var name_label  = this.buildLabel( name, Ti.UI.SIZE, "100%", this._text_medium, "#000000", this._color_ltblue, "left", 0);
+		column_2.add( this.buildSpacer( "vert", (0.5*spacer_width), "clear") );
 		column_2.add(name_label);
-		column_2.add( this.buildSpacer( "vert", 2, "clear") );
+		//column_2.add( this.buildSpacer( "vert", 2, "clear") );
 	}
 	if (value_label!="") {
-		var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold, "#000000", this._color_ltblue, "left", this._pad_left );
+		Ti.API.info( "  .... [i] buildSingleRowInfoBar :: "+ name + " " + value);
+		var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold, "#000000", this._color_ltblue, "left", 0 );
+		if (name!="") {  // Large / Small dog area case
+			column_2.add( this.buildSpacer( "vert", (0.5*spacer_width), "clear") );
+		}
 		column_2.add(value_label);
 	}
+	// add spacer to pad beginning and end of row
+	view_container.add( this.buildSpacer( "vert", spacer_width, "clear") );
 	view_container.add(column_1);
 	view_container.add(column_2);
+  	view_container.add( this.buildSpacer( "vert", spacer_width, "clear") );
+
   	return view_container;
 }
 
@@ -452,22 +516,23 @@ UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
 	// iphone 6			~? pixels available for text label / 40 chars per line = 13 px / char
 
 	// calculate thumbnail and text content view widths
-	var col_1_w = Math.floor(this._icon_medium+(2*this._pad_left) );
-	var col_2_w = Math.floor(this._device.screenwidth - col_1_w - (2*this._pad_left));		// wtf
+	var col_1_width = this._icon_medium;
+	var spacer_width = 2 * this._pad_left;
+	var col_2_width = this._device.screenwidth - col_1_width - (2*spacer_width);
 	  
 	// if text is two lines or less
 	var min_div_height  = this._icon_small + (2*this._pad_top);
-	var div_height 		= ( ( Math.round( text_content.length / (col_2_w / 12) ) ) * 10.75)  + (3*this._pad_top);
+	var div_height 		= ( ( Math.round( text_content.length / (col_2_width / 9) ) ) * 13) + (2*this._pad_top);
 	
-	if (div_height < min_div_height)	
+	if (min_div_height > div_height)	
 		div_height = min_div_height;
 		
 	// done with math on dimensions, now build the parent container
 		 								//         id, layout_orientation, view_width, view_height, top, bg_color
-	var view_container = this.buildViewContainer ( "", "horizontal", "100%", div_height, 0, this._color_ltblue); 
+	var view_container = this.buildViewContainer ( "", "horizontal", this._device.screenwidth, div_height, 0, this._color_ltblue); 
 	// semi-square smaller left icon column, multi-row text on the right
-	var column_1 = this.buildViewContainer ( "column_1", "", col_1_w, this._icon_medium+this._pad_top, 0, "" ); 
-	var column_2 = this.buildViewContainer ( "column_2", "horizontal", col_2_w, Ti.UI.SIZE, 0, "" );
+	var column_1 = this.buildViewContainer ( "column_1", "", col_1_width, this._icon_medium+this._pad_top, 0, "" ); 
+	var column_2 = this.buildViewContainer ( "column_2", "horizontal", col_2_width, Ti.UI.SIZE, 0, "" );
 	column_1.left = 2*this._pad_left;
 
 	if (image_url!="") {
@@ -476,7 +541,7 @@ UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
 	}
 	//column_2.add( this.buildSpacer( "vert", 10, "clear" ) );
 		
-	var text_box = this.buildLabel( text_content, col_2_w-(2*this._pad_right), "100%", this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left);
+	var text_box = this.buildLabel( text_content, col_2_width-(2*this._pad_right), Ti.UI.FILL, this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left);
 	//	column_2.add( this.buildSpacer( "vert", 2, "clear" ) );
 	column_2.add(text_box);
 
@@ -486,7 +551,7 @@ UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
 }
 
 /*
-	+=== buildTextFieldRow ========================+
+	+=== buildFeedRow ========================+
 	|	 column_1        column_2             | 
 	|  +-thumb--+ +--_row_1----------------+  |
 	|  |        | |   name	  |	timestamp  |  |
@@ -505,34 +570,40 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
  	var row1_height = this._height_header; 
   	var row2_height = thumb_size - this._pad_top;
 	// DETERMINE VIEW CONTAINER WIDTHS
-  	var column_1_width 	= Math.floor( thumb_size + (2*this._pad_left) );		
+	var pad_left = 2*this._pad_left;
+	var pad_right = 2*this._pad_right;
+  	var column_1_width 	= Math.floor( thumb_size + pad_left );		
 	var column_2_width 	= Math.floor( this._device.screenwidth - column_1_width );
-	var col_2_name_width= Math.floor( (0.55 * column_2_width)-this._pad_left );
-	var col_2_ts_width  = Math.floor( (0.45 * column_2_width));
+	var name_width		= Math.floor(0.6 * column_2_width);
 
+	var timestamp_width = Math.floor(0.4 * column_2_width)-pad_right;
 	var multiline_row2_height = Math.round(description.length / (column_2_width / 13.3) * 11)+this._pad_top;
+	
+	//Ti.API.info( "  .... [i] this._device.screenwidth :: "+this._device.screenwidth );
+	//Ti.API.info( "  .... [i] col1 col2 name ts :: "+column_1_width+','+column_2_width+','+name_width+','+timestamp_width );
 	
   	if (multiline_row2_height > row2_height) {
  		row2_height = multiline_row2_height;
 	}
 	var total_height = row1_height + row2_height;
 		
-  	// BUILD VIEWS (COLUMN 3 is a spacer)    id,     orientation  	view_width      view_height  top)
+  	// BUILD VIEWS  							   id,     orientation  	view_width      view_height  top)
 	var view_container = this.buildViewContainer ( "feedRow_"+id, "horizontal", "100%", total_height, 0, "" ); 
   
 	var column_1 = this.buildViewContainer ( "col_1", "horizontal", column_1_width, total_height,  0, this._color_ltblue ); 
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", 	column_2_width, total_height,  0, this._color_ltblue );
 		
 	var dog_photo = this.buildProfileThumb(id, photo_url, 0, thumb_size);			// pass along thumb size that was sent in
+	dog_photo.left = pad_left;
 	column_1.add(dog_photo);
 		
 	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
 	var column_2_row_1 		= this.buildViewContainer ( "", "horizontal", "100%", row1_height, 0, this._color_ltblue ); 
-	var dog_name_label  	= this.buildLabel( photo_caption, col_2_name_width, row1_height, this._text_medium_bold, "#000000", this._color_ltblue, "left", this._pad_left );		
-	var time_stamp_label	= this.buildLabel( time_stamp, 	  col_2_ts_width, 	row1_height, this._text_medium,  "#000000", this._color_ltblue, "right", this._pad_left);
+	var dog_name_label  	= this.buildLabel( photo_caption, name_width, row1_height, this._text_medium_bold, "#000000", this._color_ltblue, "left", this._pad_left );		
+	var time_stamp_label	= this.buildLabel( time_stamp, 	  timestamp_width, 	row1_height, this._text_medium,  "#000000", this._color_ltblue, "right", 0);
 	// COLUMN 2 :: BUILD DESCRIPTION CONTAINER
 	var column_2_row_2 		= this.buildViewContainer ( "", "horizontal", column_2_width, row2_height, 0, this._color_ltblue );
-	var description_label 	= this.buildLabel( description, column_2_width-this._pad_right, row2_height, this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left );
+	var description_label 	= this.buildLabel( description, column_2_width-pad_left, row2_height, this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left );
 	
 	// ADJUST VERTICAL SPACING
 	//dog_name_label.top = 2;
@@ -647,39 +718,6 @@ UiFactory.prototype.buildSeparator = function(){
  	});
  	return separator;
 }
-    
-/************************************************************
-*		Name:  		buildSpacer ( orientation, size, bg_color [optional] ) 
-*		Purpose:  horizontal rule lookalike
-************************************************************/
-UiFactory.prototype.buildSpacer = function( orientation, size, bg_color ){
-	var width = '100%';
-	var height = 10;
-	var background_color = this._color_ltblue;
-	if (bg_color=="clear")
-		background_color = "";
-
-	if (size=="")
-		size = this._spacer_size;
-	
-	if (orientation=="vert") {
-		width = size;
-		height = "100%";
-	}
-	else if (orientation=="horz") {
-		width = "100%";
-		height = size;
-	}
-	
-	var spacer = Ti.UI.createView({
- 		width	: width,
-		height	: height,
-    	bottom	: 0,
-    	top		: 0,
-    	backgroundColor : background_color
- 	});
- 	return spacer;
-}
 
 /*********************************************************************************
 *		Name:  		buildSectionHeader ( view_id, title, size={0,1,2} )
@@ -777,12 +815,12 @@ UiFactory.prototype.buildTextField = function(id, width, hint, is_pwd) {
 		
   var text_field = Ti.UI.createTextField( {
   	id              : id,
-  	backgroundColor : '#ffffff', 
+  	backgroundColor : "#ffffff", 
     color           : this._color_dkgray, 
     width           : width, 
     height          : this._height_row, 
     top             : this._pad_top, 
-    paddingLeft			: 16,
+    paddingLeft		: 16,
     opacity         : 1,
   	font            : this._text_medium,
   	keyboardType    : Titanium.UI.KEYBOARD_DEFAULT,

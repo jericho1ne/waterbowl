@@ -114,14 +114,14 @@ Ti.API.debug( " >>> Provide Estimate >>> "+JSON.stringify(args));
 var park_name       = args._poiInfo.name;
 var enclosure_count = args._poiDetail.enclosure_count;
 
-var miniHeader = myUiFactory.buildMiniHeader(park_name, args._poiInfo.city, args._poiInfo.icon_color);
+var miniHeader = myUi.buildMiniHeader(park_name, args._poiInfo.city, args._poiInfo.icon_color);
 $.scrollView.add(miniHeader);
 
-//var miniheader = myUiFactory.buildMiniHeader(park_name, , ); 
+//var miniheader = myUi.buildMiniHeader(park_name, , ); 
 
-//var section_header = myUiFactory.buildSectionHeader("park_name", park_name, 2)
+//var section_header = myUi.buildSectionHeader("park_name", park_name, 2)
 //$.scrollView.add(section_header);
-var call_to_action = myUiFactory.buildLabel( "How many dogs are playing here?", Ti.UI.FILL, 40, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "center" );		
+var call_to_action = myUi.buildLabel( "How many dogs are playing here?", Ti.UI.FILL, 40, myUi._text_medium, "#000000", myUi._color_ltblue, "center" );		
 
 // backend script doesn't care if there are one or two sliders on the page
 // only needs to know if place_estimate.enclosure_type is mixed, large, or small
@@ -131,36 +131,36 @@ $.scrollView.add(call_to_action);
 /*   Mixed area, if this be the only slider  
      If a second one follows, it becomes the Large Dogs slider        */
 
-var slider1_label = myUiFactory.buildLabel( "0", Ti.UI.FILL, "auto", myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "" );
-var slider1_value = myUiFactory.buildLabel( "?", Ti.UI.FILL, "auto", myUiFactory._text_banner, "#000000", myUiFactory._color_ltblue, "" );   
-var slider1 	  = myUiFactory.buildSlider("slider1", 0, 7, 0, myUiFactory._color_ltblue);
+var slider1_label = myUi.buildLabel( "0", Ti.UI.FILL, "auto", myUi._text_medium, "#000000", myUi._color_ltblue, "" );
+var slider1_value = myUi.buildLabel( "?", Ti.UI.FILL, "auto", myUi._text_banner, "#000000", myUi._color_ltblue, "" );   
+var slider1 	  = myUi.buildSlider("slider1", 0, 7, 0, myUi._color_ltblue);
 
 if (enclosure_count==1)  
-	$.scrollView.add( myUiFactory.buildSectionHeader("", "Entire Area", 1) );	
+	$.scrollView.add( myUi.buildSectionHeader("", "Entire Area", 1) );	
 else if (enclosure_count==2)  
-	$.scrollView.add( myUiFactory.buildSectionHeader("", "Large Dog Area", 1) );	
+	$.scrollView.add( myUi.buildSectionHeader("", "Large Dog Area", 1) );	
 
-$.scrollView.add( myUiFactory.buildSpacer("horz", 10, myUiFactory._color_ltblue) );      // pass in vert/horz, and dp size 
+$.scrollView.add( myUi.buildSpacer("horz", 10, myUi._color_ltblue) );      // pass in vert/horz, and dp size 
 $.scrollView.add(slider1_label);	
 $.scrollView.add(slider1_value);
 $.scrollView.add(slider1);	
-$.scrollView.add( myUiFactory.buildSpacer("horz", 20, myUiFactory._color_ltblue) );      // pass in vert/horz, and dp size
+$.scrollView.add( myUi.buildSpacer("horz", 20, myUi._color_ltblue) );      // pass in vert/horz, and dp size
 
 
 // And the following slider will be for Small Dogs 
 if (enclosure_count==2) {   // 
-	$.scrollView.add( myUiFactory.buildSectionHeader("", "Small Dog Area", 1) );	
+	$.scrollView.add( myUi.buildSectionHeader("", "Small Dog Area", 1) );	
   
-	var slider2 	  = myUiFactory.buildSlider("slider2", 0, 7, 0, myUiFactory._color_ltblue);
+	var slider2 	  = myUi.buildSlider("slider2", 0, 7, 0, myUi._color_ltblue);
 											//	title, width, height, font_style, font_color, bg_color, text_align, 				horz_pad
-	var slider2_label = myUiFactory.buildLabel( "0", Ti.UI.FILL, "auto", myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, 0 );
-	var slider2_value = myUiFactory.buildLabel( "?", Ti.UI.FILL, "auto", myUiFactory._text_banner, "#000000", myUiFactory._color_ltblue, 0 ); 
+	var slider2_label = myUi.buildLabel( "0", Ti.UI.FILL, "auto", myUi._text_medium, "#000000", myUi._color_ltblue, 0 );
+	var slider2_value = myUi.buildLabel( "?", Ti.UI.FILL, "auto", myUi._text_banner, "#000000", myUi._color_ltblue, 0 ); 
 	
-	$.scrollView.add( myUiFactory.buildSpacer("horz", 10, myUiFactory._color_ltblue) );      // pass in vert/horz, and dp size
+	$.scrollView.add( myUi.buildSpacer("horz", 10, myUi._color_ltblue) );      // pass in vert/horz, and dp size
 	$.scrollView.add(slider2_label);	
 	$.scrollView.add(slider2_value);
 	$.scrollView.add(slider2);	
-	$.scrollView.add(myUiFactory.buildSpacer("horz", 20, myUiFactory._color_ltblue));     // pass in vert/horz, and dp size
+	$.scrollView.add(myUi.buildSpacer("horz", 20, myUi._color_ltblue));     // pass in vert/horz, and dp size
 }    
 //  SLIDE EVENT LISTENERS     
 slider1.addEventListener('change', function(e){
@@ -173,7 +173,7 @@ if (enclosure_count==2) {
 }
   
 //  add save estimate button
-var save_est_btn   = myUiFactory.buildButton( "save_est_btn", "save estimate", "large" );
+var save_est_btn   = myUi.buildButton( "save_est_btn", "save estimate", "large" );
 $.scrollView.add(save_est_btn);
 
 save_est_btn.addEventListener('click', function(e) {

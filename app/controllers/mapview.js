@@ -117,6 +117,7 @@ function buildMapMenubar() {
       if (e.error) {			
         // check if running in simulator  if (Titanium.Platform.model != "Simulator")
         Alloy.Globals.wbMap.removeAllAnnotations();
+        Ti.API.debug("  .... [i]   getMarks :: " + mySesh.geo.lat, mySesh.geo.lon );
       	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
       		 myMap.getNearbyDogs();
       	} );
@@ -286,7 +287,7 @@ function doClientCheckoutStuff(data) {
 //	Purpose:	use global data array to populate a table view
 //=================================================================================
 function updateGeofenceTable() {
-	$.placeListTitle.height = myUiFactory._height_header;
+	$.placeListTitle.height = myUi._height_header;
 	
 	var array_size = 0;
 	
@@ -307,7 +308,7 @@ function updateGeofenceTable() {
 		// (1)  DETERMINE GEOFENCE PLACE LIST TITLE
 		if (array_size>1) {
 			$.placeListTitle.text = "at one of these places?  mark your presence!";
-			$.outerMapContainer.height = mySesh.device.screenheight - ( 2.7 * myUiFactory._height_header );  //  "75%"
+			$.outerMapContainer.height = mySesh.device.screenheight - ( 2.7 * myUi._height_header );  //  "75%"
 		}
 		else if (array_size==1) {
 			$.placeListTitle.text = array_size + " place nearby ";
@@ -316,7 +317,7 @@ function updateGeofenceTable() {
 			} else {
 				$.placeListTitle.text += "- tap to mark it.";
 	    	}
-	    	$.outerMapContainer.height = mySesh.device.screenheight - ( 2 * myUiFactory._height_header );// '88%';
+	    	$.outerMapContainer.height = mySesh.device.screenheight - ( 2 * myUi._height_header );// '88%';
 	  	}
   	  	
 		// (1)  CREATE AN ARRAY TO HOLD THE TABLE VIEW DATA /////////////////////////////////////////////
@@ -352,12 +353,12 @@ function updateGeofenceTable() {
 				id 		: nearby[i].id,
 				lat 	: nearby[i].lat,
 				lon 	: nearby[i].lon,
-				distance: nearby[i].dist,
+				distance: nearby[i].dist.toFixed(1),
 				hasChild: false
 			});
 				
 			// (5)  ADD LEFT SIDE ICON //////////////////////////////////////////////////////////////////
-			var colorBlock = myUiFactory.createColorBlock(nearby[i].icon_color, nearby[i].icon_basic);
+			var colorBlock = myUi.createColorBlock(nearby[i].icon_color, nearby[i].icon_basic);
 					
 			// (6)  ACCOMODATE LONG PLACE NAMES /////////////////////////////////////////////////////////
 			var font_size = 14;
@@ -387,7 +388,7 @@ function updateGeofenceTable() {
 			}
 			var contentView = Ti.UI.createView({ 
 			  layout : "horizontal", 
-			  height : myUiFactory._height_header, 
+			  height : myUi._height_header, 
 			  width  : "100%", 
 			  backgroundColor: row_bg_color 
 			});
@@ -640,15 +641,17 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 
 // REPEATEDLY TRIGGER ON WINDOW FOCUS //////////////////////////////////////////
 $.mapview.addEventListener('focus',function(e) {
-	//if(myUiFactory.refreshPlaceList) {
-		refreshPlaceListData("Window Focus");
+	//if(myUi.refreshPlaceList) {
+		//refreshPlaceListData("Window Focus");
 	//}
+
 	if(mySesh.refreshNearbyDogs) {	// if true, then get us the newest marks + nearby pups
-		Ti.API.debug("  .... [i] mapview.focus called");
+		Ti.API.debug("  .... [i] mapview.focus, getMarks, getNearbyDogs");
+		Ti.API.debug("  .... [i]   getMarks - focus :: " + mySesh.geo.lat, mySesh.geo.lon );
 		Alloy.Globals.wbMap.removeAllAnnotations();
       	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
       		 myMap.getNearbyDogs();
-      	} );
+      	} ); 
       	mySesh.refreshNearbyDogs = false;
 	}
 }); 

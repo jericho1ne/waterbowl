@@ -1,7 +1,7 @@
 //========================================================================
 //	Name:			saveRemark ()
 //========================================================================
-function saveRemark(title, text_content, textarea_hint) {
+function saveRemark(title, text_content, textarea_hint, img) {
 	// Ti.API.info( 	"  .... [i] snapShotImage.image :: " +" [" + $.mapContainer.snapShot +"] ");
 
 	if ( title!='' && text_content!='' && text_content!=textarea_hint ) {
@@ -34,22 +34,18 @@ function saveRemark(title, text_content, textarea_hint) {
 				var response = JSON.parse(json);
 				if (response.status == 1) { 		// success
 					Ti.API.log("  [>]  Info added successfully ");
-					// (3) :::: SAVE THE SET OF MARKS TO GLOBAL ARRAY ::::
+					// (3) ::::  Increment marks_made global var ::::
 					mySesh.dog.marks_made = mySesh.dog.marks_made + 1;
 					createSimpleDialog('Nice!',response.message + " ("+mySesh.dog.marks_made+" so far) ");
 					
-					// (4) :::: INCREMENT THE  dog.marks_made GLOBAL VARIABLE, HIT BACKEND SCRIPT ::::
+					// (4) :::: Hit backend script? ::::
 					// TODO: stuff above
 					
-					// (5) :::: REFRESH MAP MARKS ON MAPVIEW ::::	
-					mySesh.refreshNearbyDogs = true;
+					// (5) :::: Set flag to refresh map marks on mapview ::::	
+					mySesh.refreshNearbyDogs = true;	
 					
-					/* Alloy.Globals.wbMap.removeAllAnnotations();			
-					myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
-			      		myMap.getNearbyDogs();
-			      	} ); */
-     		
-      				// (6) :::: CLOSE WINDOW, RETURN TO MAPVIEW ::::
+      				// (6) :::: Close window, return to map ::::
+      				imgFile = null;
 					closeWindowController();				
 				} else {
 					enableAddMarkBtn();
@@ -117,21 +113,20 @@ function takeMarkImage() {
 			
 			var imageBlob = event.media;
 			var bannerImage = imageBlob.imageAsResized(750, 750);
-			var img = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
-	        img.write(bannerImage);
+			var imgFile = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
+	        imgFile.write(bannerImage);
 	        
 	        var snapShotImage = Ti.UI.createImageView({ 
 				height	: Ti.UI.SIZE,
 				width	: Ti.UI.SIZE,
-				image	: img.nativePath,
+				image	: imgFile.nativePath,
 				top		: 0, 
 				left	: 0
 			});
 	      	$.mapContainer.add(snapShotImage);
 	      	$.mapContainer.snapShot = snapShotImage;
-	      	//mySesh.temp_image = bannerImage;
-
-	      	// XHR request
+	  
+	     	// XHR request
 		    var xhr = Titanium.Network.createHTTPClient();
 			xhr.setRequestHeader("contentType", "multipart/form-data");				
 		    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
@@ -143,7 +138,7 @@ function takeMarkImage() {
 		      		var jsonData = JSON.parse(this.responseText);
 			      	if (jsonData.status>0) {
 			        	// createSimpleDialog('Success', jsonData.message);
-			        	Ti.API.log( "   >> MARK IMAGE UPLOADED" );
+			        	Ti.API.log("   >> MARK IMAGE UPLOADED");
 			        } else {
 			      		//cameraBtn.show();
 						createSimpleDialog('Upload Error', jsonData.message);
@@ -173,7 +168,6 @@ function takeMarkImage() {
 }
 
 
-
 //==============================================================================================================================
 /* TODO:  
 	 Full size header 
@@ -191,7 +185,8 @@ var args = arguments[0] || {};		// returns empty array instead of undefined than
 Ti.API.debug(" >>> args in CreateMark: "+JSON.stringify(args));
 
 // (1)  Create + Add map to the appropriate parent view; center on user's current location
-var markMapView 	= drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.012 ); 
+var markMapView = drawDefaultMap( mySesh.geo.lat, mySesh.geo.lon, 0.012 ); 
+var pad_left = 2*myUi._pad_left;
 $.mapContainer.add( markMapView );
 
 $.createmark.addEventListener('focus',function(e) {
@@ -202,8 +197,8 @@ $.createmark.addEventListener('focus',function(e) {
 			opacity : 1,
 			height	: 70, 
 			width	: 70,
-			top  	: 234,
-			right	: 20,
+			top  	: myUi._device.screenwidth - 80 -(2*myUi._pad_left),
+			right	: 2*myUi._pad_left,
 	 		zIndex  : 101
 	} );
 	markCameraBtn.addEventListener('click', function(e) { takeMarkImage(); } );
@@ -211,54 +206,57 @@ $.createmark.addEventListener('focus',function(e) {
  });	
 
 // (1.5)  Add progress bar to page
-var progress_bar = myUiFactory.buildProgressBar("Uploading Profile Image");
+var progress_bar = myUi.buildProgressBar("Uploading Profile Image");
 $.mapContainer.add(progress_bar);
 
-var parentContainer  = myUiFactory.buildViewContainer("markParent", "vertical", "100%", Ti.UI.SIZE, 0, myUiFactory._color_ltblue);
-var form_width = myUiFactory._form_width;
+var parentContainer  = myUi.buildViewContainer("markParent", "vertical", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue);
+var form_width = myUi._form_width;
 
-var title_label = myUiFactory.buildLabel( "Title:", form_width, 20, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );	
-var title_input = myUiFactory.buildTextField("mark_title", form_width, "Add a memorable title", false);
-var textarea_label = myUiFactory.buildLabel( "Message:", form_width, 40, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left" );
+var title_label = myUi.buildLabel( "Title:", form_width, 20, myUi._text_medium, "#000000", myUi._color_ltblue, "left" );	
+var title_input = myUi.buildTextField("mark_title", form_width, "Add a memorable title", false);
+var textarea_label = myUi.buildLabel( "Message:", form_width, 40, myUi._text_medium, "#000000", myUi._color_ltblue, "left" );
 // used later to ensure the user has actually filled in the Mark textarea
 var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
-var textArea = myUiFactory.buildTextArea(textarea_hint, 90);
+var textArea = myUi.buildTextArea(textarea_hint, 90);
 
-var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "mark", "large" );
+var addMarkBtn = myUi.buildButton( "addMarkBtn", "mark", "large" );
 var createmark_reward_text = "For each new dog-friendly location found, "+ mySesh.dog.name +" will be awarded +10 Helpfulness for being the first to mark it!"
 // "IS THIS A POI" SWITCH
 var createmark_ispoi_text   = "Is this mark for a dog-friendly place/business?  Notify us so we can officially mark it as a Waterbowl location!";
-var yesNoContainer  = myUiFactory.buildViewContainer("yesnoContainer", "horizontal", myUiFactory._device.screenwidth, 40, 0, myUiFactory._color_ltblue);
-var yes_label		= myUiFactory.buildLabel( "Yes", 60, myUiFactory._height_header, myUiFactory._text_small, "#888888", myUiFactory._color_ltblue, "center", 0);
-var no_label 	 	= myUiFactory.buildLabel( "No", 40, myUiFactory._height_header, myUiFactory._text_small, "#000000", myUiFactory._color_ltblue, "center", 0);
-var switch_label 	= myUiFactory.buildLabel( createmark_ispoi_text, form_width, 68, myUiFactory._text_medium, "#000000", myUiFactory._color_ltblue, "left", "");
+var yesNoContainer  = myUi.buildViewContainer("yesnoContainer", "horizontal", myUi._device.screenwidth, 40, 0, myUi._color_ltblue);
+yesNoContainer.left = pad_left;
+var yes_label		= myUi.buildLabel( "Yes", 60, myUi._height_header, myUi._text_small, "#888888", myUi._color_ltblue, "center", 0);
+var no_label 	 	= myUi.buildLabel( "No", 40, myUi._height_header, myUi._text_small, "#000000", myUi._color_ltblue, "center", 0);
+var switch_label 	= myUi.buildLabel( createmark_ispoi_text, form_width, 68, myUi._text_medium, "#000000", myUi._color_ltblue, "left", pad_left);
 
-var rewardContainer = myUiFactory.buildViewContainer("rewardContainer", "horizontal", myUiFactory._device.screenwidth, 60, 10, '');
-var reward_label	= myUiFactory.buildLabel( createmark_reward_text, form_width-(2*myUiFactory._pad_left), Ti.UI.SIZE, myUiFactory._text_small, myUiFactory._color_dkpink, "", "center",  "");
+var rewardContainer = myUi.buildViewContainer("rewardContainer", "horizontal", myUi._device.screenwidth, 60, 10, '');
+var reward_label	
+	= myUi.buildLabel( createmark_reward_text, form_width, Ti.UI.SIZE, 
+			myUi._text_small, myUi._color_dkpink, "", "center", "");
+reward_label.left = pad_left;
 
 rewardContainer.add(reward_label);
 
-var poiSwitch 		= Ti.UI.createSwitch({
-  value: false, left: myUiFactory._pad_left,
+var poiSwitch = Ti.UI.createSwitch({
+  value: false, left: myUi._pad_left,
   width: 60, height:20
 });
 poiSwitch.addEventListener('change',function(e){
-  Ti.API.info('  .... [+] poiSwitch value: ' + poiSwitch.value);
-  if(poiSwitch.value==true) {
-  	yes_label.color = "#000000";
-  	no_label.color = "#888888";
-  } if(poiSwitch.value==false) {
-  	yes_label.color = "#888888";
-  	no_label.color = "#000000";
-  }
-
+	if(poiSwitch.value==true) {
+  		yes_label.color = "#000000";
+  		no_label.color = "#888888";
+  	} 
+  	else if(poiSwitch.value==false) {
+  		yes_label.color = "#888888";
+  		no_label.color = "#000000";
+  	}
 });
 
 // ADD EVERYTHING TO WINDOW
 // original mark section header + first mark
-parentContainer.add( myUiFactory.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
+parentContainer.add( myUi.buildSectionHeader("mark_header", "MARKING THIS SPOT", 1) );
 // title of mark
-parentContainer.add( myUiFactory.buildSpacer("horz", myUiFactory._pad_top, "clear") );
+parentContainer.add( myUi.buildSpacer("horz", myUi._pad_top, "clear") );
 parentContainer.add(title_label);
 parentContainer.add(title_input);
 
@@ -275,9 +273,9 @@ parentContainer.add(yesNoContainer);
 
 // add Mark button
 parentContainer.add(addMarkBtn);
-parentContainer.add( myUiFactory.buildSpacer("horz", myUiFactory._pad_top, "clear") );
+parentContainer.add( myUi.buildSpacer("horz", myUi._pad_top, "clear") );
 parentContainer.add( rewardContainer );
-parentContainer.add( myUiFactory.buildSpacer("horz", 40, "clear") );
+parentContainer.add( myUi.buildSpacer("horz", 40, "clear") );
 $.markForm.add(parentContainer);
 
 addMarkBtn.addEventListener	('click', function(e) { saveRemark(title_input.value, textArea.value, textarea_hint); });

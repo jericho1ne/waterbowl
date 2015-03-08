@@ -55,22 +55,24 @@ function disableAddMarkBtn() {
 //======================================================================================================
 var args = arguments[0] || {};
 
-var miniHeader = myUiFactory.buildMiniHeader(args._place_name, args._place_city, args._place_bgcolor);		// send place name, subtitle, and bg color
-var create_marks_header = myUiFactory.buildSectionHeader("create_marks_header", "ADD REMARK TO THIS SPOT", 1);
-
+var miniHeader = myUi.buildMiniHeader(args._place_name, args._place_city, args._place_bgcolor);		// send place name, subtitle, and bg color
+var create_marks_header = myUi.buildSectionHeader("create_marks_header", "ADD REMARK TO THIS SPOT", 1);
+var pad_left = 2*myUi._pad_left;
+var form_width = myUi._device.screenwidth - (2*pad_left);
 // TODO:  display today's date 
-var title 	= myUiFactory.buildLabel( 'Message:', Ti.UI.SIZE, Ti.UI.SIZE, myUiFactory._text_medium_bold, "#000000", myUiFactory._color_ltblue, "left" );	
+								// title, width, 		height, 	font_style, 	  font_color, bg_color, 		text_align, horz_pad
+var title 	= myUi.buildLabel( 'Message:', form_width, 40, myUi._text_medium, "#000000", myUi._color_ltblue, "left", pad_left);	
 var text_area_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
-var textArea = myUiFactory.buildTextArea( text_area_hint, 90 );
-var character_count =  myUiFactory.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, "100%", myUiFactory._height_row, myUiFactory._text_tiny, "#000000", myUiFactory._color_ltblue, "" );
-var addMarkBtn = myUiFactory.buildButton( "addMarkBtn", "add remark", "large" );
+var textArea = myUi.buildTextArea( text_area_hint, 90 );
+var character_count =  myUi.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, form_width, Ti.UI.SIZE, myUi._text_tiny, "#000000", myUi._color_ltblue, "center", "" );
+var addMarkBtn = myUi.buildButton( "addMarkBtn", "add remark", "large" );
 
 $.scrollView.add(miniHeader);
 $.scrollView.add(create_marks_header);
-$.scrollView.add( myUiFactory.buildSpacer("horz", 10, myUiFactory._color_ltblue) ); 
 $.scrollView.add(title); 
 $.scrollView.add(textArea);
 $.scrollView.add(character_count);
+$.scrollView.add( myUi.buildSpacer("horz", 10, myUi._color_ltblue) ); 
 $.scrollView.add(addMarkBtn);
 
 textArea.addEventListener('focus',  function(e) { clearTextAreaContents(textArea, text_area_hint); });
