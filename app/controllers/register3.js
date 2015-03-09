@@ -36,7 +36,7 @@ $.scrollView.add(galleryBtn);
 $.scrollView.add(cameraBtn);
   
 ////////////// PHOTO UPLOAD PROGRESS BAR ///////////////////////////////////////////////////
-var progress_bar = myUi.buildProgressBar("Uploading Profile Image");
+var progress_bar = myUi.buildProgressBar("uploading profile image");
 $.scrollView.add(progress_bar);
 
  

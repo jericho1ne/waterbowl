@@ -94,7 +94,10 @@ function buildMapMenubar() {
   });
 	//							 WATERBOWL/POI BUTTON LONGPRESS				 												// 
 	getPoiBtn.addEventListener('longpress', function(e) {
-		alert("looong pressed WB button!");
+		if (mySesh.dog.dog_ID==1 || mySesh.dog.dog_ID==18) {
+			myMap.getNearbyPoi(33.973, -118.421,33.973, -118.421);
+			myMap.centerMapOnLocation(33.973, -118.421, 0.05);
+		}
 	});
 	/////////////////////////////////////// ADD MARK BTN LISTENER //////////////////
 	markBtn.addEventListener('click', function() {			
@@ -107,32 +110,32 @@ function buildMapMenubar() {
 	});
 	/////////////////////////////////////// ADD SNIFF LISTENER /////////////////////
 	sniffBtn.addEventListener('click', function() {		
-    Ti.API.debug(mySesh.funcCallCount + " .... [+] SNIFF button clicked on map");
-    // WORKFLOW: 
-    //	(0) get current user location
-    //	(1) center map on current location, zooming further than recenter btn
-    //	(2) remove all map markers
-    //	(3) draw Marks
-    Ti.Geolocation.getCurrentPosition(function(e) {
-      if (e.error) {			
-        // check if running in simulator  if (Titanium.Platform.model != "Simulator")
-        Alloy.Globals.wbMap.removeAllAnnotations();
-        Ti.API.debug("  .... [i]   getMarks :: " + mySesh.geo.lat, mySesh.geo.lon );
-      	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
-      		 myMap.getNearbyDogs();
-      	} );
-      	disableAllButtons();
-      } else {  // if no errors
-        myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.008);
-        mySesh.geo.lon = e.coords.longitude;
-        mySesh.geo.lat = e.coords.latitude;
-        Alloy.Globals.wbMap.removeAllAnnotations();
-        myMap.getMarks( e.coords.latitude, e.coords.longitude, 1, 0.5, 20, function(){
-      		 myMap.getNearbyDogs();
-      	} );
-        disableAllButtons();
-	  }
-    });  
+	    Ti.API.debug(mySesh.funcCallCount + " .... [+] SNIFF button clicked on map");
+	    // WORKFLOW: 
+	    //	(0) get current user location
+	    //	(1) center map on current location, zooming further than recenter btn
+	    //	(2) remove all map markers
+	    //	(3) draw Marks
+	    Ti.Geolocation.getCurrentPosition(function(e) {
+	      if (e.error) {			
+	        // check if running in simulator  if (Titanium.Platform.model != "Simulator")
+	        Alloy.Globals.wbMap.removeAllAnnotations();
+	        Ti.API.debug("  .... [i]   getMarks :: " + mySesh.geo.lat, mySesh.geo.lon );
+	      	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
+	      		myMap.getNearbyDogs();
+	      	} );
+	      	disableAllButtons();
+	      } else {  // if no errors
+	        myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.008);
+	        mySesh.geo.lon = e.coords.longitude;
+	        mySesh.geo.lat = e.coords.latitude;
+	        Alloy.Globals.wbMap.removeAllAnnotations();
+	        myMap.getMarks( e.coords.latitude, e.coords.longitude, 1, 0.5, 20, function(){
+	      		 myMap.getNearbyDogs();
+	      	} );
+	        disableAllButtons();
+		  }
+	    });  
 	});
 }
 
@@ -645,14 +648,14 @@ $.mapview.addEventListener('focus',function(e) {
 		//refreshPlaceListData("Window Focus");
 	//}
 
-	if(mySesh.refreshNearbyDogs) {	// if true, then get us the newest marks + nearby pups
+	if(mySesh.flag.nearbyDogsChanged) {	// if true, then get us the newest marks + nearby pups
 		Ti.API.debug("  .... [i] mapview.focus, getMarks, getNearbyDogs");
 		Ti.API.debug("  .... [i]   getMarks - focus :: " + mySesh.geo.lat, mySesh.geo.lon );
 		Alloy.Globals.wbMap.removeAllAnnotations();
       	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
       		 myMap.getNearbyDogs();
       	} ); 
-      	mySesh.refreshNearbyDogs = false;
+      	mySesh.flag.nearbyDogsChanged = false;
 	}
 }); 
 

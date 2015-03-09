@@ -96,7 +96,30 @@ function displayRemarks(data) {
 }
 
 //================================================================================================
+/*
+{
+    "ID": "5",
+    "mark_name": "My favorite place to roll around!",
+    "mark_lat": "33.97191",
+    "mark_lon": "-118.421545",
+    "mark_city": "Playa Vista",
+    "mark_zip": "90094",
+    "mark_country": "United States",
+    "marking_dog_ID": "2",
+    "marking_dog_name": "Terra",
+    "marking_user_ID": "2",
+    "marking_user_name": "Herb",
+    "mark_create_timestamp": "2014-12-13 03:00:00",
+    "mark_expire_timestamp": "2015-03-28 00:00:00",
+    "mark_strength": "12",
+    "mark_tone": "0",
+    "active": "1",
+    "dist": 0.08,
+    "mark_size": 1
+}
+*/
 var args = arguments[0] || {};
+Ti.API.debug ("  .... [~] args :: " + JSON.stringify(args));
 
 // predefined placeholder values until we hit the backend
 var mark_title 	 = "Loading mark title...";			
@@ -107,12 +130,22 @@ mark_title	 	= args.mark_name;
 mark_text		= args.mark_city;
 mark_subtext 	= args.dist+" miles away";
 
-$.header.add( myUi.buildPageHeader(args.ID, "mark", mark_title, mark_text, mark_subtext, "") );
+var statBar = [
+	{	
+		"icon"	: ICON_PATH + 'poi-feature-waterbowl.png',
+		"amount": args.mark_strength
+	},
+	{	
+		"icon"	: ICON_PATH + 'mark-duration.png',
+		"amount": 'x minutes'
+	}
+];	
+$.header.add( myUi.buildPageHeader(args.ID, "mark", mark_title, mark_text, mark_subtext, "", statBar) );
 // (1) 	getMarkOverview gets the mark info from mark_common
 // (2) 	then it calls getRemarks, which populates the table below original mark
 
 $.markoverview.addEventListener('focus',function(e){
-	Ti.API.debug ("  .... [~] Place overview in focus, refreshing marks now.");
+	Ti.API.debug ("  .... [~] markoverview FOCUS :: refreshing marks now.");
 	getMarkOverview(args);
 });
 

@@ -84,10 +84,11 @@ function saveUserInfoLocally(data) {
 $.scrollView.add( myUi.buildMasterSectionHeader("register_header", "account creation") );
 
 var form_width = myUi._form_width;
+var pad_left = 2 * myUi._pad_left;
 												//		title, width, height, font_style, font_color, bg_color, text_align, horz_pad)
-var title_label = myUi.buildLabel( "Welcome to Waterbowl", form_width, myUi._height_header, myUi._text_large, "#ec3c95", myUi._color_ltblue, "left",  0);	
+var title_label = myUi.buildLabel( "Welcome to Waterbowl", form_width, myUi._height_header, myUi._text_large, "#ec3c95", myUi._color_ltblue, "left",  pad_left);	
 
-var get_started = myUi.buildLabel( "Let's get you set up...", form_width, myUi._height_header, myUi._text_medium, "#000000", myUi._color_ltblue, "left", 0 );
+var get_started = myUi.buildLabel( "Let's get you set up...", form_width, myUi._height_header, myUi._text_medium, "#000000", myUi._color_ltblue, "left", pad_left );
 var user_email	= myUi.buildTextField("user_email", form_width,  "email address",    "");
 var user_pwd_1 	= myUi.buildTextField("user_pwd_1", form_width, "password", true);
 var user_pwd_2 	= myUi.buildTextField("user_pwd_2", form_width, "re-enter password", true);

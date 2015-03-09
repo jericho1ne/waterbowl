@@ -15,7 +15,12 @@ function Session(){
 	this.saveDogLocationInterval = '';
 	this.funcCallCount = 0;
 	this.actionOngoing = false;
-	this.refreshNearbyDogs = false;
+	this.flag = {
+		nearbyDogsChanged 	: false,
+		placeListChanged	: false,
+		poiEstimatesChanged	: false,
+		poiRemarksChanged	: false
+	};
 	this.device = { 
 		screenwidth  : Ti.Platform.displayCaps.platformWidth,
 		screenheight : Ti.Platform.displayCaps.platformHeight
@@ -28,10 +33,12 @@ function Session(){
 	};
 	this.temp_image = null,
 	this.user = {
-		owner_ID 	: null,
-		name     	: null,
-		email		: null,
-		state		: null
+		owner_ID 		: null,
+		name     		: null,
+		email			: null,
+		state			: null,
+		dev_msg_read 	: 0,
+		daily_msg_read 	: 0
 	};
 	this.dog = {
 		dog_ID 					: null,
@@ -180,7 +187,7 @@ Session.prototype.clearSavedDogInfo = function (){
 	this.dog.weight_buddy 	= 0.01;
 	this.dog.sniff_radius 	= 0.20;
 	this.dog.location_timer = 60000;
-    Ti.API.debug("  >>>> dog info :: "+JSON.stringify(this.dog) );
+    //Ti.API.debug("  >>>> dog info :: "+JSON.stringify(this.dog) );
 }
 
 //================================================================================
@@ -192,7 +199,7 @@ Session.prototype.clearSavedUserInfo = function (){
 	for (key in this.user) {
     	this.user[key] = null;
     }
-    Ti.API.debug("  >>>> user info :: "+JSON.stringify(this.user) );
+    //Ti.API.debug("  >>>> user info :: "+JSON.stringify(this.user) );
 }
 
 //================================================================================

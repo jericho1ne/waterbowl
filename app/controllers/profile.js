@@ -3,14 +3,9 @@
 //		Purpose:	
 //================================================================================
 function displayDogProfile(dog) {
-	var dog_info = dog.sex+" / "+dog.weight+" lbs / "+dog.age+" yrs old";
-	var breeds_comp = dog.breed + (dog.breed_2!="" ? " + "+dog.breed_2 : "");
-	$.scrollView.add( myUi.buildPageHeader(dog.ID, "profile", dog.name, dog_info, breeds_comp, "" ) );
-	
-	//-----------------------------------------------------------------------------------------------------------
-	//			BASIC INFO
-	//-----------------------------------------------------------------------------------------------------------
-	$.scrollView.add(myUi.buildSectionHeader("basics_header", "BASIC INFO", 1));
+	//-------------------------------------------------------------------------
+	//			PREPARE ICONS
+	//-------------------------------------------------------------------------
 	//var category_icon = ICON_PATH + dogInfo.icon_basic;
 	var icon_home 	= ICON_PATH + "dog-basic-homecity.png";
 	var icon_hf		= ICON_PATH + "dog-basic-humanfriendliness.png";
@@ -18,6 +13,32 @@ function displayDogProfile(dog) {
 	var icon_bone 	= ICON_PATH + "basic-ratingwb.png";
 	var icon_energy = ICON_PATH + "dog-basic-energy.png";
 	var icon_help 	= ICON_PATH + "dog-basic-helpfulness.png";
+	//-------------------------------------------------------------------------
+	//			PROFILE STAT BAR
+	//-------------------------------------------------------------------------
+	var statBar = [
+		{	
+			"icon"	: icon_df,
+			"amount": dog.dog_friendliness_ownerans
+		},
+		{	
+			"icon"	: icon_hf,
+			"amount": dog.human_friendliness_ownerans
+		},
+		{	
+			"icon"	: icon_help,
+			"amount": dog.helpfulness
+		}
+	];	
+
+	var dog_info = dog.sex+" / "+dog.weight+" lbs / "+dog.age+" yrs old";
+	var breeds_comp = dog.breed + (dog.breed_2!="" ? " + "+dog.breed_2 : "");
+	$.scrollView.add( myUi.buildPageHeader(dog.ID, "profile", dog.name, dog_info, breeds_comp, "", statBar ) );
+	
+	//-----------------------------------------------------------------------------------------------------------
+	//			BASIC INFO
+	//-----------------------------------------------------------------------------------------------------------
+	$.scrollView.add(myUi.buildSectionHeader("basics_header", "BASIC INFO", 1));
 	
 	$.scrollView.add( myUi.buildSingleRowInfoBar(icon_home, "Home City:", dog.city) );
 	$.scrollView.add( myUi.buildSeparator() );

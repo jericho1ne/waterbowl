@@ -64,6 +64,7 @@ function UiFactory(){
 	
 	/*  IMAGES AND ICONS      */
 	this._base_icon_size = 30;
+	this._icon_xsmall  = 0.8 * this._base_icon_size;
 	this._icon_small  = 1.000 * this._base_icon_size;		//  30x30 px equivalent
 	this._icon_medium = 1.333 * this._base_icon_size;		//  40x40 px equivalent, base size
 	this._icon_large  = 2.333 * this._base_icon_size;		//  70x70 px equivalent
@@ -76,7 +77,7 @@ function UiFactory(){
 UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_width, view_height, top, bg_color) {
 	if ( isset(bg_color) && bg_color!="" ) {
 		var view_container = Ti.UI.createView( { 
-			borderColor 	: this._color_ltpink, 	borderWidth	: 1, 	
+			//borderColor 	: this._color_ltpink, 	borderWidth	: 1, 	
 			id			: id, 
 			layout		: layout_orientation,
 			top			: top,  
@@ -87,7 +88,7 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 	}
 	else {
 		var view_container = Ti.UI.createView( { 
-			borderColor 	: this._color_ltpink, 	borderWidth	: 1, 
+			//borderColor 	: this._color_ltpink, 	borderWidth	: 1, 
 			id			: id, 
 			layout		: layout_orientation,
 			top			: top,  
@@ -122,7 +123,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 
 	if (text_align=="center") {
 		var label = Ti.UI.createLabel( {	
-			borderColor : "#000000", borderWidth	: 1, 
+			//borderColor : "#000000", borderWidth	: 1, 
 			text 			: title,
 			font			: font_style,
 			backgroundColor : background_color,
@@ -133,7 +134,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		});
 	} else if (text_align=="left") {
 		var label = Ti.UI.createLabel( {	
-			borderColor : "#000000", borderWidth	: 1, 
+			//borderColor : "#000000", borderWidth	: 1, 
 			text 			: title,
 			font			: font_style,
 			backgroundColor : background_color,
@@ -145,7 +146,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		});
 	} else {
 		var label = Ti.UI.createLabel( {	
-			borderColor : "#000000", borderWidth	: 1, 
+			//borderColor : "#000000", borderWidth	: 1, 
 			text 			: title,
 			font			: font_style,
 			backgroundColor : background_color,
@@ -197,32 +198,41 @@ UiFactory.prototype.buildSpacer = function( orientation, size, bg_color ){
 *	Purpose:  	build a photo upload progress bar that updates while data is sent to server
 *******************************************************************************************/
 UiFactory.prototype.buildProgressBar = function(msg_text) {
+	//var progBarContainer = this.buildViewContainer( "", "horizontal", this._device.screenwidth, 80, 0, );
+	var height = 40;
+
 	return Titanium.UI.createProgressBar({
 		width 		: this._form_width,
-		height 		: 60,
+		height 		: height,
 		min 		: 0,
 		max 		: 1,
 		value 		: 0,
 		style 		: Titanium.UI.iPhone.ProgressBarStyle.PLAIN,
-		top 		: 10,
+		top 		: 4,
 		message 	: msg_text,
+		opacity     : 0.85,
 		font 		: this._text_medium,
-		color 		: this._color_dkpink
+		color 		: this._color_dkpink,
+		backgroundColor : "#000000",
+		borderRadius : height/4
 	});
+	//progBarContainer.add(progressBar);
+	//return progBarContainer;
 }
 
 /******************************************************************************************
 *	Name: 		buildPageHeader ( view_id, type, txt_title, txt_1, txt_2, txt_3 ) 
 *	Purpose:  	build top of page profile; type = ("mark", "profile", "poi")
 *******************************************************************************************/
-UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2, txt_3) {
+UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2, txt_3, statBar) {
 	// width and height of parent object == this._device.screenwidth
+	//Ti.API.info( "  .... [i] statBar :: " + JSON.stringify(statBar) );
 	var headerContainer = this.buildViewContainer("headerContainer_"+id, "vertical", this._device.screenwidth, this._device.screenwidth, 0, "");
 	var leftPad = 2*this._pad_left;
 	var labelWidth = this._device.screenwidth - 2*leftPad;
 	
 	// determine heights of child containers
-	var h_statbar_height	= this._icon_small + this._pad_top;
+	var h_statbar_height	= this._icon_xsmall + this._pad_top;
 	var h_info_height 		= (3*this._height_header);
 	var	h_top_height		= this._device.screenwidth - h_info_height - h_statbar_height;  
 	
@@ -231,11 +241,39 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	// headerInfo.left     	= this._pad_left;
 	
 	// header stat bar should be separate function
-	var headerStatBar 	= this.buildViewContainer("headerStatBar", 	"horizontal", "100%", h_statbar_height, 0, "");	
+	var headerStatBar = this.buildViewContainer("headerStatBar", "horizontal", "100%", h_statbar_height, 0, "");	
+	
+	var statBarContainer = this.buildViewContainer("headerStatBar", "horizontal", this._form_width, this._icon_small, 0, "");	
+	if(isset(statBar)) {
+		var mainScope = this;
+		statBar.forEach(function(stat) {
+			if(stat.amount=="")
+				stat.amount = "N/A";
+			//Ti.API.info( " >>>>>>>> forEach ICON  :: " + stat.icon );
+			//Ti.API.info( " >>>>>>>> forEach STAT :: " + stat.amount );
+	    	var image = mainScope.buildIcon("", stat.icon, "xsmall"); 
+	    	// 									title, 		 width, 	 height, font_style, 		font_color, bg_color, text_align, horz_pad
+			var label = mainScope.buildLabel(stat.amount, Ti.UI.SIZE, "100%", mainScope._number_medium, "#ffffff", "", "left", "");	
+			image.top = 0;
+			image.left = mainScope._pad_left;
+			label.top = -2;
+			statBarContainer.add(image);
+			statBarContainer.add(mainScope.buildSpacer("vert", 4, "clear"));
+			statBarContainer.add(label);
+			statBarContainer.add(mainScope.buildSpacer("vert", 10, "clear"));
+	  	});
+	}
+	
+
+	statBarContainer.left = leftPad;
+	statBarContainer.top = 3;
+
+	headerStatBar.add(statBarContainer);
 	headerStatBar.backgroundColor = "#333333";
 	headerStatBar.opacity = 0.95;
 	headerStatBar.bottom = 0;
-	
+
+
 	var title_label	 	= this.buildLabel(txt_title,labelWidth, 24, this._text_large,  "#ffffff", "", "left", "");
 	var text_label 	 	= this.buildLabel(txt_1,	labelWidth, 18, this._text_medium, "#ffffff", "", "left", "");	
 	var subtext1_label 	= this.buildLabel(txt_2,	labelWidth, Ti.UI.SIZE, this._text_medium, "#ffffff", "", "left", "");
@@ -374,6 +412,7 @@ UiFactory.prototype.buildIcon = function(id, image, size){
 		image = 'images/missing/WB-Icon-Placeholder.png';
 	
 	if (size === parseInt(size, 10))	icon_size = parseInt(size);
+	else if (size == "xsmall")		icon_size = this._icon_xsmall;
 	else if (size == "small")		icon_size = this._icon_small;		//	small 
 	else if (size == "medium")	icon_size = this._icon_medium; 	//	medium (base size)
 	else if (size == "large")		icon_size = this._icon_large;		//	large
@@ -491,11 +530,9 @@ UiFactory.prototype.buildSingleRowInfoBar = function(image_url, name, value) {
 		//column_2.add( this.buildSpacer( "vert", 2, "clear") );
 	}
 	if (value_label!="") {
-		Ti.API.info( "  .... [i] buildSingleRowInfoBar :: "+ name + " " + value);
+		//Ti.API.info( "  .... [i] buildSingleRowInfoBar :: "+ name + " " + value);
 		var value_label = this.buildLabel( value, Ti.UI.SIZE, "100%", this._text_medium_bold, "#000000", this._color_ltblue, "left", 0 );
-		if (name!="") {  // Large / Small dog area case
-			column_2.add( this.buildSpacer( "vert", (0.5*spacer_width), "clear") );
-		}
+		column_2.add( this.buildSpacer( "vert", (0.5*spacer_width), "clear") );
 		column_2.add(value_label);
 	}
 	// add spacer to pad beginning and end of row
@@ -634,23 +671,24 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
 *		Purpose:  
 *********************************************************************************************************************/
 UiFactory.prototype.buildEstimateHeader = function(id, photo_url, photo_caption, time_stamp, amount, amount_suffix) {
-  var div_height 		= this._icon_large + (2*this._pad_top);
-  var photo_width 	= this._icon_large + (2*this._pad_left);
-  var middle_width 	= 0.5 * (this._device.screenwidth - photo_width);
-  var right_width 	= 0.5 * (this._device.screenwidth - photo_width);
+  	var div_height 		= this._icon_large + (2*this._pad_top);
+  	var photo_width 	= this._icon_large + (3*this._pad_left);
+  	var middle_width 	= 0.6 * (this._device.screenwidth - photo_width);
+  	var right_width 	= 0.4 * (this._device.screenwidth - photo_width);
 	
 	var view_container = this.buildViewContainer ( "rowHeader_"+id, "horizontal", "100%", div_height, 0, this._color_ltblue ); 
    
 	// all labels below will be 100% of the parent view
  	var column_1 = this.buildViewContainer ( "", "vertical", photo_width, div_height, 0, this._color_ltblue ); 
 	var dog_photo = this.buildProfileThumb(id, photo_url, 0, this._icon_large);
+	dog_photo.left = 2*this._pad_left;
 	column_1.add(dog_photo);
 	
 	var column_2 = this.buildViewContainer ( "", "vertical", middle_width, div_height, 0, this._color_ltblue ); 
 	//var column_2_row_1 = this.buildViewContainer ( "", "vertical", "100%", div_height, 0 ); 
 
-	var dog_name_label   		= this.buildLabel( photo_caption, "98%", "49%", this._text_medium_bold, "#000000", "", "left", "" );		
-	var time_stamp_label 		= this.buildLabel( time_stamp,  	"98%", "49%", this._text_tiny, "#000000", "", "left", "");
+	var dog_name_label   		= this.buildLabel( photo_caption, "98%", "49%", this._text_medium_bold, "#000000", "", "left", this._pad_left );		
+	var time_stamp_label 		= this.buildLabel( time_stamp,  	"98%", "49%", this._text_medium, "#000000", "", "left", this._pad_left);
 	//
 	column_2.add(dog_name_label);
 	column_2.add(time_stamp_label);

@@ -94,8 +94,8 @@ $.content.add(midView);
 $.content.add(botView);	
 
 $.index.addEventListener('focus',function(e) {		// only gets after original page load
-	Ti.API.log( "  .... [i] saved email :: " +Ti.App.Properties.getString('email') );
-	Ti.API.log( "  .... [i] saved pwd   :: " +Ti.App.Properties.getString('password') );
+	//Ti.API.log( "  .... [i] saved email :: " +Ti.App.Properties.getString('email') );
+	//Ti.API.log( "  .... [i] saved pwd   :: " +Ti.App.Properties.getString('password') );
 
 	/*  
 	// why oh why doesn't this work.  sonofa...
@@ -104,12 +104,12 @@ $.index.addEventListener('focus',function(e) {		// only gets after original page
 	password.value = Ti.App.Properties.getString('password');	
 	password.focus();
 	*/
-}); 
+});
 
 /* 	LOGIN HACK - skip past login screen  			*/
-email.value = "jericho1ne@yahoo.com"
-password.value = "mihai1";
-setTimeout(goToLogin(), 500);
+//email.value = "apple@waterbowl.net"
+//password.value = "appletest";
+//setTimeout(goToLogin(), 300);
 /*var params = {
 	_dog_ID: 2,
 	_poiInfo: {

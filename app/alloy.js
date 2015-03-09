@@ -97,13 +97,16 @@ function wbLogin(email, password) {
 			if (response.status == 1) {
 				var dog_ID = response.dog.dog_ID;
 				
-				// save credentials locally in mySesh global arrays
-				mySesh.user.email 	 = email;
+				// save credentials locally 
 				Ti.App.Properties.setString('email', email);
 				Ti.App.Properties.setString('password', password);
-				mySesh.user.owner_ID = response.human.owner_ID;
-				mySesh.user.name 		 = response.human.owner_name;
-	
+				// save the rest to mySesh global array
+				mySesh.user.email 		 = email;
+				mySesh.user.owner_ID 		= response.human.owner_ID;
+				mySesh.user.name 			= response.human.owner_name;
+				mySesh.user.daily_msg_read	= response.human.daily_msg_read;
+				mySesh.user.dev_msg_read	= response.human.dev_msg_read;
+
 				// USER HAS VALID ACCOUNT BUT NO DOG PROFILE	//////////////////////////////////////////////////////
 				if(dog_ID=="" || dog_ID==null) {
 					var modal_title = "Please complete your Dog's profile before proceeding"; 
@@ -151,7 +154,11 @@ function wbLogin(email, password) {
 				
 					*/
 					// TAKE USER TO MAP
-					createWindowController( "mapview", "", "slide_left" ); 	
+					if(mySesh.user.dev_msg_read==1) {
+						createWindowController( "mapview", "", "slide_left" ); 	
+					} else {
+						createWindowController( "message", "", "slide_left" );
+					}
 				}
 			} else {
 				// pass on error message from backend 
@@ -450,8 +457,18 @@ function addMenubar( parent_object ) {
 		backgroundImage : ICON_PATH +'mainnav-back.png',
 		zIndex	: 100
 	} );
+
+	var fwdBtn = Ti.UI.createButton( {
+		id: "fwdBtn",	 
+		left: myUi._pad_left,
+		top: myUi._pad_top,
+		width: myUi._icon_small,
+		height: myUi._icon_small,
+		backgroundImage : ICON_PATH +'button-forward.png',
+		zIndex	: 100
+	} );
 	
-	var	helpBtn 		= Ti.UI.createButton( {
+	var	helpBtn = Ti.UI.createButton( {
 		id: "helpBtn",
 		left: myUi._pad_left,
 		top: myUi._pad_top,
@@ -489,15 +506,25 @@ function addMenubar( parent_object ) {
 			color: "#ffffff", font:{ fontFamily: 'Raleway-Bold', fontSize: 20 } } );
 	menuCenter.add(wbLogoMenubar);	  */
 		
-	// ADD BACK BUTTON ONLY IF NOT ON MAPVIEW
+	// ADD BACK BUTTON ONLY IF NOT ON MAPVIEW, REGISTER PAGES, MESSAGE PAGE
 	if (Ti.App.Properties.current_window != "mapview" && 
 			Ti.App.Properties.current_window != "register2" &&
 			Ti.App.Properties.current_window != "register3" &&
-			Ti.App.Properties.current_window != "register4") {
+			Ti.App.Properties.current_window != "register4" && 
+			Ti.App.Properties.current_window != "message") {
 		menuLeft.add(backBtn);
 		backBtn.addEventListener('click', closeWindowController);
 	}
-	
+	// DAILY / DEV MESSAGE - FORWARD BTN ONLY
+	if (Ti.App.Properties.current_window == "message") {
+		menuRight2.add(fwdBtn);
+
+		fwdBtn.addEventListener('click', function() {
+			mySesh.user.dev_msg_read = 1;
+			closeWindowController();
+			createWindowController("mapview","","slide_left");
+		} );
+	}
 	// ADD ALL 3 RIGHT BUTTONS IF ON MAPVIEW
 	if (Ti.App.Properties.current_window == "mapview") {
 		////////// BUILD PROFILE BUTTON //////////////////////////////////////////////////
@@ -510,7 +537,7 @@ function addMenubar( parent_object ) {
 		
 		menuLeft.add(logoutBtn);
 		logoutBtn.addEventListener('click', logoutUser);
-	}	else {
+	} else {
 		var last_window_index = mySesh.windowStack.length - 1;
 		var help_img = HELP_PATH + "help-" + mySesh.windowStack[last_window_index].id +".jpg";
 		if(mySesh.windowStack[last_window_index].id!="help" && Ti.Filesystem.getFile('.', help_img).exists() ) {

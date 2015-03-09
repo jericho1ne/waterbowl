@@ -1,7 +1,6 @@
 var args = arguments[0] || {};
 var help_img = HELP_PATH + "help-" + args.current_window+".jpg";
 
-
 if( Ti.Filesystem.getFile('.', help_img).exists() ) {
 	var imageView = Ti.UI.createImageView({ 
 		image   : help_img,

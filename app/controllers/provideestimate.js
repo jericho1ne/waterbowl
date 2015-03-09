@@ -63,7 +63,6 @@ function updateLabel(e, slider_label, slider_value){
 function updateEstimates (place_ID, value_1, value_2) {
 	var grabPlaces = Ti.Network.createHTTPClient();
 	
-	// TODO: change to set-place-estimate-pdo.php
 	grabPlaces.open("POST", "http://waterbowl.net/mobile/set-place-estimate-pdo.php");
 	
 	var params = {
@@ -87,7 +86,8 @@ function updateEstimates (place_ID, value_1, value_2) {
 			var response = JSON.parse(json);
 			if (response.status == 1) { 		// success
 				Ti.API.log("  [>]  Estimate added successfully ");
-				// createSimpleDialog("Result", response.message);
+				mySesh.flag.poiEstimatesChanged = true;
+				createSimpleDialog("Result", response.message);
 				// close current window and bounce user to Place Overview
 				closeWindowController();
 			}
@@ -136,9 +136,9 @@ var slider1_value = myUi.buildLabel( "?", Ti.UI.FILL, "auto", myUi._text_banner,
 var slider1 	  = myUi.buildSlider("slider1", 0, 7, 0, myUi._color_ltblue);
 
 if (enclosure_count==1)  
-	$.scrollView.add( myUi.buildSectionHeader("", "Entire Area", 1) );	
+	$.scrollView.add( myUi.buildSectionHeader("", "Entire Area", 3) );	
 else if (enclosure_count==2)  
-	$.scrollView.add( myUi.buildSectionHeader("", "Large Dog Area", 1) );	
+	$.scrollView.add( myUi.buildSectionHeader("", "Large Dog Area", 3) );	
 
 $.scrollView.add( myUi.buildSpacer("horz", 10, myUi._color_ltblue) );      // pass in vert/horz, and dp size 
 $.scrollView.add(slider1_label);	
@@ -149,7 +149,7 @@ $.scrollView.add( myUi.buildSpacer("horz", 20, myUi._color_ltblue) );      // pa
 
 // And the following slider will be for Small Dogs 
 if (enclosure_count==2) {   // 
-	$.scrollView.add( myUi.buildSectionHeader("", "Small Dog Area", 1) );	
+	$.scrollView.add( myUi.buildSectionHeader("", "Small Dog Area", 3) );	
   
 	var slider2 	  = myUi.buildSlider("slider2", 0, 7, 0, myUi._color_ltblue);
 											//	title, width, height, font_style, font_color, bg_color, text_align, 				horz_pad

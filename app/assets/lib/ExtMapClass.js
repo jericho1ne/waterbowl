@@ -136,11 +136,16 @@ ExtMap.prototype.refreshDogAnnotations = function(data) {
 ExtMap.prototype.refreshMarkAnnotations = function(data) {
 	mySesh.nearbyMarks = data;
 	var marksAnnoArray = [];
-	for (var i=0; i<mySesh.nearbyMarks.length; i++) {
-		marksAnnoArray.push ( this.createMarkAnnotation(mySesh.nearbyMarks[i]) );	  
+	if (isset(data) && data.length>0) {
+		for (var i=0; i<mySesh.nearbyMarks.length; i++) {
+			marksAnnoArray.push ( this.createMarkAnnotation(mySesh.nearbyMarks[i]) );	  
+		}
+		Alloy.Globals.wbMap.addAnnotations( marksAnnoArray );
 	}
-	Alloy.Globals.wbMap.addAnnotations( marksAnnoArray );
-	// enableAllButtons();
+	else {
+		createSimpleDialog("Sorry","No dogs or marks found nearby :( ")
+	}	
+	enableAllButtons();
 }
 
 

@@ -3,62 +3,76 @@
 //========================================================================
 function saveRemark(title, text_content, textarea_hint, img) {
 	// Ti.API.info( 	"  .... [i] snapShotImage.image :: " +" [" + $.mapContainer.snapShot +"] ");
+	if (!mySesh.actionOngoing) {
+		if ( title!='' && text_content!='' && text_content!=textarea_hint ) {
+			disableAddMarkBtn();
+			var query = Ti.Network.createHTTPClient();
+			query.open("POST", SERVER_URL+"mark-create2.php");
+			var params = {
+				owner_ID	: mySesh.user.owner_ID,
+				owner_name	: mySesh.user.name,
+				dog_ID 		: mySesh.dog.dog_ID,		// mySesh.dog.dog_ID,
+				dog_name 	: mySesh.dog.name, 
+				lat			: mySesh.geo.lat,
+				lon         : mySesh.geo.lon,
+				city        : "unknown",
+				zip			: "unknown",
+				country 	: "unknown",
+				mark_photo	: 1,
+				mark_name  	: title,
+				post_text	: text_content,
+				post_wbflag	: ((poiSwitch.value==true)?1:0)
+			};
+			Ti.API.log( "  .... [+]  saveRemark :: " + JSON.stringify(params) );
+			
+			// (1) :::: ATTEMPT TO LOAD REMOTE DATA ::::
+			query.send(params);
+			query.onload = function() {
+				var json = this.responseText;
+				if (json != "") {
+					// (2) :::: IF WE GET SUM JSON ::::
+					var response = JSON.parse(json);
+					if (response.status == 1) { 		// success
+						Ti.API.log("  [>]  Info added successfully ");
+						// (3) ::::  Increment marks_made global var ::::
+						mySesh.dog.marks_made = mySesh.dog.marks_made + 1;				
 
-	if ( title!='' && text_content!='' && text_content!=textarea_hint ) {
-		disableAddMarkBtn();
-		var query = Ti.Network.createHTTPClient();
-		query.open("POST", SERVER_URL+"mark-create2.php");
-		var params = {
-			owner_ID	: mySesh.user.owner_ID,
-			owner_name	: mySesh.user.name,
-			dog_ID 		: mySesh.dog.dog_ID,		// mySesh.dog.dog_ID,
-			dog_name 	: mySesh.dog.name, 
-			lat			: mySesh.geo.lat,
-			lon         : mySesh.geo.lon,
-			city        : "unknown",
-			zip			: "unknown",
-			country 	: "unknown",
-			mark_photo	: 1,
-			mark_name  	: title,
-			post_text	: text_content,
-			post_wbflag	: ((poiSwitch.value==true)?1:0)
-		};
-		Ti.API.log( "  .... [+]  saveRemark :: " + JSON.stringify(params) );
-		
-		// (1) :::: ATTEMPT TO LOAD REMOTE DATA ::::
-		query.send(params);
-		query.onload = function() {
-			var json = this.responseText;
-			if (json != "") {
-				// (2) :::: IF WE GET SUM JSON ::::
-				var response = JSON.parse(json);
-				if (response.status == 1) { 		// success
-					Ti.API.log("  [>]  Info added successfully ");
-					// (3) ::::  Increment marks_made global var ::::
-					mySesh.dog.marks_made = mySesh.dog.marks_made + 1;
-					createSimpleDialog('Nice!',response.message + " ("+mySesh.dog.marks_made+" so far) ");
-					
-					// (4) :::: Hit backend script? ::::
-					// TODO: stuff above
-					
-					// (5) :::: Set flag to refresh map marks on mapview ::::	
-					mySesh.refreshNearbyDogs = true;	
-					
-      				// (6) :::: Close window, return to map ::::
-      				imgFile = null;
-					closeWindowController();				
-				} else {
+						// (4) :::: Success Dialog Modal ::::
+						var optns = {
+							options : ['OK'],
+							selectedIndex : 0,
+							title : 'Nice!' + response.message + " ("+mySesh.dog.marks_made+" so far) "
+						};
+						var done_dialog = Ti.UI.createOptionDialog(optns);
+						done_dialog.show();
+						done_dialog.addEventListener('click', function(e_dialog) {
+							if (e_dialog.index == 0) {  // user clicked OK
+							    closeWindowController();
+							}
+						});
+						
+						// (5) :::: Set flag to refresh map marks on mapview ::::	
+						mySesh.flag.nearbyDogsChanged = true;	
+						
+	      				// (6) :::: Close window, return to map ::::
+	      				imgFile = null;
+						// 	closeWindowController();		
+					} else {
+						enableAddMarkBtn();
+						createSimpleDialog( "Problems Houston", response.message); 
+					}
+				}	else {
 					enableAddMarkBtn();
-					createSimpleDialog( "Problems Houston", response.message); 
+					createSimpleDialog( "Server timeout", "No data received"); 
 				}
-			}	else {
-				enableAddMarkBtn();
-				createSimpleDialog( "Server timeout", "No data received"); 
-			}
-			//		addMarkBtn.focus();			
-		};
-	} else {
-		createSimpleDialog("Error", "Please fill in both Title and Mark");
+				//		addMarkBtn.focus();			
+			};
+		} else {
+			createSimpleDialog("Error", "Please fill in both Title and Mark");
+		}
+	} 
+	else {
+		createSimpleDialog("Please wait", "Your photo is still uploading");
 	}
 }
 
@@ -105,66 +119,79 @@ function disableAddMarkBtn() {
 //=================================================================================
 function takeMarkImage() {
 	// markCameraBtn.hide();
-	Titanium.Media.showCamera({
-		///////   	SUCCESS
-		success : function(event) {
-			removeAllChildren($.mapContainer);
-			progress_bar.show();
-			
-			var imageBlob = event.media;
-			var bannerImage = imageBlob.imageAsResized(750, 750);
-			var imgFile = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
-	        imgFile.write(bannerImage);
-	        
-	        var snapShotImage = Ti.UI.createImageView({ 
-				height	: Ti.UI.SIZE,
-				width	: Ti.UI.SIZE,
-				image	: imgFile.nativePath,
-				top		: 0, 
-				left	: 0
-			});
-	      	$.mapContainer.add(snapShotImage);
-	      	$.mapContainer.snapShot = snapShotImage;
-	  
-	     	// XHR request
-		    var xhr = Titanium.Network.createHTTPClient();
-			xhr.setRequestHeader("contentType", "multipart/form-data");				
-		    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
-		    xhr.onerror = function(e) {
-		        Ti.API.info('IN ERROR ' + e.error);
-		    };
-		    xhr.onload = function(response) {
-				if ( this.responseText != ''){
-		      		var jsonData = JSON.parse(this.responseText);
-			      	if (jsonData.status>0) {
-			        	// createSimpleDialog('Success', jsonData.message);
-			        	Ti.API.log("   >> MARK IMAGE UPLOADED");
-			        } else {
-			      		//cameraBtn.show();
-						createSimpleDialog('Upload Error', jsonData.message);
-			      	}	
-		     	} else {
-	      			//cameraBtn.show();
-					alert( "No response from server" );
-				}
-			};
-		    xhr.onsendstream = function(e) {
-		    	progress_bar.value = e.progress;
-		    };
-		    xhr.send({
-				'userfile'	: bannerImage,
-				'type'		: 'temp',
-				'type_ID'	: mySesh.user.owner_ID
-		    });
-       	},
-		/////////		CANCEL
-		cancel : function() {
-		},
-		/////////		ERROR
-		error : function(error) {
-		},
-		allowImageEditing : true
-	});
+	if (!mySesh.actionOngoing) {
+		Titanium.Media.showCamera({			//showCamera OR openPhotoGallery (for testing on emulator)
+			///////   	SUCCESS
+			success : function(event) {
+				disableAllButtons();
+				removeAllChildren($.mapContainer);
+
+				var imageBlob = event.media;
+				var bannerImage = imageBlob.imageAsResized(750, 750);
+				var imgFile = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
+		        imgFile.write(bannerImage);
+		        
+		        var snapShotImage = Ti.UI.createImageView({ 
+					height	: Ti.UI.SIZE,
+					width	: Ti.UI.SIZE,
+					image	: imgFile.nativePath,
+					top		: 0, 
+					left	: 0
+				});
+		      	$.mapContainer.add(snapShotImage);
+		      	$.mapContainer.snapShot = snapShotImage;
+				
+				$.mapContainer.add(progress_bar);
+				progress_bar.zIndex = 999;
+				progress_bar.top = (myUi._device.screenwidth/2)-20;
+				progress_bar.show();
+		     	
+		     	// XHR request
+			    var xhr = Titanium.Network.createHTTPClient();
+				xhr.setRequestHeader("contentType", "multipart/form-data");				
+			    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
+			    xhr.onerror = function(e) {
+			        Ti.API.info('IN ERROR ' + e.error);
+			    };
+			    xhr.onload = function(response) {
+					if ( this.responseText != ''){
+			      		var jsonData = JSON.parse(this.responseText);
+				      	if (jsonData.status>0) {
+				        	// createSimpleDialog('Success', jsonData.message);
+				        	Ti.API.log("   >> MARK IMAGE UPLOADED");
+				        	progress_bar.hide();
+				        	enableAllButtons();
+				        } else {
+				      		//cameraBtn.show();
+							createSimpleDialog('Upload Error', jsonData.message);
+				      	}	
+			     	} else {
+		      			//cameraBtn.show();
+						alert( "No response from server" );
+					}
+				};
+			    xhr.onsendstream = function(e) {
+			    	progress_bar.value = e.progress;
+			    };
+			    xhr.send({
+					'userfile'	: bannerImage,
+					'type'		: 'temp',
+					'type_ID'	: mySesh.user.owner_ID
+			    });
+	       	},
+			/////////		CANCEL
+			cancel : function() {
+				enableAllButtons();
+			},
+			/////////		ERROR
+			error : function(error) {
+			},
+			allowImageEditing : true
+		});
+	}
+	else {
+		createSimpleDialog("Please wait", "Your photo is still uploading");
+	}
 }
 
 
@@ -206,8 +233,7 @@ $.createmark.addEventListener('focus',function(e) {
  });	
 
 // (1.5)  Add progress bar to page
-var progress_bar = myUi.buildProgressBar("Uploading Profile Image");
-$.mapContainer.add(progress_bar);
+var progress_bar = myUi.buildProgressBar("uploading mark image");
 
 var parentContainer  = myUi.buildViewContainer("markParent", "vertical", "100%", Ti.UI.SIZE, 0, myUi._color_ltblue);
 var form_width = myUi._form_width;
@@ -218,6 +244,7 @@ var textarea_label = myUi.buildLabel( "Message:", form_width, 40, myUi._text_med
 // used later to ensure the user has actually filled in the Mark textarea
 var textarea_hint = 'What does '+ mySesh.dog.name +' want to say about this place?';
 var textArea = myUi.buildTextArea(textarea_hint, 90);
+var character_count =  myUi.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, form_width, 16, myUi._text_tiny, "#000000", myUi._color_ltblue, "center", "" );
 
 var addMarkBtn = myUi.buildButton( "addMarkBtn", "mark", "large" );
 var createmark_reward_text = "For each new dog-friendly location found, "+ mySesh.dog.name +" will be awarded +10 Helpfulness for being the first to mark it!"
@@ -263,7 +290,8 @@ parentContainer.add(title_input);
 // mark text
 parentContainer.add(textarea_label);
 parentContainer.add(textArea);
-
+parentContainer.add(character_count);
+parentContainer.add(myUi.buildSpacer("horz", 10, "clear"));
 // poi?
 parentContainer.add(switch_label);
 yesNoContainer.add(no_label);
@@ -273,11 +301,12 @@ parentContainer.add(yesNoContainer);
 
 // add Mark button
 parentContainer.add(addMarkBtn);
-parentContainer.add( myUi.buildSpacer("horz", myUi._pad_top, "clear") );
-parentContainer.add( rewardContainer );
-parentContainer.add( myUi.buildSpacer("horz", 40, "clear") );
+parentContainer.add(myUi.buildSpacer("horz", myUi._pad_top, "clear"));
+parentContainer.add(rewardContainer );
+parentContainer.add(myUi.buildSpacer("horz", 40, "clear"));
 $.markForm.add(parentContainer);
 
-addMarkBtn.addEventListener	('click', function(e) { saveRemark(title_input.value, textArea.value, textarea_hint); });
-textArea.addEventListener	('focus', function(e) { clearTextAreaContents(textArea, textarea_hint); });
+addMarkBtn.addEventListener('click', function(e) { saveRemark(title_input.value, textArea.value, textarea_hint); });
+textArea.addEventListener('change', function(e) { countCharacters(textArea, character_count); });
+textArea.addEventListener('focus', function(e) { clearTextAreaContents(textArea, textarea_hint); });
 
