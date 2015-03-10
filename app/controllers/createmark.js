@@ -41,7 +41,7 @@ function saveRemark(title, text_content, textarea_hint, img) {
 						var optns = {
 							options : ['OK'],
 							selectedIndex : 0,
-							title : 'Nice!' + response.message + " ("+mySesh.dog.marks_made+" so far) "
+							title : "Nice! You've made mark #"+mySesh.dog.marks_made+"."
 						};
 						var done_dialog = Ti.UI.createOptionDialog(optns);
 						done_dialog.show();
@@ -229,7 +229,15 @@ $.createmark.addEventListener('focus',function(e) {
 	 		zIndex  : 101
 	} );
 	markCameraBtn.addEventListener('click', function(e) { takeMarkImage(); } );
-	$.mapContainer.add( markCameraBtn );
+	$.mapContainer.add(markCameraBtn);
+	var camera_ask_label = myUi.buildLabel( 
+			"Add a photo so others know what you're exactly referring to!", 
+			"72%", 60, myUi._text_medium, 
+			myUi._color_dkpink, "", "right", 0);
+	camera_ask_label.top = myUi._device.screenwidth - 80;
+	camera_ask_label.left = 0;
+	camera_ask_label.zIndex = 998;
+	$.mapContainer.add(camera_ask_label);
  });	
 
 // (1.5)  Add progress bar to page
@@ -247,7 +255,6 @@ var textArea = myUi.buildTextArea(textarea_hint, 90);
 var character_count =  myUi.buildLabel( "0 / "+mySesh.stringMaxes.poiRemarkMaxLength, form_width, 16, myUi._text_tiny, "#000000", myUi._color_ltblue, "center", "" );
 
 var addMarkBtn = myUi.buildButton( "addMarkBtn", "mark", "large" );
-var createmark_reward_text = "For each new dog-friendly location found, "+ mySesh.dog.name +" will be awarded +10 Helpfulness for being the first to mark it!"
 // "IS THIS A POI" SWITCH
 var createmark_ispoi_text   = "Is this mark for a dog-friendly place/business?  Notify us so we can officially mark it as a Waterbowl location!";
 var yesNoContainer  = myUi.buildViewContainer("yesnoContainer", "horizontal", myUi._device.screenwidth, 40, 0, myUi._color_ltblue);
@@ -257,6 +264,8 @@ var no_label 	 	= myUi.buildLabel( "No", 40, myUi._height_header, myUi._text_sma
 var switch_label 	= myUi.buildLabel( createmark_ispoi_text, form_width, 68, myUi._text_medium, "#000000", myUi._color_ltblue, "left", pad_left);
 
 var rewardContainer = myUi.buildViewContainer("rewardContainer", "horizontal", myUi._device.screenwidth, 60, 10, '');
+
+var createmark_reward_text = "For each new dog-friendly location found, "+ mySesh.dog.name +" will be awarded +10 Helpfulness for being the first to mark it!"
 var reward_label	
 	= myUi.buildLabel( createmark_reward_text, form_width, Ti.UI.SIZE, 
 			myUi._text_small, myUi._color_dkpink, "", "center", "");

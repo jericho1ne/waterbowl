@@ -130,7 +130,7 @@ function displayRecentEstimates(data, place_ID) {
 		  //  var photo_url = mySesh.AWS.url_base+ '/' +mySesh.AWS.bucket_profile+ '/' +data.payload[i].dog_photo;
 		  if(data.payload[i].amount==-1) {
 		  	// var activity_icon = ICON_PATH + "poi-activity-dogscurrentlyhere.png";
-		  	var latest_estimate = myUi.buildSingleRowInfoBar( "", "No recent information", "");
+		  	var latest_estimate = myUi.buildSingleRowInfoBar( "", "No recent information reported", "");
 		  }
 		  // (photo_icon) 
 		  else {
@@ -158,9 +158,9 @@ function addEstimatesButton() {
 		var estimate_btn = myUi.buildFullRowButton("estimate_btn", "report estimate >"); 
 		estimate_btn.addEventListener('click', function(){
 		  var necessary_args = {
-			 _poiInfo	: mySesh.currentPlaceInfo,
-	   		_poiDetail	: mySesh.currentPlaceFeatures
-	    };
+				_poiInfo	: mySesh.currentPlaceInfo,
+	   			_poiDetail	: mySesh.currentPlaceFeatures
+	    	};
 			createWindowController( "provideestimate", necessary_args, "slide_left" );
 		});
 	}
@@ -570,12 +570,12 @@ function drawEverything( poiFeatures ) {
 	
 	var statBar = [
 		{	
-			"icon"	: ICON_PATH + 'dog-basic-dogfriendliness.png',
-			"amount"	: mySesh.currentPlaceInfo.rating_dogfriendly
+			"icon"	: ICON_PATH + 'poi-statbar-dogfriendliness.png',
+			"amount": mySesh.currentPlaceInfo.rating_dogfriendly
 		},
 		{	
 			"icon"	: ICON_PATH + 'poi-statbar-ratingwb.png',
-			"amount"	: mySesh.currentPlaceInfo.rating_wb
+			"amount": mySesh.currentPlaceInfo.rating_wb
 		}
 	];	
 	//$.miniHeaderContainer.add( myUi.buildMiniHeader(mySesh.currentPlaceInfo.name, mySesh.currentPlaceInfo.city, mySesh.currentPlaceInfo.icon_color) );
@@ -649,18 +649,7 @@ mySesh.currentPlaceInfo 	= null;
 
 // Ti.API.debug( "PlaceOverview.js :: " + JSON.stringify(args) );
 
-//////	( 2 )		FIGURE OUT WHERE WE CAME FROM ///////////////////////////////////////////
-/*
-if (args._came_from=="checkin modal") {
-	var place_index = getArrayIndexById(mySesh.geofencePlaces, args._place_ID);
-	var poiInfo = mySesh.allPlaces[place_index];
-} else {  		
-	// came here from map marker, therefore place info can be pulled from global array
-	var place_index = getArrayIndexById(mySesh.allPlaces, args._place_ID);
-	var poiInfo = mySesh.allPlaces[place_index];
-}
-*/
-//////	( 3 )	 	BUILD PLACE HEADER, ACTIVITY, REMARKS, SPECIFIC FEATURES 	///////////////
+//////	( 1 )	 	BUILD PLACE HEADER, ACTIVITY, REMARKS, SPECIFIC FEATURES 	///////////////
 var params = {	
 	place_ID 	: args._place_ID,
 	user_lat	: mySesh.geo.lat,
@@ -669,7 +658,7 @@ var params = {
 loadJson(params, "http://waterbowl.net/mobile/get-place-info.php", savePlaceInfoThenGetFeatures);	
 // doEverything(poiInfo);
 
-//////	( 4 )	 	GET REMARKS ON WINDOW FOCUS  	//////////////////////////////////////////
+//////	( 2 )	 	GET REMARKS ON WINDOW FOCUS  	//////////////////////////////////////////
 $.placeoverview.addEventListener('focus',function(e){
 	if(mySesh.flag.poiRemarksChanged == true) {
 		Ti.API.debug (".... [~] placeoverview FOCUS :: poiRemarksChanged");
@@ -693,7 +682,7 @@ $.placeoverview.addEventListener('focus',function(e){
 	}
 });
 
-//////	( 5 )	 	ATTACH MINIHEADER  / SCROLLVIEW LISTENER   	/////////////////////////////
+//////	( 3 )	 	ATTACH MINIHEADER  / SCROLLVIEW LISTENER   	/////////////////////////////
 $.scrollView.addEventListener('scroll', function(e) {
   if (e.y!=null) {
     var offsetY = e.y;

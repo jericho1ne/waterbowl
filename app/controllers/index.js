@@ -107,9 +107,11 @@ $.index.addEventListener('focus',function(e) {		// only gets after original page
 });
 
 /* 	LOGIN HACK - skip past login screen  			*/
+
 //email.value = "apple@waterbowl.net"
 //password.value = "appletest";
 //setTimeout(goToLogin(), 300);
+
 /*var params = {
 	_dog_ID: 2,
 	_poiInfo: {

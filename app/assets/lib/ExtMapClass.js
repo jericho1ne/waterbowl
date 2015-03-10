@@ -178,13 +178,13 @@ ExtMap.prototype.createPoiAnnotation = function( poi ) {
 	
 	// ADD ANNOTATION BUTTON 
 	var anno_button = Ti.UI.createButton({ 
-		id			   	    : "poi_btn_"+poi.place_ID,
-		place_ID				: poi.place_ID,
-		name					  : poi.name,
-		backgroundImage : ICON_PATH + 'button-forward.png',
-		zIndex					: 10, 
-		height					: 30, 
-		width						: 30
+		id			   	: "poi_btn_"+poi.place_ID,
+		place_ID		: poi.place_ID,
+		name		  	: poi.name,
+		backgroundImage : ICON_PATH + 'button-forward3.png',
+		zIndex			: 10, 
+		height			: 40, 
+		width			: 40
 	});
 	// ADD ANNOTATION BUTTON EVENT LISTENER 
  	anno_button.addEventListener('click', function(e){

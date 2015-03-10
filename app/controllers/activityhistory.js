@@ -49,7 +49,7 @@ function displayAllEstimates(payload) {
 			 	}
 			}// End if (payload)
 			else if (payload.data[i].activity_type=="checkin") {
-				var message = "Arrived here";
+				var message = "Visited here";
 			} 
 			var est_view = myUi.buildFeedRow(payload.data[i].dog_ID, myUi._icon_medium, photo_url, payload.data[i].dog_name, payload.data[i].time_elapsed.fmt_time, message);
 			estimate_list.add(est_view);
@@ -60,7 +60,7 @@ function displayAllEstimates(payload) {
 		}// End for loop
   	}// End (payload.status) 
   	else {		// NO ACTIVITY TO DISPLAY
-  		estimate_list.add( myUi.buildSingleRowInfoBar( "", "No recent information", "") );
+  		estimate_list.add( myUi.buildSingleRowInfoBar( "", "No member activity here. Mark your presence and be the first!", "") );
   	}
   $.scrollView.add( estimate_list );
 }
@@ -70,7 +70,7 @@ function displayAllEstimates(payload) {
 var args = arguments[0] || {};
 var miniHeader = myUi.buildMiniHeader(args._poiInfo.name, args._poiInfo.city, args._poiInfo.icon_color);
 // TODO:  Add park name at top of page, text only, super large
-var section_header = myUi.buildSectionHeader("recent_estimates", "Recent Activity", 1);
+var section_header = myUi.buildSectionHeader("recent_estimates", "ACTIVITY HISTORY", 1);
 
 $.scrollView.add(miniHeader);
 $.scrollView.add(section_header);

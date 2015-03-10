@@ -198,9 +198,8 @@ UiFactory.prototype.buildSpacer = function( orientation, size, bg_color ){
 *	Purpose:  	build a photo upload progress bar that updates while data is sent to server
 *******************************************************************************************/
 UiFactory.prototype.buildProgressBar = function(msg_text) {
-	//var progBarContainer = this.buildViewContainer( "", "horizontal", this._device.screenwidth, 80, 0, );
+	// do not wrap this inside any other Views, or external logic will fail
 	var height = 40;
-
 	return Titanium.UI.createProgressBar({
 		width 		: this._form_width,
 		height 		: height,
@@ -216,8 +215,6 @@ UiFactory.prototype.buildProgressBar = function(msg_text) {
 		backgroundColor : "#000000",
 		borderRadius : height/4
 	});
-	//progBarContainer.add(progressBar);
-	//return progBarContainer;
 }
 
 /******************************************************************************************
@@ -611,9 +608,9 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
 	var pad_right = 2*this._pad_right;
   	var column_1_width 	= Math.floor( thumb_size + pad_left );		
 	var column_2_width 	= Math.floor( this._device.screenwidth - column_1_width );
-	var name_width		= Math.floor(0.6 * column_2_width);
+	var name_width		= Math.floor(0.56 * column_2_width);
 
-	var timestamp_width = Math.floor(0.4 * column_2_width)-pad_right;
+	var timestamp_width = Math.floor(0.44 * column_2_width)-pad_right;
 	var multiline_row2_height = Math.round(description.length / (column_2_width / 13.3) * 11)+this._pad_top;
 	
 	//Ti.API.info( "  .... [i] this._device.screenwidth :: "+this._device.screenwidth );
@@ -637,7 +634,7 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
 	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
 	var column_2_row_1 		= this.buildViewContainer ( "", "horizontal", "100%", row1_height, 0, this._color_ltblue ); 
 	var dog_name_label  	= this.buildLabel( photo_caption, name_width, row1_height, this._text_medium_bold, "#000000", this._color_ltblue, "left", this._pad_left );		
-	var time_stamp_label	= this.buildLabel( time_stamp, 	  timestamp_width, 	row1_height, this._text_medium,  "#000000", this._color_ltblue, "right", 0);
+	var time_stamp_label	= this.buildLabel( time_stamp, 	  timestamp_width, 	row1_height, this._text_small,  "#000000", this._color_ltblue, "right", 0);
 	// COLUMN 2 :: BUILD DESCRIPTION CONTAINER
 	var column_2_row_2 		= this.buildViewContainer ( "", "horizontal", column_2_width, row2_height, 0, this._color_ltblue );
 	var description_label 	= this.buildLabel( description, column_2_width-pad_left, row2_height, this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left );
@@ -671,41 +668,41 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
 *		Purpose:  
 *********************************************************************************************************************/
 UiFactory.prototype.buildEstimateHeader = function(id, photo_url, photo_caption, time_stamp, amount, amount_suffix) {
-  	var div_height 		= this._icon_large + (2*this._pad_top);
-  	var photo_width 	= this._icon_large + (3*this._pad_left);
-  	var middle_width 	= 0.6 * (this._device.screenwidth - photo_width);
-  	var right_width 	= 0.4 * (this._device.screenwidth - photo_width);
-	
+  	var div_height 	= 2 * (this._icon_small + this._pad_top);
+  	var padding 	= 2*this._pad_right;
+  	var left_width	= this._icon_small + (3*this._pad_left);
+  	var right_width = this._device.screenwidth - left_width - (3*this._pad_right);
+  
 	var view_container = this.buildViewContainer ( "rowHeader_"+id, "horizontal", "100%", div_height, 0, this._color_ltblue ); 
-   
-	// all labels below will be 100% of the parent view
- 	var column_1 = this.buildViewContainer ( "", "vertical", photo_width, div_height, 0, this._color_ltblue ); 
-	var dog_photo = this.buildProfileThumb(id, photo_url, 0, this._icon_large);
-	dog_photo.left = 2*this._pad_left;
-	column_1.add(dog_photo);
+   	var row_top = this.buildViewContainer ( "", "horizontal", "100%", div_height/2, 0, this._color_ltblue );
+	var row_bot = this.buildViewContainer ( "", "horizontal", "100%", div_height/2, 0, this._color_ltblue );
 	
-	var column_2 = this.buildViewContainer ( "", "vertical", middle_width, div_height, 0, this._color_ltblue ); 
-	//var column_2_row_1 = this.buildViewContainer ( "", "vertical", "100%", div_height, 0 ); 
+	var temp_icon = this.buildViewContainer ( "", "vertical", left_width, div_height, 0, this._color_ltblue ); 
+	var dog_photo = this.buildProfileThumb(id, photo_url, 0, this._icon_small);
+	dog_photo.left = padding;
+	dog_photo.top = 2;
+	
+	var amount_label = this.buildLabel( amount+' '+amount_suffix, right_width, div_height, this._text_large, "#000000", "", "left", this._pad_left);   
+	amount_label.top = -16;
 
-	var dog_name_label   		= this.buildLabel( photo_caption, "98%", "49%", this._text_medium_bold, "#000000", "", "left", this._pad_left );		
-	var time_stamp_label 		= this.buildLabel( time_stamp,  	"98%", "49%", this._text_medium, "#000000", "", "left", this._pad_left);
-	//
-	column_2.add(dog_name_label);
-	column_2.add(time_stamp_label);
+	var estimates_container = this.buildViewContainer ( "", "horizontal", right_width, div_height, 0, this._color_ltblue ); 
+	var dog_timestamp_container = this.buildViewContainer ( "", "horizontal", right_width, div_height, 0, this._color_ltblue ); 
+	
+	var dog_name_label   = this.buildLabel( photo_caption, right_width/2, "100%", this._text_medium, "#000000", "", "left", padding );		
+	var time_stamp_label = this.buildLabel( time_stamp, right_width/2, "100%", this._text_medium, "#000000", "", "right", padding);
+	
+	// ROW 1
+	row_top.add(temp_icon);
+	row_top.add(amount_label);
+	// ROW 2
+	row_bot.add(dog_photo);
+	row_bot.add(dog_name_label);
+	row_bot.add(time_stamp_label);
 
-	column_2.add( this.buildSpacer("vert", this._pad_left, "clear") );
-	//column_2.add(column_2_row_1);
+	//column_2.add( this.buildSpacer("vert", this._pad_left, "clear") );
 	
-	var column_3 = this.buildViewContainer ( "", "vertical", right_width, div_height, 0, this._color_ltblue  ); 
-												// (title, width, height, font_style, font_color, bg_color, text_align, horz_pad)
-  	var amount_label 		 = this.buildLabel( amount, 	 "100%", "49%", this._number_large, "#000000", "", "", "");   // number!
-	var amount_suffix_label	 = this.buildLabel( amount_suffix, "100%", "49%", this._text_medium, "#000000", "", "", "" );
-	column_3.add(amount_label);
-	column_3.add(amount_suffix_label);
-	
-	view_container.add(column_1);
-	view_container.add(column_2);
-	view_container.add(column_3);
+	view_container.add(row_top);
+	view_container.add(row_bot);
 	return view_container;
 };
 

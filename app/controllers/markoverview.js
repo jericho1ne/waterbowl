@@ -132,11 +132,11 @@ mark_subtext 	= args.dist+" miles away";
 
 var statBar = [
 	{	
-		"icon"	: ICON_PATH + 'poi-feature-waterbowl.png',
+		"icon"	: ICON_PATH + 'mark-statbar-markstrength.png',
 		"amount": args.mark_strength
 	},
 	{	
-		"icon"	: ICON_PATH + 'mark-duration.png',
+		"icon"	: ICON_PATH + 'mark-statbar-duration.png',
 		"amount": 'x minutes'
 	}
 ];	

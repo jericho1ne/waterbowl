@@ -1,0 +1,7 @@
+<Alloy>
+	<Window id="message" class="absolute">
+		<View id="content" class="window_container bg_lt_blue">
+			<ScrollView id="scrollView" class="fill_width bg_lt_blue" />
+		</View>
+	</Window>
+</Alloy>

@@ -87,7 +87,7 @@ function updateEstimates (place_ID, value_1, value_2) {
 			if (response.status == 1) { 		// success
 				Ti.API.log("  [>]  Estimate added successfully ");
 				mySesh.flag.poiEstimatesChanged = true;
-				createSimpleDialog("Result", response.message);
+				createSimpleDialog("Thanks", response.message);
 				// close current window and bounce user to Place Overview
 				closeWindowController();
 			}
@@ -175,6 +175,20 @@ if (enclosure_count==2) {
 //  add save estimate button
 var save_est_btn   = myUi.buildButton( "save_est_btn", "save estimate", "large" );
 $.scrollView.add(save_est_btn);
+$.scrollView.add(myUi.buildSpacer("horz", 20, "clear"));
+
+var rewardContainer = myUi.buildViewContainer("rewardContainer", "horizontal", myUi._device.screenwidth, 60, 10, '');
+
+var provideestimate_reward_text = mySesh.dog.name + " gets +1 Helpfulness for each accurate estimate provided";
+var reward_label = myUi.buildLabel( 
+	provideestimate_reward_text, 
+	myUi._device.screenwidth-(4*myUi._pad_left), 
+	Ti.UI.SIZE, 
+	myUi._text_small, 
+	myUi._color_dkpink, "", "center", ""
+);
+reward_label.left = 2*myUi._pad_left;
+$.scrollView.add(reward_label);
 
 save_est_btn.addEventListener('click', function(e) {
 	// var estimate = ;

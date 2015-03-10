@@ -495,7 +495,7 @@ function addMenubar( parent_object ) {
 		top: myUi._pad_top,
 		width: myUi._icon_small,
 		height: myUi._icon_small,
-		backgroundImage : ICON_PATH + "mainnav-back.png",
+		backgroundImage : ICON_PATH + "button-logout.png",
 		zIndex: 100,
 		opacity: 1
 	});
@@ -519,11 +519,11 @@ function addMenubar( parent_object ) {
 	if (Ti.App.Properties.current_window == "message") {
 		menuRight2.add(fwdBtn);
 
-		fwdBtn.addEventListener('click', function() {
+		fwdBtn.addEventListener('click', function(){
 			mySesh.user.dev_msg_read = 1;
 			closeWindowController();
 			createWindowController("mapview","","slide_left");
-		} );
+		});
 	}
 	// ADD ALL 3 RIGHT BUTTONS IF ON MAPVIEW
 	if (Ti.App.Properties.current_window == "mapview") {
