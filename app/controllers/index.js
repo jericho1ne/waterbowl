@@ -6,7 +6,6 @@ function goToLogin() {
 	var emailText 	= email.value;
 	var pwdText 	= password.value;
 
-
 	Ti.API.log("  .... [+] goToLogin :: ["+ emailText +'/'+ pwdText +']');				
 	if(Titanium.Network.networkType==Titanium.Network.NETWORK_NONE) {
 		createSimpleDialog('Uh oh', 'No network connection detected');
@@ -88,22 +87,26 @@ midView.add(loginBtn);
 midView.add(regBtn);
 botView.add(footer);
 
+email.value = Ti.App.Properties.getString('email');
+password.value = Ti.App.Properties.getString('password');
+
 // add containers to parent view
 $.content.add(topView);
 $.content.add(midView);
 $.content.add(botView);	
 
 $.index.addEventListener('focus',function(e) {		// only gets after original page load
-	//Ti.API.log( "  .... [i] saved email :: " +Ti.App.Properties.getString('email') );
-	//Ti.API.log( "  .... [i] saved pwd   :: " +Ti.App.Properties.getString('password') );
+	Ti.API.log( "  .... [i] saved email :: " +Ti.App.Properties.getString('email') );
+	Ti.API.log( "  .... [i] saved pwd   :: " +Ti.App.Properties.getString('password') );
+	
 
-	/*  
+	if( Ti.App.Properties.getString('email')!="" && Ti.App.Properties.getString('password')!="") {
+		goToLogin();
+	}
 	// why oh why doesn't this work.  sonofa...
-	email.value = Ti.App.Properties.getString('email');
-	email.focus();
-	password.value = Ti.App.Properties.getString('password');	
-	password.focus();
-	*/
+	//email.value = Ti.App.Properties.getString('email');
+	//password.value = Ti.App.Properties.getString('password');	
+	//password.focus();
 });
 
 /* 	LOGIN HACK - skip past login screen  			*/

@@ -275,6 +275,14 @@ function doClientCheckoutStuff(data) {
 			mySesh.dog.current_place_lat 		= null;
 			mySesh.dog.current_place_lon	 	= null;
 			mySesh.dog.current_place_geo_radius	= null;
+
+			// force place list refresh on window focus
+			myUi.refreshPlaceList = 1;
+
+			if (Ti.App.Properties.current_window=="placeoverview") {
+				//mySesh.flag.poiEstimatesChanged = true;		// forces a refresh of the estimates buttons in case placeoverview is open
+			// closeWindowController(); 
+			}
 			createSimpleDialog( "Goodbye!", "You've left " + mySesh.dog.current_place_name);
 		} 
 		else {
@@ -467,7 +475,7 @@ function refreshPlaceListData(client_action) {
 	Ti.API.debug(".... [~] refreshPlaceListData called from :: " + client_action);
 	getPoisInGeofence( Alloy.Globals.wbMap, mySesh.geo.lat, mySesh.geo.lon, client_action );   // will affect place list
 	// SET CORRECT AMOUNT OF NEARBY PLACES (PLACE LIST LABEL)
-	setTimeout ( function(){ updateGeofenceTable(); }, 350);
+	setTimeout ( function(){ updateGeofenceTable(); }, 500);
 	
 	// ADD PLACE LIST CLICK EVENT LISTENER
 	// remove( PlaceListClickListeners )
@@ -528,9 +536,10 @@ function testForAutoCheckout() {
 	if (mySesh.dog.current_place_ID > 0) {  // OLD CHECK
  		// see if current user lat/lon is out of the geofence of our stored checkin place lat/lon  	
 		var dist = getDistance(mySesh.geo.lat, mySesh.geo.lon, mySesh.dog.current_place_lat, mySesh.dog.current_place_lon);
-		Ti.API.debug( "  .... [x] testForAutoCheckout :: mySesh.dog [" + mySesh.dog.current_place_lat + " / " + mySesh.dog.current_place_lon + "]" );
+		Ti.API.debug("  .... [x] testForAutoCheckout :: mySesh.dog lat/lon");
+		Ti.API.debug("  .....+--"+mySesh.dog.current_place_lat + " / " + mySesh.dog.current_place_lon);
 		var threshold = (dist - mySesh.dog.current_place_geo_radius);
- 		Ti.API.debug( "....  :: dist - geo_radius [" + dist + "-" + mySesh.dog.current_place_geo_radius + "="+threshold+"]" );
+ 		Ti.API.debug( " .....+--dist - geo_radius [" + dist + "-" + mySesh.dog.current_place_geo_radius + "="+threshold+"]" );
  		if( threshold >= 0 ) {
  	 		// Call update-dog-location.php on the backend, and doClientCheckoutStuff on the front end
   			checkoutFromPlace( mySesh.dog.current_place_ID );
@@ -644,9 +653,10 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 
 // REPEATEDLY TRIGGER ON WINDOW FOCUS //////////////////////////////////////////
 $.mapview.addEventListener('focus',function(e) {
-	//if(myUi.refreshPlaceList) {
-		//refreshPlaceListData("Window Focus");
-	//}
+	if(myUi.refreshPlaceList) {
+		refreshPlaceListData("Window Focus");
+		myUi.refreshPlaceList = 0;
+	}
 
 	if(mySesh.flag.nearbyDogsChanged) {	// if true, then get us the newest marks + nearby pups
 		Ti.API.debug("  .... [i] mapview.focus, getMarks, getNearbyDogs");

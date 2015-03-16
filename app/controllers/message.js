@@ -1,5 +1,7 @@
 var args = arguments[0] || {};
-var dev_img = "http://waterbowl.net/mobile/images/wb-msgs/message-dev.jpg";
+
+var d = new Date();
+var dev_img = "http://waterbowl.net/mobile/images/wb-msgs/message-dev.jpg?"+d.getMilliseconds();
 var missing_img = MISSING_PATH + "poi-0-banner.jpg";
 		// type (fg or bg), alloyObject, actual, missing
 

@@ -46,7 +46,7 @@ function UiFactory(){
   	this._text_medium_bold= { fontFamily: 'Raleway-Bold',		fontSize: this._base_font }; 	// 28 pt
   
 	this._text_small  	= { fontFamily: 'Raleway', fontSize: 0.900 * this._base_font };
-	this._text_tiny   	= { fontFamily: 'Raleway', fontSize: 0.650 * this._base_font };		// timestamps and small labels
+	this._text_tiny   	= { fontFamily: 'Raleway', fontSize: 0.700 * this._base_font };		// timestamps and small labels
 	
 	/* 	Numbers											*/
 	this._number_large 	= { fontFamily: 'Futura-Medium', fontSize: 1.500 * this._base_font };
@@ -77,7 +77,7 @@ function UiFactory(){
 UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_width, view_height, top, bg_color) {
 	if ( isset(bg_color) && bg_color!="" ) {
 		var view_container = Ti.UI.createView( { 
-			//borderColor 	: this._color_ltpink, 	borderWidth	: 1, 	
+			//borderColor : this._color_ltpink, 	borderWidth	: 1, 	
 			id			: id, 
 			layout		: layout_orientation,
 			top			: top,  
@@ -88,7 +88,7 @@ UiFactory.prototype.buildViewContainer = function(id, layout_orientation, view_w
 	}
 	else {
 		var view_container = Ti.UI.createView( { 
-			//borderColor 	: this._color_ltpink, 	borderWidth	: 1, 
+			//borderColor : this._color_ltpink, 	borderWidth	: 1, 
 			id			: id, 
 			layout		: layout_orientation,
 			top			: top,  
@@ -123,7 +123,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 
 	if (text_align=="center") {
 		var label = Ti.UI.createLabel( {	
-			//borderColor : "#000000", borderWidth	: 1, 
+			//borderColor 	: "#000000", borderWidth	: 1, 
 			text 			: title,
 			font			: font_style,
 			backgroundColor : background_color,
@@ -134,7 +134,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		});
 	} else if (text_align=="left") {
 		var label = Ti.UI.createLabel( {	
-			//borderColor : "#000000", borderWidth	: 1, 
+			//borderColor 	: "#000000", borderWidth	: 1, 
 			text 			: title,
 			font			: font_style,
 			backgroundColor : background_color,
@@ -146,7 +146,7 @@ UiFactory.prototype.buildLabel = function(title, width, height, font_style, font
 		});
 	} else {
 		var label = Ti.UI.createLabel( {	
-			//borderColor : "#000000", borderWidth	: 1, 
+			//borderColor 	: "#000000", borderWidth	: 1, 
 			text 			: title,
 			font			: font_style,
 			backgroundColor : background_color,
@@ -601,17 +601,22 @@ UiFactory.prototype.buildMultiRowInfoBar = function(image_url, text_content) {
 ****************************************************************************************************************/
 UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_caption, time_stamp, description) {
   	//Ti.API.debug( ">>>>> buildFeedRow time_stamp:"+ time_stamp); 
- 	var row1_height = this._height_header; 
-  	var row2_height = thumb_size - this._pad_top;
+ 	var row1_height = (thumb_size/2)+this._pad_top; 
+  	var row2_height = (thumb_size/2)+this._pad_top;
+
 	// DETERMINE VIEW CONTAINER WIDTHS
 	var pad_left = 2*this._pad_left;
 	var pad_right = 2*this._pad_right;
-  	var column_1_width 	= Math.floor( thumb_size + pad_left );		
-	var column_2_width 	= Math.floor( this._device.screenwidth - column_1_width );
-	var name_width		= Math.floor(0.56 * column_2_width);
+  	var column_1_width 	= Math.floor(thumb_size + (3*this._pad_left));		
+	var column_2_width 	= Math.floor(this._device.screenwidth - column_1_width);
 
+	var name_width		= Math.floor(0.56 * column_2_width);
 	var timestamp_width = Math.floor(0.44 * column_2_width)-pad_right;
-	var multiline_row2_height = Math.round(description.length / (column_2_width / 13.3) * 11)+this._pad_top;
+	var chars_per_line	= 34;
+	var char_width		= column_2_width / chars_per_line;
+	var num_text_lines 	= Math.round(description.length / chars_per_line);
+
+	var multiline_row2_height = (num_text_lines * 18);
 	
 	//Ti.API.info( "  .... [i] this._device.screenwidth :: "+this._device.screenwidth );
 	//Ti.API.info( "  .... [i] col1 col2 name ts :: "+column_1_width+','+column_2_width+','+name_width+','+timestamp_width );
@@ -623,7 +628,8 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
 		
   	// BUILD VIEWS  							   id,     orientation  	view_width      view_height  top)
 	var view_container = this.buildViewContainer ( "feedRow_"+id, "horizontal", "100%", total_height, 0, "" ); 
-  
+  	view_container.backgroundColor = this._color_ltblue;
+
 	var column_1 = this.buildViewContainer ( "col_1", "horizontal", column_1_width, total_height,  0, this._color_ltblue ); 
 	var column_2 = this.buildViewContainer ( "col_2", "vertical", 	column_2_width, total_height,  0, this._color_ltblue );
 		
@@ -633,8 +639,9 @@ UiFactory.prototype.buildFeedRow = function(id, thumb_size, photo_url, photo_cap
 		
 	// COLUMN 2 :: BUILD NAME + TIMESTAMP CONTAINER
 	var column_2_row_1 		= this.buildViewContainer ( "", "horizontal", "100%", row1_height, 0, this._color_ltblue ); 
-	var dog_name_label  	= this.buildLabel( photo_caption, name_width, row1_height, this._text_medium_bold, "#000000", this._color_ltblue, "left", this._pad_left );		
-	var time_stamp_label	= this.buildLabel( time_stamp, 	  timestamp_width, 	row1_height, this._text_small,  "#000000", this._color_ltblue, "right", 0);
+	var dog_name_label  	= this.buildLabel( photo_caption, name_width, row1_height, this._text_medium_bold, "#000000", this._color_ltblue, "left", this._pad_left);		
+	var time_stamp_label	= this.buildLabel( time_stamp, 	  timestamp_width, 	row1_height, this._text_tiny,  "#000000", this._color_ltblue, "right", this._pad_right);
+	
 	// COLUMN 2 :: BUILD DESCRIPTION CONTAINER
 	var column_2_row_2 		= this.buildViewContainer ( "", "horizontal", column_2_width, row2_height, 0, this._color_ltblue );
 	var description_label 	= this.buildLabel( description, column_2_width-pad_left, row2_height, this._text_medium, "#000000", this._color_ltblue, "left", this._pad_left );

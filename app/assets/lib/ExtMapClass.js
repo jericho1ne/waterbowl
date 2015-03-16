@@ -247,7 +247,6 @@ ExtMap.prototype.createDogAnnotation = function( dog ) {
 	var icon_stranger 	= ICON_PATH + 'dog1-mapmarker-stranger.png';
 	var icon_me 		= ICON_PATH + 'dog1-mapmarker-me.png';
 	var icon_buddy 		= ICON_PATH + 'dog1-mapmarker-buddy.png';
-
 	Ti.API.info( "  .... [~] createDogAnnotation :: dog icons :: " + icon_stranger + ' / ' + icon_me );
 
 	var anno_dog_button = Ti.UI.createButton({ 
@@ -257,12 +256,18 @@ ExtMap.prototype.createDogAnnotation = function( dog ) {
 		height			: 30, 
 		width			: 30
 	});
+
+	var dog_thumb  = PROFILE_PATH + 'dog-'+dog.dog_ID+'-iconmed.jpg';
+	// Ti.API.log( "   nearby dog_thumb >> " +  dog_thumb);
+	// var anno_dog_button = myUi.buildProfileThumb(dog.dog_ID, dog_thumb, dog.relationship, myUi._icon_small);
+
 	anno_dog_button.addEventListener('click', function(e){
 		var params = { 
 			dog_ID 	: dog.dog_ID
 		};
 		createWindowController( "profile", params, 'slide_left' );
  	});
+
 	return myMapFactory.createAnnotation({
     	id        	: dog.dog_ID, 
 		latitude  	: dog.last_lat, 

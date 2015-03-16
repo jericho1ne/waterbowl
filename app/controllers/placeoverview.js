@@ -107,7 +107,7 @@ function getRecentEstimates() {
 			enclosure_count : mySesh.currentPlaceFeatures.enclosure_count
 		};
 		loadJson(params, "http://waterbowl.net/mobile/get-recent-estimates.php", displayRecentEstimates);	
-		//addEstimatesButton();	
+		addEstimatesButtons();	
 	} 
 }
 
@@ -135,7 +135,13 @@ function displayRecentEstimates(data, place_ID) {
 		  // (photo_icon) 
 		  else {
 		  	var photo_url = PROFILE_PATH + 'dog-'+data.payload[i].dog_ID+'-iconmed.jpg';		
-		  	var latest_estimate = myUi.buildEstimateHeader(data.payload[i].dog_ID, photo_url, data.payload[i].dog_name, data.payload[i].time_elapsed, data.payload[i].amount, ( (data.payload[i].amount==1) ? "dog " : "dogs " )+"here");
+		  	var latest_estimate = myUi.buildEstimateHeader(
+		  		data.payload[i].dog_ID, 
+		  		photo_url, 
+		  		data.payload[i].dog_name+" says", 
+		  		data.payload[i].time_elapsed, 
+		  		'"'+data.payload[i].amount, 
+		  		( (data.payload[i].amount==1) ? "dog " : "dogs " )+'here!"');
 		  }
 		  $.estimates.add(latest_estimate);
 	  }
@@ -149,12 +155,13 @@ function displayRecentEstimates(data, place_ID) {
 }
 
 //================================================================================
-//		Name:			addEstimatesButton( )
+//		Name:			addEstimatesButtons( )
 //		Purpose:	LIKE THE TITLE SEZ.  I'M DOING STUFF HERE.
 //================================================================================
-function addEstimatesButton() {
+function addEstimatesButtons() {
+	removeAllChildren($.estimates_buttons);
 	//////////		 ONLY ALLOW USER TO PROVIDE ESTIMATE IF CURRENTLY CHECKED IN HERE		 /////////////////////
-	if (	mySesh.dog.current_place_ID == args._place_ID ) {
+	if (mySesh.dog.current_place_ID == args._place_ID) {
 		var estimate_btn = myUi.buildFullRowButton("estimate_btn", "report estimate >"); 
 		estimate_btn.addEventListener('click', function(){
 		  var necessary_args = {
@@ -224,14 +231,13 @@ function displayPlaceCheckins(data, parentObject) {
 
 	    Ti.API.debug(".... [~] displayPlaceCheckins:: ["+ data.checkins.length +"] ");
  	
-
 	  	var thumbs_width = myUi._device.screenwidth - (2*myUi._pad_left);
 	  	if( data.checkins.length > 4) {
 	  		// size up parent container so that we can fit two rows, up to 8 thumbnails
 	  		var thumbs_height = (2*myUi._icon_large) + (3*myUi._pad_top) + myUi._icon_medium;  	
 	  	}
 	  	else if (data.checkins.length <= 4 ) {
-	    	var thumbs_height = (1*myUi._icon_large) + (2*myUi._pad_top) + myUi._icon_medium;
+	    	var thumbs_height = (1*myUi._icon_large) + (3*myUi._pad_top) + myUi._icon_medium;
 	    }
 	    parentObject.height = thumbs_height;
 	  	var thumbs_container = myUi.buildViewContainer("", "horizontal", thumbs_width, thumbs_height, 0);
@@ -318,7 +324,7 @@ function displayBasicInfo() {
 	var category_icon 		= ICON_PATH + mySesh.currentPlaceInfo.icon_basic;
 	var rating_wb			= ICON_PATH + "poi-basic-ratingwb.png";
 	var rating_dogfriendly	= ICON_PATH + "poi-feature-waterbowl.png";
-	$.basics.add( myUi.buildSingleRowInfoBar(category_icon, categories_text, "") );
+	$.basics.add( myUi.buildMultiRowInfoBar(category_icon, categories_text, "") );
 	$.basics.add( myUi.buildSeparator() );
 	$.basics.add( myUi.buildSingleRowInfoBar(rating_dogfriendly, "Dog-Friendliness:", mySesh.currentPlaceInfo.rating_dogfriendly+"/5") );
 	$.basics.add( myUi.buildSeparator() );
@@ -612,7 +618,7 @@ function drawEverything( poiFeatures ) {
 	//----------------------------------------------------------------------------------------------------------
 	if (  mySesh.currentPlaceInfo.category>=600 && mySesh.currentPlaceInfo.category<=698 ) {
 		getRecentEstimates();
-		addEstimatesButton();	
+		// addEstimatesButtons();	 // already called inside get RecentEstimates
 	}
 	//----------------------------------------------------------------------------------------------------------
 	//		 FEATURES (HUMAN / OUTDOOR ONLY)

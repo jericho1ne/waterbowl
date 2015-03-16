@@ -105,39 +105,14 @@ function Session(){
 			bucket_uitext	: "images/wb-ui-text/",
 		
 			// LOCAL PATHS ARE INSIDE ALLOY.JS
-			// TODO: Figure out why these aren't working. Hardcoded in alloy.js for now...
-			// icon						: "images/icons/",
-			// missing				: "images/missing/"
 		}
 	};
 };
-//================================================================================
-//		Name:			loadMapJson
-//		Purpose:	standardize HTTP requests
-//================================================================================
-Session.prototype.loadMapJson = function ( params, url, callbackFunction ) {
-	var query = Ti.Network.createHTTPClient();
-	query.open("POST", url);	
-	query.send( params );
-	query.setTimeout(2000);
-	query.onload = function() {
-		var jsonResponse = this.responseText;
-		if (jsonResponse != "" ) {
-			var data = JSON.parse( jsonResponse );
-			// Ti.API.debug("....[~] UiFactory.loadMapJson ["+JSON.stringify(data)+"]");
-			if (callbackFunction!="")	{		
-				callbackFunction(data);
-			}	else {
-				return data;	
-			}
-		}
-		else {
-			createSimpleDialog('Error', 'No data received');
-			return [];
-		}
-	};
-}
 
+//==================================================================================
+//	Name:		saveLocationTimer()
+//	Purpose:	this resides here so we can kill the interval from other App Windows
+//==================================================================================
 Session.prototype.saveLocationTimer = function() {
 	var timer_ms = this.dog.location_timer;
 	var self = this;
@@ -160,7 +135,8 @@ Session.prototype.saveDogLocation = function(poi_ID, action, client_function) {
 		dog_ID 				: this.dog.dog_ID,
 		client_action		: client_function
 	}
-	Ti.API.info ( "  .... [~] saveDogLocation / Call :: " + JSON.stringify(params) );
+	Ti.API.info ("  .... [~] saveDogLocation / Call ");
+	Ti.API.info ("	.....+---" + JSON.stringify(params));
 	loadJson(params, "http://www.waterbowl.net/mobile/update-dog-location.php", this.saveDogResponse);	
 	//$.mem_usage.text = Titanium.Platform.availableMemory.toFixed(2)+" MB available";
 } 
@@ -171,7 +147,8 @@ Session.prototype.saveDogLocation = function(poi_ID, action, client_function) {
 //	Purpose:	track dog location intermittently
 //=================================================================================
 Session.prototype.saveDogResponse = function (dog_save_location_data) {
-	Ti.API.info ( "  .... [~] saveDogLocation / Response :: " + JSON.stringify(dog_save_location_data) );
+	Ti.API.info ("  .... [~] saveDogLocation / Response");
+	Ti.API.info ("	.....+---" + JSON.stringify(dog_save_location_data));
 }
 
 //================================================================================

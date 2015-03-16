@@ -168,9 +168,9 @@ function wbLogin(email, password) {
 		//  ERROR:  No data received from XHRequest
 		onerror: function(e) {
 			Ti.API.debug(e.error);
-			createSimpleDialog('Error', e.error);
+			//createSimpleDialog('Error', e.error);
 		},
-		timeout: 4000 /* in milliseconds */
+		timeout: 1200 /* in milliseconds */
 	} );
 	// << XHR REQUEST
 	loginRequest.open("POST", SERVER_URL+"login.php");
@@ -242,7 +242,9 @@ function loadJson ( params, url, callbackFunction ) {
 	query.open("POST", url);	
 	query.send( params );
 	query.setTimeout(2000);
+	disableAllButtons();
 	query.onload = function() {
+		enableAllButtons();
 		var jsonResponse = this.responseText;
 		if (jsonResponse != "" ) {
 			var data = JSON.parse( jsonResponse );
@@ -323,9 +325,9 @@ function createWindowController ( win_name, args, animation ) {
 	 	winObject.open(animStyle);
 
 	 	if(win_name!="index") {
-	 		var spinner_time = 650;
+	 		var spinner_time = 500;
 	 		if (win_name=="help") {
-				spinner_time = 250;
+				spinner_time = 150;
 	 		}
 			// show loading spinner
 			Alloy.Globals.loadingMask.show('Loading...', true);
