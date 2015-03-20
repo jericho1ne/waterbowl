@@ -261,15 +261,12 @@ UiFactory.prototype.buildPageHeader = function(id, type, txt_title, txt_1, txt_2
 	  	});
 	}
 	
-
 	statBarContainer.left = leftPad;
 	statBarContainer.top = 3;
-
 	headerStatBar.add(statBarContainer);
 	headerStatBar.backgroundColor = "#333333";
 	headerStatBar.opacity = 0.95;
 	headerStatBar.bottom = 0;
-
 
 	var title_label	 	= this.buildLabel(txt_title,labelWidth, 24, this._text_large,  "#ffffff", "", "left", "");
 	var text_label 	 	= this.buildLabel(txt_1,	labelWidth, 18, this._text_medium, "#ffffff", "", "left", "");	

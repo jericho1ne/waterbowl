@@ -95,19 +95,21 @@ $.content.add(topView);
 $.content.add(midView);
 $.content.add(botView);	
 
-$.index.addEventListener('focus',function(e) {		// only gets after original page load
-	Ti.API.log( "  .... [i] saved email :: " +Ti.App.Properties.getString('email') );
+Ti.API.log( "  .... [i] saved email :: " +Ti.App.Properties.getString('email') );
 	Ti.API.log( "  .... [i] saved pwd   :: " +Ti.App.Properties.getString('password') );
-	
+if( (Ti.App.Properties.getString('email')!="" && Ti.App.Properties.getString('password')!="") &&
+	(Ti.App.Properties.getString('email')!=null && Ti.App.Properties.getString('password')!=null) ) {
+	goToLogin();
+}
 
-	if( Ti.App.Properties.getString('email')!="" && Ti.App.Properties.getString('password')!="") {
-		goToLogin();
-	}
+/*
+$.index.addEventListener('focus',function(e) {		// only gets after original page load
 	// why oh why doesn't this work.  sonofa...
 	//email.value = Ti.App.Properties.getString('email');
 	//password.value = Ti.App.Properties.getString('password');	
 	//password.focus();
 });
+*/
 
 /* 	LOGIN HACK - skip past login screen  			*/
 

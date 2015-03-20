@@ -13,15 +13,15 @@
 //  Return: 	true / false
 //=======================================================================
 function arraysEqual(arr1, arr2) {
-    if(arr1.length !== arr2.length)
-        return false;
-    for(var i = arr1.length; i--;) {
-    	Ti.API.debug( "  .... >> arraysEqual >> arr1[i] : "+arr1[i].id );
-    	Ti.API.debug( "  .... >> arraysEqual >> arr2[i] : "+arr2[i].id );
-        if(arr1[i].id  !== arr2[i].id )
-            return false;
-    }
-    return true;
+	if(arr1.length !== arr2.length)
+		return false;
+	for(var i = arr1.length; i--;) {
+		Ti.API.debug( "  .... >> arraysEqual >> arr1[i] : "+arr1[i].id );
+		Ti.API.debug( "  .... >> arraysEqual >> arr2[i] : "+arr2[i].id );
+		if(arr1[i].id  !== arr2[i].id )
+			return false;
+	}
+	return true;
 }
 
 //===============================================
@@ -37,10 +37,10 @@ function isset( value ) {
 }
 
 function removeAllChildren(obj) {
-    var c = obj.children.slice(0);
-    for (var i = 0; i < c.length; ++i) {
-        obj.remove(c[i]);
-    }
+	var c = obj.children.slice(0);
+	for (var i = 0; i < c.length; ++i) {
+		obj.remove(c[i]);
+	}
 }
 
 function  isValidZip ( zipcode ) {
@@ -60,7 +60,8 @@ function clearTextAreaContents(textarea_object, default_text) {
 //	Name:    disableAllButtons()
 //=====================================================
 function disableAllButtons() {
-	mySesh.actionOngoing = true; 
+	mySesh.actionOngoing = true;
+	setTimeout(enableAllButtons, mySesh.timeout.ui_lockout);
 }
 
 //=====================================================
@@ -120,10 +121,10 @@ function wbLogin(email, password) {
 					gotoRegPage2.addEventListener('click', function(e_dialog) {
 						if (e_dialog.index == 0) {  // user clicked OK
 							
-					    	closeWindowController();
+							closeWindowController();
 							createWindowController("register2","","slide_left");
 						} else {
-						    // TODO: figure out if cancel case is necessary
+							// TODO: figure out if cancel case is necessary
 						 } 
 					});
 				}
@@ -149,7 +150,7 @@ function wbLogin(email, password) {
 					  mySesh.dog.current_place_lat     = response.place.lat;
 					  mySesh.dog.current_place_lon     = response.place.lon;
 					  mySesh.dog.current_place_geofence_radius = response.place.geofence_radius;
-	        		}
+					}
 					mySesh.dog.last_checkin_timestamp  = response.dog.last_checkin_timestamp;
 				
 					*/
@@ -194,11 +195,11 @@ function loadRemoteImage( type, alloyObject, img_actual, img_placeholder ) {
 		c.onload = function() {
 			if(c.status == 200) {
 				(type=="bg") ? alloyObject.backgroundImage = this.responseData : alloyObject.image = this.responseData;
-		  	//Ti.API.debug( "     SUCCESS :: Attached [ "+img_actual+" ] ");
+			//Ti.API.debug( "     SUCCESS :: Attached [ "+img_actual+" ] ");
 		  } else {
-		  	(type=="bg") ? alloyObject.backgroundImage = this.img_placeholder : alloyObject.image = img_placeholder;
-		  	// alloyObject.backgroundImage = img_placeholder;
-		  	//Ti.API.debug( "     ERROR :: Could not load remote image attaching [ " +img_placeholder +' ] instead' );
+			(type=="bg") ? alloyObject.backgroundImage = this.img_placeholder : alloyObject.image = img_placeholder;
+			// alloyObject.backgroundImage = img_placeholder;
+			//Ti.API.debug( "     ERROR :: Could not load remote image attaching [ " +img_placeholder +' ] instead' );
 		  }
 		};
 		c.open('GET', img_actual);
@@ -216,7 +217,7 @@ function countCharacters(textAreaObject, charCountLabel) {
 	// Ti.API.debug(textAreaObject.value.length);
 	charCountLabel.text = textAreaObject.value.length+" / "+mySesh.stringMaxes.poiRemarkMaxLength;
 	if( textAreaObject.value.length > mySesh.stringMaxes.poiRemarkMaxLength ) {
-  	textAreaObject.value = textAreaObject.value.substr(0, mySesh.stringMaxes.poiRemarkMaxLength);
+	textAreaObject.value = textAreaObject.value.substr(0, mySesh.stringMaxes.poiRemarkMaxLength);
   }
 }
 
@@ -268,9 +269,9 @@ function loadJson ( params, url, callbackFunction ) {
 //===========================================================================================
 function ucwords(str) {
   return (str + '')
-    .replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1) {
-      return $1.toUpperCase();
-    });
+	.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1) {
+	  return $1.toUpperCase();
+	});
 }
 
 //===========================================================================================
@@ -293,21 +294,21 @@ function createWindowController ( win_name, args, animation ) {
 	} 
 	else if (animation=="slide_up") {
 		winObject.top = mySesh.device.screenheight;
- 		winObject.opacity = 0.1;
+		winObject.opacity = 0.1;
 		animStyle = {	top: 0, opacity: 1,	duration: 120, 
 		  curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}
 	else if (animation=="slide_left") {
-	 	winObject.left = mySesh.device.screenwidth;
-	 	winObject.top = 0;
- 		winObject.opacity = 0.1;
+		winObject.left = mySesh.device.screenwidth;
+		winObject.top = 0;
+		winObject.opacity = 0.1;
 		animStyle = {	left: 0, opacity: 1,	duration: 120, 
 			curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}	
 	else if (animation=="slide_right") {
-	 	winObject.left = -1 * mySesh.device.screenwidth;
-	 	winObject.top = 0;
- 		winObject.opacity = 0.1;
+		winObject.left = -1 * mySesh.device.screenwidth;
+		winObject.top = 0;
+		winObject.opacity = 0.1;
 		animStyle = {	left: 0, opacity: 1, duration: 80, 
 			curve : Titanium.UI.ANIMATION_CURVE_EASE_IN_OUT }; 
 	}
@@ -320,15 +321,15 @@ function createWindowController ( win_name, args, animation ) {
 	// attach menubar to each new Window controller
 	addMenubar(winObject);
 	if (OS_ANDROID) 
-    	winObject.getView().open();
+		winObject.getView().open();
 	else {
-	 	winObject.open(animStyle);
+		winObject.open(animStyle);
 
-	 	if(win_name!="index") {
-	 		var spinner_time = 500;
-	 		if (win_name=="help") {
+		if(win_name!="index") {
+			var spinner_time = 500;
+			if (win_name=="help") {
 				spinner_time = 150;
-	 		}
+			}
 			// show loading spinner
 			Alloy.Globals.loadingMask.show('Loading...', true);
 			setTimeout(function(){
@@ -350,10 +351,10 @@ function getCurrentDate() {
 	var yyyy = today.getFullYear();
 
 	if(dd<10) {
-	    dd='0'+dd
+		dd='0'+dd
 	} 
 	if(mm<10) {
-	    mm='0'+mm
+		mm='0'+mm
 	} 
 	return mm+'/'+dd+'/'+yyyy;
 }
@@ -367,9 +368,9 @@ function getDistance(lat1, lon1, lat2, lon2) {
   var dLat = deg2rad(lat2-lat1);  // deg2rad below
   var dLon = deg2rad(lon2-lon1); 
   var a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2); 
+	Math.sin(dLat/2) * Math.sin(dLat/2) +
+	Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+	Math.sin(dLon/2) * Math.sin(dLon/2); 
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
   var d = R_mi * c; 	// Distance in miles
   return Number ( d.toFixed(4) );		// 4 decimals, in typecast just in case toFixed returns a string...
@@ -388,8 +389,8 @@ function deg2rad(deg) {
 //======================================================================
 function getArrayIndexById( array, value ) {
   for (var i=0; i<array.length; i++) {
-    if (array[i].place_ID == value) {
-      return i;
+	if (array[i].place_ID == value) {
+	  return i;
 	  }
   }
   return -1;
@@ -411,22 +412,21 @@ function addMenubar( parent_object ) {
 	
 	// PARENT OBJECT ----------------------------------------->	
 	var menubar = Ti.UI.createView( {
-	  id: "menubar", width: "100%", layout: "horizontal", 
-	  top: 0, 
-	  height: myUi._icon_small + (2 * myUi._pad_top),
-   	// backgroundColor: "#58c6d5", 
-    opacity: 0.94, zIndex: 99 
+		id: "menubar", width: "100%", layout: "horizontal", 
+		top: 0, 
+		height: myUi._icon_small + (2 * myUi._pad_top),
+	// backgroundColor: "#58c6d5", 
+		opacity: 0.94, zIndex: 99 
    }); 
 				
 	// CONTAINER VIEWS --------------------------------------->					
 	var menuLeft = Ti.UI.createView( {
-		width: left_width,
-		//borderWidth: 1, borderColor: "red" 
+		width: left_width
 	});
 	var menuCenter 	= Ti.UI.createView( {
+		//borderWidth: 1, borderColor: "gray", 
 		width: middle_width, 
 		layout: "horizontal",
-		//borderWidth: 1, borderColor: "gray", 
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER 
 	});
 	var menuRight0 	= Ti.UI.createView( {
@@ -434,12 +434,13 @@ function addMenubar( parent_object ) {
 		width	: right_width_1
 	});
 	var menuRight1 	= Ti.UI.createView( {
-	  //borderWidth: 1, borderColor: "black",
+		//borderWidth: 1, borderColor: "black",
 		width: right_width_1
 	});
 	var menuRight2 	= Ti.UI.createView( {		// on mapview, leave open for compass
 		//borderWidth: 1, borderColor: "blue",
-		width: right_width_2	
+		width: right_width_2,
+		zIndex: 1
 	});
 	
 	// BUTTONS ---------------------------------------------->
@@ -530,7 +531,7 @@ function addMenubar( parent_object ) {
 	// ADD ALL 3 RIGHT BUTTONS IF ON MAPVIEW
 	if (Ti.App.Properties.current_window == "mapview") {
 		////////// BUILD PROFILE BUTTON //////////////////////////////////////////////////
-		var img_actual  = PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg';
+		var img_actual = PROFILE_PATH + 'dog-'+mySesh.dog.dog_ID+'-iconmed.jpg';
 		var profileBtn = myUi.buildProfileThumb(mySesh.dog.dog_ID, img_actual, 1, myUi._icon_small);	// border=1, this means it's ME
 		menuRight0.add(profileBtn);
 		//////////////////////////////////////////////////////////////////////////////////
@@ -541,8 +542,8 @@ function addMenubar( parent_object ) {
 		logoutBtn.addEventListener('click', logoutUser);
 	} else {
 		var last_window_index = mySesh.windowStack.length - 1;
-		var help_img = HELP_PATH + "help-" + mySesh.windowStack[last_window_index].id +".jpg";
-		if(mySesh.windowStack[last_window_index].id!="help" && Ti.Filesystem.getFile('.', help_img).exists() ) {
+		var help_img = HELP_PATH + "help-" + mySesh.windowStack[last_window_index].id + ".jpg";
+		if (mySesh.windowStack[last_window_index].id != "help" && Ti.Filesystem.getFile('.', help_img).exists() ) {
 			menuRight2.add(helpBtn);
 			helpBtn.addEventListener('click', showHelp);
 		}
@@ -628,20 +629,20 @@ function uploadToAWS( event_media, photoPlaceholder ) {
 	filehandle.write( event_media );
 	Ti.API.debug ( " >> uploadToAWS: " + filename + " || "  + filehandle);
 	Alloy.Globals.AWS.S3.putObject( {
-      'BucketName' : 'wb-profile',
-     	'ObjectName' : filename, 
-      'File' : filehandle,
-      'Expires' : 30000
-	 	 	}, 
-	 	 	function(data, response) {		// success
-      	Ti.API.debug(" >>> uploadToAWS success  >> " + JSON.stringify(data) );
-      	
- 	 	}, function(message, error) {		// 
-      Ti.API.debug( " >>> uploadToAWS message  >> " + message );
-      Ti.API.debug( " >>> uploadToAWS error >> " + JSON.stringify(error));
- 	 	}
- 	);
- 	return { "filename": filename, "filehandle": filehandle };
+	  'BucketName' : 'wb-profile',
+		'ObjectName' : filename, 
+	  'File' : filehandle,
+	  'Expires' : 30000
+			}, 
+			function(data, response) {		// success
+		Ti.API.debug(" >>> uploadToAWS success  >> " + JSON.stringify(data) );
+		
+		}, function(message, error) {		// 
+	  Ti.API.debug( " >>> uploadToAWS message  >> " + message );
+	  Ti.API.debug( " >>> uploadToAWS error >> " + JSON.stringify(error));
+		}
+	);
+	return { "filename": filename, "filehandle": filehandle };
 }
 
 
@@ -715,33 +716,38 @@ function logoutUser() {
 			Titanium.Geolocation.removeEventListener('location', function(){} );
 			
 			// clear out backend
-	    	var params = {
+			var params = {
 				dog_ID		: mySesh.dog.dog_ID,
 				owner_ID	: mySesh.user.owner_ID
 			};
-	    	loadJson(params, "http://waterbowl.net/mobile/unload-dog-location.php", unloadDogResponse);
+			loadJson(params, "http://waterbowl.net/mobile/unload-dog-location.php", unloadDogResponse);
 
 			// clear data on client
 			mySesh.clearSavedDogInfo();
- 			mySesh.clearSavedUserInfo();
- 			
- 			// check user out on backend if they're currently checked in (send poiID + zero for action)
- 			if(mySesh.dog.current_place_ID>0) {
-	 			mySesh.saveDogLocation(mySesh.dog.current_place_ID, 0, "logout");
-	    	}
-	    	
-	    	// close map window, go back to login
-	    	closeWindowController();
+			mySesh.clearSavedUserInfo();
+			
+			// check user out on backend if they're currently checked in (send poiID + zero for action)
+			if(mySesh.dog.current_place_ID>0) {
+				mySesh.saveDogLocation(mySesh.dog.current_place_ID, 0, "logout");
+			}
+			
+			// close map window, go back to login
+			closeWindowController();
 			createWindowController('index', '', 'slide_right');
 		} else {
-		    // CANCEL CASE
+			// CANCEL CASE
 		 } 
 	});
 }
 
+//======================================================================
+// 	Name:  		unloadDogResponse(data)
+// 	Purpose:	callback from unload-dog-location.php
+//======================================================================
 function unloadDogResponse(data) {
 	Ti.API.debug("  .... [~] unloadDogResponse :: "+JSON.stringify(data) );
 }
+
 //======================================================================
 // 	Name:  		showSettings()
 // 	Purpose:	generic settings for user / app
@@ -768,7 +774,7 @@ function showProfile(ID) {
 function zeroPad( number, width )  {
   width -= number.toString().length;
   if ( width > 0 ){
-    return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+	return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
   }
   return number + ""; 			// always return a string
 }
@@ -778,18 +784,18 @@ function initializeMap(lat, lon) {
 	Alloy.Globals.wbMap = myMapFactory.createView({
 		mapType : myMapFactory.NORMAL_TYPE, // NORMAL HYBRID SATTELITE
 		region : {
-			latitude 			: lat,
+			latitude 		: lat,
 			longitude 		: lon,
-			latitudeDelta : 0.07,
-			longitudeDelta: 0.07,
+			latitudeDelta	: 0.07,
+			longitudeDelta	: 0.07,
 		}, 
-		top 					: 0,
+		top 				: 0,
 		animate 			: false,
 		maxZoom				: 1,
 		minZoom				: 2,
 		regionFit	 		: true,
-		userLocation 	: true,
-		enableZoomControls : true
+		userLocation 		: true,
+		enableZoomControls	: true
 	});
 	Alloy.Globals.wbMap.addEventListener('regionChanged',function(e) {
 		mySesh.xsetGeoViewport(e.source.region.latitude, e.source.region.longitude);
@@ -804,20 +810,11 @@ function initializeMap(lat, lon) {
 //Ti.API.info('Ti.Platform.displayCaps.platformWidth: ' + Ti.Platform.displayCaps.platformWidth);
 // alert('Ti.Platform.displayCaps.platformWidth: ' + Ti.Platform.displayCaps.platformWidth);
 
-/*
-if(Ti.Platform.osname === 'android'){
-  Ti.API.info('Ti.Platform.displayCaps.xdpi: ' + Ti.Platform.displayCaps.xdpi);
-  Ti.API.info('Ti.Platform.displayCaps.ydpi: ' + Ti.Platform.displayCaps.ydpi);
-  Ti.API.info('Ti.Platform.displayCaps.logicalDensityFactor: ' + Ti.Platform.displayCaps.logicalDensityFactor);
-};
-*/
-
 /*----------------------------------------------------------------------
  *  	Instantiate UiFactory
  *-----------------------------------------------------------------------*/
 var UiFactoryClass = require('lib/UiFactoryClass');
 var myUi = new UiFactoryClass.UiFactory();
-
 
 /*----------------------------------------------------------------------
  *  	Instantiate ExtMap
@@ -825,7 +822,6 @@ var myUi = new UiFactoryClass.UiFactory();
 var ExtMapClass = require('lib/ExtMapClass');
 var myMap = new ExtMapClass.ExtMap();
 // Alloy.Globals.wbMap = '';
-
 
 /*----------------------------------------------------------------------
  *  	Instantiate Session class (contains all the app globals)
@@ -835,9 +831,9 @@ var SessionClass 	= require('lib/SessionClass');
 var mySesh = new SessionClass.Session();
 
 /*	
-			DEV vs LIVE vs LOCAL
-			options: dev, live, local 			 	 
-																					*/
+		DEV vs LIVE vs LOCAL
+		options: dev, live, local 			 	 
+*/
 var SERVER_URL 		= mySesh.getUrl("live");
 var ICON_PATH 	 	= "images/icons/";
 var MISSING_PATH	= "images/missing/";
@@ -849,10 +845,6 @@ var PROFILE_PATH 	= SERVER_URL + mySesh.server.wb_path.bucket_profile;
 /*----------------------------------------------------------------------
  *  	GLOBAL VARIABLES
  *-----------------------------------------------------------------------*/
-// NextSpace Culver City  34.024 / -118.394
-// Oberrieder 		33.971995 / -118.420496
-
-// TODO: get rid of this and see what happens; should no longer be in use 
 var winStack = [];			// create window stack array to keep track of what's open
 Ti.App.Properties.windowStack = winStack;
 Ti.App.Properties.current_window = null;
@@ -878,8 +870,7 @@ Ti.Geolocation.accuracy 		= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCU
 Ti.Geolocation.purpose 			= "Receive User Location";
 // Ti.API.debug( "Running on an [" + Ti.Platform.osname + "] device");
 
-// TODO: is this still used by mapview.js??
-//Alloy.Globals.wbMap 	= "";
 
-// var longPress;
 'use strict';
+
+

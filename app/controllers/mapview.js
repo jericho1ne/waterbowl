@@ -88,18 +88,19 @@ function buildMapMenubar() {
 		}
     });  
   });
-  ///////////////////// 	ADD WATERBOWL/POI BTN LISTENER 	////////////////////////
-  getPoiBtn.addEventListener( 'click', function() { 
-  	getMapPoi(); 
-  });
-	//							 WATERBOWL/POI BUTTON LONGPRESS				 												// 
+ 
+ 	///////////////////// 	WATERBOWL/POI BTN - REGULAR 	////////////////////////
+  	getPoiBtn.addEventListener( 'click', function() { 
+  		getMapPoi(); 
+  	});
+	///////////////////// 	WATERBOWL/POI BTN - LONGPRESS 	////////////////////////
 	getPoiBtn.addEventListener('longpress', function(e) {
 		if (mySesh.dog.dog_ID==1 || mySesh.dog.dog_ID==18) {
 			myMap.getNearbyPoi(33.973, -118.421,33.973, -118.421);
 			myMap.centerMapOnLocation(33.973, -118.421, 0.05);
 		}
 	});
-	/////////////////////////////////////// ADD MARK BTN LISTENER //////////////////
+	///////////////////// 	MARK BTN LISTENER 	////////////////////////////////////
 	markBtn.addEventListener('click', function() {			
 		Ti.API.debug(mySesh.funcCallCount + "  .... [+] Mark button clicked on map");
 		var necessary_args = {
@@ -108,7 +109,7 @@ function buildMapMenubar() {
 		};
 		createWindowController( "createmark", necessary_args, "slide_left" );
 	});
-	/////////////////////////////////////// ADD SNIFF LISTENER /////////////////////
+	////////////////////// 	 SNIFF BTN - REGULAR	////////////////////////////////
 	sniffBtn.addEventListener('click', function() {		
 	    Ti.API.debug(mySesh.funcCallCount + " .... [+] SNIFF button clicked on map");
 	    // WORKFLOW: 
@@ -124,7 +125,7 @@ function buildMapMenubar() {
 	      	myMap.getMarks( mySesh.geo.lat, mySesh.geo.lon, 1, 0.5, 20, function(){
 	      		myMap.getNearbyDogs();
 	      	} );
-	      	disableAllButtons();
+	      	disableAllButtons(mySesh.timeout.map_lockout);
 	      } else {  // if no errors
 	        myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.008);
 	        mySesh.geo.lon = e.coords.longitude;
@@ -133,9 +134,16 @@ function buildMapMenubar() {
 	        myMap.getMarks( e.coords.latitude, e.coords.longitude, 1, 0.5, 20, function(){
 	      		 myMap.getNearbyDogs();
 	      	} );
-	        disableAllButtons();
+	        disableAllButtons(mySesh.timeout.map_lockout);
 		  }
 	    });  
+	});
+	////////////////////// 	 SNIFF BTN - LONGPRESS	////////////////////////////////
+	sniffBtn.addEventListener('longpress', function(e) {
+		if (mySesh.dog.dog_ID==1 || mySesh.dog.dog_ID==18) {
+			myMap.getNearbyPoi(33.973, -118.421,33.973, -118.421);
+			myMap.centerMapOnLocation(33.973, -118.421, 0.05);
+		}
 	});
 }
 
@@ -150,14 +158,14 @@ function getMapPoi() {
 	    if (e.error) {
 	    	// Alloy.Globals.wbMap.removeAllAnnotations();
 	    	myMap.getNearbyPoi( mySesh.geo.lat, mySesh.geo.lon, mySesh.geo.view_lat, mySesh.geo.view_lon);
-	    	disableAllButtons();  // disable button after first click while we load backend data
+	    	disableAllButtons(mySesh.timeout.map_lockout);  // disable button while we load backend data; loadMapJson will re-enable them
 	    } else {  // if no errors
 	      //myMap.centerMapOnLocation(e.coords.latitude, e.coords.longitude, 0.075);
 	      mySesh.geo.lon = e.coords.longitude;
 	      mySesh.geo.lat = e.coords.latitude;
 	      // Alloy.Globals.wbMap.removeAllAnnotations();
 	      myMap.getNearbyPoi( e.coords.latitude, e.coords.longitude, mySesh.geo.view_lat, mySesh.geo.view_lon);
-	      disableAllButtons();  // disable button after first click while we load backend data
+	      disableAllButtons(mySesh.timeout.map_lockout);  // disable button while we load backend data; loadMapJson will re-enable them
 	    }
 	  });
 	}  

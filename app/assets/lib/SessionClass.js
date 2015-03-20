@@ -51,8 +51,8 @@ function Session(){
 		weight					: null,
 		marks_made				: null,
 		buddies					: [],
-		weight_buddy			: 0.01,		// SNIFF SETTINGS
-		sniff_radius			: 0.20,		// SNIFF SETTINGS 	TODO:  fill this in upon login from backend
+		weight_buddy			: 0.01,		// 
+		sniff_radius			: 10.0,		// SNIFF SETTINGS 	TODO:  fill this in upon login from backend
 		location_timer			: 60000,	// milliseconds
 		current_place_ID  		: null,
 		current_place_name 		: null,
@@ -84,6 +84,11 @@ function Session(){
 	this.currentPlaceInfo 		= [];
 	this.currentPlaceFeatures 	= [];
 	this.checkinInProgress	 	= null;
+	this.timeout = {
+		remote_load : 3000,
+		map_lockout : 10000,	// 10s econds before map buttons (Sniff, Mark, POI) become available again
+		ui_lockout : 2000,		// 2 seconds after general actions
+	};
 	this.server = {
 		AWS: {
 			access_key_id		: "AKIAILLMVRRDGDBDZ5XQ",
@@ -102,7 +107,7 @@ function Session(){
 			bucket_poi		: "images/wb-poi/",
 			bucket_mark		: "images/wb-mark/",
 			bucket_profile	: "images/wb-profile/",
-			bucket_uitext	: "images/wb-ui-text/",
+			bucket_uitext	: "images/wb-ui-text/"
 		
 			// LOCAL PATHS ARE INSIDE ALLOY.JS
 		}

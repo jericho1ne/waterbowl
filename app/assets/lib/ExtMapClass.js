@@ -46,7 +46,7 @@ ExtMap.prototype.loadMapJson = function ( params, url, callbackFunction ) {
 	var query = Ti.Network.createHTTPClient();
 	query.open("POST", url);	
 	query.send( params );
-	query.setTimeout(2000);
+	query.setTimeout(mySesh.timeout.remote_load);
 	query.onload = function() {
 		var jsonResponse = this.responseText;
 		if (jsonResponse != "" ) {
@@ -126,7 +126,7 @@ ExtMap.prototype.refreshDogAnnotations = function(data) {
 			dogsAnnoArray.push( this.createDogAnnotation(mySesh.nearbyDogs[i]) );	  
 	}
 	Alloy.Globals.wbMap.addAnnotations( dogsAnnoArray );
-	enableAllButtons();
+	//enableAllButtons();
 }
 
 //=========================================================================
@@ -143,9 +143,9 @@ ExtMap.prototype.refreshMarkAnnotations = function(data) {
 		Alloy.Globals.wbMap.addAnnotations( marksAnnoArray );
 	}
 	else {
-		createSimpleDialog("Sorry","No dogs or marks found nearby :( ")
+		createSimpleDialog("Sorry","No marks found nearby. Be the first!")
 	}	
-	enableAllButtons();
+	//enableAllButtons();
 }
 
 
@@ -301,7 +301,7 @@ ExtMap.prototype.refreshPoiAnnotations = function(data) {
 		/////////////////////// CREATE ANNOTATION FOR EACH POI IN ARRAY ///////////// 
 		Alloy.Globals.wbMap.addAnnotations( poiAnnoArray );
 	}
-	enableAllButtons(); 
+	//enableAllButtons(); 
 }
 
 
