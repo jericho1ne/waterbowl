@@ -13,7 +13,6 @@
 //================================================================================
 function Session(){
 	this.saveDogLocationInterval = '';
-	this.funcCallCount = 0;
 	this.actionOngoing = false;
 	this.flag = {
 		nearbyDogsChanged 	: false,
@@ -86,7 +85,7 @@ function Session(){
 	this.checkinInProgress	 	= null;
 	this.timeout = {
 		remote_load : 3000,
-		map_lockout : 10000,	// 10s econds before map buttons (Sniff, Mark, POI) become available again
+		map_lockout : 8000,	// 10s econds before map buttons (Sniff, Mark, POI) become available again
 		ui_lockout : 2000,		// 2 seconds after general actions
 	};
 	this.server = {

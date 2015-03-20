@@ -20,7 +20,7 @@ function checkemail(emailAddress) {
 //		Purpose:  add new user to database
 //================================================================================
 function saveUserToDb(email, pwd1, pwd2, city, state, zip) {
-	disableAllButtons();
+	disableAllButtons(0);
 	if (pwd1!='' && pwd2!='' && email!='' && city!='' && zip!='' && state!='') {
 		if (pwd1 != pwd2) {
 			createSimpleDialog("Passwords do not match","Please handle that and try again");

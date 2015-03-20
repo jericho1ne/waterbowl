@@ -99,7 +99,7 @@ dog_bdate.rightButton 	= fwd_button_4;
 
 var nextBtn = myUi.buildButton( "nextBtn", "next", "xl" );
 	nextBtn.addEventListener('click',  function(dog){ 
-		disableAllButtons();	
+		disableAllButtons(0);	
 		
 		// Ti.API.info( " >>>>>> dog_name " + ucwords(dog_name.value) );
 		var dog_gender = "";

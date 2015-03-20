@@ -37,9 +37,13 @@ function goToRegister (e) {
 //
 //
 //======================== Create and Open top level UI components ==================================== 
-//
-//
 $.index.open();	
+var args = arguments[0] || {};
+
+if (!isset(args.action)) {
+	args.action = "";
+}
+
 addToAppWindowStack( $.index, "index" );
 $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
 
@@ -82,7 +86,7 @@ var footer = Ti.UI.createImageView({
 topView.add(titlebar);
 midView.add(email);
 midView.add(password);
-midView.add( myUi.buildSpacer("horz", 4, "clear") );
+midView.add(myUi.buildSpacer("horz", 4, "clear"));
 midView.add(loginBtn);
 midView.add(regBtn);
 botView.add(footer);
@@ -96,12 +100,17 @@ $.content.add(midView);
 $.content.add(botView);	
 
 Ti.API.log( "  .... [i] saved email :: " +Ti.App.Properties.getString('email') );
-	Ti.API.log( "  .... [i] saved pwd   :: " +Ti.App.Properties.getString('password') );
-if( (Ti.App.Properties.getString('email')!="" && Ti.App.Properties.getString('password')!="") &&
-	(Ti.App.Properties.getString('email')!=null && Ti.App.Properties.getString('password')!=null) ) {
-	goToLogin();
-}
+Ti.API.log( "  .... [i] saved pwd   :: " +Ti.App.Properties.getString('password') );
 
+
+//console.log("args.action >> " +args.action);
+if (args.action!="logout") {
+	if ( (Ti.App.Properties.getString('email')!="" && Ti.App.Properties.getString('password')!="") &&
+		(Ti.App.Properties.getString('email')!=null && Ti.App.Properties.getString('password')!=null) ) {
+		//args.action = "";
+		goToLogin();
+	}
+}
 /*
 $.index.addEventListener('focus',function(e) {		// only gets after original page load
 	// why oh why doesn't this work.  sonofa...

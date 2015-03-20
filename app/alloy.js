@@ -57,11 +57,18 @@ function clearTextAreaContents(textarea_object, default_text) {
 }
 
 //=====================================================
-//	Name:    disableAllButtons()
+//	Name:    disableAllButtons(timeout)
+// 	@param timeout - X ms = block for fixed time, 
+//					 0 = block until manual removal
 //=====================================================
-function disableAllButtons() {
+function disableAllButtons(timeout) {
 	mySesh.actionOngoing = true;
-	setTimeout(enableAllButtons, mySesh.timeout.ui_lockout);
+	// if timeout
+	if (timeout != 0) {
+		// default to a shorter timeouts
+		if (timeout == "") timeout = 1000;
+		setTimeout(enableAllButtons, timeout);
+	}
 }
 
 //=====================================================
@@ -88,6 +95,7 @@ function remoteFileExists( url ) {
 //================================================================================
 function wbLogin(email, password) {
 	//alert(email+"/"+password);
+	var loginRequest = '';
 	// >> XHR REQUEST
 	var loginRequest = Ti.Network.createHTTPClient( {
 		// SUCCESS:  On data load
@@ -169,7 +177,7 @@ function wbLogin(email, password) {
 		//  ERROR:  No data received from XHRequest
 		onerror: function(e) {
 			Ti.API.debug(e.error);
-			//createSimpleDialog('Error', e.error);
+			createSimpleDialog('Unable to login', e.error);
 		},
 		timeout: 1200 /* in milliseconds */
 	} );
@@ -243,7 +251,7 @@ function loadJson ( params, url, callbackFunction ) {
 	query.open("POST", url);	
 	query.send( params );
 	query.setTimeout(2000);
-	disableAllButtons();
+	disableAllButtons(mySesh.timeout.remote_load);
 	query.onload = function() {
 		enableAllButtons();
 		var jsonResponse = this.responseText;
@@ -281,6 +289,10 @@ function ucwords(str) {
 function createWindowController ( win_name, args, animation ) {
 	Ti.API.info ( "  ===================================== [ "+win_name+" ] === window #" +
 		 ( mySesh.windowStack.length+1 ) +" =====================================" );
+
+	// briefly lockout UI buttons so multiple windows don't pop open
+	disableAllButtons(mySesh.timeout.ui_lockout);
+
 	Ti.API.debug("  :::: createWindowController :::: args ["+JSON.stringify(args) +"] :::: user [ "+
 					JSON.stringify(mySesh.user)+" ] /// [ "+
 					JSON.stringify(mySesh.dog)+" ]");
@@ -733,7 +745,10 @@ function logoutUser() {
 			
 			// close map window, go back to login
 			closeWindowController();
-			createWindowController('index', '', 'slide_right');
+			var params = {
+				action : "logout"
+			};
+			createWindowController('index', params, 'slide_right');
 		} else {
 			// CANCEL CASE
 		 } 

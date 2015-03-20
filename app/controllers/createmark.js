@@ -123,7 +123,7 @@ function takeMarkImage() {
 		Titanium.Media.showCamera({			//showCamera OR openPhotoGallery (for testing on emulator)
 			///////   	SUCCESS
 			success : function(event) {
-				disableAllButtons();
+				disableAllButtons(0);
 				removeAllChildren($.mapContainer);
 
 				var imageBlob = event.media;
