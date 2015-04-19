@@ -673,8 +673,8 @@ Titanium.Geolocation.getCurrentPosition(function(e){
 // REPEATEDLY TRIGGER ON WINDOW FOCUS //////////////////////////////////////////
 $.mapview.addEventListener('focus',function(e) {
 	if(myUi.refreshPlaceList) {
-		refreshPlaceListData("Window Focus");
 		myUi.refreshPlaceList = 0;
+		refreshPlaceListData("Window Focus");
 	}
 
 	// window regained focus after createmark was closed, so refresh marks+dogs

@@ -3,7 +3,7 @@
 *************************************************************************/
 //	Waterbowl App	
 //	
-//	Created by Mihai Peteu Oct 2014
+//	Created by Mihai Peteu Oct 2014	
 //	(c) 2015 waterbowl
 //
 
@@ -100,7 +100,9 @@ function wbLogin(email, password) {
 	var loginRequest = Ti.Network.createHTTPClient( {
 		// SUCCESS:  On data load
 		onload: function(e) {
+			Ti.API.log(" >> JSON raw response :: " + this.responseText);
 			var response = JSON.parse(this.responseText);	
+			Ti.API.loge(" >> JSON parsed :: " + response);
 			// Ti.API.debug(this.responseText);
 			// TODO:  should probably put this into a separate function
 			if (response.status == 1) {
@@ -230,9 +232,9 @@ function countCharacters(textAreaObject, charCountLabel) {
 }
 
 //=====================================================
-//	Name:		 	createSimpleDialog ( title, msg )
+//	Name:		createSimpleDialog ( title, msg )
 //	Purpose:	nice clean way to do alert modals
-//	TODO:			move to UiFactory??
+//	TODO:		move to UiFactory??
 //=====================================================
 function createSimpleDialog (title, msg) {
 	var simple_dialog = Titanium.UI.createAlertDialog({
@@ -242,6 +244,24 @@ function createSimpleDialog (title, msg) {
 	simple_dialog.show();
 }	
 
+//==============================================================
+//	Name:		createFancyDialog ( title, options, callbackFunction )
+//	Purpose:	even cleaner modal
+//==============================================================
+function createFancyDialog (title, options, callbackFunction) {
+// modal popup 
+	var modal_title = 'Log out?';
+	var optns = {
+		options : ['Yes', 'Cancel'],
+		cancel        : 1,
+		selectedIndex : 0,
+		destructive   : 1,
+		title : modal_title
+	};
+	var logoutDialog = Ti.UI.createOptionDialog(optns);
+	logoutDialog.show();
+	logoutDialog.addEventListener('click', callbackFunction);
+}
 //================================================================================
 //		Name:			loadJson
 //		Purpose:	standardize HTTP requests
@@ -708,6 +728,8 @@ function logoutUser() {
 	// Ti.App.Properties.setString('email', null);
 	// Ti.App.Properties.setString('password', null);
 	
+	// TODO: user createFancyDialog() wrapper
+
 	// modal popup 
 	var modal_title = 'Log out?';
 	var optns = {
@@ -717,6 +739,7 @@ function logoutUser() {
 		destructive   : 1,
 		title : modal_title
 	};
+
 	var logoutDialog = Ti.UI.createOptionDialog(optns);
 	logoutDialog.show();
 	logoutDialog.addEventListener('click', function(e_dialog) {
@@ -761,6 +784,62 @@ function logoutUser() {
 //======================================================================
 function unloadDogResponse(data) {
 	Ti.API.debug("  .... [~] unloadDogResponse :: "+JSON.stringify(data) );
+}
+
+//======================================================================
+// 	Name:  		uploadImage(imageBlob)
+// 	Purpose:	
+//======================================================================
+function uploadImage(imageBlob, imgContainer, progressBar) {
+	var bannerImage = imageBlob.imageAsResized(750, 750);
+	var imgFile = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
+	imgFile.write(bannerImage);
+
+	var snapShotImage = Ti.UI.createImageView({ 
+		height	: Ti.UI.SIZE,
+		width	: Ti.UI.SIZE,
+		image	: imgFile.nativePath,
+		top		: 0, 
+		left	: 0
+	});
+
+	// TODO pass in from outside
+	imgContainer.add(snapShotImage);
+	imgContainer.snapShot = snapShotImage;
+
+	// XHR request
+	var xhr = Titanium.Network.createHTTPClient();
+	xhr.setRequestHeader("contentType", "multipart/form-data");				
+	xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
+	xhr.onerror = function(e) {
+		Ti.API.info('IN ERROR ' + e.error);
+	};
+	xhr.onload = function(response) {
+		if ( this.responseText != ''){
+			var jsonData = JSON.parse(this.responseText);
+			if (jsonData.status > 0) {
+				// createSimpleDialog('Success', jsonData.message);
+				Ti.API.log(" >> MARK IMAGE UPLOADED ");
+				Ti.API.log(jsonData.message);
+				progressBar.hide();
+				enableAllButtons();
+			} else {
+				//cameraBtn.show();
+				createSimpleDialog('Upload Error', jsonData.message);
+			}	
+		} else {
+			//cameraBtn.show();
+			alert( "No response from server" );
+		}
+	};
+	xhr.onsendstream = function(e) {
+		progressBar.value = e.progress;
+	};
+	xhr.send({
+		'userfile'	: bannerImage,
+		'type'		: 'temp',
+		'type_ID'	: mySesh.dog.dog_ID
+	});
 }
 
 //======================================================================
@@ -832,18 +911,20 @@ var UiFactoryClass = require('lib/UiFactoryClass');
 var myUi = new UiFactoryClass.UiFactory();
 
 /*----------------------------------------------------------------------
- *  	Instantiate ExtMap
- *-----------------------------------------------------------------------*/
-var ExtMapClass = require('lib/ExtMapClass');
-var myMap = new ExtMapClass.ExtMap();
-// Alloy.Globals.wbMap = '';
-
-/*----------------------------------------------------------------------
  *  	Instantiate Session class (contains all the app globals)
  *-----------------------------------------------------------------------*/
 // include session class library
 var SessionClass 	= require('lib/SessionClass');
 var mySesh = new SessionClass.Session();
+
+
+/*----------------------------------------------------------------------
+ *  	Instantiate ExtMap
+ *-----------------------------------------------------------------------*/
+//var ExtMapClass = require('lib/ExtMapClass');
+var myMap = new ExtMapClass.ExtMap();
+Alloy.Globals.wbMap = '';
+
 
 /*	
 		DEV vs LIVE vs LOCAL
@@ -882,7 +963,7 @@ Alloy.Globals.loadingMask = Alloy.createWidget("nl.fokkezb.loading");
 Ti.Geolocation.distanceFilter 	= 10;			// 10m=33 ft, 20m=65ft, 30m=100 ft
 Ti.Geolocation.frequency		= 1;
 Ti.Geolocation.accuracy 		= Ti.Geolocation.ACCURACY_NEAREST_TEN_METERS;		// ACCURACY_NEAREST_TEN_METERS, ACCURACY_BEST doesn't work on iOS
-Ti.Geolocation.purpose 			= "Receive User Location";
+//Ti.Geolocation.purpose 			= "Receive User Location";
 // Ti.API.debug( "Running on an [" + Ti.Platform.osname + "] device");
 
 

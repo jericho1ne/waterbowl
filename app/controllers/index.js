@@ -47,6 +47,7 @@ if (!isset(args.action)) {
 addToAppWindowStack( $.index, "index" );
 $.index.backgroundImage = 'images/waterbowl-splash-screen.jpg';
 
+
 // DIV HEIGHTS
 var footer_height = 80;
 var content_height = mySesh.device.screenheight - footer_height;
@@ -102,6 +103,14 @@ $.content.add(botView);
 Ti.API.log( "  .... [i] saved email :: " +Ti.App.Properties.getString('email') );
 Ti.API.log( "  .... [i] saved pwd   :: " +Ti.App.Properties.getString('password') );
 
+/*
+
+// WARN USER ABOUT DATA CONNECTION / LACK OF GPS 
+if (!Ti.Network.online) {
+	setTimeout( function letUserKnow(){
+		createSimpleDialog("No data connection","You'll need a data connection to use Waterbowl.");
+	}, 2000 );
+} 
 
 //console.log("args.action >> " +args.action);
 if (args.action!="logout") {
@@ -111,6 +120,9 @@ if (args.action!="logout") {
 		goToLogin();
 	}
 }
+*/
+
+
 /*
 $.index.addEventListener('focus',function(e) {		// only gets after original page load
 	// why oh why doesn't this work.  sonofa...
@@ -121,7 +133,7 @@ $.index.addEventListener('focus',function(e) {		// only gets after original page
 */
 
 /* 	LOGIN HACK - skip past login screen  			*/
-
+//createWindowController("register3", "", "slide_left");
 //email.value = "apple@waterbowl.net"
 //password.value = "appletest";
 //setTimeout(goToLogin(), 300);

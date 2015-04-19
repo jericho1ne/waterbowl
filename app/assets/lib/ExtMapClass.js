@@ -72,8 +72,8 @@ ExtMap.prototype.loadMapJson = function ( params, url, callbackFunction ) {
 //==========================================================================================
 ExtMap.prototype.getMarks =  function ( user_lat, user_lon, sniff_type, sniff_radius, marks_shown, callBackFn ) {
 	Ti.API.info("...[~] getMarks() [ "+user_lat+"/"+user_lon+"  ] :: sniff [type/radius/how many] : [ "+sniff_type+"/"+sniff_radius+"/"+marks_shown+" ]");
-  	// GET MARKS /////////////////////////////////
-  	var mark_params = {
+	// GET MARKS /////////////////////////////////
+	var mark_params = {
 		lat       			: user_lat,
 		lon       			: user_lon, 
 		sniff_type 			: sniff_type,
@@ -104,7 +104,7 @@ ExtMap.prototype.getNearbyDogs = function () {
 		number_dogs_shown 	: 20
 	};
 	Ti.API.info("...[~] dogs-mapshow() [ "+ JSON.stringify(dog_params) +" ]");
-  	
+	
 	var self = this;
 	this.loadMapJson(dog_params, "http://waterbowl.net/mobile/dogs-mapshow.php", function(data) {
 		self.refreshDogAnnotations(data)
@@ -187,14 +187,14 @@ ExtMap.prototype.createPoiAnnotation = function( poi ) {
 		width			: 40
 	});
 	// ADD ANNOTATION BUTTON EVENT LISTENER 
- 	anno_button.addEventListener('click', function(e){
- 		Ti.API.debug ( ".... [+] Clicked ANNOTATION >> " + e.source.place_ID );	
+	anno_button.addEventListener('click', function(e){
+		Ti.API.debug ( ".... [+] Clicked ANNOTATION >> " + e.source.place_ID );	
 		var necessary_args = {
 			_came_from : "map marker",
 			_place_ID : e.source.place_ID		// pass in array index and placeID so we can hit the backend for more details
 		};
 		createWindowController( "placeoverview", necessary_args, 'slide_left' );
- 	}); 
+	}); 
 	// CREATE AND RETURN ANNOTATION CONTAINER  	
 	return myMapFactory.createAnnotation({
 		id        : "poi_anno_"+poi.place_ID, 
@@ -224,9 +224,9 @@ ExtMap.prototype.createMarkAnnotation = function( mark ) {
 	});
 	anno_mark_button.addEventListener('click', function(e){
 		createWindowController( "markoverview", mark, 'slide_left' );
- 	});
+	});
 	return myMapFactory.createAnnotation({
-    id        : mark.ID, 
+		id        : mark.ID, 
 		latitude  : mark.mark_lat, 
 		longitude : mark.mark_lon,
 		title     : mark.mark_name,
@@ -266,10 +266,10 @@ ExtMap.prototype.createDogAnnotation = function( dog ) {
 			dog_ID 	: dog.dog_ID
 		};
 		createWindowController( "profile", params, 'slide_left' );
- 	});
+	});
 
 	return myMapFactory.createAnnotation({
-    	id        	: dog.dog_ID, 
+		id        	: dog.dog_ID, 
 		latitude  	: dog.last_lat, 
 		longitude 	: dog.last_lon,
 		title     	: dog.dog_name,
@@ -282,7 +282,7 @@ ExtMap.prototype.createDogAnnotation = function( dog ) {
 }
 
 //=========================================================================
-//	Name:			refreshPoiAnnotations( data )
+//	Name:		refreshPoiAnnotations( data )
 //	Purpose:	grab POI/locations from backend php file, order by proximity
 //=========================================================================
 ExtMap.prototype.refreshPoiAnnotations = function(data) {	

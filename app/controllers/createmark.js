@@ -47,15 +47,15 @@ function saveRemark(title, text_content, textarea_hint, img) {
 						done_dialog.show();
 						done_dialog.addEventListener('click', function(e_dialog) {
 							if (e_dialog.index == 0) {  // user clicked OK
-							    closeWindowController();
+								closeWindowController();
 							}
 						});
 						
 						// (5) :::: Set flag to refresh map marks on mapview ::::	
 						mySesh.flag.nearbyDogsChanged = true;	
 						
-	      				// (6) :::: Close window, return to map ::::
-	      				imgFile = null;
+						// (6) :::: Close window, return to map ::::
+						imgFile = null;
 						// 	closeWindowController();		
 					} else {
 						enableAddMarkBtn();
@@ -120,77 +120,139 @@ function disableAddMarkBtn() {
 function takeMarkImage() {
 	// markCameraBtn.hide();
 	if (!mySesh.actionOngoing) {
-		Titanium.Media.showCamera({			//showCamera OR openPhotoGallery (for testing on emulator)
-			///////   	SUCCESS
-			success : function(event) {
-				disableAllButtons(0);
-				removeAllChildren($.mapContainer);
 
-				var imageBlob = event.media;
-				var bannerImage = imageBlob.imageAsResized(750, 750);
-				var imgFile = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
-		        imgFile.write(bannerImage);
-		        
-		        var snapShotImage = Ti.UI.createImageView({ 
-					height	: Ti.UI.SIZE,
-					width	: Ti.UI.SIZE,
-					image	: imgFile.nativePath,
-					top		: 0, 
-					left	: 0
+		// modal popup 
+		var modal_title = 'Where shall we grab the photo from?';
+		var optns = {
+			options : ['Camera','Gallery', 'Cancel'],
+			cancel        : 2,
+			selectedIndex : 0,
+			destructive   : 2,
+			title : modal_title
+		};
+		var sourceDialog = Ti.UI.createOptionDialog(optns);
+		sourceDialog.show();
+		sourceDialog.addEventListener('click', function(e_dialog) {
+			// 	Camera
+			if (e_dialog.index == 0) { 
+				Titanium.Media.showCamera({			//showCamera OR openPhotoGallery (for testing on emulator)
+					///////   	SUCCESS
+					success : function(event) {
+						disableAllButtons(0);
+						removeAllChildren($.mapContainer);
+
+						var imageBlob = event.media;
+						
+						$.mapContainer.add(progress_bar);
+						progress_bar.zIndex = 999;
+						progress_bar.top = (myUi._device.screenwidth/2)-20;
+						progress_bar.show();
+
+						uploadImage(imageBlob, $.mapContainer, progress_bar);
+						
+						/*
+						var bannerImage = imageBlob.imageAsResized(750, 750);
+						var imgFile = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory,'snapshot.png');
+						imgFile.write(bannerImage);
+						
+						var snapShotImage = Ti.UI.createImageView({ 
+							height	: Ti.UI.SIZE,
+							width	: Ti.UI.SIZE,
+							image	: imgFile.nativePath,
+							top		: 0, 
+							left	: 0
+						});
+
+						$.mapContainer.add(snapShotImage);
+						$.mapContainer.snapShot = snapShotImage;
+						
+						$.mapContainer.add(progress_bar);
+						progress_bar.zIndex = 999;
+						progress_bar.top = (myUi._device.screenwidth/2)-20;
+						progress_bar.show();
+						
+						// XHR request
+						var xhr = Titanium.Network.createHTTPClient();
+						xhr.setRequestHeader("contentType", "multipart/form-data");				
+						xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
+						xhr.onerror = function(e) {
+							Ti.API.info('IN ERROR ' + e.error);
+						};
+						xhr.onload = function(response) {
+							if ( this.responseText != ''){
+								var jsonData = JSON.parse(this.responseText);
+								if (jsonData.status > 0) {
+									// createSimpleDialog('Success', jsonData.message);
+									Ti.API.log(" >> MARK IMAGE UPLOADED ");
+									Ti.API.log(jsonData.message);
+									progress_bar.hide();
+									enableAllButtons();
+								} else {
+									//cameraBtn.show();
+									createSimpleDialog('Upload Error', jsonData.message);
+								}	
+							} else {
+								//cameraBtn.show();
+								alert( "No response from server" );
+							}
+						};
+						xhr.onsendstream = function(e) {
+							progress_bar.value = e.progress;
+						};
+						xhr.send({
+							'userfile'	: bannerImage,
+							'type'		: 'temp',
+							'type_ID'	: mySesh.user.owner_ID
+						});
+						*/
+
+					},
+					/////////		CANCEL
+					cancel : function() {
+						enableAllButtons();
+					},
+					/////////		ERROR
+					error : function(error) {
+					},
+					allowImageEditing : true
+				});// End showCamera
+				Ti.API.log("CAMERA");
+			}
+			// 	Gallery
+			else if (e_dialog.index == 1) {
+				Titanium.Media.openPhotoGallery({
+					///////   	SUCCESS  	////////////
+					success : function(event) {
+						disableAllButtons(0);
+						removeAllChildren($.mapContainer);
+
+						var imageBlob = event.media;
+						
+						$.mapContainer.add(progress_bar);
+						progress_bar.zIndex = 999;
+						progress_bar.top = (myUi._device.screenwidth/2)-20;
+						progress_bar.show();
+
+						uploadImage(imageBlob, $.mapContainer, progress_bar);
+					},
+					/////////		CANCEL  	////////////
+					cancel : function() {
+					},
+					/////////		ERROR  	////////////
+					error : function(error) {
+					},
+					allowImageEditing : true
 				});
-		      	$.mapContainer.add(snapShotImage);
-		      	$.mapContainer.snapShot = snapShotImage;
-				
-				$.mapContainer.add(progress_bar);
-				progress_bar.zIndex = 999;
-				progress_bar.top = (myUi._device.screenwidth/2)-20;
-				progress_bar.show();
-		     	
-		     	// XHR request
-			    var xhr = Titanium.Network.createHTTPClient();
-				xhr.setRequestHeader("contentType", "multipart/form-data");				
-			    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
-			    xhr.onerror = function(e) {
-			        Ti.API.info('IN ERROR ' + e.error);
-			    };
-			    xhr.onload = function(response) {
-					if ( this.responseText != ''){
-			      		var jsonData = JSON.parse(this.responseText);
-				      	if (jsonData.status>0) {
-				        	// createSimpleDialog('Success', jsonData.message);
-				        	Ti.API.log("   >> MARK IMAGE UPLOADED");
-				        	progress_bar.hide();
-				        	enableAllButtons();
-				        } else {
-				      		//cameraBtn.show();
-							createSimpleDialog('Upload Error', jsonData.message);
-				      	}	
-			     	} else {
-		      			//cameraBtn.show();
-						alert( "No response from server" );
-					}
-				};
-			    xhr.onsendstream = function(e) {
-			    	progress_bar.value = e.progress;
-			    };
-			    xhr.send({
-					'userfile'	: bannerImage,
-					'type'		: 'temp',
-					'type_ID'	: mySesh.user.owner_ID
-			    });
-	       	},
-			/////////		CANCEL
-			cancel : function() {
-				enableAllButtons();
-			},
-			/////////		ERROR
-			error : function(error) {
-			},
-			allowImageEditing : true
+			} 
+			else {
+				// CANCEL CASE
+			 } 
 		});
-	}
+	
+
+	}// End if no current action ongoing
 	else {
-		createSimpleDialog("Please wait", "Your photo is still uploading");
+		createSimpleDialog("Please wait", "Page or Photo are still loading");
 	}
 }
 
@@ -226,7 +288,7 @@ $.createmark.addEventListener('focus',function(e) {
 			width	: 70,
 			top  	: myUi._device.screenwidth - 80 -(2*myUi._pad_left),
 			right	: 2*myUi._pad_left,
-	 		zIndex  : 101
+			zIndex  : 101
 	} );
 	markCameraBtn.addEventListener('click', function(e) { takeMarkImage(); } );
 	$.mapContainer.add(markCameraBtn);
@@ -279,13 +341,13 @@ var poiSwitch = Ti.UI.createSwitch({
 });
 poiSwitch.addEventListener('change',function(e){
 	if(poiSwitch.value==true) {
-  		yes_label.color = "#000000";
-  		no_label.color = "#888888";
-  	} 
-  	else if(poiSwitch.value==false) {
-  		yes_label.color = "#888888";
-  		no_label.color = "#000000";
-  	}
+		yes_label.color = "#000000";
+		no_label.color = "#888888";
+	} 
+	else if(poiSwitch.value==false) {
+		yes_label.color = "#888888";
+		no_label.color = "#000000";
+	}
 });
 
 // ADD EVERYTHING TO WINDOW

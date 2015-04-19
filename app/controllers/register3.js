@@ -50,36 +50,38 @@ galleryBtn.addEventListener('click', function(e) {
 		success : function(event) {
 		    var image 		= event.media;
 			var resized_img = image.imageAsResized(750, 750);
-		    var xhr 	= Titanium.Network.createHTTPClient();
+		    var xhr 		= Titanium.Network.createHTTPClient();
 			xhr.setRequestHeader("contentType", "multipart/form-data");				
 		    xhr.open('POST', 'http://waterbowl.net/mobile/upload-image.php');
 		    xhr.onerror = function(e) {
 		        Ti.API.info('IN ERROR ' + e.error);
 		    };
 		    xhr.onload = function(response) {
-					if ( this.responseText != ''){
-		      	var jsonData = JSON.parse(this.responseText);
-		      	if (jsonData.status>0) {
-		        	// createSimpleDialog('Success', jsonData.message);
-		        	createWindowController('register4','',"slide_left");
-		      	} else {
-		      		cameraBtn.show();
-					galleryBtn.show();
-		      		createSimpleDialog('Upload Error', jsonData.message);
-		      	}	
-		      } else {
+				if ( this.responseText != '') {
+			      	var jsonData = JSON.parse(this.responseText);
+			      	if (jsonData.status > 0) {
+			        	// createSimpleDialog('Success', jsonData.message);
+			        	createWindowController('register4','',"slide_left");
+			      	} 
+			      	else {
+			      		cameraBtn.show();
+						galleryBtn.show();
+			      		createSimpleDialog('Upload Error', jsonData.message);
+			      	}	
+			    } 
+			    else {
 	      			cameraBtn.show();
 					galleryBtn.show();
 					alert( "No response from server" );
-		      }
+		    	}
 		    };
 		    xhr.onsendstream = function(e) {
 		    	progress_bar.value = e.progress;
 		    };
 		    xhr.send({
-				'userfile'		: resized_img,
-				'type'			: 'dog',
-				'type_ID'		: mySesh.dog.dog_ID		// last dog inserted ID from register2
+				'userfile'	: resized_img,
+				'type'		: 'dog',
+				'type_ID'	: mySesh.dog.dog_ID		// last dog inserted ID from register2
 		    });
 		    // Ti.API.debug("    >>> image, dog, mySesh.dog.dog_ID, Banner :: [" + resized_img, 'dog', mySesh.dog.dog_ID, + 'banner' +"]");
 		},

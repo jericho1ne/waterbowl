@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
     <icon>appicon.png</icon>
-    <id>com.HerbYang.WaterbowlDev</id>
+    <id>com.waterbowlapp.dev</id>
     <name>Waterbowl</name>
-    <version>1.0.6</version>
+    <version>1.0.0</version>
     <publisher>mpeteu</publisher>
     <url>http://waterbowl.net</url>
     <description>Making LA more dog friendly</description>
@@ -19,6 +19,8 @@
             <dict>
                 <key>NSLocationAlwaysUsageDescription</key>
                 <string>Waterbowl would like to know when you approach a dog park.</string>
+                <key>NSLocationUsageDescription</key>
+                <string>Receive User Location</string>
                 <key>UISupportedInterfaceOrientations~iphone</key>
                 <array>
                     <string>UIInterfaceOrientationPortrait</string>
